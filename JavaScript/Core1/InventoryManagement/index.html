@@ -52,7 +52,7 @@
 
    // set up the simulation worker
    const worker = new Worker("simulation-worker.js");
-   // start the simulation/experiment in the worker thread
+   // start the simulation in the worker thread
    worker.postMessage({});
 
    // on incoming messages from worker

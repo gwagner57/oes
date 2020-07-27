@@ -27,12 +27,12 @@ sim.scenario.setupInitialState = function () {
 /*******************************************************
  Statistics variables
 ********************************************************/
-sim.setupStatistics = function () {
+sim.model.setupStatistics = function () {
   sim.stat.nmrOfStockOuts = 0;
   sim.stat.lostSales = 0;
   sim.stat.serviceLevel = 0.0;
 };
-sim.computeFinalStatistics = function () {
+sim.model.computeFinalStatistics = function () {
   sim.stat.serviceLevel = (sim.time - sim.stat.nmrOfStockOuts) / sim.time;
 };
 /*******************************************************
@@ -40,9 +40,8 @@ sim.computeFinalStatistics = function () {
 ********************************************************/
 sim.experiment = new eXPERIMENTtYPE({
   experimentNo: 1,
-  title: "Simple Experiment with 10 replications.",
-  nmrOfReplications: 10,
-  //seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012]
+  title: `Simple Experiment with 10 replications, each running for ${sim.scenario.simEndTime} ${sim.model.timeUnit}.`,
+  nmrOfReplications: 10
 });
 /*
 experiment2 = new eXPERIMENTtYPE({

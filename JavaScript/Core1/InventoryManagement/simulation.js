@@ -2,36 +2,38 @@
  Simulation Scenario Settings
 ********************************************************/
 sim.scenario.simEndTime = 1000;
-sim.scenario.idCounter = 11;  // start value of auto IDs
 /*******************************************************
  Simulation Model
 ********************************************************/
-sim.model.time = "continuous";
-sim.model.timeUnit = "min";  // minutes
-sim.model.objectTypes = ["ServiceDesk", "Customer"];
-sim.model.eventTypes = ["CustomerArrival", "CustomerDeparture"];
+sim.model.time = "discrete";
+sim.model.timeUnit = "D";  // days
+sim.model.objectTypes = ["SingleProductShop"];
+sim.model.eventTypes = ["DailyDemand", "Delivery"];
 /*******************************************************
  Initial State
 ********************************************************/
 sim.scenario.setupInitialState = function () {
   // Create initial objects
-  var sD = new ServiceDesk({id: 1, queueLength: 0});
+  const tvShop = new SingleProductShop({
+    id: 1,
+    name:"TV",
+    quantityInStock: 80,
+    reorderLevel: 50,
+    reorderUpToLevel: 100
+  });
   // Create initial events
-  sim.FEL.add( new CustomerArrival({occTime:1, serviceDesk: sD}));
-}
+  sim.FEL.add( new DailyDemand({occTime:1, quantity:25, shop: tvShop}));
+};
 /*******************************************************
  Statistics variables
 ********************************************************/
 sim.model.setupStatistics = function () {
-  sim.stat.arrivedCustomers = 0;
-  sim.stat.departedCustomers = 0;
-  sim.stat.cumulativeTimeInSystem = 0.0;
-  sim.stat.meanTimeInSystem = 0.0;
-  sim.stat.maxQueueLength = 0;
+  sim.stat.nmrOfStockOuts = 0;
+  sim.stat.lostSales = 0;
+  sim.stat.serviceLevel = 0.0;
 };
 sim.model.computeFinalStatistics = function () {
-  sim.stat.meanTimeInSystem =
-      sim.stat.cumulativeTimeInSystem / sim.stat.departedCustomers;
+  sim.stat.serviceLevel = (sim.time - sim.stat.nmrOfStockOuts) / sim.time;
 };
 /*******************************************************
  Define an experiment (type)
@@ -39,5 +41,19 @@ sim.model.computeFinalStatistics = function () {
 sim.experiment = new eXPERIMENTtYPE({
   experimentNo: 1,
   title: `Simple Experiment with 10 replications, each running for ${sim.scenario.simEndTime} ${sim.model.timeUnit}.`,
-  nmrOfReplications: 10
+  nmrOfReplications: 10,
+  //seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012]
 });
+/*
+experiment2 = new eXPERIMENTtYPE({
+  id: 2,
+  scenarioNo: 1,
+  experimentNo: 1,
+  experimentTitle: "Simple Experiment with 50 replications.",
+  nmrOfReplications: 10,
+  seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012],
+  parameterDefs: [
+    new oes.ExperimentParamDef({name:"arrivalEventRate", values:[0.4, 0.5, 0.6]})
+  ]
+});
+*/

@@ -7,7 +7,7 @@ sim.scenario.idCounter = 11;  // start value of auto IDs
  Simulation Model
 ********************************************************/
 sim.model.time = "continuous";
-sim.model.timeUnit = "min";  // minutes
+sim.model.timeUnit = "m";  // minutes
 sim.model.objectTypes = ["ServiceDesk", "Customer"];
 sim.model.eventTypes = ["CustomerArrival", "CustomerDeparture"];
 /*******************************************************
@@ -39,5 +39,6 @@ sim.model.computeFinalStatistics = function () {
 sim.experiment = new eXPERIMENTtYPE({
   experimentNo: 1,
   title: `Simple Experiment with 10 replications, each running for ${sim.scenario.simEndTime} ${sim.model.timeUnit}.`,
-  nmrOfReplications: 10
+  nmrOfReplications: 10,
+  //seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012]
 });
