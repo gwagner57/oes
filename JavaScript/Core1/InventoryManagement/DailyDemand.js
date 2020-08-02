@@ -27,7 +27,7 @@ class DailyDemand extends eVENT {
     } else return [];  // no follow-up events
   }
   static sampleQuantity() {
-    return math.getUniformRandomInteger( 5, 30);
+    return rand.uniformInt( 5, 30);
   }
   static recurrence() {
     return 1;

@@ -16,7 +16,7 @@ class Delivery extends eVENT {
     } else return [];  // no follow-up events
   }
   static sampleLeadTime() {
-    var r = math.getUniformRandomInteger( 0, 99);
+    var r = rand.uniformInt( 0, 99);
     if (r < 25) return 1;         // probability 0.25
     else if (r < 85) return 2;    // probability 0.60
     else return 3;                // probability 0.15

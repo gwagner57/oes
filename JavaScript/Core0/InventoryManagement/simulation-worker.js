@@ -1,6 +1,6 @@
 // load general framework code
-self.importScripts("../oes-js-core0/EventList.js", "../oes-js-core0/math.js",
-    "../oes-js-core0/OES-Foundation.js", "../oes-js-core0/simulator.js");
+self.importScripts("../OES-JS-Core0/EventList.js", "../OES-JS-Core0/math.js",
+    "../OES-JS-Core0/OES-Foundation.js", "../OES-JS-Core0/simulator.js");
 // load simulation-example-specific code
 self.importScripts("simulation.js");
 if (sim.model.objectTypes) {
@@ -24,6 +24,6 @@ onmessage = function (e) {
     self.postMessage({statistics: sim.stat, endTime: sim.endTime});
   } else {
     // run simulation experiment
-    sim.runExperiment( sim.experiment);
+    sim.runSimpleExperiment( sim.experiment);
   }
 };

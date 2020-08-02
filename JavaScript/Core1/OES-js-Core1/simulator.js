@@ -15,7 +15,7 @@ sim.stat = Object.create(null);
 /*******************************************************************
  * Initialize a (standalone or experiment scenario) simulation run *
  *******************************************************************/
-sim.initializeScenarioRun = function (expParamSlots, seed) {
+sim.initializeScenarioRun = function ({seed, expParamSlots}) {
   sim.step = 0;  // simulation loop step counter
   sim.time = 0;  // simulation time
   // set default endTime
@@ -23,15 +23,15 @@ sim.initializeScenarioRun = function (expParamSlots, seed) {
   // get ID counter from simulation scenario, or set to default value
   sim.idCounter = sim.scenario?.idCounter || 1000;
   // set up a default random variate sampling method
-  /*
-  if (!sim.experiment && sim.scenario.randomSeed) {  // use the Mersenne Twister RNG
-    rand = new Random( sim.scenario.randomSeed);
+  if (!sim.experiment && sim.scenario.randomSeed) {
+    // use David Bau's seedrandom RNG
+    rand.gen = new Math.seedrandom( sim.scenario.randomSeed);
   } else if (seed) {  // experiment-defined replication-specific seed
-    rand = new Random( seed);
+    // use David Bau's seedrandom RNG
+    rand.gen = new Math.seedrandom( seed);
   } else {  // use the JS built-in RNG
-    rand = new Random();
+    rand.gen = Math.random();
   }
-  */
   // set up initial state
   //sim.initializeModelVariables( expParamSlots);
   if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
@@ -87,44 +87,73 @@ sim.runScenario = function () {
   if (sim.model.computeFinalStatistics) sim.model.computeFinalStatistics();
 }
 /*******************************************************
- Run an Experiment (in a JS worker)
+ Run a Simple Experiment (in a JS worker)
  ********************************************************/
 sim.runExperiment = function (exp) {
+  if (exp.parameterDefs?.length) sim.runParVarExperiment( exp);
+  else sim.runSimpleExperiment( exp);
+}
+/*******************************************************
+ Run a Simple Experiment (in a JS worker)
+ ********************************************************/
+sim.runSimpleExperiment = function (exp) {
+  if (sim.model.setupStatistics) sim.model.setupStatistics();
+  // initialize replication statistics record
+  exp.replicStat = Object.create(null);  // empty map
+  for (let varName of Object.keys( sim.stat)) {
+    exp.replicStat[varName] = [];  // an array per statistics variable
+  }
+  // run experiment scenario replications
+  for (let k=0; k < exp.nmrOfReplications; k++) {
+    sim.initializeScenarioRun({seed: exp.seeds[k]});
+    sim.runScenario();
+    // store replication statistics
+    Object.keys( exp.replicStat).forEach( function (varName) {
+      exp.replicStat[varName][k] = sim.stat[varName];
+    });
+  }
+  // define exp.summaryStat to be a map for the summary statistics
+  exp.summaryStat = Object.create(null);
+  // aggregate replication statistics in exp.summaryStat
+  Object.keys( exp.replicStat).forEach( function (varName) {
+    exp.summaryStat[varName] = Object.create(null);  // empty map
+    Object.keys( math.stat.summary).forEach( function (aggr) {
+      var aggrF = math.stat.summary[aggr].f;
+      exp.summaryStat[varName][aggr] = aggrF( exp.replicStat[varName]);
+    });
+  });
+  // send experiment statistics to main thread
+  self.postMessage({experiment: exp});
+};
+/*******************************************************
+ Run a Parameter Variation Experiment (in a JS worker)
+********************************************************/
+sim.runParVarExperiment = function (exp) {
   var cp = [], valueSets = [], M = 0,
       N = exp.parameterDefs.length,
       increm = 0, x = 0, expPar = {},
       expRunId = (new Date()).getTime(),
       valueCombination = [], expParamSlots = {};
-  if (N === 0) {  // simple experiment (without parameters)
-    cp = [[]];  // Cartesian Product with only 1 empty parameter value combination
-    M = cp.length;  // size of cartesian product
-    // initialize replication statistics record
-    if (sim.model.setupStatistics) sim.model.setupStatistics();
-    exp.replicStat = {};
-    for (let varName of Object.keys( sim.stat)) {
-      exp.replicStat[varName] = [];  // an array per statistics variable
-    }
-  } else {  // parameter variation experiment
-    for (let i=0; i < N; i++) {
-      expPar = exp.parameterDefs[i];
-      if (!expPar.values) {
-        // create value set
-        expPar.values = [];
-        increm = expPar.stepSize || 1;
-        for (x = expPar.startValue; x <= expPar.endValue; x += increm) {
-          expPar.values.push( x);
-        }
+  // create a list of value sets, one set for each parameter
+  for (let i=0; i < N; i++) {
+    expPar = exp.parameterDefs[i];
+    if (!expPar.values) {
+      // create value set
+      expPar.values = [];
+      increm = expPar.stepSize || 1;
+      for (x = expPar.startValue; x <= expPar.endValue; x += increm) {
+        expPar.values.push( x);
       }
-      valueSets.push( expPar.values);
     }
-    cp = util.cartesianProduct( valueSets);
-    M = cp.length;  // size of cartesian product
+    valueSets.push( expPar.values);
   }
+  cp = util.cartesianProduct( valueSets);
+  M = cp.length;  // size of cartesian product
   // loop over all combinations of experiment parameter values
   for (let i=0; i < M; i++) {
     valueCombination = cp[i];  // a JS array
     // initialize the scenario record
-    exp.scenarios[i] = {stat:{}};
+    exp.scenarios[i] = {stat: Object.create(null)};
     exp.scenarios[i].parameterValues = valueCombination;
     // initialize experiment scenario statistics
     for (let varName of Object.keys( sim.stat)) {
@@ -137,65 +166,41 @@ sim.runExperiment = function (exp) {
     // run experiment scenario replications
     for (let k=0; k < exp.nmrOfReplications; k++) {
       if (exp.seeds.length > 0) {
-        sim.initializeScenarioRun( expParamSlots, exp.seeds[k]);
+        sim.initializeScenarioRun({seed: exp.seeds[k], expParamSlots: expParamSlots});
       } else {
-        sim.initializeScenarioRun( expParamSlots);
+        sim.initializeScenarioRun({expParamSlots: expParamSlots});
       }
       sim.runScenario();
-      if (N > 0) {  // parameter variation experiment
-        /*
-        // for the first replication, initialize experiment scenario statistics
-        if (k === 0) {
-          Object.keys( sim.stat).forEach( function (varName) {
-            if (sim.stat[varName].isSimpleOutputStatistics) {
-              exp.scenarios[i].stat[varName] = 0;
-            }
-          } );
-        }
-        // aggregate replication statistics from sim.stat to sim.experiment.scenarios[i].stat
+      // for the first replication, initialize experiment scenario statistics
+      if (k === 0) {
         Object.keys( sim.stat).forEach( function (varName) {
-          if (sim.stat[varName].isSimpleOutputStatistics) {
-            exp.scenarios[i].stat[varName] += sim.stat[varName];
-          }
-        });
-        if (exp.storeEachExperimentScenarioRun) {
-          await sim.storeMan.add( oes.ExperimentScenarioRun, {
-            id: expRunId + i * exp.replications + k + 1,
-            experimentRun: expRunId,
-            experimentScenarioNo: i,
-            parameterValueCombination: exp.scenarios[i].parameterValues,
-            outputStatistics: Object.assign({}, sim.stat)  // clone
-          });
-        }
-        */
-      } else {  // simple experiment
-        // store replication statistics
-        Object.keys( exp.replicStat).forEach( function (varName) {
-          exp.replicStat[varName][k] = sim.stat[varName];
+          exp.scenarios[i].stat[varName] = 0;
         });
       }
-    }
-    if (N === 0) {  // simple experiment (without parameters)
-      // aggregate replication statistics in exp.scenarios[0].stat
-      Object.keys( exp.replicStat).forEach( function (varName) {
-        exp.scenarios[i].stat[varName] = {};
-        Object.keys( math.stat.summary).forEach( function (aggr) {
-          var aggrF = math.stat.summary[aggr].f;
-          exp.scenarios[i].stat[varName][aggr] = aggrF( exp.replicStat[varName]);
+      // aggregate replication statistics from sim.stat to sim.experiment.scenarios[i].stat
+      Object.keys( sim.stat).forEach( function (varName) {
+        if (sim.stat[varName].isSimpleOutputStatistics) {
+          exp.scenarios[i].stat[varName] += sim.stat[varName];
+        }
+      });
+      /*
+      if (exp.storeEachExperimentScenarioRun) {
+        await sim.storeMan.add( oes.ExperimentScenarioRun, {
+          id: expRunId + i * exp.replications + k + 1,
+          experimentRun: expRunId,
+          experimentScenarioNo: i,
+          parameterValueCombination: exp.scenarios[i].parameterValues,
+          outputStatistics: Object.assign({}, sim.stat)  // clone
         });
-      });
+      }
+      */
     }
-    if (N > 0) {  // parameter variation experiment
-      // send statistics to main thread
-      self.postMessage({
-        expScenNo: i,
-        expScenParamValues: exp.scenarios[i].parameterValues,
-        expScenStat: exp.scenarios[i].stat
-      });
-    } else {  // simple experiment (without parameters)
-      // send statistics to main thread
-      self.postMessage({experiment: exp});
-    }
+    // send statistics to main thread
+    self.postMessage({
+      expScenNo: i,
+      expScenParamValues: exp.scenarios[i].parameterValues,
+      expScenStat: exp.scenarios[i].stat
+    });
   }
   self.postMessage({endTime: sim.endTime});
 };

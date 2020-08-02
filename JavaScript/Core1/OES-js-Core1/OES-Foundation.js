@@ -1,5 +1,5 @@
 /*******************************************************************************
- * OES Foundation - A simple Discrete Event Simulation Framework
+ * OES JS Core 1 Foundation Objects and Classes
  *
  * @copyright Copyright 2020 Gerd Wagner
  *   Chair of Internet Technology, Brandenburg University of Technology, Germany.
@@ -7,25 +7,29 @@
  * @author Gerd Wagner
  ******************************************************************************/
 
-// Define namespace variables
+// Define namespace objects
 const sim = Object.create(null); // instead of {}
 sim.model = Object.create(null);
 sim.scenario = Object.create(null);
 
+/**
+ * An OES object has an ID and may have a unique name. If no ID value is provided on creation,
+ * an ID value is automatically assigned using the simulation scenarios "idCounter".
+ */
 class oBJECT {
   constructor( id, name) {
-    this.id = id || sim.scenario.idCounter++;
+    this.id = id || sim.idCounter++;
     this.name = name;  // optional
     // add each new object to list of simulation objects
     sim.objects.set( this.id, this);
   }
   // overwrite/improve the standard toString method
   toString() {
-    var str = this.constructor.name +"-"+this.id +"{ ",
+    var Class = this.constructor, str = Class.name + `-${this.id}{ `,
         i=0, valStr="";
     Object.keys( this).forEach( function (prop) {
-      var propLabel = (this.constructor.labels && this.constructor.labels[prop]) ?
-          this.constructor.labels[prop] : "", val = this[prop];
+      var propLabel = (Class.labels && Class.labels[prop]) ? Class.labels[prop] : "",
+          val = this[prop];
       if (typeof val === "number" && !Number.isInteger( val)) {
         valStr = String( math.round( val, oes.ui.simLogDecimalPlaces));
       } else if (Array.isArray( val)) {
@@ -39,6 +43,9 @@ class oBJECT {
     return str +"}";
   }
 }
+/**
+ * An OES event may be instantaneous or it may have a non-zero duration.
+ */
 class eVENT {
   constructor( occTime, startTime, duration) {
     this.occTime = occTime;
@@ -128,39 +135,42 @@ class eVENT {
  * @author Gerd Wagner
  */
 class eXPERIMENTpARAMdEF {
-  constructor( name, values) {
+  constructor({name, values, startValue, endValue, stepSize=1}) {
     this.name = name;
-    this.values = values;  // an array list of numbers
+    if (values) this.values = values;  // optional, an array list of numbers
+    if (startValue) this.startValue = startValue;
+    if (endValue) this.endValue = endValue;
+    if (stepSize) this.stepSize = stepSize;
   }
   static val2str(v) {
-    return v.toString();  // JSON.stringify( v);
+    return JSON.stringify( v);
   }
   static str2val(str) {
     return JSON.parse( str);
   }
 }
 /**
- * An experiment type is defined for a scenario, which is defined for a model.
+ * An experiment type is defined for a model.
  */
 class eXPERIMENTtYPE {
-  constructor({model, scenarioNo, experimentNo, title,
+  constructor({model, title,
                 nmrOfReplications, parameterDefs=[], seeds=[]}) {
     this.model = model;  // optional (by default the model is defined in the context)
-    // The sequence number relative to the underlying simulation model
-    this.scenarioNo = scenarioNo;  // optional (by default the scenario is defined in the context)
-    // The sequence number relative to the underlying simulation scenario
-    this.experimentNo = experimentNo;
-    this.title = title;  // optional
+    this.title = title;  // the combination of model and title forms an ID
     this.nmrOfReplications = nmrOfReplications;
     this.parameterDefs = parameterDefs;  // an array list
     this.seeds = seeds;  // an array list with seeds.length = nmrOfReplications
     this.scenarios = [];  // experiment scenarios (will be created at runtime)
   }
 }
+/**
+ * An experiment run is based on a specific scenario.
+ */
 class eXPERIMENTrUN {
-  constructor({id, experimentDef, dateTime}) {
+  constructor({id, experimentType, baseScenarioNo, dateTime}) {
     this.id = id;  // an AutoNumber (possibly a timestamp)
-    this.experimentDef = experimentDef;
+    this.experimentType = experimentType;
+    this.baseScenarioNo = baseScenarioNo;  // relative to model
     this.dateTime = dateTime;
   }
 }

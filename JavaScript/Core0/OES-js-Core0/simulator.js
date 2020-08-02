@@ -65,9 +65,9 @@ sim.runScenario = function () {
   if (sim.model.computeFinalStatistics) sim.model.computeFinalStatistics();
 }
 /*******************************************************
- Run an Experiment (in a JS worker)
+ Run a Simple Experiment (in a JS worker)
  ********************************************************/
-sim.runExperiment = function (exp) {
+sim.runSimpleExperiment = function (exp) {
   // initialize replication statistics record
   if (sim.model.setupStatistics) sim.model.setupStatistics();
   exp.replicStat = Object.create(null);  // empty map

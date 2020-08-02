@@ -1,5 +1,5 @@
 /*******************************************************************************
- * OES Foundation - A simple Discrete Event Simulation Framework
+ * OES JS Core 0 Foundation Objects and Classes
  *
  * @copyright Copyright 2020 Gerd Wagner
  *   Chair of Internet Technology, Brandenburg University of Technology, Germany.
@@ -7,16 +7,18 @@
  * @author Gerd Wagner
  ******************************************************************************/
 
-// Define namespace variables
+// Define namespace objects
 const sim = Object.create(null); // instead of {}
 sim.model = Object.create(null);
 sim.scenario = Object.create(null);
 
 /**
- * An objet has an ID and may have a unique name.
+ * An OES object has an ID and may have a unique name. If no ID value is provided on creation,
+ * an ID value is automatically assigned using the simulators "idCounter".
  */
 class oBJECT {
   constructor( id, name) {
+    // if no "id" value provided, use (and increment) "idCounter"
     this.id = id || sim.scenario.idCounter++;
     this.name = name;  // optional unique
     // add each new object to the collection of simulation objects
@@ -24,11 +26,11 @@ class oBJECT {
   }
   // overwrite/improve the standard toString method
   toString() {
-    var str = this.constructor.name +"-"+this.id +"{ ",
+    var Class = this.constructor, str = Class.name + `-${this.id}{ `,
         i=0, valStr="";
     Object.keys( this).forEach( function (prop) {
-      var propLabel = (this.constructor.labels && this.constructor.labels[prop]) ?
-          this.constructor.labels[prop] : "", val = this[prop];
+      var propLabel = (Class.labels && Class.labels[prop]) ? Class.labels[prop] : "",
+          val = this[prop];
       if (typeof val === "number" && !Number.isInteger( val)) {
         valStr = String( math.round( val, oes.ui.simLogDecimalPlaces));
       } else if (Array.isArray( val)) {
@@ -43,14 +45,11 @@ class oBJECT {
   }
 }
 /**
- * An event may be instantaneous or it may have a non-zero duration.
+ * An OES Core 0 event is instantaneous
  */
 class eVENT {
-  constructor( occTime, startTime, duration) {
+  constructor( occTime) {
     this.occTime = occTime;
-    // only meaningful for events with duration (e.g., activities)
-    this.startTime = startTime;  // optional
-    this.duration = duration;  // optional
   }
   // overwrite/improve the standard toString method
   toString() {
@@ -68,25 +67,14 @@ class eVENT {
     else evtStr = eventTypeName;
     return `${evtStr}@${math.round(this.occTime,decPl)}`;
   }
-  // an event priority comparison function for Array.sort
-  static rank( e1, e2) {
-    var p1=0, p2=0;
-    if (e1.constructor.priority) p1 = e1.constructor.priority;
-    if (e2.constructor.priority) p2 = e2.constructor.priority;
-    return p2 - p1;
-  }
 }
 /**
- * An experiment type is defined for a scenario, which is defined for a model.
+ * An experiment type is defined for a model.
  */
 class eXPERIMENTtYPE {
-  constructor({model, scenarioNo, experimentNo, title, nmrOfReplications}) {
+  constructor({model, title, nmrOfReplications}) {
     this.model = model;  // optional (by default the model is defined in the context)
-    // The sequence number relative to the underlying simulation model
-    this.scenarioNo = scenarioNo;  // optional (by default the scenario is defined in the context)
-    // The sequence number relative to the underlying simulation scenario
-    this.experimentNo = experimentNo;
-    this.title = title;  // optional
+    this.title = title;  // the combination of model and title forms an ID
     this.nmrOfReplications = nmrOfReplications;
   }
 }
