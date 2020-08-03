@@ -15,13 +15,13 @@ sim.stat = Object.create(null);
 /*******************************************************************
  * Initialize a (standalone or experiment scenario) simulation run *
  *******************************************************************/
-sim.initializeScenarioRun = function ({seed, expParamSlots}) {
+sim.initializeScenarioRun = function ({seed, expParSlots: expParSlots}) {
   sim.step = 0;  // simulation loop step counter
-  sim.time = 0;  // simulation time
-  // set default endTime
-  sim.endTime = sim.scenario?.simEndTime || sim.endTime || Number.MAX_SAFE_INTEGER;
+  sim.time = 0;  // 1 time
+  // set simulation end time
+  sim.endTime = sim.scenario.durationInSimTime || sim.endTime || Number.MAX_SAFE_INTEGER;
   // get ID counter from simulation scenario, or set to default value
-  sim.idCounter = sim.scenario?.idCounter || 1000;
+  sim.idCounter = sim.scenario.idCounter || 1000;
   // set up a default random variate sampling method
   if (!sim.experiment && sim.scenario.randomSeed) {
     // use David Bau's seedrandom RNG
@@ -30,10 +30,10 @@ sim.initializeScenarioRun = function ({seed, expParamSlots}) {
     // use David Bau's seedrandom RNG
     rand.gen = new Math.seedrandom( seed);
   } else {  // use the JS built-in RNG
-    rand.gen = Math.random();
+    rand.gen = Math.random;
   }
   // set up initial state
-  //sim.initializeModelVariables( expParamSlots);
+  //sim.initializeModelVariables( expParSlots);
   if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
   //else sim.createInitialObjEvt();
   //if (Object.keys( oes.EntryNode.instances).length > 0) oes.setupProcNetStatistics();
@@ -133,7 +133,7 @@ sim.runParVarExperiment = function (exp) {
       N = exp.parameterDefs.length,
       increm = 0, x = 0, expPar = {},
       expRunId = (new Date()).getTime(),
-      valueCombination = [], expParamSlots = {};
+      valueCombination = [], expParSlots = {};
   // create a list of value sets, one set for each parameter
   for (let i=0; i < N; i++) {
     expPar = exp.parameterDefs[i];
@@ -161,14 +161,14 @@ sim.runParVarExperiment = function (exp) {
     }
     // create experiment parameter slots for assigning corresponding model variables
     for (let j=0; j < N; j++) {
-      expParamSlots[exp.parameterDefs[j].name] = valueCombination[j];
+      expParSlots[exp.parameterDefs[j].name] = valueCombination[j];
     }
     // run experiment scenario replications
     for (let k=0; k < exp.nmrOfReplications; k++) {
       if (exp.seeds.length > 0) {
-        sim.initializeScenarioRun({seed: exp.seeds[k], expParamSlots: expParamSlots});
+        sim.initializeScenarioRun({seed: exp.seeds[k], expParSlots: expParSlots});
       } else {
-        sim.initializeScenarioRun({expParamSlots: expParamSlots});
+        sim.initializeScenarioRun({expParSlots: expParSlots});
       }
       sim.runScenario();
       // for the first replication, initialize experiment scenario statistics

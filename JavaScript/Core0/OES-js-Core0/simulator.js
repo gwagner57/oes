@@ -19,7 +19,7 @@ sim.initializeScenarioRun = function () {
   sim.step = 0;  // simulation loop step counter
   sim.time = 0;  // simulation time
   // set default endTime
-  sim.endTime = sim.scenario?.simEndTime || sim.endTime || Number.MAX_SAFE_INTEGER;
+  sim.endTime = sim.scenario.durationInSimTime || sim.endTime || Number.MAX_SAFE_INTEGER;
   // get ID counter from simulation scenario, or set to default value
   sim.idCounter = sim.scenario?.idCounter || 1000;
   // set up initial state

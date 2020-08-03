@@ -1,7 +1,7 @@
 /*******************************************************
  Simulation Scenario Settings
 ********************************************************/
-sim.scenario.simEndTime = 1000;
+sim.scenario.durationInSimTime = 1000;
 sim.scenario.idCounter = 11;  // start value of auto IDs
 /*******************************************************
  Simulation Model
@@ -38,6 +38,6 @@ sim.model.computeFinalStatistics = function () {
 ********************************************************/
 sim.experiment = new eXPERIMENTtYPE({
   experimentNo: 1,
-  title: `Simple Experiment with 10 replications, each running for ${sim.scenario.simEndTime} ${sim.model.timeUnit}.`,
+  title: `Simple Experiment with 10 replications, each running for ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}.`,
   nmrOfReplications: 10
 });
