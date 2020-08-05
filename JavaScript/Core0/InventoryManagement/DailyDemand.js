@@ -20,13 +20,13 @@ class DailyDemand extends eVENT {
     if (prevStockLevel > this.shop.reorderLevel &&
         prevStockLevel - q <= this.shop.reorderLevel) {
       return [new Delivery({
-        occTime: this.occTime + Delivery.sampleLeadTime(),
-        quantity: this.shop.reorderUpToLevel - this.shop.quantityInStock,
+        occTime: this.occTime + Delivery.leadTime(),
+        quantity: this.shop.targetInventory - this.shop.quantityInStock,
         receiver: this.shop
       })];
     } else return [];  // no follow-up events
   }
-  static sampleQuantity() {
+  static quantity() {
     return math.getUniformRandomInteger( 5, 30);
   }
   static recurrence() {
@@ -35,7 +35,7 @@ class DailyDemand extends eVENT {
   createNextEvent() {
     return new DailyDemand({
       occTime: this.occTime + DailyDemand.recurrence(),
-      quantity: DailyDemand.sampleQuantity(),
+      quantity: DailyDemand.quantity(),
       shop: this.shop
     });
   }

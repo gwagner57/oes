@@ -4,7 +4,24 @@ oes.ui = {
   expostStatDecimalPlaces: 3,
   simLogDecimalPlaces: 2
 };
-
+const dom = {
+  /**
+   * Create option elements from an array list of option text strings
+   * and insert them into a selection list element
+   *
+   * @param {object} selEl  A select(ion list) element
+   * @param {Array<string>} strings  An array list of strings
+   * @param {object} optPar  A record of optional parameters
+   */
+  fillSelectWithOptionsFromStringList: function (selEl, strings) {
+    for (let i=0; i < strings.length; i++) {
+      let el = document.createElement("option");
+      el.textContent = `(${i}) ${strings[i]}`;
+      el.value = i;
+      selEl.add( el, null);
+    }
+  }
+}
 /*******************************************************
  Create a simulation log entry (table row)
  ********************************************************/
@@ -38,7 +55,7 @@ function createSimpleExpResultsTableHead( stat, tableEl)  {
     statVarHeadings += "<th>"+ label +"</th>";
   })
   /*
-  if (sim.experiment.parameterDefs.length > 0) {
+  if (sim.experimentType.parameterDefs.length > 0) {
     colHeadingsRow = "<tr><th rowspan='2'>"+ i18n.t("Experiment scenario") +
         "</th><th rowspan='2'>"+ i18n.t("Parameter values") +"</th>" +
         "<th colspan='"+ N +"'>"+ i18n.t("Statistics") +"</th></tr>";
@@ -59,23 +76,14 @@ function createSimpleExpResultsTableHead( stat, tableEl)  {
  Show the results of a simple experiment
  **********************************************************************/
 function showSimpleExpResults( exp, tableEl) {
-  var nmrOfReplications=0, rowEl=null;
-  var locale = "en-US";
+  var nmrOfRepl = exp.nmrOfReplications, rowEl=null;
   var tbodyEl = tableEl.tBodies[0];
-  if (Object.keys( exp.replicStat).length === 0) return;
-  else nmrOfReplications = exp.replicStat[Object.keys( exp.replicStat)[0]].length;
-  for (let i=0; i < nmrOfReplications; i++) {
+  for (let i=0; i < nmrOfRepl; i++) {
     rowEl = tbodyEl.insertRow();  // create new table row
-    rowEl.insertCell().textContent = i+1;  // replication No
+    rowEl.insertCell().textContent = String(i+1);  // replication No
     Object.keys( exp.replicStat).forEach( function (varName) {
-      var //range = sim.model.statistics[varName].range,
-          //decPl = sim.model.statistics[varName].decimalPlaces || oes.defaults.expostStatDecimalPlaces,
-          decPl = oes.ui.expostStatDecimalPlaces,
+      var decPl = oes.ui.expostStatDecimalPlaces,
           val = exp.replicStat[varName][i];
-      /*
-      if (cLASS.isIntegerType(range)) val = parseInt(val);
-      else val = math.round( val, decPl);
-      */
       rowEl.insertCell().textContent = math.round( val, decPl);
     });
   }
@@ -84,17 +92,24 @@ function showSimpleExpResults( exp, tableEl) {
     rowEl = tbodyEl.insertRow();  // create new table row
     rowEl.insertCell().textContent = math.stat.summary[aggr].label;
     Object.keys( exp.summaryStat).forEach( function (varName) {
-      var //statVar = sim.model.statistics[varName],
-          //range = statVar.range,
-          //decPl = statVar.decimalPlaces || oes.defaults.expostStatDecimalPlaces,
-          decPl = oes.ui.expostStatDecimalPlaces,
+      var decPl = oes.ui.expostStatDecimalPlaces,
           val = exp.summaryStat[varName][aggr];
-      /*
-      if (cLASS.isIntegerType( range)) val = parseInt(val);
-      else val = math.round( val, decPl);
-      */
       rowEl.insertCell().textContent = math.round( val, decPl);
     });
   });
 }
-
+/*********************************************************************
+ Show the results of a parameter variation experiment
+ **********************************************************************/
+function showResultsFromParVarExpScenarioRun( data, tableEl) {
+  var tbodyEl = tableEl.tBodies[0];
+  var rowEl = tbodyEl.insertRow();  // create new table row
+  rowEl.insertCell().textContent = data.expScenNo;
+  rowEl.insertCell().textContent = data.expScenParamValues.toString();
+  Object.keys( data.expScenStat).forEach( function (v) {
+    var statVal = data.expScenStat[v], displayStr="",
+        decPl = oes.ui.expostStatDecimalPlaces;
+    displayStr = math.round( statVal, decPl);
+    rowEl.insertCell().textContent = displayStr;
+  });
+}

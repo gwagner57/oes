@@ -7,10 +7,13 @@
  * @author Gerd Wagner
  ******************************************************************************/
 
-// Define namespace objects
+// Create initial objects/maps/arrays
 const sim = Object.create(null); // instead of {}
 sim.model = Object.create(null);
+sim.model.p = Object.create(null); // model parameters
 sim.scenario = Object.create(null);
+sim.scenarios = [];
+sim.experimentTypes = [];
 
 /**
  * An OES object has an ID and may have a unique name. If no ID value is provided on creation,

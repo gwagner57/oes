@@ -16,10 +16,10 @@ sim.scenario.setupInitialState = function () {
   // Create initial objects
   const tvShop = new SingleProductShop({
     id: 1,
-    name:"TV",
+    name:"TV Shop",
     quantityInStock: 80,
     reorderLevel: 50,
-    reorderUpToLevel: 100
+    targetInventory: 100
   });
   // Create initial events
   sim.FEL.add( new DailyDemand({occTime:1, quantity:25, shop: tvShop}));
@@ -33,12 +33,13 @@ sim.model.setupStatistics = function () {
   sim.stat.serviceLevel = 0.0;
 };
 sim.model.computeFinalStatistics = function () {
-  sim.stat.serviceLevel = (sim.time - sim.stat.nmrOfStockOuts) / sim.time;
+  // percentage of business days without stock-outs
+  sim.stat.serviceLevel = (sim.time - sim.stat.nmrOfStockOuts) / sim.time * 100;
 };
 /*******************************************************
  Define an experiment (type)
 ********************************************************/
-sim.experiment = new eXPERIMENTtYPE({
+sim.experimentType = new eXPERIMENTtYPE({
   experimentNo: 1,
   title: `Simple Experiment with 10 replications, each running for ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}.`,
   nmrOfReplications: 10

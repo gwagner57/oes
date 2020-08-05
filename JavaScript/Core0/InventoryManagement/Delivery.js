@@ -9,13 +9,13 @@ class Delivery extends eVENT {
     // schedule another Delivery if stock level is not raised above reorder level
     if (this.receiver.quantityInStock <= this.receiver.reorderLevel ) {
       return [new Delivery({
-        occTime: this.occTime + Delivery.sampleLeadTime(),
-        quantity: this.receiver.reorderUpToLevel - this.receiver.quantityInStock,
+        occTime: this.occTime + Delivery.leadTime(),
+        quantity: this.receiver.targetInventory - this.receiver.quantityInStock,
         receiver: this.receiver
       })];
     } else return [];  // no follow-up events
   }
-  static sampleLeadTime() {
+  static leadTime() {
     var r = math.getUniformRandomInteger( 0, 99);
     if (r < 25) return 1;         // probability 0.25
     else if (r < 85) return 2;    // probability 0.60

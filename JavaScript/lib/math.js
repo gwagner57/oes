@@ -11,6 +11,20 @@
  ****************************************************************/
 var math = Object.create( null);
 /**
+ * Compute the Cartesian Product of an array of arrays
+ * From https://stackoverflow.com/a/36234242/2795909
+ * @param {Array} arr - An array of arrays of values to be combined
+ */
+math.cartesianProduct = function (arr) {
+  return arr.reduce( function (a,b) {
+    return a.map( function (x) {
+      return b.map( function (y) {
+        return x.concat(y);
+      })
+    }).reduce( function (a,b) {return a.concat(b)}, [])
+  }, [[]])
+};
+/**
  * Round a decimal number to decimalPlaces
  * @param {number} x - the number to round
  * @param {number} d - decimal places

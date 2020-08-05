@@ -16,26 +16,38 @@ class DailyDemand extends eVENT {
     }
     // update quantityInStock
     this.shop.quantityInStock = Math.max( prevStockLevel-q, 0);
-    // schedule Delivery if stock level falls below reorder level
-    if (prevStockLevel > this.shop.reorderLevel &&
-        prevStockLevel - q <= this.shop.reorderLevel) {
-      return [new Delivery({
-        occTime: this.occTime + Delivery.sampleLeadTime(),
-        quantity: this.shop.reorderUpToLevel - this.shop.quantityInStock,
-        receiver: this.shop
-      })];
-    } else return [];  // no follow-up events
+    switch (sim.model.p.reviewPolicy) {
+    case "continuous":
+      // schedule Delivery if stock level falls below reorder level
+      if (prevStockLevel > this.shop.reorderLevel &&
+          prevStockLevel - q <= this.shop.reorderLevel) {
+        return [new Delivery({
+          occTime: this.occTime + Delivery.leadTime(),
+          quantity: this.shop.targetInventory - this.shop.quantityInStock,
+          receiver: this.shop
+        })];
+      } else return [];  // no follow-up events
+    case "periodic":
+      // periodically schedule new Delivery events
+      if (sim.time % this.shop.reorderInterval === 0) {
+        return [new Delivery({
+          occTime: this.occTime + Delivery.leadTime(),
+          quantity: this.shop.targetInventory - this.shop.quantityInStock,
+          receiver: this.shop
+        })];
+      } else return [];  // no follow-up events
+    }
   }
-  static sampleQuantity() {
+  static quantity() {
     return rand.uniformInt( 5, 30);
   }
   static recurrence() {
-    return 1;
+    return 1;  // each day
   }
   createNextEvent() {
     return new DailyDemand({
       occTime: this.occTime + DailyDemand.recurrence(),
-      quantity: DailyDemand.sampleQuantity(),
+      quantity: DailyDemand.quantity(),
       shop: this.shop
     });
   }

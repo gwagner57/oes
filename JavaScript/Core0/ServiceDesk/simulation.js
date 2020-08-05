@@ -36,7 +36,7 @@ sim.model.computeFinalStatistics = function () {
 /*******************************************************
  Define an experiment (type)
 ********************************************************/
-sim.experiment = new eXPERIMENTtYPE({
+sim.experimentType = new eXPERIMENTtYPE({
   experimentNo: 1,
   title: `Simple Experiment with 10 replications, each running for ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}.`,
   nmrOfReplications: 10

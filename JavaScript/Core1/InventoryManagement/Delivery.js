@@ -5,17 +5,21 @@ class Delivery extends eVENT {
     this.receiver = receiver;
   }
   onEvent() {
+    var followupEvents=[];
     this.receiver.quantityInStock += this.quantity;
-    // schedule another Delivery if stock level is not raised above reorder level
-    if (this.receiver.quantityInStock <= this.receiver.reorderLevel ) {
-      return [new Delivery({
-        occTime: this.occTime + Delivery.sampleLeadTime(),
-        quantity: this.receiver.reorderUpToLevel - this.receiver.quantityInStock,
-        receiver: this.receiver
-      })];
-    } else return [];  // no follow-up events
+    if (sim.model.p.reviewPolicy === "continuous") {
+      // schedule another Delivery if stock level is not raised above reorder level
+      if (this.receiver.quantityInStock <= this.receiver.reorderLevel ) {
+        followupEvents.push( new Delivery({
+          occTime: this.occTime + Delivery.leadTime(),
+          quantity: this.receiver.targetInventory - this.receiver.quantityInStock,
+          receiver: this.receiver
+        }));
+      }
+    }
+    return followupEvents;
   }
-  static sampleLeadTime() {
+  static leadTime() {
     var r = rand.uniformInt( 0, 99);
     if (r < 25) return 1;         // probability 0.25
     else if (r < 85) return 2;    // probability 0.60

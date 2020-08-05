@@ -22,12 +22,26 @@
       padding: 0.2em;
     }
   </style>
-  <script src="../OES-js-Core1/math.js"></script>
+  <script src="../../lib/math.js"></script>
   <script src="../OES-js-Core1/simulatorUI.js"></script>
+  <script>
+    // Create initial objects/maps/arrays
+    const sim = Object.create(null); // instead of {}
+    sim.model = Object.create(null);
+    sim.model.p = Object.create(null); // model parameters
+    sim.scenario = Object.create(null);
+    sim.scenarios = [];
+    sim.experimentTypes = [];
+  </script>
+  <script src="simulation.js"></script>
 </head>
 <body>
  <h1>Inventory Management Simulation</h1>
- <p id="expInfo"></p>
+ <form id="run">
+  <div><label>Choose: <select name="selExp"></select></label></div>
+  <div><button type="button" onclick="run()">Run</button></div>
+ </form>
+ <p id="simInfo"></p>
  <table id="statisticsTbl">
      <caption>Statistics</caption>
      <tbody></tbody>
@@ -35,33 +49,46 @@
  <p id="execInfo"></p>
  <script>
    // Assign variables for accessing UI elements
-   const statisticsTableEl = document.getElementById("statisticsTbl");
-   const expInfoEl = document.getElementById("expInfo");
-   const execInfoEl = document.getElementById("execInfo");
-
-   // store start time of simulation/experiment run
-   const simStartTime = (new Date()).getTime();
-
-   // set up the simulation worker
-   const worker = new Worker("simulation-worker.js");
-   // start the simulation in the worker thread
-   worker.postMessage({});
-
-   // on incoming messages from worker
-   worker.onmessage = function (e) {
-     if (e.data.experiment) {
-       let simEndTime = (new Date()).getTime() - simStartTime;
-       // Log experiment execution time
-       execInfoEl.textContent = `Experiment execution time: ${simEndTime} ms`;
-       // Create subheading
-       expInfoEl.textContent = e.data.experiment.title;
-       // Show statistics from experiment run
-       createSimpleExpResultsTableHead( e.data.experiment.replicStat, statisticsTableEl);
-       showSimpleExpResults( e.data.experiment, statisticsTableEl);
+   const formEl = document.forms["run"],
+       selectEl = formEl["selExp"],
+       statisticsTableEl = document.getElementById("statisticsTbl"),
+       simInfoEl = document.getElementById("simInfo"),
+       execInfoEl = document.getElementById("execInfo");
+   function setupUI() {
+     var optionTextItems = ["Standalone scenario"];
+     if (Array.isArray( sim.experimentTypes)) {
+       for (let expT of sim.experimentTypes) {
+         optionTextItems.push( expT.title);
+       }
      }
-     // statistics from standalone scenario run
-     if (e.data.statistics) showStatistics( e.data.statistics, statisticsTableEl);
+     dom.fillSelectWithOptionsFromStringList( selectEl, optionTextItems);
    }
+   function run() {
+     // store start time of simulation/experiment run
+     const simStartTime = (new Date()).getTime();
+     // set up the simulation worker
+     const worker = new Worker("simulation-worker.js");
+     // start the simulation in the worker thread
+     worker.postMessage({simToRun: selectEl.value});
+     // on incoming messages from worker
+     worker.onmessage = function (e) {
+       if (e.data.simpleExperiment) {
+         let simEndTime = (new Date()).getTime() - simStartTime;
+         // Log experiment execution time
+         execInfoEl.textContent = `Experiment execution time: ${simEndTime} ms`;
+         // Create subheading
+         simInfoEl.textContent = e.data.simpleExperiment.title;
+         // Show statistics from experiment run
+         createSimpleExpResultsTableHead( e.data.simpleExperiment.replicStat, statisticsTableEl);
+         showSimpleExpResults( e.data.simpleExperiment, statisticsTableEl);
+       } else if (e.data.expScenNo) {  // parameter variation experiment
+         showResultsFromParVarExpScenarioRun( e.data, statisticsTableEl);
+       } else if (e.data.statistics) {  // statistics from standalone scenario run
+         showStatistics( e.data.statistics, statisticsTableEl);
+       }
+     }
+   }
+   setupUI();
  </script>
 </body>
 </html>

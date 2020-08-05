@@ -1,7 +1,7 @@
 /*******************************************************
  Simulation Scenario Settings
 ********************************************************/
-sim.scenario.durationInSimTime = 1000;
+sim.scenario.durationInSimTime = 1000;  // days
 /*******************************************************
  Simulation Model
 ********************************************************/
@@ -9,6 +9,8 @@ sim.model.time = "discrete";
 sim.model.timeUnit = "D";  // days
 sim.model.objectTypes = ["SingleProductShop"];
 sim.model.eventTypes = ["DailyDemand", "Delivery"];
+// Define a model parameter
+sim.model.p.reviewPolicy = "periodic";  // "continuous" or "periodic"
 /*******************************************************
  Initial State
 ********************************************************/
@@ -16,10 +18,11 @@ sim.scenario.setupInitialState = function () {
   // Create initial objects
   const tvShop = new SingleProductShop({
     id: 1,
-    name:"TV",
+    name:"TV Shop",
     quantityInStock: 80,
     reorderLevel: 50,
-    reorderUpToLevel: 100
+    targetInventory: 100,
+    reorderInterval: 3  // every 3 days
   });
   // Create initial events
   sim.FEL.add( new DailyDemand({occTime:1, quantity:25, shop: tvShop}));
@@ -33,27 +36,23 @@ sim.model.setupStatistics = function () {
   sim.stat.serviceLevel = 0.0;
 };
 sim.model.computeFinalStatistics = function () {
-  sim.stat.serviceLevel = (sim.time - sim.stat.nmrOfStockOuts) / sim.time;
+  // percentage of business days without stock-outs
+  sim.stat.serviceLevel = (sim.time - sim.stat.nmrOfStockOuts) / sim.time * 100;
 };
 /*******************************************************
- Define an experiment (type)
+ Define experiment types
 ********************************************************/
-sim.experiment = new eXPERIMENTtYPE({
-  experimentNo: 1,
-  title: `Simple Experiment with 10 replications, each running for ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}.`,
+sim.experimentTypes[0] = {
+  title: `Simple experiment with 10 replications, each running for ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}`,
   nmrOfReplications: 10,
   seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012]
-});
-/*
-experiment2 = new eXPERIMENTtYPE({
-  id: 2,
-  scenarioNo: 1,
-  experimentNo: 1,
-  experimentTitle: "Simple Experiment with 50 replications.",
+};
+sim.experimentTypes[1] = {
+  title: "Parameter variation experiment for comparing policies",
   nmrOfReplications: 10,
   seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012],
   parameterDefs: [
-    new oes.ExperimentParamDef({name:"arrivalEventRate", values:[0.4, 0.5, 0.6]})
+    {name:"reviewPolicy", values:["continuous","periodic"]}
   ]
-});
-*/
+};
+//sim.experimentType = sim.experimentTypes[0];
