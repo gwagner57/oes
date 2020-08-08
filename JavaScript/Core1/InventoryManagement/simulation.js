@@ -9,8 +9,9 @@ sim.model.time = "discrete";
 sim.model.timeUnit = "D";  // days
 sim.model.objectTypes = ["SingleProductShop"];
 sim.model.eventTypes = ["DailyDemand", "Delivery"];
-// Define a model parameter
+// Define model parameters
 sim.model.p.reviewPolicy = "periodic";  // "continuous" or "periodic"
+sim.model.p.targetInventory = 100;
 /*******************************************************
  Initial State
 ********************************************************/
@@ -21,7 +22,7 @@ sim.scenario.setupInitialState = function () {
     name:"TV Shop",
     quantityInStock: 80,
     reorderLevel: 50,
-    targetInventory: 100,
+    targetInventory: sim.model.p.targetInventory,
     reorderInterval: 3  // every 3 days
   });
   // Create initial events
@@ -48,6 +49,15 @@ sim.experimentTypes[0] = {
   seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012]
 };
 sim.experimentTypes[1] = {
+  title: "Parameter variation experiment for exploring the targetInventory value",
+  nmrOfReplications: 10,
+  seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012],
+  parameterDefs: [
+    {name:"reviewPolicy", values:["continuous"]},
+    {name:"targetInventory", startValue:80, endValue:100, stepSize:5},
+  ]
+};
+sim.experimentTypes[2] = {
   title: "Parameter variation experiment for comparing policies",
   nmrOfReplications: 10,
   seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012],
@@ -55,4 +65,4 @@ sim.experimentTypes[1] = {
     {name:"reviewPolicy", values:["continuous","periodic"]}
   ]
 };
-//sim.experimentType = sim.experimentTypes[0];
+sim.experimentType = sim.experimentTypes[0];

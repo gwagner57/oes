@@ -31,6 +31,7 @@
     sim.model.p = Object.create(null); // model parameters
     sim.scenario = Object.create(null);
     sim.scenarios = [];
+    sim.stat = Object.create(null);
     sim.experimentTypes = [];
   </script>
   <script src="simulation.js"></script>
@@ -47,49 +48,7 @@
      <tbody></tbody>
  </table>
  <p id="execInfo"></p>
- <script>
-   // Assign variables for accessing UI elements
-   const formEl = document.forms["run"],
-       selectEl = formEl["selExp"],
-       statisticsTableEl = document.getElementById("statisticsTbl"),
-       simInfoEl = document.getElementById("simInfo"),
-       execInfoEl = document.getElementById("execInfo");
-   function setupUI() {
-     var optionTextItems = ["Standalone scenario"];
-     if (Array.isArray( sim.experimentTypes)) {
-       for (let expT of sim.experimentTypes) {
-         optionTextItems.push( expT.title);
-       }
-     }
-     dom.fillSelectWithOptionsFromStringList( selectEl, optionTextItems);
-   }
-   function run() {
-     // store start time of simulation/experiment run
-     const simStartTime = (new Date()).getTime();
-     // set up the simulation worker
-     const worker = new Worker("simulation-worker.js");
-     // start the simulation in the worker thread
-     worker.postMessage({simToRun: selectEl.value});
-     // on incoming messages from worker
-     worker.onmessage = function (e) {
-       if (e.data.simpleExperiment) {
-         let simEndTime = (new Date()).getTime() - simStartTime;
-         // Log experiment execution time
-         execInfoEl.textContent = `Experiment execution time: ${simEndTime} ms`;
-         // Create subheading
-         simInfoEl.textContent = e.data.simpleExperiment.title;
-         // Show statistics from experiment run
-         createSimpleExpResultsTableHead( e.data.simpleExperiment.replicStat, statisticsTableEl);
-         showSimpleExpResults( e.data.simpleExperiment, statisticsTableEl);
-       } else if (e.data.expScenNo) {  // parameter variation experiment
-         showResultsFromParVarExpScenarioRun( e.data, statisticsTableEl);
-       } else if (e.data.statistics) {  // statistics from standalone scenario run
-         showStatistics( e.data.statistics, statisticsTableEl);
-       }
-     }
-   }
-   setupUI();
- </script>
+ <script src="../OES-js-Core1/index.js"></script>
 </body>
 </html>
 

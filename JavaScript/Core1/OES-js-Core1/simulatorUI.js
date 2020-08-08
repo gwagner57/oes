@@ -47,28 +47,13 @@ function showStatistics( stat, tableEl) {
  Create the experiment results table head
  **********************************************************************/
 function createSimpleExpResultsTableHead( stat, tableEl)  {
-  var N=0, statVarHeadings="", colHeadingsRow="", M=0;
+  var N = Object.keys( stat).length, statVarHeadings="", colHeadingsRow="";
   let theadEl = tableEl.createTHead();
   Object.keys( stat).forEach( function (v) {
-    var label = v;
-    N = N+1;
-    statVarHeadings += "<th>"+ label +"</th>";
+    statVarHeadings += "<th>"+ v +"</th>";
   })
-  /*
-  if (sim.experimentType.parameterDefs.length > 0) {
-    colHeadingsRow = "<tr><th rowspan='2'>"+ i18n.t("Experiment scenario") +
-        "</th><th rowspan='2'>"+ i18n.t("Parameter values") +"</th>" +
-        "<th colspan='"+ N +"'>"+ i18n.t("Statistics") +"</th></tr>";
-    M = 2;
-  } else {
-    colHeadingsRow = "<tr><th rowspan='2'>"+ i18n.t("Replication") +"</th>" +
-        "<th colspan='"+ N +"'>"+ i18n.t("Statistics") +"</th></tr>";
-    M = 1;
-  }
-  */
   colHeadingsRow = `<tr><th rowspan='2'>Replication</th><th colspan='${N}'>Statistics</th></tr>`;
-  M = 1;
-  theadEl.innerHTML = `<tr><th colspan='${M+N}'>Experiment Results</th></tr>` +
+  theadEl.innerHTML = `<tr><th colspan='${N+1}'>Experiment Results</th></tr>` +
       colHeadingsRow + "<tr>"+ statVarHeadings +"</tr>";
   tableEl.style.overflowX = "auto";  // horizontal scrolling
 }
@@ -97,6 +82,20 @@ function showSimpleExpResults( exp, tableEl) {
       rowEl.insertCell().textContent = math.round( val, decPl);
     });
   });
+}
+/*********************************************************************
+ Create the parameter variation experiment results table head
+ **********************************************************************/
+function createParVarExpResultsTableHead( stat, tableEl)  {
+  var N = Object.keys( stat).length, statVarHeadings="", colHeadingsRow="";
+  let theadEl = tableEl.createTHead();
+  Object.keys( stat).forEach( function (v) {
+    statVarHeadings += "<th>"+ v +"</th>";
+  })
+  colHeadingsRow = `<tr><th rowspan='2'>Experiment scenario</th><th rowspan='2'>Parameter values</th><th colspan='${N}'>Statistics</th></tr>`;
+  theadEl.innerHTML = `<tr><th colspan='${N+2}'>Experiment Results</th></tr>` +
+      colHeadingsRow + "<tr>"+ statVarHeadings +"</tr>";
+  tableEl.style.overflowX = "auto";  // horizontal scrolling
 }
 /*********************************************************************
  Show the results of a parameter variation experiment
