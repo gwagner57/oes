@@ -22,47 +22,33 @@
       padding: 0.2em;
     }
   </style>
-  <script src="../oes-js-core0/math.js"></script>
-  <script src="../oes-js-core0/simulatorUI.js"></script>
+    <script src="../../lib/math.js"></script>
+    <script src="../OES-js-Core1/simulatorUI.js"></script>
+    <script>
+      // Create initial objects/maps/arrays
+      const sim = Object.create(null); // instead of {}
+      sim.model = Object.create(null);
+      sim.model.p = Object.create(null); // model parameters
+      sim.scenario = Object.create(null);
+      sim.scenarios = [];
+      sim.stat = Object.create(null);
+      sim.experimentTypes = [];
+    </script>
+    <script src="simulation.js"></script>
 </head>
 <body>
  <h1>Service Desk Simulation</h1>
- <p id="expInfo"></p>
+ <form id="run">
+     <div><label>Choose: <select name="selExp"></select></label></div>
+     <div><button type="button" onclick="run()">Run</button></div>
+ </form>
+ <p id="simInfo"></p>
  <table id="statisticsTbl">
      <caption>Statistics</caption>
      <tbody></tbody>
  </table>
  <p id="execInfo"></p>
- <script>
-   // Assign variables for accessing UI elements
-   const statisticsTableEl = document.getElementById("statisticsTbl");
-   const expInfoEl = document.getElementById("expInfo");
-   const execInfoEl = document.getElementById("execInfo");
-
-   // store start time of simulation/experiment run
-   const simStartTime = (new Date()).getTime();
-
-   // set up the simulation worker
-   const worker = new Worker("simulation-worker.js");
-   // start the simulation in the worker thread
-   worker.postMessage({});
-
-   // on incoming messages from worker
-   worker.onmessage = function (e) {
-     if (e.data.experiment) {
-       let simEndTime = (new Date()).getTime() - simStartTime;
-       // Log experiment execution time
-       execInfoEl.textContent = `Experiment execution time: ${simEndTime} ms`;
-       // Create subheading
-       expInfoEl.textContent = e.data.experiment.title;
-       // Show statistics from experiment run
-       createSimpleExpResultsTableHead( e.data.experiment.replicStat, statisticsTableEl);
-       showSimpleExpResults( e.data.experiment, statisticsTableEl);
-     }
-     // statistics from standalone scenario run
-     if (e.data.statistics) showStatistics( e.data.statistics, statisticsTableEl);
-   }
- </script>
+ <script src="../OES-js-Core1/index.js"></script>
 </body>
 </html>
 

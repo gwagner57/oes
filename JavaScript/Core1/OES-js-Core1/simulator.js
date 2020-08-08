@@ -144,7 +144,13 @@ sim.runSimpleExperiment = function (exp) {
   }
   // run experiment scenario replications
   for (let k=0; k < exp.nmrOfReplications; k++) {
-    sim.initializeScenarioRun({seed: exp.seeds[k]});
+    if (exp.seeds) {
+      if (exp.seeds.length >= exp.nmrOfReplications) {
+        sim.initializeScenarioRun({seed: exp.seeds[k]});
+      } else {
+        console.error(`Not enough seeds defined for ${exp.nmrOfReplications} replications`);
+      }
+    } else sim.initializeScenarioRun();
     sim.runScenario();
     // store replication statistics
     Object.keys( exp.replicStat).forEach( function (varName) {

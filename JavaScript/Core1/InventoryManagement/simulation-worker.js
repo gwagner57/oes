@@ -13,7 +13,6 @@ if (sim.model.eventTypes) {
     self.importScripts( evtT + ".js");
   });
 }
-
 // start simulation on message from main thread
 onmessage = function (e) {
   if (sim.experimentType) {
