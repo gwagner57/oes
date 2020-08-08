@@ -2,16 +2,25 @@
 - sim.objects is a JS Map
  */
 
-/*******************************************************
- General Variables and Functions
- ********************************************************/
-// A map of all simulation objects
-sim.objects = new Map();
-// The Future Events List
-sim.FEL = new EventList();
-// The statistics variables map
-sim.stat = Object.create(null);
-
+/*******************************************************************
+ * Initialize Simulator ********************************************
+ *******************************************************************/
+sim.initializeSimulator = function () {
+  // Set default values for end time parameters
+  if (!sim.scenario.durationInSimTime) sim.scenario.durationInSimTime = Infinity;
+  if (!sim.scenario.durationInSimSteps) sim.scenario.durationInSimSteps = Infinity;
+  if (!sim.scenario.durationInCpuTime) sim.scenario.durationInCpuTime = Infinity;
+  // Set timeIncrement for fixed-increment time progression
+  if (sim.model.timeIncrement) {
+    sim.timeIncrement = sim.model.timeIncrement;
+  } else {
+    if (sim.model.OnEachTimeStep) sim.timeIncrement = 1;  // default
+  }
+  // The Future Events List
+  sim.FEL = new EventList();
+  // Create map for statistics variables
+  sim.stat = Object.create(null);
+}
 /*******************************************************************
  * Assign model parameters with experiment parameter values ********
  *******************************************************************/
@@ -24,10 +33,12 @@ sim.assignModelParameters = function (expParSlots) {
  * Initialize a (standalone or experiment scenario) simulation run *
  *******************************************************************/
 sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
+  // clear initial state data structures
+  sim.objects = new Map();  // a map of all objects (accessible by ID)
+  sim.FEL.clear();
+  //sim.ongoingActivities = Object.create( null);  // a map of all ongoing activities accessible by ID
   sim.step = 0;  // simulation loop step counter
   sim.time = 0;  // 1 time
-  // set simulation end time
-  sim.endTime = sim.scenario.durationInSimTime || sim.endTime || Number.MAX_SAFE_INTEGER;
   // get ID counter from simulation scenario, or set to default value
   sim.idCounter = sim.scenario.idCounter || 1000;
   // set up a default random variate sampling method
@@ -70,13 +81,21 @@ sim.advanceSimulationTime = function () {
  Run a simulation scenario
  ********************************************************/
 sim.runScenario = function () {
+  var startTime = (new Date()).getTime();
   // Simulation Loop
-  while (sim.time < sim.endTime && !sim.FEL.isEmpty()) {
-    // if not executed in a worker, create simulation log
-    if (typeof WorkerGlobalScope === 'undefined' && simLogTableEl) logSimulationStep( simLogTableEl);
+  while (sim.time < sim.scenario.durationInSimTime &&
+      sim.step < sim.scenario.durationInSimSteps &&
+      (new Date()).getTime() - startTime < sim.scenario.durationInCpuTime) {
+    // if not executed in a worker, create entry in simulation log
+    if (typeof WorkerGlobalScope === 'undefined' && simLogTableEl) {
+      logSimulationStep( simLogTableEl);
+    }
     sim.advanceSimulationTime();
     // extract and process next events
     let nextEvents = sim.FEL.removeNextEvents();
+    // sort simultaneous events according to priority order
+    if (nextEvents.length > 1) nextEvents.sort( eVENT.rank);
+    // process next (=current) events
     for (let e of nextEvents) {
       // apply event rule
       let followUpEvents = e.onEvent();
@@ -87,12 +106,23 @@ sim.runScenario = function () {
       let EventClass = e.constructor;
       // test if e is an exogenous event
       if (EventClass.recurrence) {
-        // create and schedule next exogenous events
+        // create and schedule next exogenous event
         sim.FEL.add( e.createNextEvent());
       }
     }
+    // end simulation if no time increment and no more events
+    if (!sim.timeIncrement && sim.FEL.isEmpty()) break;
   }
   if (sim.model.computeFinalStatistics) sim.model.computeFinalStatistics();
+}
+/*******************************************************
+ Run a Standalone Simulation Scenario (in a JS worker)
+ ********************************************************/
+sim.runStandaloneScenario = function () {
+  sim.initializeSimulator();
+  if (!sim.scenario.randomSeed) sim.initializeScenarioRun();
+  else sim.initializeScenarioRun({seed: sim.scenario.randomSeed});
+  sim.runScenario();
 }
 /*******************************************************
  Run an Experiment (in a JS worker)
@@ -105,6 +135,7 @@ sim.runExperiment = function (exp) {
  Run a Simple Experiment (in a JS worker)
  ********************************************************/
 sim.runSimpleExperiment = function (exp) {
+  sim.initializeSimulator();
   if (sim.model.setupStatistics) sim.model.setupStatistics();
   // initialize replication statistics record
   exp.replicStat = Object.create(null);  // empty map
@@ -142,6 +173,7 @@ sim.runParVarExperiment = function (exp) {
       increm = 0, x = 0, expPar = {},
       expRunId = (new Date()).getTime(),
       valueCombination = [], expParSlots = {};
+  sim.initializeSimulator();
   exp.scenarios = [];
   // create a list of value sets, one set for each parameter
   for (let i=0; i < N; i++) {

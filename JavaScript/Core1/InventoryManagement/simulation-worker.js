@@ -20,9 +20,7 @@ onmessage = function (e) {
     sim.runExperiment( sim.experimentType);
   } else if (e.data.simToRun) {
     if (e.data.simToRun === "0") {
-      sim.initializeScenarioRun();
-      // run simulation
-      sim.runScenario();
+      sim.runStandaloneScenario();
       // send statistics to main thread
       self.postMessage({statistics: sim.stat, endTime: sim.endTime});
     } else {

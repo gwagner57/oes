@@ -2,6 +2,8 @@
  Simulation Scenario Settings
 ********************************************************/
 sim.scenario.durationInSimTime = 1000;  // days
+//sim.scenario.durationInSimSteps = 1000;
+//sim.scenario.durationInCpuTime = 1000;  // seconds
 /*******************************************************
  Simulation Model
 ********************************************************/
@@ -65,4 +67,5 @@ sim.experimentTypes[2] = {
     {name:"reviewPolicy", values:["continuous","periodic"]}
   ]
 };
-sim.experimentType = sim.experimentTypes[0];
+// Define sim.experimentType for avoiding selection in user interface
+//sim.experimentType = sim.experimentTypes[0];
