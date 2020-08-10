@@ -29,12 +29,12 @@ class oBJECT {
   // overwrite/improve the standard toString method
   toString() {
     var Class = this.constructor, str = Class.name + `-${this.id}{ `,
-        i=0, valStr="";
+        i=0, valStr="", simLogDecimalPlaces=2;
     Object.keys( this).forEach( function (prop) {
       var propLabel = (Class.labels && Class.labels[prop]) ? Class.labels[prop] : "",
           val = this[prop];
       if (typeof val === "number" && !Number.isInteger( val)) {
-        valStr = String( math.round( val, oes.ui.simLogDecimalPlaces));
+        valStr = String( math.round( val, simLogDecimalPlaces));
       } else if (Array.isArray( val)) {
         valStr = "["+ val.map( v => v.id).toString() +"]";
       } else valStr = JSON.stringify( val);
@@ -59,7 +59,7 @@ class eVENT {
   // overwrite/improve the standard toString method
   toString() {
     var eventTypeName = this.constructor.name,
-        slotListStr="", i=0, evtStr="", decPl = oes.ui.simLogDecimalPlaces;
+        slotListStr="", i=0, evtStr="", simLogDecimalPlaces = 2;
     Object.keys( this).forEach( function (prop) {
       var propLabel = (this.constructor.labels && this.constructor.labels[prop]) ?
           this.constructor.labels[prop] : "";
@@ -70,7 +70,7 @@ class eVENT {
     }, this);
     if (slotListStr) evtStr = `${eventTypeName}{ ${slotListStr}}`;
     else evtStr = eventTypeName;
-    return `${evtStr}@${math.round(this.occTime,decPl)}`;
+    return `${evtStr}@${math.round(this.occTime,simLogDecimalPlaces)}`;
 /*
     var occT = sim.model.time === "continuous" && sim.timeRoundingFactor ?
         Math.round( this.occTime * sim.timeRoundingFactor) / sim.timeRoundingFactor :

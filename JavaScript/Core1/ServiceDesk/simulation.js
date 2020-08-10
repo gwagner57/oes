@@ -1,26 +1,40 @@
 /*******************************************************
- Simulation Scenario Settings
-********************************************************/
-sim.scenario.durationInSimTime = 1000;
-//sim.scenario.durationInSimSteps = 1000;
-//sim.scenario.durationInCpuTime = 1000;  // seconds
-sim.scenario.idCounter = 11;  // start value of auto IDs
-/*******************************************************
  Simulation Model
 ********************************************************/
+sim.model.name = "Service-Desk-1";
 sim.model.time = "continuous";
 sim.model.timeUnit = "m";  // minutes
 sim.model.objectTypes = ["ServiceDesk", "Customer"];
 sim.model.eventTypes = ["CustomerArrival", "CustomerDeparture"];
 /*******************************************************
- Initial State
-********************************************************/
+ Simulation Scenario
+ ********************************************************/
+sim.scenario.title = "Basic scenario with one service desk";
+sim.scenario.durationInSimTime = 1000;
+//sim.scenario.durationInSimSteps = 1000;
+//sim.scenario.durationInCpuTime = 1000;  // seconds
+sim.scenario.idCounter = 11;  // start value of auto IDs
+// Initial State
 sim.scenario.setupInitialState = function () {
   // Create initial objects
   var sD = new ServiceDesk({id: 1, queueLength: 0});
-  // Create initial events
-  sim.FEL.add( new CustomerArrival({occTime:1, serviceDesk: sD}));
+  // Schedule initial events
+  sim.FEL.add( new CustomerArrival({occTime: 1, serviceDesk: sD}));
 }
+/*******************************************************
+ Alternative Scenarios
+ ********************************************************/
+sim.scenarios[1] = {
+  title: "Scenario with two service desks",
+  setupInitialState: function () {
+    // Create initial objects
+    var sD1 = new ServiceDesk({id: 1, queueLength: 0}),
+        sD2 = new ServiceDesk({id: 2, queueLength: 0});
+    // Schedule initial events
+    sim.FEL.add( new CustomerArrival({occTime: 1, serviceDesk: sD1}));
+    sim.FEL.add( new CustomerArrival({occTime: 2, serviceDesk: sD2}));
+  }
+};
 /*******************************************************
  Statistics variables
 ********************************************************/

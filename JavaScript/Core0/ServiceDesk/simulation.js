@@ -16,7 +16,7 @@ sim.model.eventTypes = ["CustomerArrival", "CustomerDeparture"];
 sim.scenario.setupInitialState = function () {
   // Create initial objects
   var sD = new ServiceDesk({id: 1, queueLength: 0});
-  // Create initial events
+  // Schedule initial events
   sim.FEL.add( new CustomerArrival({occTime:1, serviceDesk: sD}));
 }
 /*******************************************************

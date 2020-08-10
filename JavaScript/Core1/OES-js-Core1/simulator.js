@@ -80,15 +80,17 @@ sim.advanceSimulationTime = function () {
 /*******************************************************
  Run a simulation scenario
  ********************************************************/
-sim.runScenario = function () {
+sim.runScenario = function (createLog) {
   var startTime = (new Date()).getTime();
   // Simulation Loop
   while (sim.time < sim.scenario.durationInSimTime &&
       sim.step < sim.scenario.durationInSimSteps &&
       (new Date()).getTime() - startTime < sim.scenario.durationInCpuTime) {
-    // if not executed in a worker, create entry in simulation log
-    if (typeof WorkerGlobalScope === 'undefined' && simLogTableEl) {
-      logSimulationStep( simLogTableEl);
+    if (createLog) {
+      self.postMessage({ step: sim.step, time: sim.time,
+        objectsStr: [...sim.objects.values()].toString(),
+        eventsStr: sim.FEL.toString()
+      });
     }
     sim.advanceSimulationTime();
     // extract and process next events
@@ -118,11 +120,11 @@ sim.runScenario = function () {
 /*******************************************************
  Run a Standalone Simulation Scenario (in a JS worker)
  ********************************************************/
-sim.runStandaloneScenario = function () {
+sim.runStandaloneScenario = function (createLog) {
   sim.initializeSimulator();
   if (!sim.scenario.randomSeed) sim.initializeScenarioRun();
   else sim.initializeScenarioRun({seed: sim.scenario.randomSeed});
-  sim.runScenario();
+  sim.runScenario( createLog);
 }
 /*******************************************************
  Run an Experiment (in a JS worker)

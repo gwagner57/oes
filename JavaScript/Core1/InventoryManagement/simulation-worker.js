@@ -15,11 +15,27 @@ if (sim.model.eventTypes) {
 }
 // start simulation on message from main thread
 onmessage = function (e) {
+  var scenario={};
   if (sim.experimentType) {
     sim.runExperiment( sim.experimentType);
   } else if (e.data.simToRun) {
+    // assign alternative scenario, if selected
+    if (e.data.scenarioNo !== undefined) {
+      scenario = sim.scenarios[e.data.scenarioNo];
+      // copy simulation end time from base scenario if not provided
+      if (!scenario.durationInSimTime && !scenario.durationInSimSteps && !scenario.durationInCpuTime) {
+        if (sim.scenario.durationInSimTime) {
+          scenario.durationInSimTime = sim.scenario.durationInSimTime;
+        } else if (sim.scenario.durationInSimSteps) {
+          scenario.durationInSimSteps = sim.scenario.durationInSimSteps;
+        } else if (sim.scenario.durationInCpuTime) {
+          scenario.durationInCpuTime = sim.scenario.durationInCpuTime;
+        }
+      }
+      sim.scenario = scenario;
+    }
     if (e.data.simToRun === "0") {
-      sim.runStandaloneScenario();
+      sim.runStandaloneScenario( e.data.createLog);
       // send statistics to main thread
       self.postMessage({statistics: sim.stat, endTime: sim.endTime});
     } else {

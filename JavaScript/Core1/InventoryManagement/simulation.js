@@ -7,13 +7,15 @@ sim.scenario.durationInSimTime = 1000;  // days
 /*******************************************************
  Simulation Model
 ********************************************************/
+sim.model.name = "Inventory-Management-1";
 sim.model.time = "discrete";
 sim.model.timeUnit = "D";  // days
 sim.model.objectTypes = ["SingleProductShop"];
 sim.model.eventTypes = ["DailyDemand", "Delivery"];
-// Define model parameters
+// Model parameters
 sim.model.p.reviewPolicy = "periodic";  // "continuous" or "periodic"
 sim.model.p.targetInventory = 100;
+sim.model.p.reorderInterval = 3;
 /*******************************************************
  Initial State
 ********************************************************/
@@ -27,7 +29,7 @@ sim.scenario.setupInitialState = function () {
     targetInventory: sim.model.p.targetInventory,
     reorderInterval: 3  // every 3 days
   });
-  // Create initial events
+  // Schedule initial events
   sim.FEL.add( new DailyDemand({occTime:1, quantity:25, shop: tvShop}));
 };
 /*******************************************************
@@ -56,6 +58,7 @@ sim.experimentTypes[1] = {
   seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012],
   parameterDefs: [
     {name:"reviewPolicy", values:["continuous"]},
+    {name:"reorderInterval", values:[2,3,4]},
     {name:"targetInventory", startValue:80, endValue:100, stepSize:5},
   ]
 };

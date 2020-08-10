@@ -21,7 +21,7 @@ sim.scenario.setupInitialState = function () {
     reorderLevel: 50,
     targetInventory: 100
   });
-  // Create initial events
+  // Schedule initial events
   sim.FEL.add( new DailyDemand({occTime:1, quantity:25, shop: tvShop}));
 };
 /*******************************************************

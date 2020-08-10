@@ -58,7 +58,7 @@
    sim.initializeScenarioRun();
    sim.runScenario();
 
-   showStatistics( sim.stat, statisticsTableEl);
+   oes.ui.showStatistics( sim.stat, statisticsTableEl);
    // Log simulation/execution time
    execInfoEl.textContent =
        `Simulation time: ${sim.endTime} days, execution time: ${(new Date()).getTime() - simStartTime} ms`;

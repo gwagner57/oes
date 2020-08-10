@@ -11,7 +11,6 @@ const dom = {
    *
    * @param {object} selEl  A select(ion list) element
    * @param {Array<string>} strings  An array list of strings
-   * @param {object} optPar  A record of optional parameters
    */
   fillSelectWithOptionsFromStringList: function (selEl, strings) {
     for (let i=0; i < strings.length; i++) {
@@ -25,17 +24,17 @@ const dom = {
 /*******************************************************
  Create a simulation log entry (table row)
  ********************************************************/
-function logSimulationStep( simLogTableEl) {
+oes.ui.logSimulationStep = function (simLogTableEl, step, time, objectsStr, eventsStr) {
   var rowEl = simLogTableEl.insertRow();  // create new table row
-  rowEl.insertCell().textContent = String( sim.step);
-  rowEl.insertCell().textContent = String( math.round( sim.time, oes.ui.simLogDecimalPlaces));
-  rowEl.insertCell().textContent = [...sim.objects.values()].toString();
-  rowEl.insertCell().textContent = sim.FEL.toString();
+  rowEl.insertCell().textContent = String( step);
+  rowEl.insertCell().textContent = String( math.round( time, oes.ui.simLogDecimalPlaces));
+  rowEl.insertCell().textContent = objectsStr;
+  rowEl.insertCell().textContent = eventsStr;
 }
 /*******************************************************
  Display the standalone scenario statistics
  ********************************************************/
-function showStatistics( stat, tableEl) {
+oes.ui.showStatistics = function (stat, tableEl) {
   var decPl = oes.ui.expostStatDecimalPlaces, tbodyEl = tableEl.tBodies[0];
   for (let varName of Object.keys( stat)) {
     let rowEl = tbodyEl.insertRow();  // create new table row
@@ -46,7 +45,7 @@ function showStatistics( stat, tableEl) {
 /*********************************************************************
  Create the experiment results table head
  **********************************************************************/
-function createSimpleExpResultsTableHead( stat, tableEl)  {
+oes.ui.createSimpleExpResultsTableHead = function (stat, tableEl)  {
   var N = Object.keys( stat).length, statVarHeadings="", colHeadingsRow="";
   let theadEl = tableEl.createTHead();
   Object.keys( stat).forEach( function (v) {
@@ -60,7 +59,7 @@ function createSimpleExpResultsTableHead( stat, tableEl)  {
 /*********************************************************************
  Show the results of a simple experiment
  **********************************************************************/
-function showSimpleExpResults( exp, tableEl) {
+oes.ui.showSimpleExpResults = function (exp, tableEl) {
   var nmrOfRepl = exp.nmrOfReplications, rowEl=null;
   var tbodyEl = tableEl.tBodies[0];
   for (let i=0; i < nmrOfRepl; i++) {
@@ -86,7 +85,7 @@ function showSimpleExpResults( exp, tableEl) {
 /*********************************************************************
  Create the parameter variation experiment results table head
  **********************************************************************/
-function createParVarExpResultsTableHead( stat, tableEl)  {
+oes.ui.createParVarExpResultsTableHead = function (stat, tableEl)  {
   var N = Object.keys( stat).length, statVarHeadings="", colHeadingsRow="";
   let theadEl = tableEl.createTHead();
   Object.keys( stat).forEach( function (v) {
@@ -100,7 +99,7 @@ function createParVarExpResultsTableHead( stat, tableEl)  {
 /*********************************************************************
  Show the results of a parameter variation experiment
  **********************************************************************/
-function showResultsFromParVarExpScenarioRun( data, tableEl) {
+oes.ui.showResultsFromParVarExpScenarioRun = function (data, tableEl) {
   var tbodyEl = tableEl.tBodies[0];
   var rowEl = tbodyEl.insertRow();  // create new table row
   rowEl.insertCell().textContent = data.expScenNo;
