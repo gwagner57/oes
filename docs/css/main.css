@@ -1,0 +1,209 @@
+/*! HTML5 Boilerplate v5.0 | MIT License | http://h5bp.com/ */
+
+::-moz-selection {
+  background: #b3d4fc;
+  text-shadow: none;
+}
+::selection {
+  background: #b3d4fc;
+  text-shadow: none;
+}
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin: 1em 0;
+  padding: 0;
+}
+audio,
+canvas,
+iframe,
+img,
+svg,
+video {
+  vertical-align: middle;
+}
+img {
+  max-width:100%;
+  max-height:100%;
+}
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+textarea {
+  resize: vertical;
+}
+/* added to HTML5 Boilerplate
+   It means that width/height includes padding, border and margin */
+* {
+  box-sizing: border-box;
+}
+
+/*********************************************
+ DPMN webpage styles
+*********************************************/
+
+@media screen {
+  body {
+    font: 1.1rem/1.5 "Helvetica", "Helvetica Neue", "Arial", "sans-serif";
+    margin: 0 auto;
+    padding: 10px;
+    max-width: 47em;
+	min-height: 100vh;
+    hyphens: auto;
+  }
+  button {
+    background-image: linear-gradient(to bottom, #f2f5f6, lightgreen);
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-image: none;
+    background-color: lightgreen;
+  }
+  
+  div#share {
+    display: inline-block;
+  }
+  ul.links {
+    display: none;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0 1em;
+  }
+  ul.links li {
+    display: inline;
+    text-align: center;
+    cursor: pointer;
+    margin-right: 1em;
+  }
+  ul.links li:hover {
+    text-decoration: underline;
+  }
+  .icon-social {
+    width: 20px;
+    height: 20px;
+    background: #eee;
+  }
+  #share-this {
+    display: none;
+  }
+}
+
+body {
+  color: black;
+  background-color: white;
+}
+body > header {
+  font-size: 80%;
+  text-align: center;
+  margin-bottom: 5em;
+}
+
+h1 {
+  margin-top: 0.67em;
+  margin-bottom: 0.33em;
+}
+@media only screen and (min-width: 800px) {
+  #supertitle {
+      font-size: 15em;
+	  line-height: 0.9
+  }
+  h1 {
+    margin-top: 0.67em;
+    margin-bottom: 0.33em;
+  }
+}
+
+p.indented {
+  margin-left: 2em;
+}
+.list-inline {
+  padding-left: 0;
+  list-style: none;
+}
+.list-inline > li {
+  display: inline-block;
+  margin-right: 0.2em;
+}
+.list-inline.comma-separated > li:not(:last-child):after {
+  content: ",";
+}
+
+table {
+  border-collapse: collapse;
+  margin: 1em auto;
+  table-layout: fixed;
+}
+table,
+td,
+th {
+  border: thin solid black;
+  padding: 5px;
+}
+thead,
+th {
+  background: silver;
+}
+table > caption {
+  margin-bottom: 0.7em;
+}
+
+figure {
+  margin: 1em auto;
+  text-align: center;
+}
+figcaption {
+  margin-top: 0.7em;
+}
+
+blockquote.stylish {
+  position: relative;
+  font: 1.3rem/1.5 "Helvetica", "Helvetica Neue", "Arial", "sans-serif";
+  /* font: 14px/22px normal helvetica, sans-serif; */
+  margin-top: 1.2em;
+  margin-bottom: 1em;
+  margin-left: 20px;
+  margin-right: 0;
+  padding-left: 15px;
+  /* border-left: 3px solid #ccc; */
+}
+blockquote.stylish::before {
+  content: "\201C"; /* Unicode for Left Double Quote */
+  position: absolute;
+  left: -20px;
+  top: -30px;
+  /* Font */
+  font-family: Georgia, serif;
+  font-size: 60px;
+  font-weight: bold;
+  color: grey;
+}
+blockquote.float-right {
+  float: right;
+  width: 50%;
+  margin-top: 0.8em;
+  margin-left: 2em;
+}
+
+.iframe-container {
+    position: relative;
+    overflow: hidden;
+    padding-top: 66%;  /* aspect ratio = height / width */
+  background: aliceblue;
+}
+.iframe-container iframe {
+  position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+footer {
+  font-size: smaller;
+}
+

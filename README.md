@@ -26,12 +26,12 @@ OES Core 0 is the minimal architecture for an OE simulator, supporting
 OES Core 1 adds the following features to OES Core 0:
 
 - fixed-increment time progression
+- a seedable random number generator
+- a set of sampling functions from various probability distributions (uniform, triangular, normal, exponential, etc.)
 - multiple scenarios per model
 - multiple experiment types per model
-- a seedable random number generator
-- a set of probability distributions (uniform, triangular, normal, exponential, etc.)
 - model parameters 
 - parameter variation experiments
-- experiment data storage
+- persistent storage of experiment results 
 
 <img src="./OES-Core1.svg">
