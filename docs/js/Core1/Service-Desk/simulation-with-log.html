@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>DES Example Service Desk</title>
+  <meta name="viewport" content="width=device-width, initial-scale = 1.0" />
+  <style>
+    table {
+      border: thin solid black;
+      border-collapse: collapse;
+      empty-cells: show;
+      counter-increment: tables;
+    }
+    table td, table th {
+      border: thin solid black;
+      padding: 0.2em;
+    }
+  </style>
+    <script src="../../lib/math.js"></script>
+    <script src="../../lib/rand.js"></script>
+    <!-- The EventList class defining an ordered list of events -->
+    <script src="../../lib/EventList.js"></script>
+  <!-- The OES OES-js-Core1 classes  -->
+  <script src="../OES-js-Core1/OES-Foundation.js"></script>
+  <!-- The simulator code -->
+  <script src="../OES-js-Core1/simulator.js"></script>
+  <!-- The simulation user interface code -->
+  <script src="../OES-js-Core1/simulatorUI.js"></script>
+  <!-- Inventory Management simulation model classes -->
+  <script src="ServiceDesk.js"></script>
+  <script src="Customer.js"></script>
+  <script src="CustomerArrival.js"></script>
+  <script src="CustomerDeparture.js"></script>
+</head>
+<body>
+ <h1>Service Desk Simulation</h1>
+ <table>
+  <caption>Simulation Log</caption>
+  <thead>
+   <tr><th>Step</th><th>Time</th><th>System State</th><th>Future Events</th></tr>
+  </thead>
+  <tbody id="simLog"></tbody>
+ </table>
+ <table id="statisticsTbl">
+     <caption>Statistics</caption>
+     <tbody></tbody>
+ </table>
+ <p id="execInfo"></p>
+ <script src="simulation.js"></script>
+ <script>
+   // Assign variables for accessing UI elements
+   const simLogTableEl = document.getElementById("simLog");
+   const statisticsTableEl = document.getElementById("statisticsTbl");
+   const execInfoEl = document.getElementById("execInfo");
+
+   // store start time of simulation run
+   const simStartTime = (new Date()).getTime();
+   sim.initializeSimulator();
+   sim.initializeScenarioRun();
+   sim.runScenario();
+
+   oes.ui.showStatistics( sim.stat, statisticsTableEl);
+   // log simulation time and execution time
+   execInfoEl.textContent =
+       `Simulation time: ${sim.endTime} days, execution time: ${(new Date()).getTime() - simStartTime} ms`;
+ </script>
+</body>
+</html>
+
