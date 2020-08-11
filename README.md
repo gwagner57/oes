@@ -9,6 +9,8 @@ The minimal version of an Object Event Simulator is *OES Core 0* with about 220 
 
 The simulators OES Core 1-3 incrementally extend OES Core 0 by adding further features.
 
+You can run OESjs Core0 and Core1 simulation examples from [the project's GitHub Page](https://gwagner57.github.io/oes/).
+
 ## OES Core 0
 
 OES Core 0 is the minimal architecture for an OE simulator, supporting  
