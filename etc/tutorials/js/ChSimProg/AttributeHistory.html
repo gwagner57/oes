@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Defining and Using a History for an Attribute</title>
+  </head>
+  <body><p>There are use cases which require to construct a history of the changing values of a certain attribute for a specific object and evaluate
+  or simply display this history. For example, we may define a history for the attribute <code>queueLength</code> of service desks using the
+  <code>historySize</code> parameter:</p><pre>var ServiceDesk = new cLASS({
+  Name: "ServiceDesk",
+  supertypeName: "oBJECT",
+  properties: {
+    "queueLength": { range: "NonNegativeInteger", <b>historySize</b>: 7,
+        label: "Queue length", shortLabel: "qlen"}
+  }
+});
+
+In such </pre><p>In such a case, the OESjs simulator automatically constructs a history buffer of the specified size, which can, for instance, be
+  converted to a string with the expression</p><pre>sim.namedObjects["serviceDesk1"].history.queueLength.toString()</pre><p>A <em>history buffer</em>
+  is a ring buffer, having a limited size and an <code>add</code> operation for adding new items to the buffer as in:</p><pre>sim.namedObjects["serviceDesk1"].history.queueLength.<b>add</b>( this.queueLength);</pre><p>Notice
+  that the oldest item may get lost when a (fixed-size) buffer is already full and a new item is added.</p><pre>Object.keys( cLASS["ServiceDesk"].instances).forEach( function (objIdStr) {
+  var obj = cLASS["ServiceDesk"].instances[objIdStr];
+  ...  // do something with obj
+});</pre><p>If a simulation has to deal with a large number of objects, using a <code>for</code> loop may be faster than a <code>forEach</code>
+  loop.</p></body>
+</html>

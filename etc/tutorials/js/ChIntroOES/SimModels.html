@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Simulation Models</title>
+  </head>
+
+  <body><section><h4>2.2.1. Model Variables and Functions</h4><p>In the simple
+  model of a service desk discussed in the previous section, we define one
+  (global) model variable, <i>queueLength</i>, one model function,
+  <i>serviceTime</i>(), and two event types, as shown in the following class
+  diagram: </p><figure><img alt="???" src="../IDM0.svg"
+  width="360" /></figure><p>Notice that this model does not define any object
+  type, which implies that the system state does not consist of any object,
+  but only of one model variable, <i>queueLength</i>. The discrete random
+  variable for modeling random service durations is implemented as a model
+  function <code>serviceTime</code> shown in the <i>Model Variables and
+  Functions</i> class. It samples integers between 2 and 4 from the empirical
+  probability distribution <i>Emp{2:0.3, 3:0.5, 4:0.2}</i>. The model can be
+  coded with OESjs in the following way:</p><pre>// (global) model variable
+sim.model.v.<strong>queueLength</strong> = {
+  range:"NonNegativeInteger", 
+  label:"Queue length", 
+  shortLabel:"qLen", 
+  initialValue: 0
+};
+// (global) model function
+sim.model.f.<strong>serviceTime</strong> = function () {
+  return rand.frequency({"2":0.3, "3":0.5, "4":0.2});
+};</pre><p>When a model variable, like <code>sim.model.v.queueLength</code>,
+  is defined, its value can be accessed at simulation runtime with the
+  expression <code>sim.v.queueLength</code>. A variable is shown in the user
+  interface for model variables, whenever a <code>label</code> is defined for
+  it. By default, the size of the variable's input field is 7. It can be
+  changed by setting the property <code>inputFieldSize</code> in the variable
+  definition.</p>A variable's value is shown in the simulation log, whenever a
+  <code>shortLabel</code> is defined for it. <p>You can <a
+  href="https://sim4edu.com/sims/14" target="_top">run this simulation
+  model</a> and <a href="https://sim4edu.com/sims/14/Download.zip"
+  target="_top">download its code</a> from the sim4edu.com
+  website.</p></section><section><h4>2.2.2. Object Types</h4><p>Object types
+  are defined in the form of classes. More precisely, they are defined as
+  instances of the meta-class <i>cLASS</i>. Consider the object type
+  <i>ServiceDesk</i> defined in the following model: </p><figure><img
+  alt="???" src="../IDM1.svg" width="400" /></figure><p>The object type
+  <i>ServiceDesk</i> is defined with an attribute
+  <code>queueLength</code>:</p><pre>var <strong>ServiceDesk</strong> = new cLASS({
+  Name: "ServiceDesk",
+  label: "Service desks",
+  supertypeName: "oBJECT",
+  properties: {
+    "<strong>queueLength</strong>": { range: "NonNegativeInteger", 
+        label: "Queue length", shortLabel: "qlen"}
+  }
+});</pre><p>Notice that, in OESjs, object types are defined as subtypes of the
+  pre-defined class <code>oBJECT</code>, from which they inherit an
+  integer-valued <code>id</code> attribute and an optional <code>name</code>
+  attribute. A property may have both a <code>label</code> and a
+  <code>shortLabel</code>. The <code>label</code> is used for user interface
+  fields, while the <code>shortLabel</code> is used in the simulation log,
+  which only logs those objects and properties that do have a
+  <i>shortLabel</i>.</p><p>The discrete random variable for modeling random
+  service durations, which samples integers between 2 and 4 from the empirical
+  probability distribution <i>Emp{2:0.3, 3:0.5, 4:0.2}</i>, is implemented as
+  a class-level ("static") function <code>serviceTime</code> in the
+  <i>ServiceDesk</i> class:</p><pre>ServiceDesk.<strong>serviceTime</strong> = function () {
+  return rand.frequency({"2":0.3, "3":0.5, "4":0.2});
+};</pre><p>You can <a href="https://sim4edu.com/sims/1" target="_top">run this
+  simulation model</a> and <a href="https://sim4edu.com/sims/1/Download.zip"
+  target="_top">download its code</a> from the sim4edu.com
+  website.</p></section><section><h4>2.2.3. Event Types</h4><p>We distinguish
+  between two kinds of events:</p><ol>
+      <li><em>caused</em> events are caused by other events occurring during a
+      simulation run;</li>
+
+      <li><em>exogenous</em> events seem to happen spontaneously, but may be
+      caused by factors, which are external to the simulation model.</li>
+    </ol><p>Here is an example of an exogenous event type definition:</p><pre>var <strong>Arrival</strong> = new cLASS({
+  Name: "Arrival",
+  label: "Customer arrivals",
+  shortLabel: "Arr",  // for the log
+  supertypeName: "eVENT",
+  <strong>properties</strong>: {
+    "serviceDesk": {range: "ServiceDesk", label:"Service desk"}
+  },
+  <strong>methods</strong>: {
+    "onEvent": function () {
+      ...
+    }
+  }
+});</pre><p>Notice that this event type definition includes a reference
+  property <i>serviceDesk</i>, which is used for referencing the service desk
+  object at which an event occurs. In OESjs, event types are defined as
+  subtypes of the pre-defined class <code>eVENT</code>, from which they
+  inherit an attribute <code>occTime</code>, which holds the occurrence time<a
+  class="role-index-term">occurrence time</a> of an event. As opposed to
+  objects, events do normally not have an ID, nor a name. </p><p>Each event
+  type needs to define an <i>onEvent</i> method that implements the event rule
+  for events of the defined type. Event rules are discussed below. Exogenous
+  events occur periodically. They are therefore defined with a
+  <em>recurrence</em> function,<a class="role-index-term">recurrence</a> which
+  provides the time in-between two events (often in the form of a random
+  variable). The recurrence function is defined as a class-level
+  method:</p><pre>Arrival.<strong>recurrence</strong> = function () {
+  return rand.uniformInt( 1, 6); 
+};</pre><p>Notice that the <i>recurrence</i> method of <i>Arrival</i> is coded
+  with the library method <code class="code">rand.uniformInt</code>, which
+  allows sampling discrete uniform probability distribution functions (the
+  <code class="code">rand</code> library provides several other PDF sampling
+  methods as explained below). The OESjs simulator automatically creates the
+  next <i>Arrival</i> event by invoking the <i>recurrence</i> function for
+  setting its <i>ocurrenceTime</i> and by copying all participant references
+  (such as the <i>serviceDesk</i> reference). Only if an exogenous event<a
+  class="role-index-term">exogenous event</a> type has additional properties,
+  a <i>createNextEvent</i> method has to be defined for assigning all
+  properties and returning the next event of that type. Whenever the simulator
+  finds such a method, it will be invoked for creating corresponding exogenous
+  events.</p> <p>The second event type of this model, <i>Departure</i>, is an
+  example of a type of <i>caused</i> events:</p> <pre>var <strong>Departure</strong> = new cLASS({
+  Name: "Departure",
+  label: "Customer departures",
+  shortLabel: "Dep",  // for the log
+  supertypeName: "eVENT",
+  properties: {
+    "serviceTime": {range: "NonNegativeInteger"},
+    "serviceDesk": {range: "ServiceDesk", label:"Service desk"}
+  },
+  methods: {
+    "onEvent": function () {
+      ...
+  }
+});</pre></section><section><h4>2.2.4. Event Rules</h4><p>An event rule<a
+  class="role-index-term">event rule</a> for an event type defines what
+  happens when an event of that type occurs, by specifying the caused state
+  changes and follow-up events. In OESjs, an event rule for an event type is
+  defined as a method <code>onEvent</code> of the class that implements the
+  event type. This method, which is also called <i>event routine</i>,<a
+  class="role-index-term">event routine</a> returns a set of events (more
+  precisely, a set of JS objects representing events).</p><p>The following
+  event rule method is defined in the <code>Arrival</code> class.</p><pre>// Arrival event rule
+"<b>onEvent</b>": function () {
+  var srvTm=0, events = [];
+  this.serviceDesk.queueLength++;
+  sim.stat.arrivedCustomers++;
+  // if the service desk is not busy
+  if (this.serviceDesk.queueLength === 1) {
+    srvTm = ServiceDesk.serviceTime();
+    events.push( new Departure({
+      delay: srvTm,
+      serviceTime: srvTm,
+      serviceDesk: this.serviceDesk
+    }));
+  }
+  return events;
+}</pre><p>The context of this event rule method is the event that triggers the
+  rule, that is, the variable <code>this</code> references a JS object that
+  represents the triggering event. Thus, the expression
+  <code>this.serviceDesk</code> refers to the service desk object associated
+  with the current customer arrival event, and the statement
+  <code>this.serviceDesk.queueLength++</code> increments the
+  <i>queueLength</i> attribute of this service desk object (as an immediate
+  state change).</p><p>The following event rule method is defined in the
+  <code>Departure</code> class. </p><pre>// Departure event rule
+"<b>onEvent</b>": function () {
+  var events = [], srvTm=0;
+  // remove customer from queue
+  this.serviceDesk.queueLength--;
+  // if there are still customers waiting
+  if (this.serviceDesk.queueLength &gt; 0) {
+    // start next service and schedule its end/departure
+    srvTm = ServiceDesk.serviceTime();
+    events.push( new Departure({
+      delay: srvTm,
+      serviceTime: srvTm,
+      serviceDesk: this.serviceDesk
+    }));
+  }
+  sim.stat.departedCustomers++;
+  sim.stat.totalServiceTime += this.serviceTime;
+  return events;
+}</pre><p>Notice that a new future event can be scheduled in three different
+  ways:</p><ol>
+      <li>By providing a value for the <i>delay</i> attribute, as shown
+      above.</li>
+
+      <li><p>By providing a value for the <i>occTime</i> attribute, specifying
+      the ocurrence time of the future event. For instance, the following
+      event scheduling code creates the same future event as above:</p><pre>events.push( new Departure({
+  occTime: this.occTime + srvTm,
+  serviceTime: srvTm,
+  serviceDesk: this.serviceDesk
+}));
+</pre></li>
+
+      <li>By omitting both the <i>delay</i> and the <i>occTime</i> attributes,
+      events are scheduled with a minimal (implicit) delay defined by the
+      <i>nextMomentDeltaT</i> parameter.</li>
+    </ol></section><section><h4>2.2.5. Event Priorities</h4><p>An OES model
+  may imply the possibility of several events occurring at the same time.
+  Consequently, a simulator (like OESjs) must be able to process simultaneous
+  events.<a class="role-index-term">simultaneous events</a> In particular,
+  simulation models based on discrete time may create simulation states where
+  two or more events occur at the same time, but the model's logic requires
+  them to be processed in a certain order. Defining priorities for events of a
+  certain type helps to control the processing order of simultaneous
+  events.</p><p>Consider an example model based on discrete time with three
+  exogenous event types <i>StartOfMonth</i>, <i>EachDay</i> and
+  <i>EndOfMonth</i>, where the recurrence of StartOfMonth and EndOfMonth is
+  21, and the recurrence of EachDay is 1. In this example we want to control
+  that on simulation time 1 + <i>i</i> * 21 both a StartOfMonth and an EachDay
+  event occur simultaneously, but StartOfMonth should be processed before
+  EachDay, and on simulation time 21 + <i>i</i> * 21 both an EndOfMonth and an
+  EachDay event occur simultaneously, but EndOfMonth should be processed after
+  EachDay. This can be achieved by defining a high priority, say 2, to
+  StartOfMonth, a middle priority, say 1, to StartOfMonth, and a low priority,
+  say 0, to EndOfMonth. </p><p>Event priorities are defined as class-level
+  properties of event classes in the event type definition file. Thus, we
+  would define in <kbd>StartOfMonth.js</kbd>:</p><pre>StartOfMonth.priority = 2;</pre><p>and
+  in <kbd>EachDay.js</kbd>:</p><pre>EachDay.priority = 1;</pre><p>and finally
+  in <kbd>EndOfMonth.js</kbd>:</p><pre>EndOfMonth.priority = 0;</pre></section><section><h4>2.2.6.
+  Library Methods for Sampling Probability Distribution
+  Functions</h4><p>Random variables<a class="role-index-term">random
+  variable</a> are implemented as methods that sample specific <em>probability
+  distribution functions (PDFs)</em>.<a class="role-index-term">probability
+  distribution function</a> Simulation frameworks typically provide a library
+  of predefined parametrized PDF sampling methods, which can be used with one
+  or several (possibly seeded) streams of <a
+  href="https://en.wikipedia.org/wiki/Pseudorandom_number_generator"
+  target="_top">pseudo-random numbers</a>.</p><p>The OESjs simulator provides
+  the following predefined parametrized PDF sampling methods:</p><table
+      border="1">
+      <thead>
+        <tr>
+          <td style="text-align:center;"><b>Probability Distribution
+          Function</b></td>
+
+          <td style="text-align:center;"><b>OESjs Library Method</b></td>
+
+          <td style="text-align:center;"><b>Example</b></td>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td><a
+          href="https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)"
+          target="_top">Uniform</a></td>
+
+          <td><code>uniform</code>( <i>lowerBound</i>, <i>upperBound</i>)</td>
+
+          <td><code>rand.uniform( 0.5, 1.5)</code></td>
+        </tr>
+
+        <tr>
+          <td><a
+          href="https://en.wikipedia.org/wiki/Discrete_uniform_distribution"
+          target="_top">Discrete Uniform</a></td>
+
+          <td><code>uniformInt</code>( <i>lowerBound</i>,
+          <i>upperBound</i>)</td>
+
+          <td><code>rand.uniformInt( 1, 6)</code></td>
+        </tr>
+
+        <tr>
+          <td><a href="https://en.wikipedia.org/wiki/Triangular_distribution"
+          target="_top">Triangular</a></td>
+
+          <td><code>triangular</code>( <i>lowerBound</i>, <i>upperBound</i>,
+          <i>mode</i>)</td>
+
+          <td><code>rand.triangular( 0.5, 1.5, 1.0)</code></td>
+        </tr>
+
+        <tr>
+          <td><a href="https://en.wikipedia.org/wiki/Triangular_distribution"
+          target="_top">Frequency</a></td>
+
+          <td><code>frequency</code>( <i>frequencyMap</i>)</td>
+
+          <td><code>rand.frequency({"2":0.4, "3":0.6})</code></td>
+        </tr>
+
+        <tr>
+          <td><a href="http://en.wikipedia.org/wiki/Exponential_distribution"
+          target="_top">Exponential</a></td>
+
+          <td><code>exponential</code>( <i>eventRate</i>)</td>
+
+          <td><code>rand.exponential( 0.5)</code></td>
+        </tr>
+
+        <tr>
+          <td><a href="https://en.wikipedia.org/wiki/Gamma_distribution"
+          target="_top">Gamma</a></td>
+
+          <td><code>gamma</code>( <i>shape</i>, <i>scale</i>)</td>
+
+          <td><code>rand.gamma( 1.0, 2.0)</code></td>
+        </tr>
+
+        <tr>
+          <td><a href="https://en.wikipedia.org/wiki/Normal_distribution"
+          target="_top">Normal</a></td>
+
+          <td><code>normal</code>( <i>mean</i>, <i>stdDev</i>)</td>
+
+          <td><code>rand.normal( 1.5, 0.5)</code></td>
+        </tr>
+
+        <tr>
+          <td><a href="https://en.wikipedia.org/wiki/Pareto_distribution"
+          target="_top">Pareto</a></td>
+
+          <td><code>pareto</code>( <i>shape</i>)</td>
+
+          <td><code>rand.pareto( 2.0)</code></td>
+        </tr>
+
+        <tr>
+          <td><a href="https://en.wikipedia.org/wiki/Weibull_distribution"
+          target="_top">Weibull</a></td>
+
+          <td><code>weibull</code>( <i>scale</i>, <i>shape</i>)</td>
+
+          <td><code>rand.weibull( 1, 0.5)</code></td>
+        </tr>
+      </tbody>
+    </table><p>The OESjs library <kbd>rand.js</kbd> supports both unseeded and
+  seeded random number streams.<a class="role-index-term">random number
+  stream</a> By default, its PDF sampling methods are based on an unseeded
+  stream, using Marsaglia’s high-performance random number generator <a
+  href="https://en.wikipedia.org/wiki/Xorshift"
+  target="_top"><em>xorshift</em></a> that is built into the
+  <code>Math.random</code> function of modern JavaScript engines.</p><p>A
+  seeded random number stream, based on the slower <a
+  href="https://en.wikipedia.org/wiki/Mersenne_Twister" target="_top">Mersenne
+  Twister</a> algorithm, can be obtained by setting the scenario parameter
+  <code>sim.scenario.randomSeed</code> to a positive integer
+  value.</p><p>Additional streams can be defined and used in the following
+  way:</p><pre>var stream1 = new Random( 1234);
+var stream2 = new Random( 6789);
+var service1Duration = stream1.exponential( 0.5);
+var service2Duration = stream2.exponential( 1.5);</pre><p><b>Warning</b>:
+  Avoid using JavaScript's built-in <code>Math.random</code> in simulation
+  code. Always use <code>rand.uniform</code>, or one of the other probability
+  distribution functions from the <i>rand</i> library described above, for
+  generating random numbers.</p></section></body>
+</html>

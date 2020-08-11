@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Using the Simulation Log</title>
+  </head>
+  <body><p>The OESjs simulator can generate a simulation log, which allows to inspect the evolving states of a simulation run. Inspecting the
+  simulation log can help to understand the dynamics of a model, or it can be used for finding logical flaws in it.</p><p>The contents of the
+  simulation log can be controlled by defining <em>short labels</em> for those objects and object properties as well as event types that we want to
+  see in the log, using the <code>shortLabel</code> attribute. For instance, in the case of the <a href="https://sim4edu.com/sims/1"
+  target="_top">service desk model</a>, defining the short labels "sd1" for the service desk object, "qLen" for the <code>queueLength</code> property,
+  "Arr" for the <code>Arrival</code> event type and "Dep" for the <code>Departure</code> event type leads to the following simulation log:</p><table
+      border="1" style="border-spacing:3px;width:100%;">
+      <thead>
+        <tr>
+          <th colspan="3" style="text-align:center;">Simulation Log</th>
+        </tr>
+        <tr>
+          <th style="text-align:center;">Time</th>
+          <th style="text-align:center;">System State</th>
+          <th style="text-align:center;">Future Events</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>0</td>
+          <td>sd1{ qLen: 0}</td>
+          <td>Arr@1</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>sd1{ qLen: 1}</td>
+          <td>Arr@4, Dep@4</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>sd1{ qLen: 1}</td>
+          <td>Arr@5, Dep@8</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>sd1{ qLen: 2}</td>
+          <td>Dep@8, Arr@10</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>sd1{ qLen: 1}</td>
+          <td>Arr@10, Dep@12</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>sd1{ qLen: 2}</td>
+          <td>Dep@12, Arr@12</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>sd1{ qLen: 2}</td>
+          <td>Arr@15, Dep@16</td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td>sd1{ qLen: 3}</td>
+          <td>Dep@16, Arr@21</td>
+        </tr>
+        <tr>
+          <td>16</td>
+          <td>sd1{ qLen: 2}</td>
+          <td>Dep@18, Arr@21</td>
+        </tr>
+        <tr>
+          <td>18</td>
+          <td>sd1{ qLen: 1}</td>
+          <td>Dep@20, Arr@21</td>
+        </tr>
+        <tr>
+          <td>20</td>
+          <td>sd1{ qLen: 0}</td>
+          <td>Arr@21</td>
+        </tr>
+      </tbody>
+    </table></body>
+</html>

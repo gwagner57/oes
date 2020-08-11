@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Statistics</title>
+  </head>
+  <body><p>In scientific and engineering simulation projects the main goal is getting estimates of the values of certain variables or performance
+  indicators with the help of statistical methods. In educational simulations, statistics can be used for observing simulation runs and for learning
+  the dynamics of a simulation model. </p><p>For collecting statistics, suitable <em>statistics variables</em> have to be defined, each of them with a
+  <em>name</em> and a <em>range</em>. Only if a <em>label</em> is defined for them, they are shown in the statistics output view</p><p>The following
+  code defines statistics variables for the service desk model.</p><pre class="role-listing-1">sim.model.statistics = {
+  "arrivedCustomers": {range:"NonNegativeInteger", label:"Arrived customers"},
+  "departedCustomers": {range:"NonNegativeInteger", label:"Departed customers"},
+  "totalServiceTime": {range:"NonNegativeInteger"},
+  "serviceUtilization": {range:"Decimal", label:"Service utilization",
+      computeOnlyAtEnd: true, decimalPlaces: 1, unit: "%",
+      expression: () =&gt; sim.stat.totalServiceTime / sim.time * 100
+  },
+  "maxQueueLength": {objectType:"ServiceDesk", objectIdRef: 1,
+      property:"queueLength", aggregationFunction:"max", label:"Max. queue length"},
+  "averageQueueLength": {objectType:"ServiceDesk", objectIdRef: 1,
+    property:"queueLength", aggregationFunction:"avg", label:"Avg. queue length"},
+  "queueLength": {objectType:"ServiceDesk", objectIdRef: 1,
+    property:"queueLength", showTimeSeries: true, label:"Queue length"}
+};</pre><p>The first three statistics variables (<i>arrivedCustomers</i>, <i>departedCustomers</i> and <i>totalServiceTime</i>) are simple variables
+  that are updated in event routines (that is, in <i>onEvent</i> methods).</p><p>The <i>serviceUtilization</i> variable is only computed at the end of
+  a simulation run by evaluating the <em>expression</em> specified for it (in the form of a JS <em>arrow function</em>). Notice that the expression on
+  the right hand side of the arrow divides the total service time by the simulation time multiplied by 100 (for getting a percentage). </p><p>In the
+  case of the remaining three variables, the data source is the object property <code>queueLength</code> of the service desk object with id=1. For the
+  variable <code>maxQueueLength</code> the built-in aggregation function <code>max</code> is applied to this data source, computing the maximum of all
+  <i>queueLength</i> values, while for the variable <code>averageQueueLength</code> the aggregation function <code>avg</code> is applied. The last
+  variable, <i>queueLength</i>, is defined for the purpose of getting a time series chart. In such a chart, the y-value can be scaled by specifying a
+  suitable scaling factor as the value of <code>timeSeriesScalingFactor</code>.</p><p>The statistics results are shown in a default view of the
+  statistics output. It is an option to define a non-standard user interface for the statistics output.</p></body>
+</html>

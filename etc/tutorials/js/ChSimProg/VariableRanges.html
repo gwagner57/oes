@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Defining Variables and Properties</title>
+  </head>
+  <body><p>OESjs is based on the <a href="https://github.com/gwagner57/cLASSjs">cLASSjs</a> library, which supports choosing specific datatypes, such
+  as "PositiveInteger", as the range of model variables and object/event properties. In addition, various constraints can be defined for them.
+  Defining specific ranges helps catching type errors and providing tailored user interfaces. Defining other constraints helps catching other
+  simulation programming flaws.</p><section><h4>Range Constraints</h4><p>Suitable range constraints can be defined by using one of the following
+  datatype keywords:</p><ul>
+      <li>"String", "NonEmptyString", "Identifier" (disallowing blank spaces and other special characters), "Email", "URL", "PhoneNumber".</li>
+      <li>"Integer", "PositiveInteger", "NonNegativeInteger".</li>
+      <li>"Decimal", "Number" (the same as "Decimal"), "Percent", "ClosedUnitInterval" [0,1], "OpenUnitInterval" (0,1).</li>
+      <li>"Boolean".</li>
+      <li>"DateTime", "Date" (a JS Date value or an ISO date or date-time string).</li>
+    </ul><p>For a decimal number type, the number of decimal places to be displayed can be specified with a declaration parameter setting like
+  <code>displayDecimalPlaces:2</code>, as shown in the following example </p><pre>var <strong>StaffMember</strong> = new cLASS({
+  Name: "StaffMember",
+  supertypeName: "oBJECT",
+  properties: {
+    "<strong>age</strong>": { range: "<b>PositiveInteger</b>"}
+    "<strong>weight</strong>": { range: "<b>Decimal</b>", <b>displayDecimalPlaces</b>: 2}
+  }
+});</pre><p>In addition to the simple/primitive datatypes listed above, the range of a property may be</p><ol>
+      <li>the name (or the corresponding object variable) of an enumeration, or</li>
+      <li>the name of another class (defined as an instance of cLASS).</li>
+    </ol></section><section><h4>Optional Properties and Multiplicity Constraints</h4><p>A variable or property may be <em>optional</em> or
+  <em>multi-valued</em>. By default, variables and properties are <em>mandatory</em> and <em>single-valued</em>. </p><p>An example of an optional
+  single-valued property is <code>clerk</code>, while an example of an optional multi-valued property is <code>waitingCustomers</code>, defined as
+  follows:</p><pre>var <strong>ServiceDesk</strong> = new cLASS({
+  Name: "ServiceDesk",
+  supertypeName: "oBJECT",
+  properties: {
+    "<strong>clerk</strong>": { range: "StaffMember", <b>optional</b>: true}
+    "<strong>waitingCustomers</strong>": { range: "Customer", <b>minCard</b>: 0, <b>maxCard</b>: Infinity}
+  }
+});</pre><p>Notice how a (by default) single-valued property like <code>clerk</code> is defined to be optional with the help of the declaration
+  parameter setting <code>optional:true</code>, while a multi-valued property like <code>waitingCustomers</code> is defined to be optional with
+  <code>minCard:0</code> and multi-valued with <code>maxCard:Infinity</code>.</p></section><section><h4>Pattern Constraints and Interval
+  Constraints</h4><p>T.B.D.</p></section></body>
+</html>

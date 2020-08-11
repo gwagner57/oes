@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Simulation Space</title>
+  </head>
+
+  <body><p>A simulation model may have an underlying <b><i>space
+  model</i></b>. While in the real world, we live in a three-dimensional
+  continuous space, a simulation model can be based on a simplified space
+  model such as </p><ol>
+      <li>a two-dimensional continuous space,</li>
+
+      <li>a two-dimensional discrete space, also called <em>grid
+      space</em>,</li>
+
+      <li>a one-dimensional continuous, or discrete, space,</li>
+
+      <li>a <em>graph space</em> consisting of a set of locations, which may,
+      or may not, be connected with each other. </li>
+    </ol><p>OESjs 1.4 only supports grid space, but other space models will be
+  supported in future versions. For defining a grid space model in
+  <kbd>simulation.js</kbd>, the following settings have to be made:</p><pre>sim.model.space.type = "IntegerGrid";
+sim.model.space.xMax = 500;
+sim.model.space.yMax = 300;</pre><p>The OESjs Integer Grid space model allows
+  large grid spaces with large populations. An example of a grid space model
+  using Integer Grid is the <a
+  href="https://sim4edu.com/sims/6/Schelling-Segregation-Model-1">Schelling
+  Segregation Model</a>.</p><section><h4>3.1.1. The Integer Grid Space
+  Model</h4><p>TBD</p></section><section><h4>3.1.1. The Object Grid Space
+  Model</h4><p>TBD</p></section></body>
+</html>

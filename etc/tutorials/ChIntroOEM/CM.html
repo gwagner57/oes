@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Making a Conceptual Model of the System under Investigation</title>
+  </head>
+  <body><figure class="right"><img alt="" src="../service-desk.svg" width="200" /></figure><p>Let's look at an example. We model a system of one or
+  more service desks, each of them having its own queue, as a discrete event system:</p><ul>
+      <li>Customers arrive at a service desk at random times.</li>
+      <li>If there is no other customer in front of them, and the service desk is available, they are served immediately, otherwise they have to queue
+      up in a waiting line.</li>
+      <li>The duration of services varies, depending on the individual case.</li>
+      <li>When a service is completed, the customer departs and the next customer is served, if there is still any customer in the queue.</li>
+    </ul><p>The potentially relevant <b>object types</b> of the system under investigation are:</p><ul>
+      <li>customers,</li>
+      <li>service desks,</li>
+      <li>waiting lines,</li>
+      <li>service clerks, if the service is performed by (one or more) clerks.</li>
+    </ul><p>The potentially relevant <b>event types</b> are:</p><ul>
+      <li>customer arrivals,</li>
+      <li>service starts,</li>
+      <li>service terminations,</li>
+      <li>customer departures.</li>
+    </ul></body>
+</html>

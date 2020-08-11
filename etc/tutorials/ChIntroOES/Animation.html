@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Animation</title>
+  </head>
+
+  <body><p>Animation is important for educational simulations and games, but
+  it can also be used as a general tool for testing, inspecting and validating
+  simulations.</p><p>Simulation runs can be animated by <em>visualizing</em>
+  objects and events, by <em>sonifying</em> events and by allowing human users
+  to <em>interact</em> with the simulated world. OESjs allows adding the
+  following user interfaces (UI) to a simulation model:</p><ol>
+      <li>An <strong>observation UI</strong> defines various kinds of
+      visualizations (including 3D) for allowing the user to observe what is
+      going on during a simulation run. Space models, objects and events can
+      be visualized by defining a <em>view</em> for them. An <em>object
+      view</em> is defined by a 2D shape (like a <em>rectangle</em> or a
+      <em>polygon</em>) or a 3D shape (like a <em>cuboid</em> or a
+      <em>mesh</em>). An <em>event view</em> consists of an animation defined
+      in the form of a <em>Web Animation</em> (of one or more DOM elements
+      using key frames). Events can also be <em>sonified</em> by attaching
+      specific sounds to event occurrences in an event appearance
+      definition.</li>
+
+      <li>A <strong>user interaction UI</strong> allows human users to
+      interact with a running simulation by taking decisions on the values of
+      decision variables or by taking actions that change the value of certain
+      simulation variables.</li>
+
+      <li>A <strong>participation UI</strong> allows human users to
+      participate in a multi-agent simulation scenario by receiving
+      situational information and by performing in-world actions via the user
+      interface. Any multi-agent simulation model can be turned into a
+      user-interactive <em>participatory simulation</em> by adding a
+      <em>participation model</em> and a corresponding UI.</li>
+    </ol><section><h4>2.7.1. Adding an Observation User Interface</h4><p>For
+  being able to observe a simulation run, some form of visualization has to be
+  defined. OESjs supports both the visualization of <em>spatial models</em>
+  and of non-spatial models. In a visualization of a non-spatial model, such
+  as the ServiceDesk-1 model, all object views have to be explicitly
+  positioned in an observation canvas. Rich two-dimensional visualizations can
+  be obtained by using the web technology of <em>Scalable Vector Graphics
+  (SVG)</em> in the definition of the observation UI.</p><p>In the case of our
+  <em>ServiceDesk-1</em> model, we may, for instance, visualize the service
+  desk using either an image or simply a fixed-size rectangle, and its queue
+  in the form of a growing and shrinking bar.</p><p>For defining an
+  observation UI with SVG-based visualization, the following settings have to
+  be made:</p><pre class="role-listing-1">sim.config.observationUI.type = "SVG";
+sim.config.observationUI.canvas.width = 600;
+sim.config.observationUI.canvas.height = 300;</pre><p>In addition, one can
+  define a CSS style for the canvas element in the following way, e.g. for
+  setting a background color or background image:</p><pre
+  class="role-listing-1">sim.config.observationUI.canvas.<b>style</b> = "background-color: azure";</pre><p>Then
+  we can define fixed elements of a visualization, giving each one a name
+  (here: "desk") and defining an SVG shape with attributes and a CSS
+  style:</p><pre class="role-listing-1">sim.config.observationUI.<b>fixedElements</b> = {
+  "desk": {
+    shapeName: "rect",
+    shapeAttributes: { x: 350, y: 200, width: 50, height: 30},
+    style: "fill:brown; stroke-width:0"
+  }
+};</pre><p>For learning more about SVG shapes and their attributes, see the
+  book chapter <a href="http://svgpocketguide.com/book/#section-2"
+  target="_top">Basic Shapes &amp; Paths</a> by Joni Trythall. For learning
+  more about CSS styling of SVG elements, see <a
+  href="http://www.smashingmagazine.com/2014/11/styling-and-animating-svgs-with-css/"
+  target="_top">Styling And Animating SVGs With CSS</a> by Sara
+  Soueidan.</p><p>The main issue in visualization is to visualize simulation
+  objects by defining suitable views for them and then map certain attributes
+  to suitable visual parameters such as colors, shape size, etc. A
+  <b><i>visualization view</i></b> can be defined either for all instances of
+  an object type or for specific instances only.</p><p>For instance, we may
+  want to visualize the waiting line of the object "serviceDesk1" in the form
+  of a rectangle and map the service desk's <i>queueLength</i> attribute to
+  the width of that rectangle, as in the following object view
+  definition:</p><pre class="role-listing-1">sim.config.observationUI.<b>objectViews</b> = {
+  "<b>serviceDesk1</b>": [  // a view of the queue
+    { shapeName: "rect",  // a rectangle defined by 
+      shapeAttributes: {  // left-upper corner (x,y) as well as width and height
+        x: function (sd) {return Math.max( 0, 330 - sd.queueLength * 20);},
+        width: function (sd) {return Math.min( 300, sd.queueLength * 20);},
+        y: 150, height: 80
+      },
+      style:"fill:yellow; stroke-width:0"
+    },
+    { shapeName: "text",
+      shapeAttributes: {x: 325, y: 250,
+          textContent: function (sd) {return sd.queueLength;}},
+      style: "font-size:14px; text-anchor:middle"
+    }
+  ]
+};</pre><p>Notice that the view consists of two elements: a rectangle and an
+  attached text displaying the queue length. In the view definition, certain
+  attributes are assigned a fixed value, while others are assigned a JS
+  function expression, which codes the mapping of object attributes to visual
+  parameters.</p><p>Alternatively, instead of defining a view for a specific
+  service desk object, we can also define a view for all service desk objects,
+  like so</p><pre class="role-listing-1">sim.config.observationUI.<b>objectViews</b> = {
+  "<b>ServiceDesk</b>": [
+    { shapeName: "rect",  // a rectangle defined by 
+      shapeAttributes: {  // left-upper corner (x,y) as well as width and height
+        x: function (sd) {return Math.max( 0, 330 - sd.queueLength * 20);},
+        width: function (sd) {return Math.min( 300, sd.queueLength * 20);},
+        y: 150, height: 80
+      },
+      style:"fill:yellow; stroke-width:0"
+    }
+};</pre><p>Whenever a model is about objects that are located in a
+  two-dimensional discrete space, also called <strong>gridspace</strong>,
+  it</p></section></body>
+</html>

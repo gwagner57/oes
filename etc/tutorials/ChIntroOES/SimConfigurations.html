@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Simulation Configurations</title>
+  </head>
+  <body><p>A simulation scenario can be configured in various ways using, for instance, different types of visualizations and various user interfaces
+  (UI):</p><ol>
+      <li>Turn off multi-threading (which is normally used for speeding up simulation execution) by setting the configuration parameter <code>sim.config.runInMainThread</code> to <i>true</i> (it is <i>false</i> by default). Running the
+      simulation in the main thread, together with the user interface, may simplify debugging.</li>
+      <li>Turn on/off the simulation log by setting the configuration parameter <code>sim.config.createLog</code> to true/false.</li>
+      <li>Suppress or show the initial state UI, which allows to inspect/modify the initial values of model variables and the initial state of
+      objects.</li>
+      <li>Turn on/off visualization, if there is one, by setting the configuration parameter <i>visualize</i> to true/false.</li>
+      <li>Turn on/off user interaction, if there is one, by setting the configuration parameter <i>userInteractive</i> to true/false. Since user
+      interaction requires visualization, it is also turned off when <code>sim.config.visualize</code> is
+      set to false.</li>
+      <li>Slow down a (standalone) scenario simulation run by setting the configuration parameter <i>stepDuration</i>, which defines the duration of a
+      simulation step (in ms). This is typically used for being able to observe a simulation run.</li>
+      <li>Credit art work used in a visualization with the parameter <i>artworkCredits</i>.</li>
+    </ol><p>In the simulation definition file, we could have settings like the following:</p><pre>sim.config.createLog = true;
+sim.config.suppressInitialStateUI = true;
+sim.config.visualize = true;
+sim.config.userInteractive = false;
+sim.config.stepDuration = 200;   // 200 ms observation time per step
+sim.config.artworkCredits = "Weather icons by https://icons8.com";</pre></body>
+</html>
