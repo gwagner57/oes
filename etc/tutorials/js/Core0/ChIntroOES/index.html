@@ -6,42 +6,30 @@
     <title>Creating Object Event Simulations with OESjs-Core0</title>
   </head>
 
-  <body><p>The JavaScript-based simulation framework <i>OESjs</i> implements
-  the <i>Object Event Simulation (<a href="https://sim4edu.com/OES"
+  <body><p>The JavaScript-based simulator <i>OESjs-Core0</i> implements the
+  <i>Object Event Simulation (<a href="https://sim4edu.com/OES"
   target="_top">OES</a>)</i> paradigm, representing a general <i>Discrete
   Event Simulation</i> approach based on <i>object-oriented</i> modeling and
   <i>event scheduling</i>. In OES, a model normally defines various types of
-  objects and events, but OES also supports</p><ol>
-      <li><p>models without objects, if they define state variables in the
-      form of global <i>model variables</i>, instead;</p></li>
-
-      <li><p>models without events, if they use pure fixed-increment time
-      progression (by defining an <code>onEachTimeStep</code> procedure and a
-      <code>timeIncrement</code> parameter), instead; such a model can be used
-      </p><ol type="a">
-          <li><p>as a discrete model that abstracts away from explicit events
-          and uses only implicit time events ("ticks"), which is a popular
-          approach in social science simulation, or</p></li>
-
-          <li><p>for modeling continuous state changes (e.g., objects moving
-          in a continuous space).</p></li>
-        </ol></li>
-    </ol><p>OESjs supports two forms of simulations:</p><ol>
+  objects and events, but OES<i>js-Core0</i> also supports models without
+  objects, if they define state variables in the form of global <i>model
+  variables</i>, instead.</p><p>OESjs<i>-Core0</i> supports two forms of
+  simulations:</p><ol>
       <li><p>Standalone scenario simulations, which are good for getting a
       quick impression of a simulation model, e.g., by checking some simple
-      statistics or by observing visualized (or sonified) simulation
-      runs.</p></li>
+      statistics.</p></li>
 
-      <li><p>Simulation experiments, which are defined as a set of simulation
-      scenarios by defining value sets for certain model variables, such that
-      an experiment run consists of a set of scenario runs.</p></li>
-    </ol><p>Using a simulation framework like OESjs means that only the
+      <li><p>Simple simulation experiments, which are defined as a set of
+      replicated simulation scenario runs, providing summary statistics like
+      mean, standard deviation, minimum/maximum and confidence intervals for
+      each statistics variable defined in the underlying model.</p></li>
+    </ol><p>Using a simulation library like OESjs-Core0 means that only the
   model-specific logic has to be coded (in the form of object types, event
   types, event routines and other functions for model-specific computations),
   but not the general simulator operations (e.g., time progression and
   statistics) and the environment handling (e.g., user interfaces for
-  statistics output and visualization).</p><p>The following sections present
-  the basic concepts of the OESjs simulation framework, and show how to
-  implement the service desk models described in <a
+  statistics output).</p><p>The following sections present the basic concepts
+  of the OESjs<i>-Core0</i> simulation library, and show how to implement the
+  service desk models described in <a
   href="../ChIntroOEM/index.html"></a>.</p></body>
 </html>

@@ -10,9 +10,13 @@ oes.ui = {
  ********************************************************/
 function logSimulationStep( simLogTableEl) {
   var rowEl = simLogTableEl.insertRow();  // create new table row
+  var modelVarInfo = Object.keys( sim.model.v).reduce( function (serialization, varName, i) {
+    var slotSerialization = varName +": "+ sim.model.v[varName];
+    return i>0 ? serialization +", "+ slotSerialization : slotSerialization;
+  }, "");
   rowEl.insertCell().textContent = String( sim.step);
   rowEl.insertCell().textContent = String( math.round( sim.time, oes.ui.simLogDecimalPlaces));
-  rowEl.insertCell().textContent = [...sim.objects.values()].toString();
+  rowEl.insertCell().textContent = [...sim.objects.values()].toString() +" "+ modelVarInfo;
   rowEl.insertCell().textContent = sim.FEL.toString();
 }
 /*******************************************************

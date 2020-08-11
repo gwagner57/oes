@@ -18,8 +18,12 @@ sim.stat = Object.create(null);
 sim.initializeScenarioRun = function () {
   sim.step = 0;  // simulation loop step counter
   sim.time = 0;  // simulation time
+  // Assign default to nextMomentDeltaT
+  if (sim.model.time === "continuous" && !sim.model.nextMomentDeltaT) {
+    sim.model.nextMomentDeltaT = 0.001;  // default value
+  }
   // set default endTime
-  sim.endTime = sim.scenario.durationInSimTime || sim.endTime || Number.MAX_SAFE_INTEGER;
+  sim.endTime = sim.scenario.durationInSimTime || Infinity;
   // get ID counter from simulation scenario, or set to default value
   sim.idCounter = sim.scenario?.idCounter || 1000;
   // set up initial state

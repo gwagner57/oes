@@ -10,6 +10,10 @@ sim.initializeSimulator = function () {
   if (!sim.scenario.durationInSimTime) sim.scenario.durationInSimTime = Infinity;
   if (!sim.scenario.durationInSimSteps) sim.scenario.durationInSimSteps = Infinity;
   if (!sim.scenario.durationInCpuTime) sim.scenario.durationInCpuTime = Infinity;
+  // Assign default to nextMomentDeltaT
+  if (sim.model.time === "continuous" && !sim.model.nextMomentDeltaT) {
+    sim.model.nextMomentDeltaT = 0.001;  // default value
+  }
   // Set timeIncrement for fixed-increment time progression
   if (sim.model.timeIncrement) {
     sim.timeIncrement = sim.model.timeIncrement;

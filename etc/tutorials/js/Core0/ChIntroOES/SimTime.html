@@ -2,46 +2,55 @@
 <html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="UTF-8" />
+
     <title>Simulation Time</title>
   </head>
-  <body><p>A simulation model has an underlying <b><i>time model</i></b>, which can be either <i>discrete time</i>, when setting</p><pre>sim.model.time = "discrete";</pre><p>or
-  <i>continuous time</i>, when setting</p><pre>sim.model.time = "continuous";</pre><p>Choosing a discrete time model means that time is measured in
-  steps (with equal durations), and all temporal random variables used in the model need to be discrete (i.e., based on discrete probability
-  distributions). Choosing a continuous time model means that one has to define a <i>simulation time granularity</i>, as explained in the next
-  sub-section.</p><p>In both cases, the underlying simulation <b><i>time unit</i></b> can be either left unspecified (e.g., in the case of an abstract
-  time model), or it can be set to one of the time units "ms", "s", "m", "h", "D", "W", "M" or "Y", as in</p><pre>sim.model.timeUnit = "h";</pre><p>Typical
-  examples of time models are:</p><ol>
-      <li><p>An abstract discrete model of time where time runs in steps without any concrete meaning: </p><pre>sim.model.time = "discrete";</pre></li>
+
+  <body><p>A simulation model has an underlying <b><i>time model</i></b>,
+  which can be either <i>discrete time</i>, when setting</p><pre>sim.model.time = "discrete";</pre><p>or
+  <i>continuous time</i>, when setting</p><pre>sim.model.time = "continuous";</pre><p>Choosing
+  a discrete time model means that time is measured in steps (with equal
+  durations), and all temporal random variables used in the model need to be
+  discrete (i.e., based on discrete probability distributions). Choosing a
+  continuous time model means that one has to define a <i>simulation time
+  granularity</i>, as explained in the next sub-section.</p><p>In both cases,
+  the underlying simulation <b><i>time unit</i></b> can be either left
+  unspecified (e.g., in the case of an abstract time model), or it can be set
+  to one of the time units "ms", "s", "m", "h", "D", "W", "M" or "Y", as
+  in</p><pre>sim.model.timeUnit = "h";</pre><p>Typical examples of time models
+  are:</p><ol>
+      <li><p>An abstract discrete model of time where time runs in steps
+      without any concrete meaning: </p><pre>sim.model.time = "discrete";</pre></li>
+
       <li><p>A concrete discrete model of time in number of days: </p><pre>sim.model.time = "discrete";
 sim.model.timeUnit = "D";</pre></li>
-      <li><p>A concrete continuous model of time in number of seconds: </p><pre>sim.model.time = "continuous";
+
+      <li><p>A concrete continuous model of time in number of seconds:
+      </p><pre>sim.model.time = "continuous";
 sim.model.timeUnit = "s";</pre></li>
-    </ol><section><h4>2.1.1. Time Granularity</h4><p>When a simulation model is based on continuous time, it is possible to control the time
-  granularity (the time delay until the next moment) in one of two ways:</p><ol>
-      <li>through simulation time rounding by setting the model parameter <i>timeRoundingDecimalPlaces</i> to a suitable value (e.g., to 2 for
-      obtaining time values like 281.39), which implies a corresponding value of the model parameter <i>nextMomentDeltaT</i>;</li>
-      <li>by explicitly setting the model parameter <i>nextMomentDeltaT</i>.</li>
-    </ol><p>The model parameter <i>nextMomentDeltaT</i> is used by the simulator for scheduling next events with a minimal
-  delay.</p></section><section><h4>2.1.2. Time Progression</h4><p>An important issue in simulation is the question how the simulation time is advanced
-  by the simulator. The OES paradigm supports <strong>fixed-increment</strong> time progression and <strong>next-event</strong> time progression, and
-  their combination.</p><p>An OESjs model with pure fixed-increment time progression has to define a <code>sim.model.OnEachTimeStep</code> procedure,
-  but no event types. Such a model can be used for</p><ol>
-      <li>modeling continuous state changes (e.g., objects moving in a continuous space), or</li>
-      <li>making a discrete model that abstracts away from explicit events and uses only implicit periodic time events ("ticks"), which is a popular
+    </ol><section><h4>2.1.1. Time Granularity</h4><p>When a simulation model
+  is based on continuous time, the model's <em>time granularity</em>, which is
+  the time delay until the next moment, is defined by the model parameter
+  <i>nextMomentDeltaT</i> to be used for scheduling immediate events with a
+  minimal delay. By default, <code>sim.model.nextMomentDeltaT</code> is set to
+  0.001.</p></section><section><h4>2.1.2. Time Progression</h4><p>An important
+  issue in simulation is the question how the simulation time is advanced by
+  the simulator. The OES paradigm supports <strong>next-event</strong> time
+  progression and <strong>fixed-increment</strong> time progression, as well
+  as their combination.</p><p>An OESjs-Core0 model with fixed-increment time
+  progression has to define a suitable periodic time event type, like
+  <code>EachSecond</code> or <code>EachDay</code> in the form of an exogenous
+  event type with a recurrence function returning the value 1. Such a model
+  can be used for</p><ol>
+      <li>modeling continuous state changes (e.g., objects moving in a
+      continuous space), or</li>
+
+      <li>making a discrete model that abstracts away from explicit events and
+      uses only implicit periodic time events ("ticks"), which is a popular
       approach in social science simulation.</li>
-    </ol><p>By default, in fixed-increment time progression with an <code>OnEachTimeStep</code> procedure, simulation time is incremented by 1. This
-  can be changed by setting <code>sim.model.timeIncrement</code> in the <kbd>simulation.js</kbd> file.</p><p>Examples of discrete event simulation
-  models with fixed-increment time progression and no explicit events are the <a href="https://sim4edu.com/sims/6">Schelling Segregation Model</a> and
-  the <a href="https://sim4edu.com/sims/25/index.html">Susceptible-Infected-Recovered (SIR) Disease Model</a>.</p><p>A simulation model with pure
-  next-event time progression, representing a classical DES model, defines event types and event rules, but no <code>timeIncrement</code>
-  parameter.</p><p>It is also possible to combine both time progression mechanisms, e.g., in a "hybrid" model that supports both discrete and
-  continuous state changes, or in a social science model based on "ticks" and explicit events.</p></section><section><h4>2.1.3. Real-Time
-  Simulation</h4><p>Real-time simulation means to run an observable simulation model in such a way that the speed of its state changes is close to the
-  speed of the state changes in the simulated real-world system. This is only possible if the simulator is able to run the simulation at least as fast
-  as the real-world system is running. If this is the case, the running simulator can be slowed down to real-time speed. </p><p>Real-time simulation
-  requires fixed-increment time progression by setting the model parameter <i>timeIncrement</i>. In the case of a model with a <i>timeUnit</i> and
-  real-time simulation turned on (by setting the scenario parameter <i>realtimeFactor</i> to 1), the simulator delays each simulation step such that
-  its real duration is equal to its simulation time, which is <i>timeIncrement</i> [timeUnit].</p><p>In the case of a model without a <i>timeUnit</i>
-  (that is, with abstract time), the simulator cannot automatically run in real-time, but the scenario parameter <i>stepDuration</i> (for specifying
-  the real duration of a simulation step) can be set to a suitable value for making the simulation observable in real-time.</p></section></body>
+    </ol><p>Examples of discrete event simulation models with fixed-increment
+  time progression and no explicit events are the <a
+  href="https://sim4edu.com/sims/6">Schelling Segregation Model</a> and the <a
+  href="https://sim4edu.com/sims/25/index.html">Susceptible-Infected-Recovered
+  (SIR) Disease Model</a>.</p></section></body>
 </html>

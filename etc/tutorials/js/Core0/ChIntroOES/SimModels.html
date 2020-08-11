@@ -10,68 +10,388 @@
   model of a service desk discussed in the previous section, we define one
   (global) model variable, <i>queueLength</i>, one model function,
   <i>serviceTime</i>(), and two event types, as shown in the following class
-  diagram: </p><figure><img alt="???" src="../IDM0.svg"
-  width="360" /></figure><p>Notice that this model does not define any object
+  diagram: </p><figure><img alt="???" src="../../../IDM0.svg"
+  width="400" /></figure><p>Notice that this model does not define any object
   type, which implies that the system state does not consist of any object,
   but only of one model variable, <i>queueLength</i>. The discrete random
   variable for modeling random service durations is implemented as a model
   function <code>serviceTime</code> shown in the <i>Model Variables and
   Functions</i> class. It samples integers between 2 and 4 from the empirical
-  probability distribution <i>Emp{2:0.3, 3:0.5, 4:0.2}</i>. The model can be
-  coded with OESjs in the following way:</p><pre>// (global) model variable
-sim.model.v.<strong>queueLength</strong> = {
-  range:"NonNegativeInteger", 
-  label:"Queue length", 
-  shortLabel:"qLen", 
-  initialValue: 0
-};
+  probability distribution <i>Frequency{ 2:0.3, 3:0.5, 4:0.2}</i>. The model
+  can be coded with OESjs in the following way:</p><pre>// (global) model variable
+sim.model.v.<strong>queueLength</strong> = 0;
 // (global) model function
 sim.model.f.<strong>serviceTime</strong> = function () {
-  return rand.frequency({"2":0.3, "3":0.5, "4":0.2});
-};</pre><p>When a model variable, like <code>sim.model.v.queueLength</code>,
-  is defined, its value can be accessed at simulation runtime with the
-  expression <code>sim.v.queueLength</code>. A variable is shown in the user
-  interface for model variables, whenever a <code>label</code> is defined for
-  it. By default, the size of the variable's input field is 7. It can be
-  changed by setting the property <code>inputFieldSize</code> in the variable
-  definition.</p>A variable's value is shown in the simulation log, whenever a
-  <code>shortLabel</code> is defined for it. <p>You can <a
-  href="https://sim4edu.com/sims/14" target="_top">run this simulation
-  model</a> and <a href="https://sim4edu.com/sims/14/Download.zip"
-  target="_top">download its code</a> from the sim4edu.com
-  website.</p></section><section><h4>2.2.2. Object Types</h4><p>Object types
-  are defined in the form of classes. More precisely, they are defined as
-  instances of the meta-class <i>cLASS</i>. Consider the object type
-  <i>ServiceDesk</i> defined in the following model: </p><figure><img
-  alt="???" src="../IDM1.svg" width="400" /></figure><p>The object type
+  var r = math.getUniformRandomInteger( 0, 99);
+  if ( r &lt; 30) return 2;         // probability 0.30
+  else if ( r &lt; 80) return 3;    // probability 0.50
+  else return 4;                 // probability 0.20
+};</pre><p>You can <a href="https://sim4edu.com/sims/14" target="_top">run
+  this simulation model</a> from the project's GitHub website. An example of a
+  run of this model is shown in the following simulation log: </p><table>
+      <caption>Simulation Log</caption>
+
+      <thead>
+        <tr>
+          <th>Step</th>
+
+          <th>Time</th>
+
+          <th>System State</th>
+
+          <th>Future Events</th>
+        </tr>
+      </thead>
+
+      <tbody id="simLog">
+        <tr>
+          <td>0</td>
+
+          <td>0</td>
+
+          <td>queueLength: 0</td>
+
+          <td>CustomerArrival@1</td>
+        </tr>
+
+        <tr>
+          <td>1</td>
+
+          <td>1</td>
+
+          <td>queueLength: 1</td>
+
+          <td>CustomerDeparture@4, CustomerArrival@4</td>
+        </tr>
+
+        <tr>
+          <td>2</td>
+
+          <td>4</td>
+
+          <td>queueLength: 1</td>
+
+          <td>CustomerDeparture@6, CustomerArrival@7</td>
+        </tr>
+
+        <tr>
+          <td>3</td>
+
+          <td>6</td>
+
+          <td>queueLength: 0</td>
+
+          <td>CustomerArrival@7</td>
+        </tr>
+
+        <tr>
+          <td>4</td>
+
+          <td>7</td>
+
+          <td>queueLength: 1</td>
+
+          <td>CustomerDeparture@11, CustomerArrival@13</td>
+        </tr>
+
+        <tr>
+          <td>5</td>
+
+          <td>11</td>
+
+          <td>queueLength: 0</td>
+
+          <td>CustomerArrival@13</td>
+        </tr>
+
+        <tr>
+          <td>6</td>
+
+          <td>13</td>
+
+          <td>queueLength: 1</td>
+
+          <td>CustomerDeparture@15, CustomerArrival@19</td>
+        </tr>
+
+        <tr>
+          <td>7</td>
+
+          <td>15</td>
+
+          <td>queueLength: 0</td>
+
+          <td>CustomerArrival@19</td>
+        </tr>
+
+        <tr>
+          <td>...</td>
+
+          <td>...</td>
+
+          <td>...</td>
+
+          <td>...</td>
+        </tr>
+
+        <tr>
+          <td>49</td>
+
+          <td>114</td>
+
+          <td>queueLength: 0</td>
+
+          <td>CustomerArrival@117</td>
+        </tr>
+
+        <tr>
+          <td>50</td>
+
+          <td>117</td>
+
+          <td>queueLength: 1</td>
+
+          <td>CustomerArrival@118, CustomerDeparture@119</td>
+        </tr>
+
+        <tr>
+          <td>51</td>
+
+          <td>118</td>
+
+          <td>queueLength: 2</td>
+
+          <td>CustomerDeparture@119, CustomerArrival@119</td>
+        </tr>
+
+        <tr>
+          <td>52</td>
+
+          <td>119</td>
+
+          <td>queueLength: 2</td>
+
+          <td>CustomerArrival@121, CustomerDeparture@123</td>
+        </tr>
+
+        <tr>
+          <td>53</td>
+
+          <td>121</td>
+
+          <td>queueLength: 3</td>
+
+          <td>CustomerDeparture@123, CustomerArrival@124</td>
+        </tr>
+
+        <tr>
+          <td>54</td>
+
+          <td>123</td>
+
+          <td>queueLength: 2</td>
+
+          <td>CustomerArrival@124, CustomerDeparture@126</td>
+        </tr>
+
+        <tr>
+          <td>55</td>
+
+          <td>124</td>
+
+          <td>queueLength: 3</td>
+
+          <td>CustomerArrival@125, CustomerDeparture@126</td>
+        </tr>
+
+        <tr>
+          <td>56</td>
+
+          <td>125</td>
+
+          <td>queueLength: 4</td>
+
+          <td>CustomerDeparture@126, CustomerArrival@128</td>
+        </tr>
+
+        <tr>
+          <td>57</td>
+
+          <td>126</td>
+
+          <td>queueLength: 3</td>
+
+          <td>CustomerArrival@128, CustomerDeparture@128</td>
+        </tr>
+
+        <tr>
+          <td>58</td>
+
+          <td>128</td>
+
+          <td>queueLength: 3</td>
+
+          <td>CustomerArrival@129, CustomerDeparture@131</td>
+        </tr>
+
+        <tr>
+          <td>59</td>
+
+          <td>129</td>
+
+          <td>queueLength: 4</td>
+
+          <td>CustomerDeparture@131, CustomerArrival@133</td>
+        </tr>
+
+        <tr>
+          <td>60</td>
+
+          <td>131</td>
+
+          <td>queueLength: 3</td>
+
+          <td>CustomerArrival@133, CustomerDeparture@135</td>
+        </tr>
+
+        <tr>
+          <td>61</td>
+
+          <td>133</td>
+
+          <td>queueLength: 4</td>
+
+          <td>CustomerDeparture@135, CustomerArrival@137</td>
+        </tr>
+
+        <tr>
+          <td>62</td>
+
+          <td>135</td>
+
+          <td>queueLength: 3</td>
+
+          <td>CustomerArrival@137, CustomerDeparture@137</td>
+        </tr>
+
+        <tr>
+          <td>63</td>
+
+          <td>137</td>
+
+          <td>queueLength: 3</td>
+
+          <td>CustomerArrival@139, CustomerDeparture@141</td>
+        </tr>
+
+        <tr>
+          <td>64</td>
+
+          <td>139</td>
+
+          <td>queueLength: 4</td>
+
+          <td>CustomerDeparture@141, CustomerArrival@142</td>
+        </tr>
+
+        <tr>
+          <td>65</td>
+
+          <td>141</td>
+
+          <td>queueLength: 3</td>
+
+          <td>CustomerArrival@142, CustomerDeparture@144</td>
+        </tr>
+
+        <tr>
+          <td>66</td>
+
+          <td>142</td>
+
+          <td>queueLength: 4</td>
+
+          <td>CustomerDeparture@144, CustomerArrival@147</td>
+        </tr>
+
+        <tr>
+          <td>67</td>
+
+          <td>144</td>
+
+          <td>queueLength: 3</td>
+
+          <td>CustomerArrival@147, CustomerDeparture@148</td>
+        </tr>
+
+        <tr>
+          <td>68</td>
+
+          <td>147</td>
+
+          <td>queueLength: 4</td>
+
+          <td>CustomerDeparture@148, CustomerArrival@148</td>
+        </tr>
+
+        <tr>
+          <td>69</td>
+
+          <td>148</td>
+
+          <td>queueLength: 4</td>
+
+          <td>CustomerArrival@149, CustomerDeparture@151</td>
+        </tr>
+
+        <tr>
+          <td>70</td>
+
+          <td>149</td>
+
+          <td>queueLength: 5</td>
+
+          <td>CustomerDeparture@151, CustomerArrival@151</td>
+        </tr>
+
+        <tr>
+          <td>...</td>
+
+          <td>...</td>
+
+          <td>...</td>
+
+          <td>...</td>
+        </tr>
+      </tbody>
+    </table></section><section><h4>2.2.2. Object Types</h4><p>Object types are
+  defined in the form of classes. Consider the object type <i>ServiceDesk</i>
+  defined in the following model: </p><figure><img alt="???"
+  src="../../../IDM1.svg" width="400" /></figure><p>The object type
   <i>ServiceDesk</i> is defined with an attribute
-  <code>queueLength</code>:</p><pre>var <strong>ServiceDesk</strong> = new cLASS({
-  Name: "ServiceDesk",
-  label: "Service desks",
-  supertypeName: "oBJECT",
-  properties: {
-    "<strong>queueLength</strong>": { range: "NonNegativeInteger", 
-        label: "Queue length", shortLabel: "qlen"}
+  <code>queueLength</code>:</p><pre>class <b>ServiceDesk</b> extends oBJECT {
+  constructor({ id, name, queueLength}) {
+    super( id, name);
+    this.<b>queueLength</b> = queueLength;
   }
-});</pre><p>Notice that, in OESjs, object types are defined as subtypes of the
-  pre-defined class <code>oBJECT</code>, from which they inherit an
-  integer-valued <code>id</code> attribute and an optional <code>name</code>
-  attribute. A property may have both a <code>label</code> and a
-  <code>shortLabel</code>. The <code>label</code> is used for user interface
-  fields, while the <code>shortLabel</code> is used in the simulation log,
-  which only logs those objects and properties that do have a
-  <i>shortLabel</i>.</p><p>The discrete random variable for modeling random
-  service durations, which samples integers between 2 and 4 from the empirical
-  probability distribution <i>Emp{2:0.3, 3:0.5, 4:0.2}</i>, is implemented as
-  a class-level ("static") function <code>serviceTime</code> in the
-  <i>ServiceDesk</i> class:</p><pre>ServiceDesk.<strong>serviceTime</strong> = function () {
-  return rand.frequency({"2":0.3, "3":0.5, "4":0.2});
-};</pre><p>You can <a href="https://sim4edu.com/sims/1" target="_top">run this
-  simulation model</a> and <a href="https://sim4edu.com/sims/1/Download.zip"
-  target="_top">download its code</a> from the sim4edu.com
-  website.</p></section><section><h4>2.2.3. Event Types</h4><p>We distinguish
-  between two kinds of events:</p><ol>
-      <li><em>caused</em> events are caused by other events occurring during a
+  static <b>serviceTime</b>() {
+    var r = math.getUniformRandomInteger( 0, 99);
+    if ( r &lt; 30) return 2;         // probability 0.3
+    else if ( r &lt; 80) return 3;    // probability 0.5
+    else return 4;                 // probability 0.2
+  }
+}
+ServiceDesk.<b>labels</b> = {"queueLength":"qLen"};</pre><p>Notice that, in
+  OESjs, object types are defined as subtypes of the pre-defined class
+  <code>oBJECT</code>, from which they inherit an integer-valued
+  <code>id</code> attribute and an optional <code>name</code> attribute. When
+  a property has a <code>label</code> (defined by the class-level property
+  <code>labels</code>), it is shown in the simulation log.</p><p>You can <a
+  href="https://sim4edu.com/sims/1" target="_top">run this simulation
+  model</a> from the project's GitHub
+  website.</p></section><section><h4>2.2.3. Event Types</h4><p>In OES, there
+  is a distinction between two kinds of events:</p><ol>
+      <li>events that are <em>caused</em> by other events occurring during a
       simulation run;</li>
 
       <li><em>exogenous</em> events seem to happen spontaneously, but may be
@@ -116,8 +436,8 @@ sim.model.f.<strong>serviceTime</strong> = function () {
   a <i>createNextEvent</i> method has to be defined for assigning all
   properties and returning the next event of that type. Whenever the simulator
   finds such a method, it will be invoked for creating corresponding exogenous
-  events.</p> <p>The second event type of this model, <i>Departure</i>, is an
-  example of a type of <i>caused</i> events:</p> <pre>var <strong>Departure</strong> = new cLASS({
+  events.</p><p>The second event type of this model, <i>Departure</i>, is an
+  example of a type of <i>caused</i> events:</p><pre>var <strong>Departure</strong> = new cLASS({
   Name: "Departure",
   label: "Customer departures",
   shortLabel: "Dep",  // for the log

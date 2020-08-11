@@ -10,6 +10,8 @@
 // Create initial objects/maps
 const sim = Object.create(null); // instead of {}
 sim.model = Object.create(null);
+sim.model.v = Object.create(null);
+sim.model.f = Object.create(null);
 sim.scenario = Object.create(null);
 
 /**

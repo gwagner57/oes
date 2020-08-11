@@ -108,13 +108,9 @@ ul.links li:hover {
   <chapter href="ChIntroOES/index.html">
     <section href="ChIntroOES/SimTime.html" samepage="true"/>
 
-    <section href="ChIntroOES/SimSpace.html"/>
-
     <section href="ChIntroOES/SimModels.html" samepage="true"/>
 
     <section href="ChIntroOES/SimScenarios.html" samepage="true"/>
-
-    <section href="ChIntroOES/SimConfigurations.html" samepage="true"/>
 
     <section href="ChIntroOES/SimStatistics.html" samepage="true"/>
 
