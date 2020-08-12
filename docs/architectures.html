@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+ <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <title>Core Simulators for Object Event Simulation</title>
+  <meta name="viewport" content="width=device-width, initial-scale = 1.0" />
+ <meta name="description"
+       content="Architectures for OES Core simulators"/>
+
+ <link rel="icon" type="image/png" href="img/favicon32px.png" sizes="32x32"/>
+ <link rel="icon" type="image/png" href="img/favicon16px.png" sizes="16x16"/>
+ 
+ <link rel="stylesheet" type="text/css" href="css/normalize.css" />
+ <link rel="stylesheet" type="text/css" href="css/prio-menu.css" />
+ <link rel="stylesheet" type="text/css" href="css/main.css" />
+</head>
+<body>
+ <header>
+  <div id="navigation" class="priority-nav">
+   <nav id="menu">
+    <ul id="menu-closed">
+     <li><a href="./index.html">Home</a></li>
+     <li><a href="./architectures.html">Simulator Architectures</a></li>
+     <li><a href="./examples.html">Simulation Examples</a></li>
+     <li><a href="./js/index.html">JavaScript</a></li>
+     <li><a href="./py/index.html">Python</a></li>
+     <li><a href="#menu-closed">&#215;</a></li>
+     <li><a href="#menu">&#9776;</a></li>
+    </ul>
+   </nav>
+  </div>
+ </header>
+ <main>
+  <h1>Simulator Architectures</h1>
+  <h2>OES Core 0</h2>
+  <p>OES Core 0 is the minimal architecture for an OE simulator, supporting</p>
+  <ul>
+   <li>model variables</li>
+   <li>object types and event types (including exogenous event types with recurrence/nextEvent functions)</li>
+   <li>next-event time progression</li>
+   <li>the uniform distribution as the only representative of probability distributions</li>
+   <li>simple simulation experiments with the (unseeded) random number generator provided by the host programming language.</li>
+  </ul>
+  <img src="./OES-Core0.svg">
+  <h2>OES Core 1</h2>
+  <p>OES Core 1 adds the following features to OES Core 0:</p>
+  <ul>
+   <li>fixed-increment time progression</li>
+   <li>a seedable random number generator</li>
+   <li>a set of sampling functions from various probability distributions (uniform, triangular, normal, exponential, etc.)</li>
+   <li>multiple scenarios per model</li>
+   <li>multiple experiment types per model</li>
+   <li>model parameters</li>
+   <li>parameter variation experiments</li>
+   <li>persistent storage of experiment results</li>
+  </ul>
+  <img src="./OES-Core1.svg">
+ </main>
+  <footer>
+   <p>© 2020 G. Wagner (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>), Brandenburg University of Technology, Germany</p>
+ </footer>
+</html>

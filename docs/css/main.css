@@ -100,12 +100,13 @@ body {
 body > header {
   font-size: 80%;
   text-align: center;
-  margin-bottom: 5em;
+  margin-bottom: 1em;
 }
 
 h1 {
   margin-top: 0.67em;
   margin-bottom: 0.33em;
+  text-align: center;
 }
 @media only screen and (min-width: 800px) {
   #supertitle {

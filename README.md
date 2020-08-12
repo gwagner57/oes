@@ -21,7 +21,7 @@ OES Core 0 is the minimal architecture for an OE simulator, supporting
 - the uniform distribution as the only representative of probability distributions
 - simple simulation experiments with the (unseeded) random number generator provided by the host programming language.
 
-<img src="./OES-Core0.svg">
+<img src="docs/OES-Core0.svg">
 
 ## OES Core 1
 
@@ -36,4 +36,4 @@ OES Core 1 adds the following features to OES Core 0:
 - parameter variation experiments
 - persistent storage of experiment results 
 
-<img src="./OES-Core1.svg">
+<img src="docs/OES-Core1.svg">

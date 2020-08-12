@@ -10,4 +10,4 @@ class ServiceDesk extends oBJECT {
     else return 4;                 // probability 0.20
   }
 }
-ServiceDesk.labels = {"waitingCustomers":"qLen"};
+ServiceDesk.labels = {"queueLength":"qLen"};

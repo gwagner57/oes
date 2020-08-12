@@ -1,6 +1,6 @@
 // load general framework code
 self.importScripts("../lib/seedrandom.min.js", "../lib/rand.js", "../lib/EventList.js", "../lib/math.js",
-    "../OES-JS-Core1/OES-Foundation.js", "../OES-JS-Core1/simulator.js");
+    "../OESjs-Core1/OES-Foundation.js", "../OESjs-Core1/simulator.js");
 // load simulation-example-specific code
 self.importScripts("simulation.js");
 if (sim.model.objectTypes) {
@@ -21,7 +21,7 @@ onmessage = function (e) {
     sim.runExperiment( sim.experimentType);
   } else if (e.data.simToRun) {
     // assign alternative scenario, if selected
-    if (e.data.scenarioNo !== undefined) {
+    if (e.data.scenarioNo !== undefined && sim.scenarios[e.data.scenarioNo]) {
       scenario = sim.scenarios[e.data.scenarioNo];
       // copy simulation end time from base scenario if not provided
       if (!scenario.durationInSimTime && !scenario.durationInSimSteps && !scenario.durationInCpuTime) {
