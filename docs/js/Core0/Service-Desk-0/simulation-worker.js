@@ -1,5 +1,5 @@
 // load general framework code
-self.importScripts("../../lib/EventList.js", "../../lib/math.js",
+self.importScripts("../lib/EventList.js", "../lib/math.js",
     "../OES-js-Core0/OES-Foundation.js", "../OES-js-Core0/simulator.js");
 // load simulation-example-specific code
 self.importScripts("simulation.js");
