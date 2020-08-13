@@ -2,80 +2,133 @@
 <html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="UTF-8" />
+
     <title>Using the Simulation Log</title>
   </head>
-  <body><p>The OESjs simulator can generate a simulation log, which allows to inspect the evolving states of a simulation run. Inspecting the
-  simulation log can help to understand the dynamics of a model, or it can be used for finding logical flaws in it.</p><p>The contents of the
-  simulation log can be controlled by defining <em>short labels</em> for those objects and object properties as well as event types that we want to
-  see in the log, using the <code>shortLabel</code> attribute. For instance, in the case of the <a href="https://sim4edu.com/sims/1"
-  target="_top">service desk model</a>, defining the short labels "sd1" for the service desk object, "qLen" for the <code>queueLength</code> property,
-  "Arr" for the <code>Arrival</code> event type and "Dep" for the <code>Departure</code> event type leads to the following simulation log:</p><table
-      border="1" style="border-spacing:3px;width:100%;">
+
+  <body><p>The OESjs-Core0 simulator can generate a simulation log, which
+  allows to inspect the evolving states of a simulation run. Inspecting the
+  simulation log can help to understand the dynamics of a model, or it can be
+  used for finding logical flaws in it.</p><p>The contents of the simulation
+  log can be controlled by defining <em>labels</em> for those object
+  properties that are to be displayed in the log. For instance, in the case of
+  the <a
+  href="https://gwagner57.github.io/oes/js/Core0/Service-Desk-1/index.html"
+  target="_top">Service-Desk-1</a> model, a label "qLen" is defined for the
+  <code>queueLength</code> property of <i>ServiceDesk</i> objects by
+  setting</p><pre>ServiceDesk.labels = {"queueLength":"qLen"};</pre><p> This
+  results in the following simulation log:</p><table border="1">
       <thead>
         <tr>
-          <th colspan="3" style="text-align:center;">Simulation Log</th>
-        </tr>
-        <tr>
-          <th style="text-align:center;">Time</th>
-          <th style="text-align:center;">System State</th>
-          <th style="text-align:center;">Future Events</th>
+          <th>Step</th>
+
+          <th>Time</th>
+
+          <th>System State</th>
+
+          <th>Future Events</th>
         </tr>
       </thead>
+
       <tbody>
         <tr>
           <td>0</td>
-          <td>sd1{ qLen: 0}</td>
-          <td>Arr@1</td>
+
+          <td>0</td>
+
+          <td>ServiceDesk-1{ qLen: 0}</td>
+
+          <td>CustomerArrival@1</td>
         </tr>
+
         <tr>
           <td>1</td>
-          <td>sd1{ qLen: 1}</td>
-          <td>Arr@4, Dep@4</td>
+
+          <td>1</td>
+
+          <td>ServiceDesk-1{ qLen: 1}</td>
+
+          <td>CustomerDeparture@5, CustomerArrival@6</td>
         </tr>
+
+        <tr>
+          <td>2</td>
+
+          <td>5</td>
+
+          <td>ServiceDesk-1{ qLen: 0}</td>
+
+          <td>CustomerArrival@6</td>
+        </tr>
+
+        <tr>
+          <td>3</td>
+
+          <td>6</td>
+
+          <td>ServiceDesk-1{ qLen: 1}</td>
+
+          <td>CustomerArrival@7, CustomerDeparture@10</td>
+        </tr>
+
         <tr>
           <td>4</td>
-          <td>sd1{ qLen: 1}</td>
-          <td>Arr@5, Dep@8</td>
+
+          <td>7</td>
+
+          <td>ServiceDesk-1{ qLen: 2}</td>
+
+          <td>CustomerDeparture@10, CustomerArrival@10</td>
         </tr>
+
         <tr>
           <td>5</td>
-          <td>sd1{ qLen: 2}</td>
-          <td>Dep@8, Arr@10</td>
+
+          <td>10</td>
+
+          <td>ServiceDesk-1{ qLen: 2}</td>
+
+          <td>CustomerArrival@12, CustomerDeparture@13</td>
         </tr>
+
+        <tr>
+          <td>6</td>
+
+          <td>12</td>
+
+          <td>ServiceDesk-1{ qLen: 3}</td>
+
+          <td>CustomerDeparture@13, CustomerArrival@16</td>
+        </tr>
+
+        <tr>
+          <td>7</td>
+
+          <td>13</td>
+
+          <td>ServiceDesk-1{ qLen: 2}</td>
+
+          <td>CustomerArrival@16, CustomerDeparture@16</td>
+        </tr>
+
         <tr>
           <td>8</td>
-          <td>sd1{ qLen: 1}</td>
-          <td>Arr@10, Dep@12</td>
-        </tr>
-        <tr>
-          <td>10</td>
-          <td>sd1{ qLen: 2}</td>
-          <td>Dep@12, Arr@12</td>
-        </tr>
-        <tr>
-          <td>12</td>
-          <td>sd1{ qLen: 2}</td>
-          <td>Arr@15, Dep@16</td>
-        </tr>
-        <tr>
-          <td>15</td>
-          <td>sd1{ qLen: 3}</td>
-          <td>Dep@16, Arr@21</td>
-        </tr>
-        <tr>
+
           <td>16</td>
-          <td>sd1{ qLen: 2}</td>
-          <td>Dep@18, Arr@21</td>
+
+          <td>ServiceDesk-1{ qLen: 2}</td>
+
+          <td>CustomerDeparture@19, CustomerArrival@21</td>
         </tr>
+
         <tr>
-          <td>18</td>
-          <td>sd1{ qLen: 1}</td>
-          <td>Dep@20, Arr@21</td>
-        </tr>
-        <tr>
-          <td>20</td>
-          <td>sd1{ qLen: 0}</td>
-          <td>Arr@21</td>
+          <td>9</td>
+
+          <td>19</td>
+
+          <td>ServiceDesk-1{ qLen: 1}</td>
+
+          <td>CustomerArrival@21, CustomerDeparture@23</td>
         </tr>
       </tbody>
     </table></body>

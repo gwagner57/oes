@@ -2,129 +2,215 @@
 <html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="UTF-8" />
+
     <title>Making a Simulation Design Model</title>
   </head>
-  <body><p>When making a simulation design based on the conceptual model of the system under investigation, wee need to abstract away from many items
-  of the conceptual model for obtaining a sufficiently simple design. The right degree of abstraction depends on the purpose of the model. But
-  abstracting away from too many things may make a model too unnatural and not sufficiently generic, implying that it cannot be easily extended to
-  model additional features (such as more than one service desk).</p><p>In our example, the purpose of the simulation model is to compute the
-  <em>maximum queue length</em> and possibly also the <em>service utilization</em>. So, we may abstract away from the following object types:</p><ul>
-      <li><em>customers</em>: we don't need any information about individual customers.</li>
-      <li><em>waiting lines</em>: we don't need to know who is next, it's sufficient to know the length of the queue.</li>
-      <li><em>service clerks</em>: we don't need any information about the service clerk(s).</li>
-    </ul><p>Notice that, for simplicity, we consider the customer that is currently being served to be part of the queue. In this way, in the
-  simulation program, we can check if the service desk is busy by testing if the length of the queue is greater than 0. In fact, for being able to
-  compute the service utilization and the maximum queue length, the queue length is the only relevant state variable.</p><p>State variables can be
-  modeled in the simple form of <em>global variables</em> or in the form of <em>attributes</em> of suitable object types. Consequently, the simplest
-  model we can make for the given problem, called <em>ServiceDesk-0</em>, has only one global variable: <i>queueLength</i>. But, as an alternative,
-  more explicit, model, called <em>ServiceDesk-1</em>, we will also model the system state in terms of (one or more) <i>ServiceDesk</i> objects having
-  only one property: <i>queueLength</i>. As opposed to the simpler model defining <i>queueLength</i> as a global variable, this model allows defining
-  simulation scenarios with two or more service desks operating simultaneously.</p><p>We also look for opportunities to simplify our event model by
-  dropping event types that are not needed, e.g., because their events temporally coincide with events of another type. This is the case with
-  <em>service terminations</em> and <i>customer departure</i> events. Consequently, we can drop the event type <em>service
-  terminations</em>.</p><p>There are two situations when a new service can be started: either when the waiting line is empty and a new customer
-  arrives, or when the waiting line is not empty and a service terminates. Therefore, any <em>service start</em> event immediately follows either a
-  <i>customer arrival</i> or a <i>customer departure</i> event, and we may abstract away from <em>service start</em> events and drop the corresponding
-  event type from the design model.</p><p>So we only need to consider <i>customer arrival</i> and <i>customer departure</i> events, modeled with the
-  two event types <i>Arrival</i> and <i>Departure</i>.</p><p>The event type <i>Arrival</i> is an example of a type of <b>exogenous</b>
-  events,<a class="role-index-term">exogenous event</a> which are not caused by any causal regularity of the system under investigation and,
-  therefore, have to be modeled with a <b>recurrence</b><a class="role-index-term">recurrence</a> function that allows to compute the time of the next
-  occurrence of an event of that type. In OES, exogenous event types are a built-in concept such that an OES simulator takes care of creating the next
-  exogenous event whenever an event of that type is processed. This mechanism makes sure that there is a continuous stream of exogenous events
-  throughout a simulation run.</p><p>We also have to model the random variations of two variables: (1) the recurrence of (that is, the time in-between
-  two) customer arrival events and (2) the service duration. In a class model, such random variables<a class="role-index-term">random variable</a> can
-  be defined as special class-level ("static") operations, with a stereotype «rv», in the class to which they belong, as shown in the diagrams
-  below.</p><p>We model the recurrence of customer arrival events as a discrete random variable with a uniform distribution between 1 and 6 minutes,
-  which we express in the class diagram of the information design model by appending the symbolic expression <i>U{1-6}</i> within curly braces to the
-  operation declaration, following the UML syntax for property/method modifiers.</p><p>We model the <i>service time</i> random variable with an
-  empirical distribution of 2 minutes with probability 0.3, 3 minutes with probability 0.5 and 4 minutes with probability 0.2, using the symbolic
-  expression <i>Freq{ 2:0.3, 3:0.5, 4:0.2}</i>.</p><p>Computationally, object types and event types correspond to classes, either of an
-  object-oriented information model, such as a UML class diagram, or of a computer program written in an object-oriented programming language, such as
-  Java or JavaScript.</p><section><h4>1.2.1. ServiceDesk-0: Modeling <i>queueLength</i> as a global variable</h4><p>As discussed above, the simplest
-  model for the service desk problem with maximum queue length statistics (available in the Sim4edu library as <a href="https://sim4edu.com/sims/14"
-  target="_top">ServiceDesk-0</a>) has only one global variable: <i>queueLength</i>, which is a non-negative integer, and a global function for
-  computing the random service time, but no object type.</p><p>An information model for ServiceDesk-0 consists of a special class for defining model
-  variables and functions, and two classes for defining the event types <i>Arrival</i> and <i>Departure</i>, as shown in <a
-  href="#figServiceDesk0"></a>.</p><figure id="figServiceDesk0"><figcaption>An information design model for ServiceDesk-0</figcaption><div><img
-  alt="???" src="../IDM0.svg" width="360" /></div></figure><p>In addition to an information model, which captures the system's state structure, we
-  also need to make a process model that captures the dynamics of the service desk system. The dynamics of a system consists of events triggering
-  state changes and follow-up events. A process model can be expressed with the help of event rules, which define what happens when an event (of a
-  certain type) occurs, or, more specifically, which state changes and which follow-up events are caused by an event of that type.</p><p>Event rules
-  can be expressed with the help of a process model diagram or in pseudo-code, or in a simulation or programming language. The following <em>Event
-  Graph</em> provides a process design model for the ServiceDesk-0 simulation scenario. Circles represent events (or, more precisely, event types) and
-  arrows, which may be annotated with a delay expression, such as +serviceTime(), represent event scheduling relationships. An arrow with a
-  mini-diamond at its source end represents a conditional event scheduling relationship where the condition is expressed in brackets below or above
-  the arrow.</p><figure><figcaption>A process design model in the form of an Event Graph, where the state variable <i>Q</i> stands for
-  <i>queueLength</i></figcaption><div><img alt="???" src="../ServiceDesk0_EG.svg" width="360" /></div></figure><p>Event Graphs have originally been
-  proposed by L. Schruben (<a href="https://dl.acm.org/citation.cfm?id=358460">1983</a>). Their visual syntax has been improved and harmonized with
-  BPMN in (<a href="https://oxygen.informatik.tu-cottbus.de/publications/wagner/SummerSim19-ExtendedEventGraphs.pdf">Wagner 2019</a>).</p><p>The
-  following table shows the two event rules defined by the above Event Graph, expressed in pseudo-code.</p><table border="1"
+
+  <body><p>When making a simulation design based on the conceptual model of
+  the system under investigation, wee need to abstract away from many items of
+  the conceptual model for obtaining a sufficiently simple design. The right
+  degree of abstraction depends on the purpose of the model. But abstracting
+  away from too many things may make a model too unnatural and not
+  sufficiently generic, implying that it cannot be easily extended to model
+  additional features (such as more than one service desk).</p><p>In our
+  example, the purpose of the simulation model is to compute the <em>maximum
+  queue length</em> and possibly also the <em>service utilization</em>. So, we
+  may abstract away from the following object types:</p><ul>
+      <li><em>customers</em>: we don't need any information about individual
+      customers.</li>
+
+      <li><em>waiting lines</em>: we don't need to know who is next, it's
+      sufficient to know the length of the queue.</li>
+
+      <li><em>service clerks</em>: we don't need any information about the
+      service clerk(s).</li>
+    </ul><p>Notice that, for simplicity, we consider the customer that is
+  currently being served to be part of the queue. In this way, in the
+  simulation program, we can check if the service desk is busy by testing if
+  the length of the queue is greater than 0. In fact, for being able to
+  compute the service utilization and the maximum queue length, the queue
+  length is the only relevant state variable.</p><p>State variables can be
+  modeled in the simple form of <em>global variables</em> or in the form of
+  <em>attributes</em> of suitable object types. Consequently, the simplest
+  model we can make for the given problem, called <em>ServiceDesk-0</em>, has
+  only one global variable: <i>queueLength</i>. But, as an alternative, more
+  explicit, model, called <em>ServiceDesk-1</em>, we will also model the
+  system state in terms of (one or more) <i>ServiceDesk</i> objects having
+  only one property: <i>queueLength</i>. As opposed to the simpler model
+  defining <i>queueLength</i> as a global variable, this model allows defining
+  simulation scenarios with two or more service desks operating
+  simultaneously.</p><p>We also look for opportunities to simplify our event
+  model by dropping event types that are not needed, e.g., because their
+  events temporally coincide with events of another type. This is the case
+  with <em>service terminations</em> and <i>customer departure</i> events.
+  Consequently, we can drop the event type <em>service
+  terminations</em>.</p><p>There are two situations when a new service can be
+  started: either when the waiting line is empty and a new customer arrives,
+  or when the waiting line is not empty and a service terminates. Therefore,
+  any <em>service start</em> event immediately follows either a <i>customer
+  arrival</i> or a <i>customer departure</i> event, and we may abstract away
+  from <em>service start</em> events and drop the corresponding event type
+  from the design model.</p><p>So we only need to consider <i>customer
+  arrival</i> and <i>customer departure</i> events, modeled with the two event
+  types <i>Arrival</i> and <i>Departure</i>.</p><p>The event type
+  <i>Arrival</i> is an example of a type of <b>exogenous</b> events,<a
+  class="role-index-term">exogenous event</a> which are not caused by any
+  causal regularity of the system under investigation and, therefore, have to
+  be modeled with a <b>recurrence</b><a class="role-index-term">recurrence</a>
+  function that allows to compute the time of the next occurrence of an event
+  of that type. In OES, exogenous event types are a built-in concept such that
+  an OES simulator takes care of creating the next exogenous event whenever an
+  event of that type is processed. This mechanism makes sure that there is a
+  continuous stream of exogenous events throughout a simulation run.</p><p>We
+  also have to model the random variations of two variables: (1) the
+  recurrence of (that is, the time in-between two) customer arrival events and
+  (2) the service duration. In a class model, such random variables<a
+  class="role-index-term">random variable</a> can be defined as special
+  class-level ("static") operations, with a stereotype «rv», in the class to
+  which they belong, as shown in the diagrams below.</p><p>We model the
+  recurrence of customer arrival events as a discrete random variable with a
+  uniform distribution between 1 and 6 minutes, which we express in the class
+  diagram of the information design model by appending the symbolic expression
+  <i>U{1-6}</i> within curly braces to the operation declaration, following
+  the UML syntax for property/method modifiers.</p><p>We model the <i>service
+  time</i> random variable with an empirical distribution of 2 minutes with
+  probability 0.3, 3 minutes with probability 0.5 and 4 minutes with
+  probability 0.2, using the symbolic expression <i>Freq{ 2:0.3, 3:0.5,
+  4:0.2}</i>.</p><p>Computationally, object types and event types correspond
+  to classes, either of an object-oriented information model, such as a UML
+  class diagram, or of a computer program written in an object-oriented
+  programming language, such as Java or
+  JavaScript.</p><section><h4>1.2.1. ServiceDesk-0: Modeling
+  <i>queueLength</i> as a global variable</h4><p>As discussed above, the
+  simplest model for the service desk problem with maximum queue length
+  statistics (available in the Sim4edu library as <a
+  href="https://sim4edu.com/sims/14" target="_top">ServiceDesk-0</a>) has only
+  one global variable: <i>queueLength</i>, which is a non-negative integer,
+  and a global function for computing the random service time, but no object
+  type.</p><p>An information model for ServiceDesk-0 consists of a special
+  class for defining model variables and functions, and two classes for
+  defining the event types <i>Arrival</i> and <i>Departure</i>, as shown in <a
+  href="#figServiceDesk0"></a>.</p><figure id="figServiceDesk0"><figcaption>An
+  information design model for ServiceDesk-0</figcaption><div><img alt="???"
+  src="../IDM0.svg" width="360" /></div></figure><p>In addition to an
+  information model, which captures the system's state structure, we also need
+  to make a process model that captures the dynamics of the service desk
+  system. The dynamics of a system consists of events triggering state changes
+  and follow-up events. A process model can be expressed with the help of
+  event rules, which define what happens when an event (of a certain type)
+  occurs, or, more specifically, which state changes and which follow-up
+  events are caused by an event of that type.</p><p>Event rules can be
+  expressed with the help of a process model diagram or in pseudo-code, or in
+  a simulation or programming language. The following <em>Event Graph</em>
+  provides a process design model for the ServiceDesk-0 simulation scenario.
+  Circles represent events (or, more precisely, event types) and arrows, which
+  may be annotated with a delay expression, such as +serviceTime(), represent
+  event scheduling relationships. An arrow with a mini-diamond at its source
+  end represents a conditional event scheduling relationship where the
+  condition is expressed in brackets below or above the
+  arrow.</p><figure><figcaption>A process design model in the form of an Event
+  Graph, where the state variable <i>Q</i> stands for
+  <i>queueLength</i></figcaption><div><img alt="???"
+  src="../ServiceDesk0_EG.svg" width="360" /></div></figure><p>Event Graphs
+  have originally been proposed by L. Schruben (<a
+  href="https://dl.acm.org/citation.cfm?id=358460">1983</a>). Their visual
+  syntax has been improved and harmonized with BPMN in (<a
+  href="https://oxygen.informatik.tu-cottbus.de/publications/wagner/SummerSim19-ExtendedEventGraphs.pdf">Wagner
+  2019</a>).</p><p>The following table shows the two event rules defined by
+  the above Event Graph, expressed in pseudo-code.</p><table border="1"
       style="border-spacing:3px;width:100%;">
       <thead>
         <tr>
           <td style="text-align:center;"><p><b>ON (event type)</b></p></td>
+
           <td style="text-align:center;"><p><b>DO (event routine)</b></p></td>
         </tr>
       </thead>
+
       <tbody>
         <tr>
           <td><p>Arrival @ t</p></td>
+
           <td><pre>INCREMENT queueLength
 IF queueLength = 1 THEN
   sTime := serviceTime()
   SCHEDULE Departure @ (t + sTime)
 </pre></td>
         </tr>
+
         <tr>
           <td><p>Departure @ t</p></td>
+
           <td><pre>DECREMENT queueLength
 IF queueLength &gt; 0 THEN
   sTime := serviceTime()
   SCHEDULE Departure @ (t + sTime)</pre></td>
         </tr>
       </tbody>
-    </table></section> <section><h4>1.2.2. ServiceDesk-1: Modeling <i>queueLength</i> as an attribute</h4><p>In our extended model (<a
-  href="https://sim4edu.com/sims/1" target="_top">ServiceDesk-1</a>) we represent the state variable <i>queueLength</i> as an attribute of an object
-  type <i>ServiceDesk</i>. This results in a model with three classes, the object class <i>ServiceDesk</i> with an attribute <i>queueLength</i>, and
-  the event classes <i>Arrival</i> and <i>Departure</i>, both with a reference property <i>serviceDesk</i> for referencing the service desk at which
-  an event occurs. When we also want to compute the service utilization statistics, we need to add an attribute <i>serviceTime</i> to the
-  <i>Departure</i> class for being able to update the service utilization statistics when a customer departs.</p><p>Both event types, <i>Arrival</i>
-  and <i>Departure</i>, now have a many-to-one association with the object type <i>ServiceDesk</i>. This expresses the fact that any such event occurs
-  at a particular service desk, which participates in the event. This association is implemented in the form of a reference property
-  <i>serviceDesk</i> in each of the two event types, as shown in <a href="#figServiceDesk1"></a>.</p><figure id="figServiceDesk1"><figcaption>An
-  information design model for ServiceDesk-1</figcaption><div><img alt="???" src="../IDM1.svg" width="400" /></div></figure><p>In addition to an
-  information model, we need to make a process model, which captures the dynamics of the service desk system consisting of arrival and departure
-  events triggering state changes and follow-up events. The following <em>DPMN Process Diagram</em> provides a process design model for the
-  ServiceDesk-1 simulation scenario. As in Event Graphs, circles represent event types and arrows represent event scheduling relationships. DPMN
-  extends Event Graphs by adding object rectangles, attached to event circles, representing state change patterns for objects that are affected by
-  events of that type.</p><figure><figcaption>A process design model in the form of a DPMN Process Diagram</figcaption><div><img alt="???"
-  src="../ServiceDesk-1_PDM.svg" width="600" /></div></figure><p>DPMN has been proposed by Wagner (<a
-  href="https://articles.jsime.org/1/1/Modeling-for-Simulation-Part-I">2018</a>).</p><p>The following table shows the two event rules defined by the
-  DPMN diagram, which now account for the fact that both types of events occur at a particular service desk that is referenced by the event expression
-  parameter <i>sd</i>.</p><table border="1" style="border-spacing:3px;width:100%;">
+    </table></section> <section><h4>1.2.2. ServiceDesk-1: Modeling
+  <i>queueLength</i> as an attribute</h4><p>In our extended model (<a
+  href="https://sim4edu.com/sims/1" target="_top">ServiceDesk-1</a>) we
+  represent the state variable <i>queueLength</i> as an attribute of an object
+  type <i>ServiceDesk</i>. This results in a model with three classes, the
+  object class <i>ServiceDesk</i> with an attribute <i>queueLength</i>, and
+  the event classes <i>Arrival</i> and <i>Departure</i>, both with a reference
+  property <i>serviceDesk</i> for referencing the service desk at which an
+  event occurs. When we also want to compute the service utilization
+  statistics, we need to add an attribute <i>serviceTime</i> to the
+  <i>Departure</i> class for being able to update the service utilization
+  statistics when a customer departs.</p><p>Both event types, <i>Arrival</i>
+  and <i>Departure</i>, now have a many-to-one association with the object
+  type <i>ServiceDesk</i>. This expresses the fact that any such event occurs
+  at a particular service desk, which participates in the event. This
+  association is implemented in the form of a reference property
+  <i>serviceDesk</i> in each of the two event types, as shown in <a
+  href="#figServiceDesk1"></a>.</p><figure id="figServiceDesk1"><figcaption>An
+  information design model for ServiceDesk-1</figcaption><div><img alt="???"
+  src="../IDM1.svg" width="400" /></div></figure><p>In addition to an
+  information model, we need to make a process model, which captures the
+  dynamics of the service desk system consisting of arrival and departure
+  events triggering state changes and follow-up events. The following <em>DPMN
+  Process Diagram</em> provides a process design model for the ServiceDesk-1
+  simulation scenario. As in Event Graphs, circles represent event types and
+  arrows represent event scheduling relationships. DPMN extends Event Graphs
+  by adding object rectangles, attached to event circles, representing state
+  change patterns for objects that are affected by events of that
+  type.</p><figure><figcaption>A process design model in the form of a DPMN
+  Process Diagram</figcaption><div><img alt="???"
+  src="../ServiceDesk-1_PDM.svg" width="600" /></div></figure><p>DPMN has been
+  proposed by Wagner (<a
+  href="https://articles.jsime.org/1/1/Modeling-for-Simulation-Part-I">2018</a>).</p><p>The
+  following table shows the two event rules defined by the DPMN diagram, which
+  now account for the fact that both types of events occur at a particular
+  service desk that is referenced by the event expression parameter
+  <i>sd</i>.</p><table border="1" style="border-spacing:3px;width:100%;">
       <thead>
         <tr>
           <td style="text-align:center;"><p><b>ON (event type)</b></p></td>
+
           <td style="text-align:center;"><p><b>DO (event routine)</b></p></td>
         </tr>
       </thead>
+
       <tbody>
         <tr>
           <td><p>Arrival( sd) @ t</p><p>with sd : ServiceDesk</p></td>
+
           <td><pre>INCREMENT sd.queueLength
 IF sd.queueLength = 1 THEN
   sTime := ServiceDesk.serviceTime()
   SCHEDULE Departure( sTime, sd) @(t + sTime)
 </pre></td>
         </tr>
+
         <tr>
           <td><p>Departure( sd) @ t</p><p>with sd : ServiceDesk</p></td>
+
           <td><pre>DECREMENT sd.queueLength
 IF sd.queueLength &gt; 0 THEN
   sTime := ServiceDesk.serviceTime()
   SCHEDULE Departure( sTime, sd) @(t + sTime)</pre></td>
         </tr>
       </tbody>
-    </table><p>In the next section, we discuss how to implement this simple model of a service desk system with the OESjs simulation
-  framework.</p></section></body>
+    </table></section></body>
 </html>

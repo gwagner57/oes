@@ -29,7 +29,9 @@ sim.model.setupStatistics = function () {
 /*******************************************************
  Define an experiment (type)
 ********************************************************/
+/*
 sim.experimentType = {
   title: `Simple Experiment with 10 replications, each running for ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}.`,
   nmrOfReplications: 10
 };
+*/

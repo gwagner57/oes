@@ -2,90 +2,207 @@
 <html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="UTF-8" />
+
     <title>Simulation Experiments</title>
   </head>
-  <body><p>There are different types of simulation experiments. In a <em>simple experiment</em>, a simulation scenario is run repeatedly by defining a
-  number of replications (iterations) for being able to compute average statistics.</p><p>In a <em>parameter variation experiment</em>, several
-  variants of a simulation scenario (called <em>experiment scenarios</em>), are defined by defining value sets for certain model variables (the
-  <em>experiment parameters</em>), such that a parameter variation experiment run consists of a set of experiment scenario runs, one for each
-  combination of parameter values.</p><p>When running an experiment, the resulting statistics data are stored in a database, which allows looking them
-  up later on or exporting them to data analysis tools (such as Microsoft Excel and RStudio)</p><section><h4>2.6.1. <em>Simple
-  Experiments</em></h4><p>A simple experiment is defined with a <code>sim.experiment</code> record on top of a scenario by defining (1) the number of
-  <em>replications</em> and (2) possibly a list of <em>seed values</em>, one for each replication. The following code shows an example of a simple
-  experiment definition:</p><pre class="role-listing-1">sim.experiment.<b>replications</b> = 5;
-sim.experiment.<b>seeds</b> = [1234, 2345, 3456, 4567, 5678];</pre><p>Running this simple experiment means running the underlying scenario 5 times,
-  each time with another random seed, as specified by the list of seeds. The resulting statistics are composed of the statistics for each replication
-  complemented with a summary statistics listing averages, standard deviations, min/max values and confidence intervals.</p><p>When no seeds are defined, 
-  the experiment is run with implicit random seeds using JavaScript's built-in random
-  number generator, which implies that experiment runs are not reproducible.</p></section><section><h4>2.6.2. <em>Parameter Variation
-  Experiments</em></h4><p>A parameter variation experiment is defined with (1) a number of <em>replications</em>, (2) a list of <em>seed values</em>
-  (one for each replication), and (3) one or more experiment parameters. The following code shows an example of a parameter variation experiment
-  definition:</p><pre class="role-listing-1">sim.experiment.replications = 5;
-sim.experiment.seeds = [1234, 2345, 3456, 4567, 5678];
-sim.experiment.<b>parameterDefs</b> = [
-  {name:"arrivalEventRate", values:[0.4, 0.5, 0.6]}
-];</pre><p>Notice that this experiment definition defines three experiment scenarios: the 1st one with a value of 0.4 for the model variable
-  <i>arrivalEventRate</i>, the 2nd one with a value of 0.5 and the 3rd one with a value of 0.6. Running this parameter variation experiment means
-  running each of the 3 experiment scenarios 5 times (each time with another random seed, as specified by the list of seeds). The resulting
-  statistics, as shown in the following table, is computed by averaging all statistics variables defined for the given model. </p><table border="1"
-      class="expStatistics" id="simLogTbl">
+
+  <body><p>There are different types of simulation experiments. In the
+  simplest case, a simulation scenario is run repeatedly for being able to
+  compute aggregate statistics.</p><p>An experiment type is defined for a
+  given simulation model and an experiment of that type is run on top of a
+  given simulation scenario for that model.</p><p>A simple experiment type is
+  defined with a <code>sim.experimentType</code> record on top of a model by
+  defining (1) the number of <em>replications</em> and (2) possibly a list of
+  <em>seed values</em>, one for each replication. The following code shows an
+  example of a simple experiment type definition:</p><pre
+  class="role-listing-1">sim.experimentType = {
+  title: "Simple Experiment with 10 replications, each running for 1000 time units (days)",
+  nmrOfReplications: 10
+};</pre><p>Running this simple experiment means running the underlying
+  scenario 10 times. The resulting statistics are composed of the statistics
+  for each replication complemented with summary statistics listing averages,
+  standard deviations, min/max values and confidence intervals, as shown in
+  the following table:</p><table border="1" style="overflow-x: auto;">
       <thead>
         <tr>
-          <th colspan="5">Experiment Log</th>
+          <th colspan="4">Experiment Results</th>
         </tr>
+
         <tr>
-          <th rowspan="2">Experiment scenario</th>
-          <th rowspan="2">Parameter values</th>
+          <th rowspan="2">Replication</th>
+
           <th colspan="3">Statistics</th>
         </tr>
+
         <tr>
-          <th>Arrived customers</th>
-          <th>Departed customers</th>
-          <th>Time in system [min]</th>
+          <th>arrivedCustomers</th>
+
+          <th>departedCustomers</th>
+
+          <th>maxQueueLength</th>
         </tr>
       </thead>
-      <tbody id="simLog">
-        <tr>
-          <td>0</td>
-          <td>0.4</td>
-          <td>4,032</td>
-          <td>3,981</td>
-          <td>90.7</td>
-        </tr>
+
+      <tbody>
         <tr>
           <td>1</td>
-          <td>0.5</td>
-          <td>5,041</td>
-          <td>4,788</td>
-          <td>358.6</td>
+
+          <td>285</td>
+
+          <td>283</td>
+
+          <td>7</td>
         </tr>
+
         <tr>
           <td>2</td>
-          <td>0.6</td>
-          <td>6,072</td>
-          <td>4,926</td>
-          <td>1,011.6</td>
+
+          <td>274</td>
+
+          <td>274</td>
+
+          <td>6</td>
+        </tr>
+
+        <tr>
+          <td>3</td>
+
+          <td>285</td>
+
+          <td>285</td>
+
+          <td>4</td>
+        </tr>
+
+        <tr>
+          <td>4</td>
+
+          <td>287</td>
+
+          <td>286</td>
+
+          <td>5</td>
+        </tr>
+
+        <tr>
+          <td>5</td>
+
+          <td>284</td>
+
+          <td>284</td>
+
+          <td>6</td>
+        </tr>
+
+        <tr>
+          <td>6</td>
+
+          <td>300</td>
+
+          <td>299</td>
+
+          <td>4</td>
+        </tr>
+
+        <tr>
+          <td>7</td>
+
+          <td>288</td>
+
+          <td>286</td>
+
+          <td>5</td>
+        </tr>
+
+        <tr>
+          <td>8</td>
+
+          <td>286</td>
+
+          <td>284</td>
+
+          <td>4</td>
+        </tr>
+
+        <tr>
+          <td>9</td>
+
+          <td>286</td>
+
+          <td>285</td>
+
+          <td>4</td>
+        </tr>
+
+        <tr>
+          <td>10</td>
+
+          <td>295</td>
+
+          <td>293</td>
+
+          <td>6</td>
+        </tr>
+
+        <tr>
+          <td>Average</td>
+
+          <td>287</td>
+
+          <td>285.9</td>
+
+          <td>5.1</td>
+        </tr>
+
+        <tr>
+          <td>Std.dev.</td>
+
+          <td>6.848</td>
+
+          <td>6.506</td>
+
+          <td>1.101</td>
+        </tr>
+
+        <tr>
+          <td>Minimum</td>
+
+          <td>274</td>
+
+          <td>274</td>
+
+          <td>4</td>
+        </tr>
+
+        <tr>
+          <td>Maximum</td>
+
+          <td>300</td>
+
+          <td>299</td>
+
+          <td>7</td>
+        </tr>
+
+        <tr>
+          <td>CI Lower</td>
+
+          <td>282.9</td>
+
+          <td>281.9</td>
+
+          <td>4.4</td>
+        </tr>
+
+        <tr>
+          <td>CI Upper</td>
+
+          <td>291</td>
+
+          <td>289.6</td>
+
+          <td>5.7</td>
         </tr>
       </tbody>
-    </table><p>An experiment parameter must have the same name as the model variable to which it refers. It defines a set of values for this model
-  variable, either using a <code>values</code> field or a combination of a <code>startValue</code> and <code>endValue</code> field (and
-  <code>stepSize</code> for a non-default increment value) as in the following example:</p><pre class="role-listing-1">sim.experiment.replications = 5;
-sim.experiment.seeds = [1234, 2345, 3456, 4567, 5678];
-sim.experiment.parameterDefs = [
-  {name:"arrivalEventRate", <b>startValue</b>:0.4, <b>endValue</b>:0.6)}
-];</pre><p>There are a few further settings for controlling the storage of experiment statistics. An experiment should have an <code>id</code> value
-  and a <code>title</code>. In addition, it should have a sequence number relative to the simulation scenario for which it is defined. These settings
-  are shown in the following code listing:</p><pre class="role-listing-1">sim.experiment.id = 1;
-sim.experiment.title = "Test";
-sim.experiment.experimentNo = 1;  // sequence number relative to simulation scenario</pre></section><section><h4>2.6.1. <em>Storage of Experiment
-  Statistics Data</em></h4><p>An experiment's statistics data is stored in a browser-managed database using JavaScript's <em>IndexedDB</em>
-  technology. The name of this database is the same as the name of the simulation model. It can be inspected with the help of the browser's developer
-  tools, which are typically activated with the key combination [Shift]+[Ctrl]+[I]. For instance, in Google's Chrome browser, one has to go to
-  Application/Storage/IndexedDB.</p><p>The experiment statistics database consists of three tables containing data about (1) experiment definitions,
-  (2) experiment runs, and (3) experiment scenario runs, which can be exported to a CSV file. By default, the statistics data obtained from running
-  all replications of an experiment scenario is stored in averaged form as one experiment scenario run record. </p><section><p>When the output
-  statistics of each single experiment scenario run is to be stored (for later analysis), this can be achieved by setting the Boolean experiment
-  attribute <code>storeEachExperimentScenarioRun</code> to <i>true</i>, as in</p><pre>sim.experiment.storeEachExperimentScenarioRun = true;</pre><p>When
-  time series data is to be created and stored for certain statistics variables, this can be achieved by listing the names of the variables in the
-  experiment attribute <code>timeSeriesStatisticsVariables</code>, as in</p><pre>sim.experiment.timeSeriesStatisticsVariables = ["arrivedCustomers","departedCustomers"];</pre></section></section></body>
+    </table></body>
 </html>

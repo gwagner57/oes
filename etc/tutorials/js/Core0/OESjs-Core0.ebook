@@ -11,7 +11,7 @@
   <headcommon>
     <html:meta content="width=device-width, initial-scale=1" name="viewport"/>
 
-    <html:link href="../ebook.css" rel="stylesheet" type="text/css"/>
+    <html:link href="../../ebook.css" rel="stylesheet" type="text/css"/>
 
     <!-- Facebook Open Graph annotations -->
 
@@ -116,21 +116,7 @@ ul.links li:hover {
 
     <section href="ChIntroOES/SimExperiments.html" samepage="true"/>
 
-    <section href="ChIntroOES/Animation.html" samepage="true"/>
-  </chapter>
-
-  <chapter href="ChSimProg/index.html">
     <section href="ChSimProg/SimLog.html"/>
-
-    <section href="ChSimProg/VariableRanges.html"/>
-
-    <section href="ChSimProg/CreateInitialState.html"/>
-
-    <section href="ChSimProg/AccessingObjects.html"/>
-
-    <section href="ChSimProg/AttributeHistory.html"/>
-
-    <section href="ChSimProg/Constraints.html"/>
   </chapter>
 
   <!--

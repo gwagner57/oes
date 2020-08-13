@@ -1,0 +1,1250 @@
+/*
+ * ===========================================================================
+ * You are welcome to use this CSS stylesheet as is for your own ebooks.
+ *
+ * Rather than template/template.css, this CSS stylesheet may also be
+ * used as a starting point for developing your own CSS stylesheet.
+ * ===========================================================================
+ */
+
+/*
+ * ===========================================================================
+ * XMLmind base styles
+ * ===========================================================================
+ */
+
+body {
+  font-family: Verdana,Geneva,sans-serif;
+  max-width: 50em;
+  margin: auto;
+  font-size: 0.9em;  /* HTML5 Boilerplate */
+  line-height: 1.33;
+  color: black;
+  background-color: white;
+}
+@media screen {
+ body {
+   padding: 5px;
+ }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #394986;
+    font-weight: bold;
+}
+
+h1 {
+    font-size: 1.33em;
+    line-height: 1;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+h2 {
+    font-size: 1.25em;
+    line-height: 1.07;
+    margin-top: 1.07em;
+    margin-bottom: 1.07em;
+}
+
+h3 {
+    font-size: 1.17em;
+    line-height: 1.14;
+    margin-top: 1.14em;
+    margin-bottom: 1.14em;
+}
+
+h4 {
+    font-size: 1.08em;
+    line-height: 1.23;
+    margin-top: 1.23em;
+    margin-bottom: 1.23em;
+}
+
+h1:first-child,
+h2:first-child,
+h3:first-child,
+h4:first-child,
+h5:first-child,
+h6:first-child {
+    margin-top: 0;
+}
+
+p,
+pre,
+ol,
+dl,
+ul,
+table,
+hr {
+    margin-top: 1.33em;
+    margin-bottom: 1.33em;
+}
+ol,ul,dl {
+  padding-left: 1.33em;
+}
+
+hr {
+    height: 1px;
+    border-style: none;
+    background-color: #D0D0D0;
+}
+
+blockquote {
+    margin: 2.66em 5.32em;
+}
+
+code,
+kbd,
+samp,
+tt,
+pre {
+    font-family: "Lucida Console","Lucida Sans Typewriter",Monaco,monospace;
+    font-size: 0.917em;
+    line-height: 1.45;
+}
+
+pre {
+    white-space: pre;
+    background-color: #F0F0F0;
+    border: 1px dotted #D0D0D0;
+    padding: 0.36em;
+    margin-top: 1.45em;
+    margin-bottom: 1.45em;
+}
+
+ul {
+    list-style-type: disc;
+}
+
+ul ul {
+    list-style-type: square;
+}
+
+ul ul ul {
+    list-style-type: circle;
+}
+
+ul ul ul ul {
+    list-style-type: disc;
+}
+
+ul ul ul ul ul {
+    list-style-type: square;
+}
+
+ul ul ul ul ul ul {
+    list-style-type: circle;
+}
+
+ul ul ul ul ul ul ul {
+    list-style-type: disc;
+}
+
+ol > li {
+    list-style-image: none;
+}
+
+li {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+*[compact] > li,
+.xmcompact > li {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+dt {
+    margin-top: 1em;
+    margin-bottom: 0;
+}
+
+dt + dt {
+    margin-top: 0;
+}
+
+dd {
+    margin-top: 0;
+    margin-bottom: 1.33em;
+}
+
+*[compact] > dt,
+.xmcompact > dt {
+    margin-top: 0;
+}
+
+*[compact] > dd,
+.xmcompact > dd {
+    margin-bottom: 0;
+}
+
+a:link:hover,
+a:visited:hover {
+    text-decoration: underline;
+}
+
+a:link {
+    text-decoration: none;
+    color: #004668;
+}
+
+a:visited {
+    text-decoration: none;
+    color: #135678;
+}
+
+/*
+ * ===========================================================================
+ * Styles which are used in the ebookc manual (but which may be useful
+ * in other documents)
+ * ===========================================================================
+ */
+
+aside {
+    background-color: ghostwhite;
+    border: 1px solid gainsboro;
+    border-top-width: 5px;
+    border-bottom-width: 5px;
+    border-left-style: none;
+    border-right-style: none;
+    padding: 1.33em;
+    margin: 2.66em 0;
+}
+aside.rightbox40 {
+	float: right;
+	width: 40%;
+    border-style: solid;
+    border-width: 5px;
+    margin-top: 1.33em;
+    margin-left: 1.33em;
+    margin-bottom: 1.33em;
+}
+
+pre.xmsynopsis {
+    border-style: none;
+    background-color: transparent;
+    padding: 0;
+}
+
+b.xmgui {
+}
+
+a.external:after {
+    content: " " url(icons/new_window.svg);
+}
+
+/*
+ * ===========================================================================
+ * Override some of the base styles
+ * ===========================================================================
+ */
+
+/*
+ * By default, the fonts used for headings are slightly too small.
+ * They are even made smaller when a heading is nested inside sections.
+ *
+ * In the context of an ebook, headings other than those having
+ * class="role-XXX-title" are used as bridgeheads and thus should keep their
+ * normal sizes. If you don't want this to happen, the simplest is to set
+ * book attribute adjustuserheadings to "true".
+ */
+
+section section section section section section section section section h1,
+section section section section section section section section h1,
+section section section section section section section h1,
+section section section section section section h1,
+section section section section section h1,
+section section section section h1,
+section section section h1,
+section section h1,
+section h1,
+h1 {
+    font-size: 1.33em;
+    line-height: 1;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+section section section section section section section section section h2,
+section section section section section section section section h2,
+section section section section section section section h2,
+section section section section section section h2,
+section section section section section h2,
+section section section section h2,
+section section section h2,
+section section h2,
+section h2,
+h2 {
+    font-size: 1.25em;
+    line-height: 1.07;
+    margin-top: 1.07em;
+    margin-bottom: 1.07em;
+}
+
+section section section section section section section section section h3,
+section section section section section section section section h3,
+section section section section section section section h3,
+section section section section section section h3,
+section section section section section h3,
+section section section section h3,
+section section section h3,
+section section h3,
+section h3,
+h3 {
+    font-size: 1.17em;
+    line-height: 1.14;
+    margin-top: 1.14em;
+    margin-bottom: 1.14em;
+}
+
+section section section section section section section section section h4,
+section section section section section section section section h4,
+section section section section section section section h4,
+section section section section section section h4,
+section section section section section h4,
+section section section section h4,
+section section section h4,
+section section h4,
+section h4,
+h4 {
+    font-size: 1.08em;
+    line-height: 1.23;
+    margin-top: 1.23em;
+    margin-bottom: 1.23em;
+}
+
+section section section section section section section section section h5,
+section section section section section section section section h5,
+section section section section section section section h5,
+section section section section section section h5,
+section section section section section h5,
+section section section section h5,
+section section section h5,
+section section h5,
+section h5,
+h5 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+section section section section section section section section section h6,
+section section section section section section section section h6,
+section section section section section section section h6,
+section section section section section section h6,
+section section section section section h6,
+section section section section h6,
+section section section h6,
+section section h6,
+section h6,
+h6 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+/*
+ * ===========================================================================
+ * First page of a book
+ * ===========================================================================
+ */
+
+section.role-book {
+}
+
+div.role-book-title-div {
+    text-align: center;
+}
+
+div.role-book-title-div h1.role-book-title {
+    font-size: 2em;
+    margin: 2.66em 0;
+}
+/* id value ending with "subtitle" */
+div[id$="subtitle"] {
+    font-size: 1.5em;
+    margin-top: -2.33em;
+    margin-bottom: 1.33em;
+}
+/* id value ending with "authors" */
+div[id$="authors"] {
+    font-size: 1.2em;
+    margin-bottom: 2.66em;
+}
+div.role-book-title-div p {
+    text-align: left;
+}
+
+a.role-book-ref { /*Link from TOC Frame*/
+}
+
+/*
+ * ===========================================================================
+ * Frontmatter/backmatter sections
+ * ===========================================================================
+ */
+
+div.role-frontmatter,
+div.role-backmatter {
+}
+
+/*
+ * Main TOC
+ */
+
+body.role-toc, /*Only inside TOC Frame*/
+section.role-toc {
+}
+
+h1.role-toc-title {
+}
+
+ul.role-booklist-entries {
+    list-style-type: none;
+    list-style-image: none;
+    padding: 0;
+}
+
+ul.role-booklist-entries ul.role-booklist-entries {
+    list-style-type: none; /* Increased selector specificity. */
+    list-style-image: none;
+    margin-left: 1.5em;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+li.role-booklist-entry {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+li.booklist-entry-for-part,
+li.booklist-entry-for-appendices {
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+
+li.booklist-entry-for-book, /*Only inside TOC Frame*/
+li.booklist-entry-for-toc, /*Only inside TOC Frame*/
+li.booklist-entry-for-lot,
+li.booklist-entry-for-lof,
+li.booklist-entry-for-lox,
+li.booklist-entry-for-loe,
+li.booklist-entry-for-index,
+li.booklist-entry-for-chapter,
+li.booklist-entry-for-appendix {
+}
+
+nav.role-local-toc li.booklist-entry-for-section1,
+li.booklist-entry-for-chapter li.booklist-entry-for-section1,
+li.booklist-entry-for-appendix li.booklist-entry-for-section1,
+li.booklist-entry-for-section2,
+li.booklist-entry-for-section3,
+li.booklist-entry-for-section4,
+li.booklist-entry-for-section5,
+li.booklist-entry-for-section6,
+li.booklist-entry-for-section7,
+li.booklist-entry-for-section8,
+li.booklist-entry-for-section9,
+li.booklist-entry-for-section {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+a.role-toc-ref { /*Link from TOC Frame*/
+}
+
+/*
+ * List of Tables
+ */
+
+section.role-lot {
+}
+
+h1.role-lot-title {
+}
+
+a.role-lot-ref { /*Link from main TOC*/
+}
+
+/*
+ * List of Figures
+ */
+
+section.role-lof {
+}
+
+h1.role-lof-title {
+}
+
+a.role-lof-ref { /*Link from main TOC*/
+}
+
+/*
+ * List of Examples
+ */
+
+section.role-lox {
+}
+
+h1.role-lox-title {
+}
+
+a.role-lox-ref { /*Link from main TOC*/
+}
+
+/*
+ * List of Equations
+ */
+
+section.role-loe {
+}
+
+h1.role-loe-title {
+}
+
+a.role-loe-ref { /*Link from main TOC*/
+}
+
+/*
+ * Index
+ */
+
+section.role-index {
+}
+
+h1.role-index-title {
+}
+
+a.role-index-ref { /*Link from main TOC*/
+}
+
+nav.role-index-toc {
+    font-weight: bold;
+    font-size: 1.25em; /*Like h2*/
+    line-height: 1.07;
+    margin-top: 1.07em;
+    margin-bottom: 1.07em;
+}
+
+span.role-index-toc-placeholder {
+    color: #D0D0D0;
+}
+
+a.role-index-div-ref {
+    color: #394986; /*Like h2*/
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+div.role-index-div {
+}
+
+h2.role-index-div-title { /*Symbols,A,B,C*/
+}
+
+a.role-index-toc-ref:before {
+    float: right;
+    content: url(icons/backToTop.svg);
+    width: 1em;
+    height: 1em;
+}
+
+ul.role-index-entries {
+    list-style-type: none;
+    list-style-image: none;
+    padding: 0;
+}
+
+ul.role-index-entries ul.role-index-entries {
+    list-style-type: none; /* Increased selector specificity. */
+    list-style-image: none;
+    margin-left: 2em;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+li.role-index-entry {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+span.role-index-term {
+}
+
+/*Contains one or more a.role-index-anchor-ref and span.role-index-range*/
+span.role-index-anchor-refs {
+}
+
+span.role-index-range { /*Contains a pair of a.role-index-anchor-ref*/
+}
+
+a.role-index-anchor-ref { /*Points to an a.role-index-anchor*/
+}
+
+span.role-index-see {
+}
+
+i.role-index-see-label { /*Contains "See"*/
+}
+
+a.role-index-see-link { /*Points to a li.role-index-entry*/
+}
+
+span.role-index-see-also {
+}
+
+i.role-index-see-also-label { /*Contains "See also"*/
+}
+
+a.role-index-see-also-link { /*Points to a li.role-index-entry*/
+}
+
+/*
+ * ===========================================================================
+ * Body sections
+ * ===========================================================================
+ */
+
+/*
+ * Part
+ */
+
+section.role-part {
+}
+
+h1.role-appendix-title,
+h1.role-appendices-title,
+h1.role-chapter-title,
+h1.role-part-title {
+    border-bottom: 1px solid #394986;
+    padding-bottom: 0.25em;
+}
+
+h1.role-appendices-title,
+h1.role-part-title {
+    border-bottom-width: 2px;
+}
+
+a.role-part-ref {
+}
+
+span.role-label {
+    color: #394986;
+    font-weight: bold;
+    font-style: normal;
+}
+
+span.role-number {
+}
+
+/*
+ * Chapter
+ */
+
+section.role-chapter {
+}
+
+a.role-chapter-ref {
+}
+
+/*
+ * Section 1
+ */
+
+section.role-section1 {
+}
+
+h2.role-section1-title {
+}
+
+a.role-section1-ref {
+}
+
+/*
+ * Section 2
+ */
+
+section.role-section2 {
+}
+
+h3.role-section2-title {
+}
+
+a.role-section2-ref {
+}
+
+/*
+ * Section 3
+ */
+
+section.role-section3 {
+}
+
+h4.role-section3-title {
+}
+
+a.role-section3-ref {
+}
+
+/*
+ * Section 4
+ */
+
+section.role-section4 {
+}
+
+h5.role-section4-title {
+}
+
+a.role-section4-ref {
+}
+
+/*
+ * Section 5
+ */
+
+section.role-section5 {
+}
+
+h6.role-section5-title {
+}
+
+a.role-section5-ref {
+}
+
+/*
+ * Section 6
+ */
+
+section.role-section6 {
+}
+
+h6.role-section6-title {
+}
+
+a.role-section6-ref {
+}
+
+/*
+ * Section 7
+ */
+
+section.role-section7 {
+}
+
+h6.role-section7-title {
+}
+
+a.role-section7-ref {
+}
+
+/*
+ * Section 8
+ */
+
+section.role-section8 {
+}
+
+h6.role-section8-title {
+}
+
+a.role-section8-ref {
+}
+
+/*
+ * Section 9
+ */
+
+section.role-section9 {
+}
+
+h6.role-section9-title {
+}
+
+a.role-section9-ref {
+}
+
+/*
+ * Sections beyond level 9 are not numbered.
+ */
+
+section.role-section {
+}
+
+h6.role-section-title {
+}
+
+a.role-section-ref {
+}
+
+/*
+ * Transparent container.
+ */
+
+div.role-content {
+}
+
+/*
+ * Appendices
+ */
+
+section.role-appendices {
+}
+
+a.role-appendices-ref {
+}
+
+/*
+ * Appendix
+ */
+
+section.role-appendix {
+}
+
+a.role-appendix-ref {
+}
+
+/*
+ * ===========================================================================
+ * Generated content
+ * ===========================================================================
+ */
+
+/*
+ * Local TOC
+ */
+
+nav.role-local-toc {
+}
+
+h6.role-local-toc-title {
+}
+
+/*
+ * Related information
+ */
+
+nav.role-related {
+}
+
+h6.role-related-title {
+}
+
+ul.role-related-list {
+}
+
+li.role-related-item {
+    list-style-image: none;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/*
+ * ===========================================================================
+ * Content
+ * ===========================================================================
+ */
+
+/*
+ * Admonitions
+ */
+
+blockquote.role-note,
+blockquote.role-attention,
+blockquote.role-caution,
+blockquote.role-danger,
+blockquote.role-fastpath,
+blockquote.role-important,
+blockquote.role-notice,
+blockquote.role-remember,
+blockquote.role-restriction,
+blockquote.role-tip,
+blockquote.role-trouble,
+blockquote.role-warning {
+    font-size: 0.917em;
+    line-height: 1.45;
+    border-top: 2px solid #D0D0D0;
+    border-bottom: 2px solid #D0D0D0;
+    padding: 1.45em 0 1.45em 4.35em;
+    margin: 2.9em 5.8em;
+}
+
+blockquote.role-note:before,
+blockquote.role-attention:before,
+blockquote.role-caution:before,
+blockquote.role-danger:before,
+blockquote.role-fastpath:before,
+blockquote.role-important:before,
+blockquote.role-notice:before,
+blockquote.role-remember:before,
+blockquote.role-restriction:before,
+blockquote.role-tip:before,
+blockquote.role-trouble:before,
+blockquote.role-warning:before {
+    float: left;
+    width: 2.9em;
+    height: 2.9em;
+    margin-left: -4.35em;
+}
+
+blockquote.role-note:before {
+    content: url(icons/note.svg);
+}
+
+blockquote.role-attention:before {
+    content: url(icons/attention.svg);
+}
+
+blockquote.role-caution:before {
+    content: url(icons/caution.svg);
+}
+
+blockquote.role-danger:before {
+    content: url(icons/danger.svg);
+}
+
+blockquote.role-fastpath:before {
+    content: url(icons/fastpath.svg);
+}
+
+blockquote.role-important:before {
+    content: url(icons/important.svg);
+}
+
+blockquote.role-notice:before {
+    content: url(icons/notice.svg);
+}
+
+blockquote.role-remember:before {
+    content: url(icons/remember.svg);
+}
+
+blockquote.role-restriction:before {
+    content: url(icons/restriction.svg);
+}
+
+blockquote.role-tip:before {
+    content: url(icons/tip.svg);
+}
+
+blockquote.role-trouble:before {
+    content: url(icons/trouble.svg);
+}
+
+blockquote.role-warning:before {
+    content: url(icons/warning.svg);
+}
+
+
+/*
+ * Informal Figures (do not have captions)
+ */
+figure.right {
+	width: 33%;
+	float: right;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 1.66em;
+}
+
+/*
+ * Figures
+ */
+
+figure {
+    text-align: center;
+    margin-top: 2.66em;
+    margin-bottom: 2.66em;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+caption,
+figcaption {
+    text-align: center;
+    font-style: italic;
+    margin-top: 1.33em;
+    margin-bottom: 1.33em;
+}
+
+@media XEP, AHF, XFC {
+    /* fo:table-caption does have margins.
+       (FOP does not support fo:table-caption.) */
+    caption {
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-bottom: 1.33em;
+    }
+}
+
+a.role-figure-ref {
+}
+
+/*
+ * Examples
+ */
+
+figure.role-equation,
+figure.role-example {
+    text-align: left;
+}
+
+a.role-example-ref {
+}
+
+/*
+ * Equations
+ */
+
+a.role-equation-ref {
+}
+
+/*
+ * Tables
+ */
+
+table[border="1"] {
+    border-collapse: collapse;
+    border: 1px solid #808080;
+    margin-top: 2.66em;
+    margin-bottom: 2.66em;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table[border="1"] thead {
+    background-color: #E0E0E0;
+}
+
+table[border="1"] th,
+table[border="1"] td {
+    border: 1px solid #808080;
+    padding: 0.33em;
+}
+
+/*
+table[border="1"] tbody th,
+table[border="1"] td {
+    vertical-align: baseline;
+}
+*/
+
+a.role-table-ref {
+}
+
+/*
+ * Index terms
+ */
+
+a.role-index-term {
+    visbility: hidden; /* Not display:none if we want a link to reach the anchor. */
+}
+
+/*
+ * Program listings
+ */
+
+table.role-listing {
+    background-color: #F0F0F0;
+    border: 1px dotted #D0D0D0;
+}
+
+colgroup.listing-numbers-column {
+    border-right: 1px solid #808080;
+}
+
+td.listing-numbers {
+    color: #808080;
+    padding: 0.33em;
+}
+
+td.listing-lines {
+    padding: 0.33em;
+}
+
+pre.role-listing {
+}
+
+/*
+ * ===========================================================================
+ * Syntax highlighting
+ * ===========================================================================
+ */
+
+span.hl-keyword {
+    font-weight: bold;
+    color: #602060;
+}
+
+span.hl-string {
+    color: #A00000;
+}
+
+span.hl-number {
+    color: #B08000;
+}
+
+span.hl-comment {
+    font-style: italic;
+    color: #808080;
+}
+
+span.hl-doccomment {
+    color: #008080;
+}
+
+span.hl-directive {
+    color: #00A000;
+}
+
+span.hl-annotation {
+    font-weight: bold;
+    color: #808080;
+}
+
+/*
+ * XML
+ */
+
+span.hl-tag {
+    font-weight: bold;
+    color: #602060;
+}
+
+span.hl-attribute {
+    color: #0050A0;
+}
+
+span.hl-value {
+    color: #A00000;
+}
+
+span.hl-doctype {
+    color: #008080;
+}
+
+/*
+ * ===========================================================================
+ * Footnotes
+ * ===========================================================================
+ */
+
+div.role-footnotes {
+}
+
+hr.role-footnote-separator {
+    width: 4em;
+    margin-top: 2.66em;
+    margin-bottom: 0.66em;
+    margin-left: 0;
+    margin-right: auto;
+}
+
+div.role-footnote {
+    font-size: 0.83em;
+    line-height: 1.6;
+}
+
+a.role-footnote-number, /*Points to an a.role-footnote-ref*/
+a.role-footnote-ref {
+    vertical-align: super;
+    font-size: smaller;
+    font-weight: normal;
+    font-style: normal;
+    text-decoration: none;
+}
+
+/*
+ * ===========================================================================
+ * Special extensions
+ * ===========================================================================
+ */
+
+ *[xml\:space="preserve"] {white-space:pre;}
+
+.iframe-container {
+    position: relative;
+    overflow: hidden;
+    padding-top: 66%;  /* aspect ratio = height / width */
+	background: aliceblue;
+}
+.iframe-container iframe {
+  position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+figure.threecells {
+  width: 120%;
+  margin-left: -10%;
+}
+figure.threecells > div {
+  display: flex;
+}
+figure.threecells > div > img {
+  display: block;
+}
+
+/*
+ * ===========================================================================
+ * When converting to PDF, DOCX, etc.
+ * ===========================================================================
+ */
+
+@media print {
+    body {
+        font-family: serif;
+        font-size: 10pt;
+    }
+
+    blockquote.role-note,
+    blockquote.role-attention,
+    blockquote.role-caution,
+    blockquote.role-danger,
+    blockquote.role-fastpath,
+    blockquote.role-important,
+    blockquote.role-notice,
+    blockquote.role-remember,
+    blockquote.role-restriction,
+    blockquote.role-tip,
+    blockquote.role-trouble,
+    blockquote.role-warning {
+        padding-left: 0;
+    }
+
+    /* a:link not supported. */
+    a[href] {
+        text-decoration: none;
+        color: #004668;
+    }
+
+    ul.role-booklist-entries a[href],
+    ul.role-index-entries a[href] {
+        color: black;
+    }
+}
+
+@media FOP {
+    /*
+     * FOP complains about margin:auto.
+     */
+    .xmtable,
+    body,
+    hr.role-footnote-separator,
+    table[border="1"],
+    figure {
+        margin-top: 0;
+        margin-bottom: 0;
+        margin-left: 0;
+        margin-right: 0;
+    }
+}

@@ -11,10 +11,20 @@
   target="_top">OES</a>)</i> paradigm, representing a general <i>Discrete
   Event Simulation</i> approach based on <i>object-oriented</i> modeling and
   <i>event scheduling</i>. In OES, a model normally defines various types of
-  objects and events, but OES<i>js-Core0</i> also supports models without
-  objects, if they define state variables in the form of global <i>model
-  variables</i>, instead.</p><p>OESjs<i>-Core0</i> supports two forms of
-  simulations:</p><ol>
+  objects and events, but OESjs-Core0 also supports models without objects, if
+  they define state variables in the form of global <i>model variables</i>,
+  instead.</p><p>An OESjs-Core0 simulation consists of the OESjs-Core0 library
+  code and the following files to be created by the simulation
+  developer:</p><ol>
+      <li>For each object type <i>ObjT</i>, a JS code file
+      <kbd>ObjT.js</kbd>.</li>
+
+      <li>For each event type <i>EvtT</i>, a JS code file
+      <kbd>EvtT.js</kbd>.</li>
+
+      <li>A <kbd>simulation.js</kbd> file defining further parts of the
+      simulation, such as statistics variables and the initial state.</li>
+    </ol><p>OESjs-Core0 supports two forms of simulations:</p><ol>
       <li><p>Standalone scenario simulations, which are good for getting a
       quick impression of a simulation model, e.g., by checking some simple
       statistics.</p></li>
@@ -31,5 +41,5 @@
   statistics output).</p><p>The following sections present the basic concepts
   of the OESjs<i>-Core0</i> simulation library, and show how to implement the
   service desk models described in <a
-  href="../ChIntroOEM/index.html"></a>.</p></body>
+  href="../../../ChIntroOEM/index.html"></a>.</p></body>
 </html>
