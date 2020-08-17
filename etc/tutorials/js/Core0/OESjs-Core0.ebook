@@ -119,9 +119,7 @@ ul.links li:hover {
     <section href="ChSimProg/SimLog.html"/>
   </chapter>
 
-  <!--
-  <appendix href="???"/>
-  -->
+  <appendix href="architecture.html"/>
 
   <backmatter>
     <index/>

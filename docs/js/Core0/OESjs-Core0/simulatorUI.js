@@ -1,10 +1,11 @@
 // Define the namespace variable "oes" if not yet defined
-if (typeof oes !== "object") oes = Object.create(null);
-oes.ui = {
-  expostStatDecimalPlaces: 3,
-  simLogDecimalPlaces: 2
-};
-
+if (typeof oes !== "object") {
+  oes = Object.create(null);
+  oes.defaults = {
+    expostStatDecimalPlaces: 2,
+    simLogDecimalPlaces: 2
+  };
+}
 /*******************************************************
  Create a simulation log entry (table row)
  ********************************************************/
@@ -15,7 +16,8 @@ function logSimulationStep( simLogTableEl) {
     return i>0 ? serialization +", "+ slotSerialization : slotSerialization;
   }, "");
   rowEl.insertCell().textContent = String( sim.step);
-  rowEl.insertCell().textContent = String( math.round( sim.time, oes.ui.simLogDecimalPlaces));
+  rowEl.insertCell().textContent = String( math.round( sim.time, oes.defaults.simLogDecimalPlaces));
+  // convert values() iterator to array
   rowEl.insertCell().textContent = [...sim.objects.values()].toString() +" "+ modelVarInfo;
   rowEl.insertCell().textContent = sim.FEL.toString();
 }
@@ -23,7 +25,7 @@ function logSimulationStep( simLogTableEl) {
  Display the standalone scenario statistics
  ********************************************************/
 function showStatistics( stat, tableEl) {
-  var decPl = oes.ui.expostStatDecimalPlaces, tbodyEl = tableEl.tBodies[0];
+  var decPl = oes.defaults.expostStatDecimalPlaces, tbodyEl = tableEl.tBodies[0];
   for (let varName of Object.keys( stat)) {
     let rowEl = tbodyEl.insertRow();  // create new table row
     rowEl.insertCell().textContent = varName;
@@ -57,7 +59,7 @@ function showSimpleExpResults( exp, tableEl) {
     rowEl = tbodyEl.insertRow();  // create new table row
     rowEl.insertCell().textContent = String(i+1);  // replication No
     Object.keys( exp.replicStat).forEach( function (varName) {
-      var decPl = oes.ui.expostStatDecimalPlaces,
+      var decPl = oes.defaults.expostStatDecimalPlaces,
           val = exp.replicStat[varName][i];
       rowEl.insertCell().textContent = math.round( val, decPl);
     });
@@ -67,7 +69,7 @@ function showSimpleExpResults( exp, tableEl) {
     rowEl = tbodyEl.insertRow();  // create new table row
     rowEl.insertCell().textContent = math.stat.summary[aggr].label;
     Object.keys( exp.summaryStat).forEach( function (varName) {
-      var decPl = oes.ui.expostStatDecimalPlaces,
+      var decPl = oes.defaults.expostStatDecimalPlaces,
           val = exp.summaryStat[varName][aggr];
       rowEl.insertCell().textContent = math.round( val, decPl);
     });

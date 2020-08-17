@@ -1,6 +1,6 @@
 class Delivery extends eVENT {
-  constructor({ occTime, quantity, receiver}) {
-    super( occTime);
+  constructor({ occTime, delay, quantity, receiver}) {
+    super({occTime, delay});
     this.quantity = quantity;
     this.receiver = receiver;
   }
@@ -11,7 +11,7 @@ class Delivery extends eVENT {
       // schedule another Delivery if stock level is not raised above reorder level
       if (this.receiver.quantityInStock <= this.receiver.reorderLevel ) {
         followupEvents.push( new Delivery({
-          occTime: this.occTime + Delivery.leadTime(),
+          delay: Delivery.leadTime(),
           quantity: this.receiver.targetInventory - this.receiver.quantityInStock,
           receiver: this.receiver
         }));

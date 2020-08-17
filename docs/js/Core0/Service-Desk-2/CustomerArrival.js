@@ -1,11 +1,11 @@
 class CustomerArrival extends eVENT {
-  constructor({ occTime, serviceDesk}) {
-    super(occTime);
+  constructor({ occTime, delay, serviceDesk}) {
+    super({ occTime, delay});
     this.serviceDesk = serviceDesk;
     this.customer = null;  // is assigned on occurrence
   }
   onEvent() {
-    var srvTm=0, followupEvents=[];
+    var followupEvents=[];
     // create new customer object
     this.customer = new Customer({arrivalTime: this.occTime});
     // push new customer to the queue
@@ -17,9 +17,8 @@ class CustomerArrival extends eVENT {
     }
     // if the service desk is not busy
     if (this.serviceDesk.waitingCustomers.length === 1) {
-      srvTm = ServiceDesk.serviceDuration();
       followupEvents.push( new CustomerDeparture({
-        occTime: this.occTime + srvTm,
+        delay: ServiceDesk.serviceDuration(),
         serviceDesk: this.serviceDesk
       }));
     }
@@ -27,7 +26,7 @@ class CustomerArrival extends eVENT {
   }
   createNextEvent() {
     return new CustomerArrival({
-      occTime: this.occTime + CustomerArrival.recurrence(),
+      delay: CustomerArrival.recurrence(),
       serviceDesk: this.serviceDesk
     });
   }

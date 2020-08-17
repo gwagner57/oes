@@ -14,6 +14,11 @@ sim.model.p = Object.create(null); // model parameters
 sim.scenario = Object.create(null);
 sim.scenarios = [];
 sim.experimentTypes = [];
+oes = Object.create(null);
+oes.defaults = {
+  expostStatDecimalPlaces: 2,
+  simLogDecimalPlaces: 2
+};
 
 /**
  * An OES object has an ID and may have a unique name. If no ID value is provided on creation,
@@ -28,13 +33,15 @@ class oBJECT {
   }
   // overwrite/improve the standard toString method
   toString() {
-    var Class = this.constructor, str = Class.name + `-${this.id}{ `,
-        i=0, valStr="", simLogDecimalPlaces=2;
+    var Class = this.constructor,
+        str = Class.name + `-${this.id}{ `,
+        decPl = oes.defaults.simLogDecimalPlaces,
+        i=0, valStr="";
     Object.keys( this).forEach( function (prop) {
       var propLabel = (Class.labels && Class.labels[prop]) ? Class.labels[prop] : "",
           val = this[prop];
       if (typeof val === "number" && !Number.isInteger( val)) {
-        valStr = String( math.round( val, simLogDecimalPlaces));
+        valStr = String( math.round( val, decPl));
       } else if (Array.isArray( val)) {
         valStr = "["+ val.map( v => v.id).toString() +"]";
       } else valStr = JSON.stringify( val);
@@ -50,16 +57,19 @@ class oBJECT {
  * An OES event may be instantaneous or it may have a non-zero duration.
  */
 class eVENT {
-  constructor( occTime, startTime, duration) {
-    this.occTime = occTime;
-    // only meaningful for events with duration (e.g., activities)
-    this.startTime = startTime;
-    this.duration = duration;
+    constructor({occTime, delay, startTime, duration}) {
+      if (occTime) this.occTime = occTime;
+      else if (delay) this.occTime = sim.time + delay;
+      else this.occTime = sim.time + sim.nextMomentDeltaT;
+      // only meaningful for events with duration (e.g., activities)
+      if (startTime) this.startTime = startTime;
+      if (duration) this.duration = duration;
   }
   // overwrite/improve the standard toString method
   toString() {
     var eventTypeName = this.constructor.name,
-        slotListStr="", i=0, evtStr="", simLogDecimalPlaces = 2;
+        slotListStr="", i=0, evtStr="",
+        decPl = oes.defaults.simLogDecimalPlaces;
     Object.keys( this).forEach( function (prop) {
       var propLabel = (this.constructor.labels && this.constructor.labels[prop]) ?
           this.constructor.labels[prop] : "";
@@ -70,7 +80,7 @@ class eVENT {
     }, this);
     if (slotListStr) evtStr = `${eventTypeName}{ ${slotListStr}}`;
     else evtStr = eventTypeName;
-    return `${evtStr}@${math.round(this.occTime,simLogDecimalPlaces)}`;
+    return `${evtStr}@${math.round(this.occTime,decPl)}`;
 /*
     var occT = sim.model.time === "continuous" && sim.timeRoundingFactor ?
         Math.round( this.occTime * sim.timeRoundingFactor) / sim.timeRoundingFactor :

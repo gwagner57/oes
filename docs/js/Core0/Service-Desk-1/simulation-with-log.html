@@ -54,10 +54,7 @@
 
    // store start time of simulation run
    const simStartTime = (new Date()).getTime();
-
-   sim.initializeScenarioRun();
-   sim.runScenario();
-
+   sim.runStandaloneScenario();
    showStatistics( sim.stat, statisticsTableEl);
    // log simulation time and execution time
    execInfoEl.textContent =

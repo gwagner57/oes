@@ -1,6 +1,6 @@
 class CustomerDeparture extends eVENT {
-  constructor({ occTime, serviceDesk}) {
-    super(occTime);
+  constructor({ occTime, delay, serviceDesk}) {
+    super({ occTime, delay});
     this.serviceDesk = serviceDesk;
   }
   onEvent() {
@@ -13,7 +13,7 @@ class CustomerDeparture extends eVENT {
     if (this.serviceDesk.queueLength > 0) {
       // start next service and schedule its end/departure
       followupEvents.push( new CustomerDeparture({
-        occTime: this.occTime + ServiceDesk.serviceTime(),
+        delay: ServiceDesk.serviceTime(),
         serviceDesk: this.serviceDesk
       }));
     }

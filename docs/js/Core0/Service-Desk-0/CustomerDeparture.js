@@ -1,6 +1,6 @@
 class CustomerDeparture extends eVENT {
-  constructor({ occTime}) {
-    super(occTime);
+  constructor({occTime, delay}) {
+    super({occTime, delay});
   }
   onEvent() {
     var followupEvents=[];
@@ -12,7 +12,7 @@ class CustomerDeparture extends eVENT {
     if (sim.model.v.queueLength > 0) {
       // start next service and schedule its end/departure
       followupEvents.push( new CustomerDeparture({
-        occTime: this.occTime + sim.model.f.serviceTime()
+        delay: sim.model.f.serviceTime()
       }));
     }
     return followupEvents;

@@ -13,7 +13,11 @@ sim.model = Object.create(null);
 sim.model.v = Object.create(null);
 sim.model.f = Object.create(null);
 sim.scenario = Object.create(null);
-
+oes = Object.create(null);
+oes.defaults = {
+  expostStatDecimalPlaces: 2,
+  simLogDecimalPlaces: 2
+};
 /**
  * An OES object has an ID and may have a unique name. If no ID value is provided on creation,
  * an ID value is automatically assigned using the simulators "idCounter".
@@ -28,13 +32,15 @@ class oBJECT {
   }
   // overwrite/improve the standard toString method
   toString() {
-    var Class = this.constructor, str = Class.name + `-${this.id}{ `,
+    var Class = this.constructor,
+        str = Class.name + `-${this.id}{ `,
+        decPl = oes.defaults.simLogDecimalPlaces || 2,
         i=0, valStr="";
     Object.keys( this).forEach( function (prop) {
       var propLabel = (Class.labels && Class.labels[prop]) ? Class.labels[prop] : "",
           val = this[prop];
       if (typeof val === "number" && !Number.isInteger( val)) {
-        valStr = String( math.round( val, oes.ui.simLogDecimalPlaces));
+        valStr = String( math.round( val, decPl));
       } else if (Array.isArray( val)) {
         valStr = "["+ val.map( v => v.id).toString() +"]";
       } else valStr = JSON.stringify( val);
@@ -50,13 +56,16 @@ class oBJECT {
  * An OES Core 0 event is instantaneous
  */
 class eVENT {
-  constructor( occTime) {
-    this.occTime = occTime;
+  constructor({occTime, delay}) {
+    if (occTime) this.occTime = occTime;
+    else if (delay) this.occTime = sim.time + delay;
+    else this.occTime = sim.time + sim.nextMomentDeltaT;
   }
   // overwrite/improve the standard toString method
   toString() {
     var eventTypeName = this.constructor.name,
-        slotListStr="", i=0, evtStr="", decPl = oes.ui.simLogDecimalPlaces;
+        slotListStr="", i=0, evtStr="",
+        decPl = oes.defaults.simLogDecimalPlaces || 2;
     Object.keys( this).forEach( function (prop) {
       var propLabel = (this.constructor.labels && this.constructor.labels[prop]) ?
           this.constructor.labels[prop] : "";

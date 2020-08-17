@@ -1,10 +1,10 @@
 class CustomerDeparture extends eVENT {
-  constructor({ occTime, serviceDesk}) {
-    super(occTime);
+  constructor({ occTime, delay, serviceDesk}) {
+    super({occTime, delay});
     this.serviceDesk = serviceDesk;
   }
   onEvent() {
-    var followupEvents=[], srvTm=0;
+    var followupEvents=[];
     // remove/pop customer from FIFO queue (FIFO pop = JS shift)
     var departingCustomer = this.serviceDesk.waitingCustomers.shift();
     // add the time the customer has spent in the system
@@ -16,9 +16,8 @@ class CustomerDeparture extends eVENT {
     // if there are still customers waiting
     if (this.serviceDesk.waitingCustomers.length > 0) {
       // start next service and schedule its end/departure
-      srvTm = ServiceDesk.serviceDuration();
       followupEvents.push( new CustomerDeparture({
-        occTime: this.occTime + srvTm,
+        delay: ServiceDesk.serviceDuration(),
         serviceDesk: this.serviceDesk
       }));
     }

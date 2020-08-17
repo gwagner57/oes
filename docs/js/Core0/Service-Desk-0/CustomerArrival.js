@@ -1,6 +1,6 @@
 class CustomerArrival extends eVENT {
-  constructor({ occTime}) {
-    super(occTime);
+  constructor({occTime, delay}) {
+    super({occTime, delay});
   }
   onEvent() {
     var followupEvents=[];
@@ -14,14 +14,14 @@ class CustomerArrival extends eVENT {
     // if the service desk is not busy, start service and schedule departure
     if (sim.model.v.queueLength === 1) {
       followupEvents.push( new CustomerDeparture({
-        occTime: this.occTime + sim.model.f.serviceTime()
+        delay: sim.model.f.serviceTime()
       }));
     }
     return followupEvents;
   }
   createNextEvent() {
     return new CustomerArrival({
-      occTime: this.occTime + CustomerArrival.recurrence()
+      delay: CustomerArrival.recurrence()
     });
   }
   static recurrence() {

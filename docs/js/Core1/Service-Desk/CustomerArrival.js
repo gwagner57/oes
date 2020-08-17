@@ -1,6 +1,6 @@
 class CustomerArrival extends eVENT {
   constructor({ occTime, serviceDesk}) {
-    super(occTime);
+    super({occTime, delay});
     this.serviceDesk = serviceDesk;
     this.customer = null;  // is assigned on occurrence
   }

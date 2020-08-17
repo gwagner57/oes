@@ -16,9 +16,8 @@ if (sim.model.eventTypes) {
 // start simulation on message from main thread
 onmessage = function (e) {
   if (!sim.experimentType) {
-    sim.initializeScenarioRun();
     // run simulation
-    sim.runScenario();
+    sim.runStandaloneScenario();
     // send statistics to main thread
     self.postMessage({statistics: sim.stat, endTime: sim.endTime});
   } else {

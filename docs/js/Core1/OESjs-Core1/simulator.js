@@ -6,13 +6,10 @@
  * Initialize Simulator ********************************************
  *******************************************************************/
 sim.initializeSimulator = function () {
-  // Set default values for end time parameters
-  if (!sim.scenario.durationInSimTime) sim.scenario.durationInSimTime = Infinity;
-  if (!sim.scenario.durationInSimSteps) sim.scenario.durationInSimSteps = Infinity;
-  if (!sim.scenario.durationInCpuTime) sim.scenario.durationInCpuTime = Infinity;
-  // Assign default to nextMomentDeltaT
-  if (sim.model.time === "continuous" && !sim.model.nextMomentDeltaT) {
-    sim.model.nextMomentDeltaT = 0.001;  // default value
+  if (sim.model.nextMomentDeltaT) sim.nextMomentDeltaT = sim.model.nextMomentDeltaT;
+  else {  // assign defaults
+    if (sim.model.time === "continuous") sim.nextMomentDeltaT = 0.001;
+    else sim.nextMomentDeltaT = 1;
   }
   // Set timeIncrement for fixed-increment time progression
   if (sim.model.timeIncrement) {
@@ -43,6 +40,10 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   //sim.ongoingActivities = Object.create( null);  // a map of all ongoing activities accessible by ID
   sim.step = 0;  // simulation loop step counter
   sim.time = 0;  // 1 time
+  // Set default values for end time parameters
+  if (!sim.scenario.durationInSimTime) sim.scenario.durationInSimTime = Infinity;
+  if (!sim.scenario.durationInSimSteps) sim.scenario.durationInSimSteps = Infinity;
+  if (!sim.scenario.durationInCpuTime) sim.scenario.durationInCpuTime = Infinity;
   // get ID counter from simulation scenario, or set to default value
   sim.idCounter = sim.scenario.idCounter || 1000;
   // set up a default random variate sampling method
@@ -92,6 +93,7 @@ sim.runScenario = function (createLog) {
       (new Date()).getTime() - startTime < sim.scenario.durationInCpuTime) {
     if (createLog) {
       self.postMessage({ step: sim.step, time: sim.time,
+        // convert values() iterator to array
         objectsStr: [...sim.objects.values()].toString(),
         eventsStr: sim.FEL.toString()
       });

@@ -1,6 +1,6 @@
 class DailyDemand extends eVENT {
-  constructor({ occTime, quantity, shop}) {
-    super( occTime);
+  constructor({occTime, delay, quantity, shop}) {
+    super({occTime, delay});
     this.quantity = quantity;
     this.shop = shop;
   }
@@ -22,7 +22,7 @@ class DailyDemand extends eVENT {
       if (prevStockLevel > this.shop.reorderLevel &&
           prevStockLevel - q <= this.shop.reorderLevel) {
         return [new Delivery({
-          occTime: this.occTime + Delivery.leadTime(),
+          delay: Delivery.leadTime(),
           quantity: this.shop.targetInventory - this.shop.quantityInStock,
           receiver: this.shop
         })];
@@ -31,7 +31,7 @@ class DailyDemand extends eVENT {
       // periodically schedule new Delivery events
       if (sim.time % this.shop.reorderInterval === 0) {
         return [new Delivery({
-          occTime: this.occTime + Delivery.leadTime(),
+          delay: Delivery.leadTime(),
           quantity: this.shop.targetInventory - this.shop.quantityInStock,
           receiver: this.shop
         })];
@@ -46,7 +46,7 @@ class DailyDemand extends eVENT {
   }
   createNextEvent() {
     return new DailyDemand({
-      occTime: this.occTime + DailyDemand.recurrence(),
+      delay: DailyDemand.recurrence(),
       quantity: DailyDemand.quantity(),
       shop: this.shop
     });

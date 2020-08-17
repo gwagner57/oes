@@ -1,6 +1,6 @@
 class DailyDemand extends eVENT {
   constructor({ occTime, quantity, shop}) {
-    super( occTime);
+    super( {occTime});
     this.quantity = quantity;
     this.shop = shop;
   }
@@ -20,7 +20,7 @@ class DailyDemand extends eVENT {
     if (prevStockLevel > this.shop.reorderLevel &&
         prevStockLevel - q <= this.shop.reorderLevel) {
       return [new Delivery({
-        occTime: this.occTime + Delivery.leadTime(),
+        delay: Delivery.leadTime(),
         quantity: this.shop.targetInventory - this.shop.quantityInStock,
         receiver: this.shop
       })];

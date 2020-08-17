@@ -1,27 +1,29 @@
 /* Changes from OESjs
 - sim.objects is a JS Map
  */
-
-/*******************************************************
- General Variables and Functions
- ********************************************************/
-// A map of all simulation objects
-sim.objects = new Map();
-// The Future Events List
-sim.FEL = new EventList();
-// The statistics variables map
-sim.stat = Object.create(null);
-
+/*******************************************************************
+ * Initialize Simulator ********************************************
+ *******************************************************************/
+sim.initializeSimulator = function () {
+  if (sim.model.nextMomentDeltaT) sim.nextMomentDeltaT = sim.model.nextMomentDeltaT;
+  else {  // assign defaults
+    if (sim.model.time === "continuous") sim.nextMomentDeltaT = 0.001;
+    else sim.nextMomentDeltaT = 1;
+  }
+  // The Future Events List
+  sim.FEL = new EventList();
+  // Create map for statistics variables
+  sim.stat = Object.create(null);
+}
 /*******************************************************************
  * Initialize a (standalone or experiment scenario) simulation run *
  *******************************************************************/
 sim.initializeScenarioRun = function () {
+  // clear initial state data structures
+  sim.objects = new Map();  // a map of all objects (accessible by ID)
+  sim.FEL.clear();
   sim.step = 0;  // simulation loop step counter
   sim.time = 0;  // simulation time
-  // Assign default to nextMomentDeltaT
-  if (sim.model.time === "continuous" && !sim.model.nextMomentDeltaT) {
-    sim.model.nextMomentDeltaT = 0.001;  // default value
-  }
   // set default endTime
   sim.endTime = sim.scenario.durationInSimTime || Infinity;
   // get ID counter from simulation scenario, or set to default value
@@ -47,7 +49,9 @@ sim.runScenario = function () {
   // Simulation Loop
   while (sim.time < sim.endTime && !sim.FEL.isEmpty()) {
     // if not executed in a JS worker, create simulation log
-    if (typeof WorkerGlobalScope === 'undefined' && simLogTableEl) logSimulationStep( simLogTableEl);
+    if (typeof WorkerGlobalScope === 'undefined' && simLogTableEl) {
+      logSimulationStep( simLogTableEl);
+    }
     sim.advanceSimulationTime();
     // extract and process next events
     let nextEvents = sim.FEL.removeNextEvents();
@@ -69,9 +73,18 @@ sim.runScenario = function () {
   if (sim.model.computeFinalStatistics) sim.model.computeFinalStatistics();
 }
 /*******************************************************
+ Run a Standalone Simulation Scenario (in a JS worker)
+ ********************************************************/
+sim.runStandaloneScenario = function () {
+  sim.initializeSimulator();
+  sim.initializeScenarioRun();
+  sim.runScenario();
+}
+/*******************************************************
  Run a Simple Experiment (in a JS worker)
  ********************************************************/
 sim.runSimpleExperiment = function (exp) {
+  sim.initializeSimulator();
   // initialize replication statistics record
   if (sim.model.setupStatistics) sim.model.setupStatistics();
   exp.replicStat = Object.create(null);  // empty map
