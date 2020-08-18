@@ -10,6 +10,8 @@ sim.initializeSimulator = function () {
     if (sim.model.time === "continuous") sim.nextMomentDeltaT = 0.001;
     else sim.nextMomentDeltaT = 1;
   }
+  // A Map of all objects (accessible by ID)
+  sim.objects = new Map();
   // The Future Events List
   sim.FEL = new EventList();
   // Create map for statistics variables
@@ -20,14 +22,14 @@ sim.initializeSimulator = function () {
  *******************************************************************/
 sim.initializeScenarioRun = function () {
   // clear initial state data structures
-  sim.objects = new Map();  // a map of all objects (accessible by ID)
+  sim.objects.clear();
   sim.FEL.clear();
   sim.step = 0;  // simulation loop step counter
   sim.time = 0;  // simulation time
   // set default endTime
   sim.endTime = sim.scenario.durationInSimTime || Infinity;
   // get ID counter from simulation scenario, or set to default value
-  sim.idCounter = sim.scenario?.idCounter || 1000;
+  sim.idCounter = sim.scenario.idCounter || 1000;
   // set up initial state
   if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
   if (sim.model.setupStatistics) sim.model.setupStatistics();

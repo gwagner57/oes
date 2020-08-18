@@ -17,6 +17,8 @@ sim.initializeSimulator = function () {
   } else {
     if (sim.model.OnEachTimeStep) sim.timeIncrement = 1;  // default
   }
+  // A map of all objects (accessible by ID)
+  sim.objects = new Map();
   // The Future Events List
   sim.FEL = new EventList();
   // Create map for statistics variables
@@ -35,7 +37,7 @@ sim.assignModelParameters = function (expParSlots) {
  *******************************************************************/
 sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   // clear initial state data structures
-  sim.objects = new Map();  // a map of all objects (accessible by ID)
+  sim.objects.clear();
   sim.FEL.clear();
   //sim.ongoingActivities = Object.create( null);  // a map of all ongoing activities accessible by ID
   sim.step = 0;  // simulation loop step counter

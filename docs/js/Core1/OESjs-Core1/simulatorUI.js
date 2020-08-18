@@ -48,7 +48,7 @@ oes.ui.showStatistics = function (stat, tableEl) {
   }
 }
 /*********************************************************************
- Create the experiment results table head
+ Create the table head for simple experiment results
  **********************************************************************/
 oes.ui.createSimpleExpResultsTableHead = function (stat, tableEl)  {
   var N = Object.keys(stat).length, statVarHeadings="", colHeadingsRow="";
@@ -57,8 +57,7 @@ oes.ui.createSimpleExpResultsTableHead = function (stat, tableEl)  {
     statVarHeadings += "<th>"+ v +"</th>";
   })
   colHeadingsRow = `<tr><th rowspan='2'>Replication</th><th colspan='${N}'>Statistics</th></tr>`;
-  theadEl.innerHTML = `<tr><th colspan='${N+1}'>Experiment Results</th></tr>` +
-      colHeadingsRow + "<tr>"+ statVarHeadings +"</tr>";
+  theadEl.innerHTML = colHeadingsRow + "<tr>"+ statVarHeadings +"</tr>";
   tableEl.style.overflowX = "auto";  // horizontal scrolling
 }
 /*********************************************************************
@@ -88,7 +87,7 @@ oes.ui.showSimpleExpResults = function (exp, tableEl) {
   });
 }
 /*********************************************************************
- Create the parameter variation experiment results table head
+ Create the table head for parameter variation experiment results
  **********************************************************************/
 oes.ui.createParVarExpResultsTableHead = function (stat, tableEl)  {
   var N = Object.keys( stat).length, statVarHeadings="", colHeadingsRow="";
@@ -97,8 +96,7 @@ oes.ui.createParVarExpResultsTableHead = function (stat, tableEl)  {
     statVarHeadings += "<th>"+ v +"</th>";
   })
   colHeadingsRow = `<tr><th rowspan='2'>Experiment scenario</th><th rowspan='2'>Parameter values</th><th colspan='${N}'>Statistics</th></tr>`;
-  theadEl.innerHTML = `<tr><th colspan='${N+2}'>Experiment Results</th></tr>` +
-      colHeadingsRow + "<tr>"+ statVarHeadings +"</tr>";
+  theadEl.innerHTML = colHeadingsRow + "<tr>"+ statVarHeadings +"</tr>";
   tableEl.style.overflowX = "auto";  // horizontal scrolling
 }
 /*********************************************************************

@@ -25,13 +25,14 @@
   <script src="../lib/math.js"></script>
   <script src="../OESjs-Core1/simulatorUI.js"></script>
   <script>
-    // Create initial objects/maps/arrays
-    const sim = Object.create(null); // instead of {}
-    sim.model = Object.create(null);
-    sim.model.p = Object.create(null); // model parameters
-    sim.scenario = Object.create(null);
+    // Create initial (namespace) objects/maps/arrays
+    const sim = {};
+    sim.model = {};
+    sim.model.v = Object.create(null); // map of model variables
+    sim.model.p = Object.create(null); // map of model parameters
+    sim.scenario = {};
     sim.scenarios = [];
-    sim.stat = Object.create(null);
+    sim.stat = Object.create(null); // map of statistics variables
     sim.experimentTypes = [];
   </script>
   <script src="simulation.js"></script>
@@ -40,7 +41,7 @@
  <h1>Inventory Management Simulation</h1>
  <form id="run">
   <div><label>Select scenario: <select name="selScen"></select></label></div>
-  <div><button type="button" onclick="run()">Run</button> <select name="selExp" onchange="updateLogUI()"></select></div>
+  <div><button type="button" onclick="run()">Run</button> <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>
   <div><label>Simulation log <input name="log" type="checkbox"/></label></div>
  </form>
  <table style="display: none">
@@ -52,7 +53,7 @@
  </table>
  <p id="simInfo"></p>
  <table id="statisticsTbl">
-     <caption>Statistics</caption>
+     <caption></caption>
      <tbody></tbody>
  </table>
  <p id="execInfo"></p>

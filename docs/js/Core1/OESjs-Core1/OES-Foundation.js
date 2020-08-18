@@ -7,14 +7,18 @@
  * @author Gerd Wagner
  ******************************************************************************/
 
-// Create initial objects/maps/arrays
-const sim = Object.create(null); // instead of {}
-sim.model = Object.create(null);
-sim.model.p = Object.create(null); // model parameters
-sim.scenario = Object.create(null);
+// Create initial (namespace) objects/maps/arrays
+const sim = {};
+sim.model = {};
+sim.model.v = Object.create(null); // map of (global) model variables
+sim.model.f = Object.create(null); // map of (global) model functions
+sim.model.p = Object.create(null); // map of model parameters
+sim.scenario = {};
 sim.scenarios = [];
+sim.stat = Object.create(null); // map of statistics variables
 sim.experimentTypes = [];
-oes = Object.create(null);
+
+oes = {};  // cannot be const, since also defined in simulatorUI.js
 oes.defaults = {
   expostStatDecimalPlaces: 2,
   simLogDecimalPlaces: 2

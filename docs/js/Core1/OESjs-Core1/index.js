@@ -25,7 +25,7 @@ function setupUI() {
     dom.fillSelectWithOptionsFromStringList( selExpEl, optionTextItems);
   }
 }
-function updateLogUI() {
+function onChangeOfExpSelect() {
   if (selExpEl.value === "0") logCheckboxEl.parentElement.style.display = "block";
   else logCheckboxEl.parentElement.style.display = "none";
 }
@@ -34,8 +34,15 @@ function run() {
   if (choice) {
     if (choice !== "0") {
       if (!sim.experimentType) sim.experimentType = sim.experimentTypes[parseInt(choice)-1];
+      simInfoEl.textContent = sim.experimentType.title;
+      statisticsTableEl.querySelector("caption").textContent = "Experiment Results";
+    } else {
+      simInfoEl.textContent = "Standalone scenario run";
+      statisticsTableEl.querySelector("caption").textContent = "Statistics";
     }
   }
+  // Hide UI elements
+  formEl.style.display = "none";  // hide selection form
   sim.model.setupStatistics();
   if (sim.experimentType) {
     if (!sim.experimentType.parameterDefs) {
@@ -54,21 +61,21 @@ function run() {
   worker.postMessage( data);
   // on incoming messages from worker
   worker.onmessage = function (e) {
-    if (e.data.step) {
+    if (e.data.step) {  // create log entry
       simLogTableEl.parentElement.style.display = "block";
       oes.ui.logSimulationStep( simLogTableEl, e.data.step, e.data.time,
           e.data.objectsStr, e.data.eventsStr);
-    } else if (e.data.simpleExperiment) {
-      let simEndTime = (new Date()).getTime() - simStartTime;
-      // Log experiment execution time
-      execInfoEl.textContent = `Experiment execution time: ${simEndTime} ms`;
-      // Create subheading
-      simInfoEl.textContent = e.data.simpleExperiment.title;
-      oes.ui.showSimpleExpResults( e.data.simpleExperiment, statisticsTableEl);
     } else if (e.data.expScenNo !== undefined) {  // parameter variation experiment
       oes.ui.showResultsFromParVarExpScenarioRun( e.data, statisticsTableEl);
-    } else if (e.data.statistics) {  // statistics from standalone scenario run
-      oes.ui.showStatistics( e.data.statistics, statisticsTableEl);
+    } else {
+      let simEndTime = (new Date()).getTime() - simStartTime;
+      // Show execution time
+      execInfoEl.textContent = `Execution time: ${simEndTime} ms`;
+      if (e.data.statistics) {  // statistics from standalone scenario run
+        oes.ui.showStatistics( e.data.statistics, statisticsTableEl);
+      } else if (e.data.simpleExperiment) {
+        oes.ui.showSimpleExpResults( e.data.simpleExperiment, statisticsTableEl);
+      }
     }
   }
 }
@@ -79,7 +86,5 @@ if (sim.scenarios.length > 0) {
 } else {
   selScenEl.parentElement.style.display = "none";
 }
-if (sim.experimentType) {
-  document.getElementById("run").style.display = "none";  // hide selection form
-  run();
-} else setupUI();  // let the user choose
+if (sim.experimentType) run();  // pre-set experiment (in simulation.js)
+else setupUI();  // let the user choose
