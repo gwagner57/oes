@@ -1,6 +1,8 @@
 // load general framework code
 self.importScripts("../lib/seedrandom.min.js", "../lib/rand.js", "../lib/EventList.js", "../lib/math.js",
-    "../OESjs-Core1/OES-Foundation.js", "../OESjs-Core1/simulator.js");
+    //"../lib/idb.js", "../lib/idb-crud.js",
+    "../lib/idb5.js");
+self.importScripts("../OESjs-Core1/OES-Foundation.js", "../OESjs-Core1/simulator.js");
 // load simulation-example-specific code
 self.importScripts("simulation.js");
 if (sim.model.objectTypes) {
@@ -40,8 +42,10 @@ onmessage = function (e) {
       self.postMessage({statistics: sim.stat, endTime: sim.endTime});
     } else {
       let expNo = parseInt( e.data.simToRun) - 1;
+      sim.experimentType = sim.experimentTypes[expNo];
+      sim.experimentType.storeExpResults = e.data.storeExpRes;
       // run simulation experiment
-      sim.runExperiment( sim.experimentTypes[expNo]);
+      sim.runExperiment();
     }
   }
 };

@@ -41,8 +41,9 @@ onmessage = function (e) {
       self.postMessage({statistics: sim.stat, endTime: sim.endTime});
     } else {
       let expNo = parseInt( e.data.simToRun) - 1;
-      // run simulation experiment
-      sim.runExperiment( sim.experimentTypes[expNo]);
+      sim.experimentType = sim.experimentTypes[expNo];
+      sim.experimentType.storeExpResults = e.data.storeExpRes;
+      sim.runExperiment();
     }
   }
 };

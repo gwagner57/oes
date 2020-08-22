@@ -2,6 +2,7 @@
 const formEl = document.forms["run"],
     selScenEl = formEl["selScen"],
     logCheckboxEl = formEl["log"],
+    storeExpResCheckboxEl = formEl["storeExpRes"],
     selExpEl = formEl["selExp"],
     simLogTableEl = document.getElementById("simLog"),
     statisticsTableEl = document.getElementById("statisticsTbl"),
@@ -26,8 +27,16 @@ function setupUI() {
   }
 }
 function onChangeOfExpSelect() {
-  if (selExpEl.value === "0") logCheckboxEl.parentElement.style.display = "block";
-  else logCheckboxEl.parentElement.style.display = "none";
+  if (selExpEl.value === "0") {
+    logCheckboxEl.parentElement.style.display = "block";
+    storeExpResCheckboxEl.parentElement.style.display = "none";
+  } else {
+    logCheckboxEl.parentElement.style.display = "none";
+    // allow choosing "store results" only if browser supports IndexedDB
+    if ('indexedDB' in self) {
+      storeExpResCheckboxEl.parentElement.style.display = "block";
+    }
+  }
 }
 function run() {
   var choice = selExpEl.value, data={};
@@ -47,9 +56,13 @@ function run() {
   if (sim.experimentType) {
     if (!sim.experimentType.parameterDefs) {
       oes.ui.createSimpleExpResultsTableHead( sim.stat, statisticsTableEl);
-    } else oes.ui.createParVarExpResultsTableHead( sim.stat, statisticsTableEl);
+    } else {
+      oes.ui.createParVarExpResultsTableHead( sim.stat, statisticsTableEl);
+    }
   }
-  data = {simToRun: selExpEl.value, createLog: logCheckboxEl.checked};
+  data = {simToRun: selExpEl.value,
+      createLog: logCheckboxEl.checked,
+      storeExpRes: storeExpResCheckboxEl.checked};
   if (sim.scenarios.length > 0) {
     data.scenarioNo = parseInt( selScenEl.value)
   }
