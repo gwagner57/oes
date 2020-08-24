@@ -300,7 +300,7 @@ sim.runExperiment = async function () {
       //await idbc.add( "experiment_runs", expRun);
       await sim.db.add("experiment_runs", expRun);
     } catch( err) {
-      console.log('error', err.message);
+      console.log("IndexedDB error: ", err.message);
     }
   }
   if (exp.parameterDefs?.length) runParVarExperiment();

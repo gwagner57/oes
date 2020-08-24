@@ -7,23 +7,6 @@ if (typeof oes !== "object") {
     simLogDecimalPlaces: 2
   };
 }
-const dom = {
-  /**
-   * Create option elements from an array list of option text strings
-   * and insert them into a selection list element
-   *
-   * @param {object} selEl  A select(ion list) element
-   * @param {Array<string>} strings  An array list of strings
-   */
-  fillSelectWithOptionsFromStringList: function (selEl, strings) {
-    for (let i=0; i < strings.length; i++) {
-      let el = document.createElement("option");
-      el.textContent = `(${i}) ${strings[i]}`;
-      el.value = i;
-      selEl.add( el, null);
-    }
-  }
-}
 /*******************************************************
  Create a simulation log entry (table row)
  ********************************************************/

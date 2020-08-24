@@ -9,7 +9,7 @@
 
 /****************************************************************
  ****************************************************************/
-var math = Object.create( null);
+const math = {};
 /**
  * Compute the Cartesian Product of an array of arrays
  * From https://stackoverflow.com/a/36234242/2795909
