@@ -115,6 +115,9 @@ async function exportExperResults() {
     util.generateTextFile( "experiment_scenario_runs", text);
   }
 }
+async function clearDatabase() {
+  await idb.deleteDB( sim.model.name);
+}
 function run() {
   var choice = selExpEl.value, data={};
   if (choice) {
