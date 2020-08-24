@@ -70,11 +70,13 @@ async function exportExperResults() {
   for (const rec of experRunRecords) {
     let row=[];  // Definitions
     let simExper = sim.experimentTypes[rec.experimentType];
-    let parNames = simExper.parameterDefs.map( defRec => defRec.name);
     row.push( rec.id);
     row.push( rec.experimentType);
     row.push( rec.dateTime);
-    row.push( parNames.join("/"));
+    if (simExper.parameterDefs) {
+      let parNames = simExper.parameterDefs.map( defRec => defRec.name);
+      row.push( parNames.join("/"));
+    }
     text += row.join( exportSep) + "\n";
   }
   util.generateTextFile( "experiment_runs", text);
