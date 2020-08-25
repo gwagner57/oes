@@ -23,6 +23,9 @@ sim.initializeSimulator = async function () {
   sim.FEL = new EventList();
   // Create map for statistics variables
   sim.stat = Object.create(null);
+  // Assign scenarioNo = 0 to default  scenario
+  if (sim.scenario.scenarioNo === undefined) sim.scenario.scenarioNo = 0;
+
 }
 /*******************************************************************
  * Assign model parameters with experiment parameter values ********
@@ -294,6 +297,7 @@ sim.runExperiment = async function () {
     expRun = {
       id: eXPERIMENTrUN.getAutoId(),
       experimentType: exp.id,
+      baseScenarioNo: sim.scenario.scenarioNo,
       dateTime: (new Date()).toISOString(),
     };
     try {

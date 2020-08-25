@@ -85,56 +85,6 @@ class eVENT {
     if (slotListStr) evtStr = `${eventTypeName}{ ${slotListStr}}`;
     else evtStr = eventTypeName;
     return `${evtStr}@${math.round(this.occTime,decPl)}`;
-/*
-    var occT = sim.model.time === "continuous" && sim.timeRoundingFactor ?
-        Math.round( this.occTime * sim.timeRoundingFactor) / sim.timeRoundingFactor :
-        this.occTime;
-    var str1="", str2="", evtStr="", i=0,
-        eventTypeName = this.constructor.Name, AT=null,
-        propDs={}, slots={};
-    switch (eventTypeName) {
-      case "aCTIVITYsTART":
-        AT = cLASS[this.activityType];
-        if (!AT.shortLabel) return "";
-        str1 = AT.shortLabel + "Start";
-        propDs = AT.properties;
-        slots = this.resources;
-        break;
-      case "pROCESSINGaCTIVITYsTART":
-        break;
-      case "aCTIVITYeND":
-        AT = cLASS[this.activityType];
-        if (!AT.shortLabel) return "";
-        str1 = AT.shortLabel + "End";
-        propDs = AT.properties;
-        slots = {"activityIdRef": this.activityIdRef};
-        break;
-      default:
-        if (!this.constructor.shortLabel) return "";
-        str1 = this.constructor.shortLabel;
-        propDs = cLASS[eventTypeName].properties;
-        slots = this;
-    }
-    str2 = "{";
-    Object.keys( slots).forEach( function (p) {
-      var propDecl = propDs[p], val = slots[p], propLabel="", valStr="";
-      if (propDecl && propDecl.shortLabel) {
-        propLabel = propDecl.shortLabel;
-        if (cLASS[propDecl.range]) {  // a reference property
-          valStr = val.id;
-        } else {  // if the property is not a reference property
-          if (typeof val === "number" && !Number.isInteger(val) && sim.timeRoundingFactor) {
-            valStr = JSON.stringify( Math.round(
-                val * sim.timeRoundingFactor) / sim.timeRoundingFactor);
-          } else valStr = JSON.stringify( val);
-        }
-      }
-      if (val !== undefined && propLabel) {
-        str2 += (i>0 ? ", " : "") + propLabel +":"+ valStr;
-        i = i+1;
-      }
-    });
-*/
   }
   // an event priority comparison function for Array.sort
   static rank( e1, e2) {
@@ -159,19 +109,12 @@ class eXPERIMENTpARAMdEF {
     if (endValue) this.endValue = endValue;
     if (stepSize) this.stepSize = stepSize;
   }
-  static val2str(v) {
-    return JSON.stringify( v);
-  }
-  static str2val(str) {
-    return JSON.parse( str);
-  }
 }
 /**
  * An experiment type is defined for a model.
  */
 class eXPERIMENTtYPE {
-  constructor({model, title,
-                nmrOfReplications, parameterDefs=[], seeds=[]}) {
+  constructor({model, title, nmrOfReplications, parameterDefs=[], seeds=[]}) {
     this.model = model;  // optional (by default the model is defined in the context)
     this.title = title;  // the combination of model and title forms an ID
     this.nmrOfReplications = nmrOfReplications;

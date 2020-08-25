@@ -25,6 +25,7 @@ sim.scenario.setupInitialState = function () {
  Alternative Scenarios
  ********************************************************/
 sim.scenarios[1] = {
+  scenarioNo: 1,
   title: "Scenario with two service desks",
   setupInitialState: function () {
     // Create initial objects

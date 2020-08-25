@@ -66,12 +66,13 @@ async function exportExperResults() {
     return;
   }
   // Export data about experiment_runs
-  text = ["id","experimentType","dateTime","parameters"].join( exportSep) + "\n";
+  text = ["id","experimentType","baseScenarioNo","dateTime","parameters"].join( exportSep) + "\n";
   for (const rec of experRunRecords) {
     let row=[];  // Definitions
     let simExper = sim.experimentTypes[rec.experimentType];
     row.push( rec.id);
     row.push( rec.experimentType);
+    row.push( rec.baseScenarioNo);
     row.push( rec.dateTime);
     if (simExper.parameterDefs) {
       let parNames = simExper.parameterDefs.map( defRec => defRec.name);
