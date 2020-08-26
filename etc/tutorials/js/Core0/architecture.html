@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Simulator Architecture</title>
+  </head>
+
+  <body><p>OES Core 0 is the minimal architecture for an OE simulator,
+  supporting</p><ul>
+      <li>model variables</li>
+
+      <li>object types and event types, including <em>exogenous</em> event
+      types with <code>recurrence</code> and <code>nextEvent</code>
+      functions</li>
+
+      <li>next-event time progression</li>
+
+      <li>the uniform distribution as the only representative of probability
+      distributions</li>
+
+      <li>simple simulation experiments with the (unseeded) random number
+      generator provided by the host programming language.</li>
+    </ul><p>The OES Core 0 simulator's information architecture is described
+  by the following class diagram, which defines the names of classes,
+  properties and methods/functions:</p><figure><img
+  src="../../../../docs/OES-Core0.svg" /></figure><p>The
+  Run-Standalone-Scenario procedure is described by the following activity
+  diagram:</p><figure><img
+  src="../../../../docs/OES-Core0-runStandaloneScenario.svg" /></figure></body>
+</html>

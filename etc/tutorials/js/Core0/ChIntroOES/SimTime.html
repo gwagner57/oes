@@ -16,14 +16,14 @@
   granularity</i>, as explained in the next sub-section.</p><p>In both cases,
   the underlying simulation <b><i>time unit</i></b> can be either left
   unspecified (e.g., in the case of an abstract time model), or it can be set
-  to one of the time units "ms", "s", "m", "h", "D", "W", "M" or "Y", as
-  in</p><pre>sim.model.timeUnit = "h";</pre><p>Typical examples of time models
-  are:</p><ol>
+  to one of the time units "ms", "s", "min", "hour", "day", "week", "month" or
+  "year", as in</p><pre>sim.model.timeUnit = "hour";</pre><p>Typical examples
+  of time models are:</p><ol>
       <li><p>An abstract discrete model of time where time runs in steps
       without any concrete meaning: </p><pre>sim.model.time = "discrete";</pre></li>
 
       <li><p>A concrete discrete model of time in number of days: </p><pre>sim.model.time = "discrete";
-sim.model.timeUnit = "D";</pre></li>
+sim.model.timeUnit = "day";</pre></li>
 
       <li><p>A concrete continuous model of time in number of seconds:
       </p><pre>sim.model.time = "continuous";

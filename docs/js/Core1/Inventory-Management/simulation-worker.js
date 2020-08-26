@@ -18,10 +18,11 @@ if (sim.model.eventTypes) {
 onmessage = function (e) {
   var scenario={};
   if (sim.experimentType) {
+    // when experimentType has been set, run it
     sim.runExperiment( sim.experimentType);
   } else if (e.data.simToRun) {
     // assign alternative scenario, if selected
-    if (e.data.scenarioNo !== undefined) {
+    if (e.data.scenarioNo !== undefined && sim.scenarios[e.data.scenarioNo]) {
       scenario = sim.scenarios[e.data.scenarioNo];
       // copy simulation end time from base scenario if not provided
       if (!scenario.durationInSimTime && !scenario.durationInSimSteps && !scenario.durationInCpuTime) {
@@ -43,7 +44,6 @@ onmessage = function (e) {
       let expNo = parseInt( e.data.simToRun) - 1;
       sim.experimentType = sim.experimentTypes[expNo];
       sim.experimentType.storeExpResults = e.data.storeExpRes;
-      // run simulation experiment
       sim.runExperiment();
     }
   }

@@ -1,6 +1,7 @@
 /*******************************************************
  Simulation Scenario Settings
 ********************************************************/
+sim.scenario.title = "Basic scenario with a periodic review policy";
 sim.scenario.durationInSimTime = 1000;  // days
 //sim.scenario.durationInSimSteps = 1000;
 //sim.scenario.durationInCpuTime = 1000;  // seconds
@@ -13,7 +14,7 @@ sim.model.timeUnit = "D";  // days
 sim.model.objectTypes = ["SingleProductShop"];
 sim.model.eventTypes = ["DailyDemand", "Delivery"];
 // Model parameters
-sim.model.p.reviewPolicy = "periodic";  // "continuous" or "periodic"
+sim.model.p.reviewPolicy = "continuous";  // "continuous" or "periodic"
 sim.model.p.targetInventory = 100;
 sim.model.p.reorderInterval = 3;
 /*******************************************************
@@ -27,7 +28,7 @@ sim.scenario.setupInitialState = function () {
     quantityInStock: 80,
     reorderLevel: 50,
     targetInventory: sim.model.p.targetInventory,
-    reorderInterval: 3  // every 3 days
+    reorderInterval: sim.model.p.reorderInterval
   });
   // Schedule initial events
   sim.FEL.add( new DailyDemand({occTime:1, quantity:25, shop: tvShop}));
@@ -55,13 +56,13 @@ sim.experimentTypes[0] = {
 };
 sim.experimentTypes[1] = {
   id: 1,
-  title: "Parameter variation experiment for exploring the targetInventory value",
+  title: "Parameter variation experiment for exploring reorderInterval and targetInventory",
   nmrOfReplications: 10,
   seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012],
   parameterDefs: [
-    {name:"reviewPolicy", values:["continuous"]},
+    {name:"reviewPolicy", values:["periodic"]},
     {name:"reorderInterval", values:[2,3,4]},
-    {name:"targetInventory", startValue:80, endValue:100, stepSize:5},
+    {name:"targetInventory", startValue:80, endValue:100, stepSize:10},
   ]
 };
 sim.experimentTypes[2] = {

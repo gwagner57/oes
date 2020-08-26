@@ -40,7 +40,7 @@ OES Core 1 adds the following features to OES Core 0:
 - multiple experiment types per model
 - model parameters 
 - parameter variation experiments
-- persistent storage of experiment results 
+- persistent storage and export of experiment results 
 
 <figure><figcaption>The OES Core 1 information architecture</figcaption>
  <img src="docs/OES-Core1.svg">
