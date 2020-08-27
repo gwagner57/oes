@@ -7,8 +7,8 @@
 sim.initializeSimulator = function () {
   if (sim.model.nextMomentDeltaT) sim.nextMomentDeltaT = sim.model.nextMomentDeltaT;
   else {  // assign defaults
-    if (sim.model.time === "continuous") sim.nextMomentDeltaT = 0.001;
-    else sim.nextMomentDeltaT = 1;
+    if (sim.model.time === "discrete") sim.nextMomentDeltaT = 1;
+    else sim.nextMomentDeltaT = oes.defaults.nextMomentDeltaT;
   }
   // A Map of all objects (accessible by ID)
   sim.objects = new Map();

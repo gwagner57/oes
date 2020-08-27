@@ -49,6 +49,8 @@ class oBJECT {
         valStr = String( math.round( val, decPl));
       } else if (Array.isArray( val)) {
         valStr = "["+ val.map( v => v.id).toString() +"]";
+      } else if (typeof val === "object") {
+        valStr = "{"+ val.toString() +"}";
       } else valStr = JSON.stringify( val);
       if (propLabel && val !== undefined) {
         str += (i>0 ? ", " : "") + propLabel +": "+ valStr;
@@ -62,10 +64,16 @@ class oBJECT {
  * An OES event may be instantaneous or it may have a non-zero duration.
  */
 class eVENT {
-    constructor({occTime, delay}) {
+    constructor({occTime, delay, startTime, duration}) {
       if (occTime) this.occTime = occTime;
       else if (delay) this.occTime = sim.time + delay;
-      else this.occTime = sim.time + sim.nextMomentDeltaT;
+      else if (startTime) {  // e.g., an activity
+        this.startTime = startTime;
+        if (duration) {
+          this.duration = duration;
+          this.occTime = startTime + duration;
+        }
+      } else this.occTime = sim.time + sim.nextMomentDeltaT;
   }
   // overwrite/improve the standard toString method
   toString() {

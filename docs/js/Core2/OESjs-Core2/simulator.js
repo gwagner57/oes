@@ -5,7 +5,7 @@
 /*******************************************************************
  * Initialize Simulator ********************************************
  *******************************************************************/
-sim.initializeSimulator = async function () {
+sim.initializeSimulator = function () {
   if (sim.model.nextMomentDeltaT) sim.nextMomentDeltaT = sim.model.nextMomentDeltaT;
   else {  // assign defaults
     if (sim.model.time === "discrete") sim.nextMomentDeltaT = 1;
@@ -17,12 +17,15 @@ sim.initializeSimulator = async function () {
   } else {
     if (sim.model.OnEachTimeStep) sim.timeIncrement = 1;  // default
   }
-  // A map of all objects (accessible by ID)
+  // A Map of all objects (accessible by ID)
   sim.objects = new Map();
+  // A Map of all ongoing activities (accessible by ID)
+  sim.ongoingActivities = new Map();
   // The Future Events List
   sim.FEL = new EventList();
   // Create map for statistics variables
   sim.stat = Object.create(null);
+  sim.initializeStatistics();
   // Assign scenarioNo = 0 to default scenario
   if (sim.scenario.scenarioNo === undefined) sim.scenario.scenarioNo = 0;
   if (!sim.scenario.title) sim.scenario.title = "Default scenario";
@@ -41,8 +44,8 @@ sim.assignModelParameters = function (expParSlots) {
 sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   // clear initial state data structures
   sim.objects.clear();
+  sim.ongoingActivities.clear();
   sim.FEL.clear();
-  //sim.ongoingActivities = Object.create( null);  // a map of all ongoing activities accessible by ID
   sim.step = 0;  // simulation loop step counter
   sim.time = 0;  // 1 time
   // Set default values for end time parameters
@@ -66,7 +69,12 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   // Set up initial state and statistics
   if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
   //if (Object.keys( oes.EntryNode.instances).length > 0) oes.setupProcNetStatistics();
-  if (sim.model.setupStatistics) sim.model.setupStatistics();
+  if (sim.model.setupStatistics) {  // reset statistics
+    sim.model.setupStatistics();
+    sim.model.activityTypes.forEach( function (aT) {
+      sim.stat.resUtil[aT] = Object.create(null);
+    });
+  }
 };
 /*******************************************************
  Advance Simulation Time
@@ -309,5 +317,24 @@ sim.runExperiment = async function () {
   }
   if (exp.parameterDefs?.length) runParVarExperiment();
   else runSimpleExperiment();
+}
+/*******************************************************
+ * Initialize the ex-post statistics
+ ********************************************************/
+sim.initializeStatistics = function () {
+  // initialize resource utilization statistics
+  if (sim.model.activityTypes && sim.model.activityTypes.length > 0) {
+    sim.stat.resUtil = Object.create(null);  // a map of maps
+    sim.model.activityTypes.forEach( function (aT) {
+      sim.stat.resUtil[aT] = Object.create(null);
+    });
+  }
+  /*
+  // initialize PN statistics
+  if (Object.keys( oes.ProcessingNode.instances).length > 0) {
+    sim.stat.resUtil = sim.stat.resUtil || {};
+    sim.stat.resUtil["pROCESSINGaCTIVITY"] = {};
+  }
+  */
 }
 

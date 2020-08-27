@@ -15,6 +15,7 @@ sim.model.f = Object.create(null);
 sim.scenario = Object.create(null);
 oes = Object.create(null);
 oes.defaults = {
+  nextMomentDeltaT: 2,
   expostStatDecimalPlaces: 2,
   simLogDecimalPlaces: 2
 };
