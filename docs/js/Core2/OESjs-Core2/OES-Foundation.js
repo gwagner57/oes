@@ -20,7 +20,7 @@ sim.experimentTypes = [];
 
 oes = {};  // cannot be const, since also defined in simulatorUI.js
 oes.defaults = {
-  nextMomentDeltaT: 2,
+  nextMomentDeltaT: 0.01,
   expostStatDecimalPlaces: 2,
   simLogDecimalPlaces: 2
 };
@@ -67,11 +67,13 @@ class eVENT {
     constructor({occTime, delay, startTime, duration}) {
       if (occTime) this.occTime = occTime;
       else if (delay) this.occTime = sim.time + delay;
-      else if (startTime) {  // e.g., an activity
-        this.startTime = startTime;
-        if (duration) {
-          this.duration = duration;
-          this.occTime = startTime + duration;
+      else if (startTime !== undefined) {  // e.g., an activity
+        if (startTime > 0) {  // a meaningful startTime
+          this.startTime = startTime;
+          if (duration) {
+            this.duration = duration;
+            this.occTime = startTime + duration;
+          }
         }
       } else this.occTime = sim.time + sim.nextMomentDeltaT;
   }

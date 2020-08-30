@@ -4,19 +4,17 @@ class CustomerArrival extends eVENT {
     this.serviceDesk = serviceDesk;
   }
   onEvent() {
-    var followupEvents=[];
-    this.serviceDesk.queueLength++;
+    var followupEvents=[], plannedServices = this.serviceDesk.plannedServices;
+    plannedServices.push( new Service({serviceDesk: this.serviceDesk}));
     // update statistics
     sim.stat.arrivedCustomers++;
-    if (this.serviceDesk.queueLength > sim.stat.maxQueueLength) {
-      sim.stat.maxQueueLength = this.serviceDesk.queueLength;
+    if (plannedServices.length > sim.stat.maxQueueLength) {
+      sim.stat.maxQueueLength = plannedServices.length;
     }
     // if the service desk is not busy
-    if (this.serviceDesk.queueLength === 1) {
+    if (this.serviceDesk.status === oes.ResourceStatusEL.AVAILABLE) {
       followupEvents.push( new aCTIVITYsTART({
-        activityType: PerformService,
-        // on activity creation, resource roles are copied to corresp. property slots
-        resourceRoles: {"serviceDesk": this.serviceDesk}
+        plannedActivity: plannedServices.shift(),  // dequeue next planned service
       }));
     }
     return followupEvents;

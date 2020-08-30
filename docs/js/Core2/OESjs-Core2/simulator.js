@@ -19,11 +19,16 @@ sim.initializeSimulator = function () {
   }
   // A Map of all objects (accessible by ID)
   sim.objects = new Map();
-  // A Map of all ongoing activities (accessible by ID)
-  sim.ongoingActivities = new Map();
+  // A map for resource pools
+  sim.resourcePools = {};
+  if (Array.isArray( sim.model.resourcePools)) {
+    for (let poolName of sim.model.resourcePools) {
+      sim.resourcePools[poolName] = new rESOURCEpOOL( poolName);
+    }
+  }
   // The Future Events List
   sim.FEL = new EventList();
-  // Create map for statistics variables
+  // A map for statistics variables
   sim.stat = Object.create(null);
   sim.initializeStatistics();
   // Assign scenarioNo = 0 to default scenario
@@ -44,7 +49,6 @@ sim.assignModelParameters = function (expParSlots) {
 sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   // clear initial state data structures
   sim.objects.clear();
-  sim.ongoingActivities.clear();
   sim.FEL.clear();
   sim.step = 0;  // simulation loop step counter
   sim.time = 0;  // 1 time
@@ -134,6 +138,7 @@ sim.runScenario = function (createLog) {
     // end simulation if no time increment and no more events
     if (!sim.timeIncrement && sim.FEL.isEmpty()) break;
   }
+  sim.computeFinalStatistics();  // resource utilization
   if (sim.model.computeFinalStatistics) sim.model.computeFinalStatistics();
 }
 /*******************************************************
@@ -149,12 +154,18 @@ sim.runStandaloneScenario = function (createLog) {
  Run an Experiment (in a JS worker)
  ********************************************************/
 sim.runExperiment = async function () {
-  var exp = sim.experimentType, expRun={};
+  var exp = sim.experimentType, expRun={},
+      compositeStatVarNames = ["resUtil"],
+      simpleStatVarNames = [];
+  // set up statistics variables
+  sim.model.setupStatistics();
+  // create a list of the names of simple statistics variables
+  simpleStatVarNames = Object.keys( sim.stat).filter(
+      varName => !compositeStatVarNames.includes( varName));
   async function runSimpleExperiment() {
-    if (sim.model.setupStatistics) sim.model.setupStatistics();
     // initialize replication statistics record
     exp.replicStat = Object.create(null);  // empty map
-    for (let varName of Object.keys( sim.stat)) {
+    for (let varName of simpleStatVarNames) {
       exp.replicStat[varName] = [];  // an array per statistics variable
     }
     // run experiment scenario replications
@@ -212,8 +223,6 @@ sim.runExperiment = async function () {
     }
     cp = math.cartesianProduct( valueSets);
     M = cp.length;  // size of cartesian product
-    // set up statistics variables
-    sim.model.setupStatistics();
     // loop over all combinations of experiment parameter values
     for (let i=0; i < M; i++) {
       valueCombination = cp[i];  // an array list of values, one for each parameter
@@ -221,7 +230,7 @@ sim.runExperiment = async function () {
       exp.scenarios[i] = {stat: Object.create(null)};
       exp.scenarios[i].parameterValues = valueCombination;
       // initialize experiment scenario statistics
-      for (let varName of Object.keys( sim.stat)) {
+      for (let varName of simpleStatVarNames) {
         exp.scenarios[i].stat[varName] = 0;
       }
       // create experiment parameter slots for assigning corresponding model variables
@@ -249,7 +258,7 @@ sim.runExperiment = async function () {
         }
         sim.runScenario();
         // add up replication statistics from sim.stat to sim.experimentType.scenarios[i].stat
-        Object.keys( sim.stat).forEach( function (varName) {
+        simpleStatVarNames.forEach( function (varName) {
           exp.scenarios[i].stat[varName] += sim.stat[varName];
         });
         if (exp.storeExpResults) {
@@ -266,7 +275,7 @@ sim.runExperiment = async function () {
         }
       }
       // compute averages
-      Object.keys( sim.stat).forEach( function (varName) {
+      simpleStatVarNames.forEach( function (varName) {
         exp.scenarios[i].stat[varName] /= exp.nmrOfReplications;
       });
       // send statistics to main thread
@@ -324,9 +333,9 @@ sim.runExperiment = async function () {
 sim.initializeStatistics = function () {
   // initialize resource utilization statistics
   if (sim.model.activityTypes && sim.model.activityTypes.length > 0) {
-    sim.stat.resUtil = Object.create(null);  // a map of maps
-    sim.model.activityTypes.forEach( function (aT) {
-      sim.stat.resUtil[aT] = Object.create(null);
+    sim.stat.resUtil = Object.create(null);  // an empty map
+    sim.model.activityTypes.forEach( function (actTypeName) {
+      sim.stat.resUtil[actTypeName] = Object.create(null);
     });
   }
   /*
@@ -336,5 +345,19 @@ sim.initializeStatistics = function () {
     sim.stat.resUtil["pROCESSINGaCTIVITY"] = {};
   }
   */
+}
+/*******************************************************
+ * Compute the final statistics
+ ********************************************************/
+sim.computeFinalStatistics = function () {
+  // finalize resource utilization statistics
+  if (sim.model.activityTypes && sim.model.activityTypes.length > 0) {
+    sim.model.activityTypes.forEach( function (aT) {
+      var resUtilMap = sim.stat.resUtil[aT];
+      Object.keys( resUtilMap).forEach( function (idStr) {
+        resUtilMap[idStr] /= sim.time;
+      });
+    });
+  }
 }
 

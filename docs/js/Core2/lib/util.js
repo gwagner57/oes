@@ -30,5 +30,18 @@ const util = {
     aElem.click();
     window.URL.revokeObjectURL( url);
     aElem.remove();
+  },
+  // from https://stackoverflow.com/questions/5646279/get-object-class-from-string-name-in-javascript/53199720
+  getClass( name){
+    var Class=null;
+    if (name.match(/^[a-zA-Z0-9_]+$/)) {
+      // proceed only if the name is a single word string
+      Class = eval( name);
+    } else {  // not a name
+      throw new Error("getClass requires a single word string as argument!");
+    }
+    return Class;
+    // Alternative solution
+    // return this[name];
   }
 }

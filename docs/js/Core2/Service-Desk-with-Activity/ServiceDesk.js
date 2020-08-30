@@ -1,7 +1,8 @@
 class ServiceDesk extends oBJECT {
-  constructor({ id, name, queueLength}) {
+  constructor({ id, name, status}) {
     super( id, name);
-    this.queueLength = queueLength;
+    this.status = status;
+    this.plannedServices = [];  // a queue
   }
 }
-ServiceDesk.labels = {"queueLength":"qLen", "activityState":"act"};
+ServiceDesk.labels = {"status":"st", "activityState":"act"};
