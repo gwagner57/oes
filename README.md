@@ -7,9 +7,20 @@ For simplicity, all of these simulators have a minimalistic user interface.
 
 The minimal version of an Object Event Simulator is *OES Core 0* with about 220 lines of code in JavaScript. 
 
-The simulators OES Core 1-3 incrementally extend OES Core 0 by adding further features.
+The simulators OES Core 1-4 incrementally extend OES Core 0 by adding further features:
 
-You can run OESjs Core0 and Core1 simulation examples from [the project website](https://gwagner57.github.io/oes/).
+1. OES Core 1 adds a seedable random number generator, a set of sampling functions from various probability distributions 
+(uniform, triangular, normal, exponential, etc.), multiple scenarios per model, multiple experiment types per model, model parameters, 
+parameter variation experiments, as well as persistent storage and export of experiment results.
+
+2. OES Core 2 adds the concept of *activities*, which are composite events that have some duration and typically depend on resources,
+together with the concepts of *resource roles*, *resource constrainst* and *resource pools*.
+
+3. OES Core 3 adds the concepts of *processing activities* and *processing networks*.
+
+4. OES Core 4 adds the concept of *agents*.
+
+You can run OESjs CoreX simulation examples from [the project website](https://gwagner57.github.io/oes/).
 
 ## OES Core 0
 
