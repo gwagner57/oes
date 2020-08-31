@@ -1,5 +1,14 @@
 /* Changes from OESjs
 - sim.objects is a JS Map
+- sim.resourcePools
+- etc.
+ */
+
+/*
+TODO:
+- compute generic queue length statistics per activity type
+- compute generic cycle time statistics per activity type
+- group all activity-induced extensions in "initializeSimulator" and other procedures
  */
 
 /*******************************************************************
@@ -22,7 +31,13 @@ sim.initializeSimulator = function () {
   // A map for resource pools
   sim.resourcePools = {};
   if (Array.isArray( sim.model.resourcePools)) {
+    // a list of count pool names
     for (let poolName of sim.model.resourcePools) {
+      sim.resourcePools[poolName] = new rESOURCEpOOL( poolName);
+    }
+  } else if (typeof sim.model.resourcePools === "object") {
+    // a map of pool names
+    for (let poolName of Object.keys( sim.model.resourcePools)) {
       sim.resourcePools[poolName] = new rESOURCEpOOL( poolName);
     }
   }
@@ -31,6 +46,11 @@ sim.initializeSimulator = function () {
   // A map for statistics variables
   sim.stat = Object.create(null);
   sim.initializeStatistics();
+  // Create a className->Class map
+  sim.Classes = Object.create(null);
+  sim.model.activityTypes.forEach( function (className) {
+    sim.Classes[className] = util.getClass( className);
+  });
   // Assign scenarioNo = 0 to default scenario
   if (sim.scenario.scenarioNo === undefined) sim.scenario.scenarioNo = 0;
   if (!sim.scenario.title) sim.scenario.title = "Default scenario";
@@ -72,6 +92,15 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   if (expParSlots) sim.assignModelParameters( expParSlots);
   // Set up initial state and statistics
   if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
+  // Reset the plannedActivities queues
+  sim.model.activityTypes.forEach( function (actTypeName) {
+    sim.Classes[actTypeName].plannedActivities = [];
+  });
+  // Store the size of count pools
+  for (const poolName of Object.keys( sim.resourcePools)) {
+    // the size of a pool is the number of initially available resources
+    sim.resourcePools[poolName].size = sim.resourcePools[poolName].available;
+  }
   //if (Object.keys( oes.EntryNode.instances).length > 0) oes.setupProcNetStatistics();
   if (sim.model.setupStatistics) {  // reset statistics
     sim.model.setupStatistics();
@@ -352,10 +381,15 @@ sim.initializeStatistics = function () {
 sim.computeFinalStatistics = function () {
   // finalize resource utilization statistics
   if (sim.model.activityTypes && sim.model.activityTypes.length > 0) {
-    sim.model.activityTypes.forEach( function (aT) {
-      var resUtilMap = sim.stat.resUtil[aT];
-      Object.keys( resUtilMap).forEach( function (idStr) {
-        resUtilMap[idStr] /= sim.time;
+    sim.model.activityTypes.forEach( function (actTypeName) {
+      var resUtilPerAT = sim.stat.resUtil[actTypeName];
+      Object.keys( resUtilPerAT).forEach( function (key) {
+        // key is either an objIdStr or a count pool name
+        resUtilPerAT[key] /= sim.time;
+        // if key is a count pool name
+        if (sim.resourcePools[key]) {
+          resUtilPerAT[key] /= sim.resourcePools[key].size;
+        }
       });
     });
   }

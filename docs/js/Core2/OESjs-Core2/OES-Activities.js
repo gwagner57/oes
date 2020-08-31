@@ -169,20 +169,23 @@ class aCTIVITYeND extends eVENT {
       acty.occTime = this.occTime;
       acty.duration = acty.occTime - acty.startTime;
     }
-    // compute resource utilization per activity type (per resource object or per pool)
-    Object.keys( AT.resourceRoles).forEach( function (resRoleName) {
-      var resUtilPerAT = sim.stat.resUtil[AT.name];
+    // compute resource utilization per activity type (per resource object or per count pool)
+    for (const resRoleName of Object.keys( AT.resourceRoles)) {
+      if (resRoleName === "PERFORMER") continue;
+      let resUtilPerAT = sim.stat.resUtil[AT.name];
       if (AT.resourceRoles[resRoleName].range) {  // per resource object
         let objIdStr = String(acty[resRoleName].id);
         if (resUtilPerAT[objIdStr] === undefined) resUtilPerAT[objIdStr] = 0;
         resUtilPerAT[objIdStr] += acty.duration;
         // update the activity state of resource objects
         acty[resRoleName].activityState.delete( AT.name);
-      } else {  // per pool
-        let pool = AT.resourceRoles[resRoleName].pool;
-        if (resUtilPerAT[pool] === undefined) resUtilPerAT[pool] = 0;
-        resUtilPerAT[pool] += acty.duration;
+      } else {  // per count pool
+        let poolName = AT.resourceRoles[resRoleName].countPool;
+        if (resUtilPerAT[poolName] === undefined) resUtilPerAT[poolName] = 0;
+        resUtilPerAT[poolName] += acty.duration;
       }
+    }
+    Object.keys( AT.resourceRoles).forEach( function (resRoleName) {
     });
     return followupEvents;
   }

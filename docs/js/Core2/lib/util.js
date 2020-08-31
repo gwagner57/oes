@@ -41,7 +41,6 @@ const util = {
       throw new Error("getClass requires a single word string as argument!");
     }
     return Class;
-    // Alternative solution
-    // return this[name];
+    // Alternative solution: Class = this[name];
   }
 }

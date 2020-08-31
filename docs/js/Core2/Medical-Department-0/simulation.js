@@ -4,28 +4,30 @@
 sim.model.name = "Medical-Department-0";
 sim.model.time = "continuous";
 sim.model.timeUnit = "min";
-sim.model.objectTypes = ["MedicalDepartment"];
 sim.model.eventTypes = ["PatientArrival"];
 sim.model.activityTypes = ["Examination"];
 sim.model.resourcePools = ["rooms","doctors"];
 /*
+sim.model.objectTypes = ["Doctor"];
 sim.model.resourcePools = {
-  "rooms": {range: Room, allocationPolicy},
-  "doctors": {range: Doctor, allocationPolicy},
+  // a count pool
+  "rooms": {},
+  // an object pool
+  "doctors": {range: Doctor, allocationPolicy:...},
 };
 */
 /*******************************************************
  Simulation Scenario
  ********************************************************/
-sim.scenario.durationInSimTime = 1000;
+sim.scenario.durationInSimTime = 100;
 //sim.scenario.durationInSimSteps = 1000;
 //sim.scenario.durationInCpuTime = 1000;  // seconds
 sim.scenario.idCounter = 11;  // start value of auto IDs
 // Initial State
 sim.scenario.setupInitialState = function () {
-  // Initialize pools
-  sim.resourcePools["rooms"].available = 9;
-  sim.resourcePools["doctors"].available = 9;
+  // Initialize the two count pools "rooms" and"doctors"
+  sim.resourcePools["rooms"].available = 5;
+  sim.resourcePools["doctors"].available = 5;
   // Schedule initial events
   sim.FEL.add( new PatientArrival({occTime: 1}));
 }

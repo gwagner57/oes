@@ -25,11 +25,9 @@ class Examination extends aCTIVITY {
   }
   static duration() {return rand.uniform( 5, 9);}
 }
-// The queue of planned examinations
-Examination.plannedActivities = [];
 // An examination requires a room and a doctor
 Examination.resourceRoles = {
-    "room": {pool:"rooms", card:1},
-    "doctor": {pool:"doctors", card:1},
+    "room": {countPool:"rooms", card:1},
+    "doctor": {countPool:"doctors", card:1},
     "PERFORMER": "doctor"
 }
