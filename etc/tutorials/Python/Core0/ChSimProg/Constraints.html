@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Verification and Validation with Constraints</title>
+  </head>
+
+  <body><p>Simulation models and scenarios can be verified or validated with
+  the help of various kinds of integrity constraints:</p><ol>
+      <li><p>The OESjs simulator has a number of <em><strong>built-in</strong>
+      property and model <strong>constraints</strong></em>, which are checked
+      automatically or on demand:</p><ol>
+          <li>Many simulator objects, such as <code>sim.model</code>,
+          <code>sim.scenario</code> and <code>sim.config</code>, have
+          pre-defined property constraints that allow validating their
+          property values set in the <kbd>simulation.js</kbd> file. </li>
+
+          <li>For any particular class of simulation models, e.g., for
+          Processing Network models, the OESjs simulator may have pre-defined
+          model constraints that can be checked at each simulation step for
+          verifying certain model correctness properties.</li>
+        </ol></li>
+
+      <li><p>A simulation developer can define <strong><em>property
+      constraints</em></strong> within the definition of object and event
+      types for allowing the simulator to verify that the values of properties
+      are valid.</p></li>
+
+      <li><p>A simulation developer can define <strong><em>model
+      constraints</em></strong> for allowing the simulator to verify that the
+      model satisfies certain correctness properties.</p></li>
+    </ol><p>Constraint checking is useful in the development of new simulation
+  models, since it allows to catch a number of errors a developer may make.
+  When a simulation has been sufficiently tested and is to be deployed for
+  operational usage, constraint checking will normally be turned off in favor
+  of simulation execution speed.</p></body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Simulation Scenarios</title>
+  </head>
+
+  <body><p>For obtaining a complete executable simulation scenario, a
+  simulation model has to be complemented with <em>simulation parameter
+  settings</em> and an <em>initial system state</em>.</p><p>In general, we may
+  have more than one simulation scenario for a simulation model. For instance,
+  the same model could be used in two different scenarios with different
+  initial states. However, only from OES Core 1 upwards, multiple scenarios
+  per model will be supported.</p><p>A <em>simulation scenario</em> consists
+  of</p><ol>
+      <li>a simulation model,</li>
+
+      <li>simulation parameter settings, such as setting a value for
+      <code>durationInSimTime</code>, and</li>
+
+      <li>an initial state definition.</li>
+    </ol><p>An empty template for the <kbd>simulation.js</kbd> file has the
+  following structure:</p><pre>// ***** Simulation Model *******************
+sim.model.time = "...";  // discrete or continuous
+sim.model.timeIncrement = ...;   // optional
+sim.model.timeUnit = "...";  // optional (ms|s|min|hour|day|week|month|year)
+sim.model.v.aModelVariable = ...;  // (developer-defined) model variables
+sim.model.f.aModelFunction = ...;  // (developer-defined) model functions
+sim.model.objectTypes = [...];  // (developer-defined) object types
+sim.model.eventTypes = [...];  // (developer-defined) event types
+// ***** Simulation Parameters **************
+sim.scenario.durationInSimTime = ...;
+// ***** Initial State **********************
+sim.scenario.<b>setupInitialState</b> = function () {
+  // Initialize model variables
+  ...
+  // Create initial objects
+  ...
+  // Schedule initial events
+  ...
+};
+// ***** Ex-Post Statistics *****************
+sim.model.statistics = {...};</pre><p>We briefly discuss each group of
+  scenario information items in the following
+  sub-sections.</p><section><h4>2.3.1. Simulation Scenario
+  Parameters</h4><p>In OESjs-Core0, the only simulation parameter is
+  <i>durationInSimTime</i>, which defines the duration of a simulation run in
+  terms of simulation time. By default, when this attribute is not set, the
+  simulation runs forever.</p></section><section
+  id="sectInitialState"><h4>2.3.2. Initial State</h4><p>Defining an initial
+  state means:</p><ol>
+      <li>assigning initial values to global model variables, if there are
+      any;</li>
+
+      <li>defining which objects exist initially, and assigning initial values
+      to their properties;</li>
+
+      <li>defining which events are scheduled initially.</li>
+    </ol><p>A <code>setupInitialState</code> procedure takes care of these
+  initial state definitions. A global model variable is initialized in the
+  following way: </p><pre>sim.scenario.setupInitialState = function () {
+  // <b>Initialize model variables</b>
+  <b>sim.model.v.queueLength</b> = 0;
+  // Create initial objects
+  ...
+  // Schedule initial events
+  ...
+};</pre><p>An initial state object is created by instantiating an object type
+  of the simulation model with suitable initial property values, as shown in
+  the following example:</p><pre>sim.scenario.setupInitialState = function () {
+  // Initialize model variables
+  ...
+  // <b>Create initial objects</b>
+  let <b>serviceDesk1</b> = new ServiceDesk({id: 1, queueLength: 0});
+  // Schedule initial events
+  ...
+};</pre><p>Notice that object IDs are positive integers, but when used as keys
+  in the map <code>sim.objects</code>, they are converted to
+  strings.</p><p>Instead of assigning a <strong>fixed value</strong> to a
+  property like <code>queueLength</code> for defining an object's initial
+  state, as in <code>queueLength: 0</code>, we can also assign it a
+  <strong>fixed expression</strong>, as in <code>queueLength:
+  Math.round(12/30)</code>.</p><p>An <strong>initial event</strong> is
+  scheduled by adding it to the <em>Future Events List (FEL)</em>, as shown in
+  the following example:</p><pre>sim.scenario.setupInitialState = function () {
+  // Initialize model variables
+  ...
+  // Create initial objects
+  let desk1 = new ServiceDesk({id: 1, queueLength: 0});
+  // <b>Schedule initial events</b>
+  sim.<b>FEL.add</b>( <b>new CustomerArrival</b>({occTime:1, serviceDesk: desk1}));
+};</pre></section><section><h4>2.3.3. Using Model Parameters in the Initial
+  State</h4><p>Initial objects or events can be parametrized with the help of
+  model parameters.</p></section></body>
+</html>

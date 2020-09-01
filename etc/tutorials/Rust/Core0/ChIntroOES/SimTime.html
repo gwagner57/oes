@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Simulation Time</title>
+  </head>
+
+  <body><p>A simulation model has an underlying <b><i>time model</i></b>,
+  which can be either <i>discrete time</i>, when setting</p><pre>sim.model.time = "discrete";</pre><p>or
+  <i>continuous time</i>, when setting</p><pre>sim.model.time = "continuous";</pre><p>Choosing
+  a discrete time model means that time is measured in steps (with equal
+  durations), and all temporal random variables used in the model need to be
+  discrete (i.e., based on discrete probability distributions). Choosing a
+  continuous time model means that one has to define a <i>simulation time
+  granularity</i>, as explained in the next sub-section.</p><p>In both cases,
+  the underlying simulation <b><i>time unit</i></b> can be either left
+  unspecified (e.g., in the case of an abstract time model), or it can be set
+  to one of the time units "ms", "s", "min", "hour", "day", "week", "month" or
+  "year", as in</p><pre>sim.model.timeUnit = "hour";</pre><p>Typical examples
+  of time models are:</p><ol>
+      <li><p>An abstract discrete model of time where time runs in steps
+      without any concrete meaning: </p><pre>sim.model.time = "discrete";</pre></li>
+
+      <li><p>A concrete discrete model of time in number of days: </p><pre>sim.model.time = "discrete";
+sim.model.timeUnit = "day";</pre></li>
+
+      <li><p>A concrete continuous model of time in number of seconds:
+      </p><pre>sim.model.time = "continuous";
+sim.model.timeUnit = "s";</pre></li>
+    </ol><section><h4>2.1.1. Time Granularity</h4><p>A model's <em>time
+  granularity</em> is the time delay until the next moment, such that the
+  model does not allow considering an earlier next moment. This is captured by
+  the simulation parameter <i>nextMomentDeltaT</i> used by the simulator for
+  scheduling immediate events with a minimal delay. When a simulation model is
+  based on discrete time, <i>nextMomentDeltaT</i> is set to 1, referring to
+  the next time point. When a simulation model is based on continuous time,
+  <i>nextMomentDeltaT</i> is set to the default value 0.001, unless the model
+  parameter <code>sim.model.nextMomentDeltaT</code> is explicitly assigned in
+  the <kbd>simulation.js</kbd> file.</p></section><section><h4>2.1.2. Time
+  Progression</h4><p>An important issue in simulation is the question how the
+  simulation time is advanced by the simulator. The OES paradigm supports
+  <strong>next-event</strong> time progression and
+  <strong>fixed-increment</strong> time progression, as well as their
+  combination.</p><p>An OESjs-Core0 model with fixed-increment time
+  progression has to define a suitable periodic time event type, like
+  <code>EachSecond</code> or <code>EachDay</code> in the form of an exogenous
+  event type with a recurrence function returning the value 1. Such a model
+  can be used for</p><ol>
+      <li>modeling continuous state changes (e.g., objects moving in a
+      continuous space), or</li>
+
+      <li>making a discrete model that abstracts away from explicit events and
+      uses only implicit periodic time events ("ticks"), which is a popular
+      approach in social science simulation.</li>
+    </ol><p>Examples of discrete event simulation models with fixed-increment
+  time progression and no explicit events are the <a
+  href="https://sim4edu.com/sims/6">Schelling Segregation Model</a> and the <a
+  href="https://sim4edu.com/sims/25/index.html">Susceptible-Infected-Recovered
+  (SIR) Disease Model</a>.</p></section></body>
+</html>

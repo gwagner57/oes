@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Creating the Initial State</title>
+  </head>
+  <body><p>In <a href="../ChIntroOES/SimScenarios.html#sectInitialState"></a>, we have shown how to create initial objects for the initial state of a
+  simulation scenario using the map <code>sim.scenario.initialState.objects</code>. Whenever the initial state has to be populated with a larger set
+  of objects, we can define a set-up procedure <code>sim.scenario.setupInitialState</code>, as in the following example where we create 100
+  <code>ServiceDesk</code> objects, each with an associated <code>Arrival</code> event:</p><pre>sim.scenario.<b>setupInitialState</b> = function () {
+  var i=1;
+  for (i=1; i &lt;= 100; i++) {
+    sim.addObject( new ServiceDesk({
+      id: i,
+      typeName: "ServiceDesk",
+      queueLength: 0
+    }));
+    sim.scheduleEvent( new Arrival( {
+      occTime: 1,
+      serviceDesk: i
+    }));
+  }
+};</pre></body>
+</html>

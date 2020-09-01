@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Creating Object Event Simulations with OESjs-Core0</title>
+  </head>
+
+  <body><p>The JavaScript-based simulator <i>OESjs-Core0</i> implements the
+  <i>Object Event Simulation (<a href="https://sim4edu.com/OES"
+  target="_top">OES</a>)</i> paradigm, representing a general <i>Discrete
+  Event Simulation</i> approach based on <i>object-oriented</i> modeling and
+  <i>event scheduling</i>. In OES, a model normally defines various types of
+  objects and events, but OESjs-Core0 also supports models without objects, if
+  they define state variables in the form of global <i>model variables</i>,
+  instead.</p><p>An OESjs-Core0 simulation consists of the OESjs-Core0 library
+  code and the following files to be created by the simulation
+  developer:</p><ol>
+      <li>For each object type <i>ObjT</i>, a JS code file
+      <kbd>ObjT.js</kbd>.</li>
+
+      <li>For each event type <i>EvtT</i>, a JS code file
+      <kbd>EvtT.js</kbd>.</li>
+
+      <li>A <kbd>simulation.js</kbd> file defining further parts of the
+      simulation, such as statistics variables and the initial state.</li>
+    </ol><p>OESjs-Core0 supports two forms of simulations:</p><ol>
+      <li><p>Standalone scenario simulations, which are good for getting a
+      quick impression of a simulation model, e.g., by checking some simple
+      statistics.</p></li>
+
+      <li><p>Simple simulation experiments, which are defined as a set of
+      replicated simulation scenario runs, providing summary statistics like
+      mean, standard deviation, minimum/maximum and confidence intervals for
+      each statistics variable defined in the underlying model.</p></li>
+    </ol><p>Using a simulation library like OESjs-Core0 means that only the
+  model-specific logic has to be coded (in the form of object types, event
+  types, event routines and other functions for model-specific computations),
+  but not the general simulator operations (e.g., time progression and
+  statistics) and the environment handling (e.g., user interfaces for
+  statistics output).</p><p>The following sections present the basic concepts
+  of the OESjs<i>-Core0</i> simulation library, and show how to implement the
+  service desk models described in <a
+  href="../../../ChIntroOEM/index.html"></a>.</p></body>
+</html>
