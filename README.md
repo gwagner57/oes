@@ -5,7 +5,8 @@ which is a *Discrete Event Simulation* paradigm combining object-oriented modeli
 
 For simplicity, all of these simulators have a minimalistic user interface.
 
-The minimal version of an Object Event Simulator is *OES Core 0* with about 220 lines of code in JavaScript. 
+The minimal version of an Object Event Simulator is *OES Core 0* with about 220 lines of code in JavaScript,
+supporting models with (global) model variables and functions, object types, event types, and simple simulation experiments. 
 
 The simulators OES Core 1-4 incrementally extend OES Core 0 by adding further features:
 
@@ -14,7 +15,9 @@ The simulators OES Core 1-4 incrementally extend OES Core 0 by adding further fe
 parameter variation experiments, as well as persistent storage and export of experiment results.
 
 2. OES Core 2 adds the concept of *activities*, which are composite events that have some duration and typically depend on resources,
-together with the concepts of *resource roles*, *resource constrainst* and *resource pools*.
+together with the concepts of *resource roles*, *resource constrainst* and *resource pools*. For an activity-based simulation model,
+the simulator can automatically compute (a) utilization statistics per activity type and resource, as well as (b) queue length and
+(c) cycle time statistics per activity type.
 
 3. OES Core 3 adds the concepts of *processing activities* and *processing networks*.
 
