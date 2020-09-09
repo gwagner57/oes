@@ -37,7 +37,6 @@ sim.scenario.setupInitialState = function () {
 sim.model.setupStatistics = function () {
   sim.stat.arrivedPatients = 0;
   sim.stat.departedPatients = 0;
-  sim.stat.maxQueueLength = 0;
 };
 /*******************************************************
  Define an experiment (type)

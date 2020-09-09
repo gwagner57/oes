@@ -25,18 +25,32 @@ oes.ui.showStatistics = function (stat, tableEl) {
   var decPl = oes.defaults.expostStatDecimalPlaces,
       tbodyEl = tableEl.tBodies[0];
   for (let varName of Object.keys( stat)) {
-    if (["resUtil"].includes( varName)) continue;
+    // skip pre-defined statistics (collection) variables
+    if (["actTypes","resUtil"].includes( varName)) continue;
     let rowEl = tbodyEl.insertRow();  // create new table row
     rowEl.insertCell().textContent = varName;
     rowEl.insertCell().textContent = math.round( stat[varName], decPl);
   }
+  // show statistics per activity type
+  if (Object.keys( stat.actTypes).length > 0) {
+    let rowEl = tbodyEl.insertRow();
+    let cellEl = rowEl.insertCell();
+    cellEl.colSpan = 2;
+    cellEl.textContent = "Planned Activities Queue Length";
+    Object.keys( stat.actTypes).forEach( function (actTypeName) {
+      var qLenStat = stat.actTypes[actTypeName];
+      let rowEl = tbodyEl.insertRow();
+      rowEl.insertCell().textContent = actTypeName;
+      rowEl.insertCell().textContent = JSON.stringify( qLenStat);
+    });
+  }
   // show resource utilization statistics
-  if (Object.keys(stat.resUtil).length > 0) {
+  if (Object.keys( stat.resUtil).length > 0) {
     let rowEl = tbodyEl.insertRow();
     let cellEl = rowEl.insertCell();
     cellEl.colSpan = 2;
     cellEl.textContent = "Resource Utilization";
-    Object.keys(stat.resUtil).forEach( function (actTypeName) {
+    Object.keys( stat.resUtil).forEach( function (actTypeName) {
       var resUtilMap = stat.resUtil[actTypeName];
       /*
       var activityTypeLabel = cLASS[actTypeName].label || actTypeName,

@@ -17,7 +17,7 @@ class Examination extends aCTIVITY {
       sim.resourcePools["doctors"].allocate();
       // start next exam
       followupEvents.push( new aCTIVITYsTART({
-        plannedActivity: plannedExams.shift(),  // dequeue next planned exam
+        plannedActivity: plannedExams.dequeue(),  // dequeue next planned exam
         //resourceRoles: {"serviceDesk": this.serviceDesk}
       }));
     }

@@ -55,6 +55,28 @@ class aCTIVITY extends eVENT {
     else this.id = sim.idCounter++;  // activities need an ID
   }
 }
+// Define a datatype class for queues of planned activities
+class pLANNEDaCTIVITIESqUEUE extends Array {
+  constructor() {
+    super();
+  }
+  enqueue( acty) {
+    var AT = acty.constructor;
+    if (this !== AT.plannedActivities) {
+      console.error("Attempt to push an "+ AT.name +" to wrong queue!");
+      return;
+    }
+    this.push( acty);
+    // compute generic queue length statistics per activity type
+    if (this.length > sim.stat.actTypes[AT.name].queueLength.max) {
+      sim.stat.actTypes[AT.name].queueLength.max = this.length;
+    }
+    //TODO: compute average queue length statistics
+  }
+  dequeue() {
+    return this.shift();
+  }
+}
 // An activity state (of an object) is a set of activity type names
 class aCTIVITYsTATE extends Set {
   constructor() {
