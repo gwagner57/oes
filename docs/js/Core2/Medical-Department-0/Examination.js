@@ -4,10 +4,13 @@ class Examination extends aCTIVITY {
   }
   onActivityEnd() {
     var followupEvents = [], plannedExams = Examination.plannedActivities;
+    /*
     sim.resourcePools["rooms"].release();
     sim.resourcePools["doctors"].release();
+    */
     // update statistics
     sim.stat.departedPatients++;
+    /*
     // if there are still planned exams (waiting patients)
     if (plannedExams.length > 0 &&
         sim.resourcePools["rooms"].isAvailable() &&
@@ -21,13 +24,14 @@ class Examination extends aCTIVITY {
         //resourceRoles: {"serviceDesk": this.serviceDesk}
       }));
     }
+    */
     return followupEvents;
   }
   static duration() {return rand.uniform( 5, 9);}
 }
 // An examination requires a room and a doctor
 Examination.resourceRoles = {
-    "room": {countPool:"rooms", card:1},
-    "doctor": {countPool:"doctors", card:1},
-    "PERFORMER": "doctor"
+    "room": {countPoolName:"rooms", card:1},
+    "doctor": {countPoolName:"doctors", card:1}
 }
+Examination.PERFORMER = "doctor";

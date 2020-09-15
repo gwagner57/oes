@@ -4,17 +4,15 @@ class CustomerArrival extends eVENT {
     this.serviceDesk = serviceDesk;
   }
   onEvent() {
-    var followupEvents=[], plannedServices = this.serviceDesk.plannedServices;
-    plannedServices.push( new Service({serviceDesk: this.serviceDesk}));
+    var followupEvents=[], plannedServices = Service.plannedActivities;
+    // Enqueue a new planned service (for the newly arrived customer) at the arrival event's service desk
+    plannedServices.enqueue( new Service());
     // update statistics
     sim.stat.arrivedCustomers++;
-    if (plannedServices.length > sim.stat.maxQueueLength) {
-      sim.stat.maxQueueLength = plannedServices.length;
-    }
     // if the service desk is not busy
     if (this.serviceDesk.status === oes.ResourceStatusEL.AVAILABLE) {
       followupEvents.push( new aCTIVITYsTART({
-        plannedActivity: plannedServices.shift(),  // dequeue next planned service
+        plannedActivity: plannedServices.dequeue(),  // dequeue next planned service
       }));
     }
     return followupEvents;

@@ -36,7 +36,7 @@ oes.ui.showStatistics = function (stat, tableEl) {
     let rowEl = tbodyEl.insertRow();
     let cellEl = rowEl.insertCell();
     cellEl.colSpan = 2;
-    cellEl.textContent = "Planned Activities Queue Length";
+    cellEl.textContent = "Per activity type";
     Object.keys( stat.actTypes).forEach( function (actTypeName) {
       var qLenStat = stat.actTypes[actTypeName];
       let rowEl = tbodyEl.insertRow();
@@ -44,7 +44,7 @@ oes.ui.showStatistics = function (stat, tableEl) {
       rowEl.insertCell().textContent = JSON.stringify( qLenStat);
     });
   }
-  // show resource utilization statistics
+  /* show resource utilization statistics
   if (Object.keys( stat.resUtil).length > 0) {
     let rowEl = tbodyEl.insertRow();
     let cellEl = rowEl.insertCell();
@@ -52,10 +52,8 @@ oes.ui.showStatistics = function (stat, tableEl) {
     cellEl.textContent = "Resource Utilization";
     Object.keys( stat.resUtil).forEach( function (actTypeName) {
       var resUtilMap = stat.resUtil[actTypeName];
-      /*
       var activityTypeLabel = cLASS[actTypeName].label || actTypeName,
           columnLabel = oes.isProcNetModel() ? " (% busy | % blocked)" : " (% busy)";
-      */
       let rowEl = tbodyEl.insertRow();
       rowEl.insertCell().textContent = actTypeName;
       rowEl.insertCell().textContent = JSON.stringify( resUtilMap);
@@ -79,9 +77,9 @@ oes.ui.showStatistics = function (stat, tableEl) {
           labelText: objName, value: resInfoText}));
         document.forms["expost-statistics"].appendChild( contEl);
       });
-      */
     });
   }
+  */
 }
 /*********************************************************************
  Create the table head for simple experiment results

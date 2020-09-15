@@ -4,9 +4,11 @@ class PatientArrival extends eVENT {
   }
   onEvent() {
     var followupEvents=[], plannedExams = Examination.plannedActivities;
+    // Enqueue a new planned examination (of the newly arrived patient)
     plannedExams.enqueue( new Examination());
     // update statistics
     sim.stat.arrivedPatients++;
+    /*
     // if the required resources for an examination are available
     if (sim.resourcePools["rooms"].isAvailable() &&
         sim.resourcePools["doctors"].isAvailable()) {
@@ -18,6 +20,7 @@ class PatientArrival extends eVENT {
           plannedActivity: plannedExams.dequeue(),  // dequeue next planned exam
       }));
     }
+    */
     return followupEvents;
   }
   createNextEvent() {

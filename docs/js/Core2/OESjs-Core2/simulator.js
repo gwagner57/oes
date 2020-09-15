@@ -38,47 +38,42 @@ sim.initializeSimulator = function () {
   // Create a className->Class map
   sim.Classes = Object.create(null);
   // Make object classes accessible via their object type name
-  sim.model.objectTypes.forEach( function (className) {
-    sim.Classes[className] = util.getClass( className);
+  sim.model.objectTypes.forEach( function (objTypeName) {
+    sim.Classes[objTypeName] = util.getClass( objTypeName);
   });
-  // Make event classes accessible via their object type name
-  sim.model.eventTypes.forEach( function (className) {
-    sim.Classes[className] = util.getClass( className);
+  // Make event classes accessible via their event type name
+  sim.model.eventTypes.forEach( function (evtTypeName) {
+    sim.Classes[evtTypeName] = util.getClass( evtTypeName);
   });
   // Assign scenarioNo = 0 to default scenario
   if (sim.scenario.scenarioNo === undefined) sim.scenario.scenarioNo = 0;
   if (!sim.scenario.title) sim.scenario.title = "Default scenario";
   /*** Activity extensions **********************************************/
   if (sim.model.activityTypes === undefined) sim.model.activityTypes = [];
-  // Make activity classes accessible via their object type name
-  sim.model.activityTypes.forEach( function (className) {
-    sim.Classes[className] = util.getClass( className);
-  });
-  // Initialize the plannedActivities queues
+  // Make activity classes accessible via their activity type name
   sim.model.activityTypes.forEach( function (actTypeName) {
-    sim.Classes[actTypeName].plannedActivities = new pLANNEDaCTIVITIESqUEUE();
+    sim.Classes[actTypeName] = util.getClass( actTypeName);
   });
-  // A map for resource pools
+  // A map for resource pools if there are no explicit process owners
   sim.resourcePools = {};
-  if (Array.isArray( sim.model.resourcePools)) {
-    // a list of count pool names
-    for (let poolName of sim.model.resourcePools) {
-      sim.resourcePools[poolName] = new rESOURCEpOOL( poolName);
+  // Initialize the plannedActivities queues and resource pools
+  sim.model.activityTypes.forEach( function (actTypeName) {
+    const AT = sim.Classes[actTypeName];
+    AT.plannedActivities = new pLANNEDaCTIVITIESqUEUE();
+    for (const resRoleName of Object.keys( AT.resourceRoles)) {
+      const resRole = AT.resourceRoles[resRoleName],
+            cpn = resRole.countPoolName;
+      if (cpn) {  // the resource role is associated with a count pool
+        sim.resourcePools[cpn] = new rESOURCEpOOL({name:cpn, available:0});
+        resRole.resPool = sim.resourcePools[cpn];
+      } else {  // the resource role is associated with an individual pool
+        const rn = resRole.range.name,
+              pn = rn.charAt(0).toLowerCase() + rn.slice(1) + "s";
+        sim.resourcePools[pn] = new rESOURCEpOOL( {name: pn, resources:[]});
+        resRole.resPool = sim.resourcePools[pn];
+      }
     }
-  } else if (typeof sim.model.resourcePools === "object") {
-    // a map of pool names
-    for (let poolName of Object.keys( sim.model.resourcePools)) {
-      sim.resourcePools[poolName] = new rESOURCEpOOL( poolName);
-    }
-  }
-}
-/*******************************************************************
- * Assign model parameters with experiment parameter values ********
- *******************************************************************/
-sim.assignModelParameters = function (expParSlots) {
-  for (let parName of Object.keys( sim.model.p)) {
-    sim.model.p[parName] = expParSlots[parName];
-  }
+  });
 }
 /*******************************************************************
  * Initialize a (standalone or experiment scenario) simulation run *
@@ -110,23 +105,39 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   // Set up initial state and statistics
   if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
   //if (Object.keys( oes.EntryNode.instances).length > 0) oes.setupProcNetStatistics();
-  if (sim.model.setupStatistics) {  // reset statistics
+  if (sim.model.setupStatistics) {  // reset model-specific statistics
     sim.model.setupStatistics();
-    sim.model.activityTypes.forEach( function (aT) {
-      sim.stat.resUtil[aT] = Object.create(null);
-    });
   }
   /*** Activity extensions **********************************************/
+  // Reset the generic (per activity) statistics
+  sim.model.activityTypes.forEach( function (actTypeName) {
+    // Reset resource utilization statistics per activity type
+    sim.stat.actTypes[actTypeName].resUtil = Object.create(null);
+    // Reset generic queue length statistics per activity type
+    sim.stat.actTypes[actTypeName].queueLength.max = 0;
+    //sim.stat.actTypes[actTypeName].queueLength.avg = 0.0;
+  });
   // Reset/clear the plannedActivities queues
   sim.model.activityTypes.forEach( function (actTypeName) {
     sim.Classes[actTypeName].plannedActivities.length = 0;
   });
-  // Store the size of count pools
+  // Initialize resource pools
   for (const poolName of Object.keys( sim.resourcePools)) {
-    // the size of a pool is the number of initially available resources
-    sim.resourcePools[poolName].size = sim.resourcePools[poolName].available;
+    const nmrOfAvailRes = sim.resourcePools[poolName].available;
+    if (nmrOfAvailRes) {  // a count pool
+      // the size of a count pool is the number of initially available resources
+      sim.resourcePools[poolName].size = nmrOfAvailRes;
+    }
   }
 };
+/*******************************************************************
+ * Assign model parameters with experiment parameter values ********
+ *******************************************************************/
+sim.assignModelParameters = function (expParSlots) {
+  for (let parName of Object.keys( sim.model.p)) {
+    sim.model.p[parName] = expParSlots[parName];
+  }
+}
 /*******************************************************
  Advance Simulation Time
  ********************************************************/
@@ -202,7 +213,7 @@ sim.runStandaloneScenario = function (createLog) {
  ********************************************************/
 sim.runExperiment = async function () {
   var exp = sim.experimentType, expRun={},
-      compositeStatVarNames = ["resUtil"],
+      compositeStatVarNames = ["actTypes", "resUtil"],
       simpleStatVarNames = [];
   // set up statistics variables
   sim.model.setupStatistics();
@@ -379,23 +390,21 @@ sim.runExperiment = async function () {
  * Initialize the ex-post statistics
  ********************************************************/
 sim.initializeStatistics = function () {
-  // initialize resource utilization statistics
-  if (sim.model.activityTypes && sim.model.activityTypes.length > 0) {
-    sim.stat.resUtil = Object.create(null);  // an empty map
+  if (Array.isArray( sim.model.activityTypes) && sim.model.activityTypes.length > 0) {
     sim.stat.actTypes = Object.create(null);  // an empty map
     sim.model.activityTypes.forEach( function (actTypeName) {
-      sim.stat.resUtil[actTypeName] = Object.create(null);
       sim.stat.actTypes[actTypeName] = Object.create(null);
+      // initialize resource utilization statistics  per activity type
+      sim.stat.actTypes[actTypeName].resUtil = Object.create(null);
       // generic queue length statistics per activity type
       sim.stat.actTypes[actTypeName].queueLength = Object.create(null);
-      sim.stat.actTypes[actTypeName].queueLength.avg = 0.0;
+      //sim.stat.actTypes[actTypeName].queueLength.avg = 0.0;
       sim.stat.actTypes[actTypeName].queueLength.max = 0;
     });
   }
   /*
   // initialize PN statistics
   if (Object.keys( oes.ProcessingNode.instances).length > 0) {
-    sim.stat.resUtil = sim.stat.resUtil || {};
     sim.stat.resUtil["pROCESSINGaCTIVITY"] = {};
   }
   */
@@ -405,16 +414,18 @@ sim.initializeStatistics = function () {
  ********************************************************/
 sim.computeFinalStatistics = function () {
   // finalize resource utilization statistics
-  if (sim.model.activityTypes && sim.model.activityTypes.length > 0) {
+  if (Array.isArray( sim.model.activityTypes)) {
     sim.model.activityTypes.forEach( function (actTypeName) {
-      var resUtilPerAT = sim.stat.resUtil[actTypeName];
+      var resUtilPerAT = sim.stat.actTypes[actTypeName].resUtil;
       Object.keys( resUtilPerAT).forEach( function (key) {
+        var utiliz = resUtilPerAT[key];
         // key is either an objIdStr or a count pool name
-        resUtilPerAT[key] /= sim.time;
+        utiliz /= sim.time;
         // if key is a count pool name
         if (sim.resourcePools[key]) {
-          resUtilPerAT[key] /= sim.resourcePools[key].size;
+          utiliz /= sim.resourcePools[key].size;
         }
+        resUtilPerAT[key] = math.round( utiliz, oes.defaults.expostStatDecimalPlaces);
       });
     });
   }

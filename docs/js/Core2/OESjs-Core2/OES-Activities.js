@@ -41,10 +41,10 @@
  *  currently participating).
  *
  *  TODO: introduce
- *   - resource pools (both simple and individualized)
+ *   - cycle time statistics per activity type
+ *   - individual resource pools based on pre-defined object type rESOURCE( status / isAvailable, allocate, release)
+ *     specializing oBJECT, such that a resource type is defined by specializing rESOURCE
  *   - an optional processOwner (= institutional agent); if there is only one (= no collaboration), it may be left implicit
- *   - pre-defined object type rESOURCE( status / isAvailable, allocate, release) specializing oBJECT,
- *     such that a resource type is defined by specializing rESOURCE
  */
 // An abstract class
 class aCTIVITY extends eVENT {
@@ -54,6 +54,32 @@ class aCTIVITY extends eVENT {
     if (id) this.id = id;
     else this.id = sim.idCounter++;  // activities need an ID
   }
+  static ifAvailAllocReqResAndStartNextActivity( AT) {
+    const nextActy = AT.plannedActivities[0];
+    // Are all required resources available?
+    if (Object.keys( AT.resourceRoles)
+        .map( resRoleName => AT.resourceRoles[resRoleName])
+        .every( resRole => (resRole.resPool.isAvailable( resRole.card)))) {
+      // remove next activity from queue
+      AT.plannedActivities.dequeue();
+      // Allocate all required resources
+      for (const resRoleName of Object.keys( AT.resourceRoles)) {
+        const resRole = AT.resourceRoles[resRoleName];
+        // allocate the required quantity of resources from the pool
+        const allocatedRes = resRole.resPool.allocate( resRole.card);
+        if (allocatedRes) {
+          // create an activity property slot for this resource role
+          if (allocatedRes.length === 1) {
+            nextActy[resRoleName] = allocatedRes[0];
+          } else {
+            nextActy[resRoleName] = allocatedRes;
+          }
+        }
+      }
+      // start next activity with the allocated resources
+      sim.FEL.add( new aCTIVITYsTART({plannedActivity: nextActy}));
+    }
+  }
 }
 // Define a datatype class for queues of planned activities
 class pLANNEDaCTIVITIESqUEUE extends Array {
@@ -61,7 +87,7 @@ class pLANNEDaCTIVITIESqUEUE extends Array {
     super();
   }
   enqueue( acty) {
-    var AT = acty.constructor;
+    const AT = acty.constructor;
     if (this !== AT.plannedActivities) {
       console.error("Attempt to push an "+ AT.name +" to wrong queue!");
       return;
@@ -72,6 +98,8 @@ class pLANNEDaCTIVITIESqUEUE extends Array {
       sim.stat.actTypes[AT.name].queueLength.max = this.length;
     }
     //TODO: compute average queue length statistics
+    // if available, allocate required resources and start next activity
+    aCTIVITY.ifAvailAllocReqResAndStartNextActivity( AT);
   }
   dequeue() {
     return this.shift();
@@ -89,20 +117,77 @@ class aCTIVITYsTATE extends Set {
 }
 oes.ResourceStatusEL = new eNUMERATION("ResourceStatusEL",
     ["available","busy","out of order"]);
-
+/****************************************************************************
+ A resource pool can take one of two forms:
+ (1) a count pool abstracts away from individual resources and just maintains
+     an "available" counter of the available resources of some type
+ (2) an individual pool is a queue of individual resource objects; if a resource
+     role of an activity type does not specify an individualPoolName, this name
+     is formed from the role's range name (lower-cased and plural "s")
+ ****************************************************************************/
 class rESOURCEpOOL {
-  constructor( name, available=0) {
+  constructor( {name, available, resources}) {
     this.name = name;
-    this.available = available;
+    if (available) this.available = available;
+    if (resources) {
+      //this.resources = resources;
+      this.busyResources = [];
+      this.availResources = [];
+      for (let res of resources) {
+        if (res.status === oes.ResourceStatusEL.AVAILABLE) this.availResources.push( res);
+        else if (res.status === oes.ResourceStatusEL.BUSY) this.busyResources.push( res);
+      }
+    }
   }
-  isAvailable() {
-    return this.available > 0;
+  isAvailable( card) {
+    if (card === undefined) card = 1;
+    if (this.available === undefined) {  // individual pool
+      return this.availResources.length >= card;
+    } else return this.available >= card;
   }
-  allocate() {
-    this.available--;
+  allocate( card) {
+    if (card === undefined) card = 1;
+    if (this.availResources) {  // individual pool
+      if (this.availResources.length >= card) {
+        // remove the first card resources from availResources
+        let allocatedRes = this.availResources.splice( 0, card);
+        for (const res of allocatedRes) {
+          res.status = oes.ResourceStatusEL.BUSY;
+          this.busyResources.push( res);
+        }
+        return allocatedRes;
+      } else {
+        console.error(`The pool ${this.name} does not have enough resources at simulation step ${sim.step}!`);
+      }
+    } else this.available -= card;
   }
-  release() {
-    this.available++;
+  release( nmrOrRes) {  // number or resource(s)
+    if (nmrOrRes === undefined) nmrOrRes = 1;
+    if (typeof nmrOrRes === "number") {
+      this.available += nmrOrRes;
+    } else if (typeof nmrOrRes === "object") {
+      let resources = nmrOrRes;
+      if (!Array.isArray( resources)) resources = [resources];
+      for (const res of resources) {
+        const i = this.busyResources.indexOf( res);
+        if (i === -1) {
+          console.error(`The pool ${this.name} does not contain resource ${res.toString()} 
+at simulation step ${sim.step}!`);
+        } else {
+          // remove resource from busyResources list
+          this.busyResources.splice( i, 1);
+          // add resource to availResources list
+          res.status = oes.ResourceStatusEL.AVAILABLE;
+          this.availResources.push( res);
+        }
+      }
+
+    } else {
+    }
+  }
+  clear() {
+    this.busyResources.length = 0;
+    this.availResources.length = 0;
   }
 }
 
@@ -128,17 +213,18 @@ class aCTIVITYsTART extends eVENT {
   }
   onEvent() {
     var slots={}, followupEvents=[],
-        acty = this.plannedActivity, AT = acty.constructor;
+        acty = this.plannedActivity,
+        AT = acty.constructor;  // the activity's type/class
     acty.startTime = this.occTime;
     if (this.duration) acty.duration = this.duration;
     else if (AT.duration) {
       if (typeof AT.duration === "function") acty.duration = AT.duration();
       else acty.duration = AT.duration;
     }
+    // Set activity state for all involved resource objects
     Object.keys( AT.resourceRoles).forEach( function (resRoleName) {
       if (AT.resourceRoles[resRoleName].range) {
         const resObj = acty[resRoleName];
-        // set activity state for resource object
         if (!resObj.activityState) resObj.activityState = new aCTIVITYsTATE();
         resObj.activityState.add( AT.name);
       }
@@ -147,8 +233,8 @@ class aCTIVITYsTART extends eVENT {
     if (typeof acty.onActivityStart === "function") {
       followupEvents.push( ...acty.onActivityStart());
     }
+    // Schedule an activity end event if the duration is known
     if (acty.duration) {
-      // schedule activity end event
       slots = {
         occTime: this.occTime + acty.duration,
         activity: acty
@@ -165,7 +251,8 @@ class aCTIVITYeND extends eVENT {
   }
   toString() {
     var decPl = oes.defaults.simLogDecimalPlaces,
-        acty = this.activity, AT = acty.constructor,
+        acty = this.activity,
+        AT = acty.constructor,  // the activity's type/class
         eventTypeName = (AT.shortLabel || AT.name) + "End",
         evtStr = "", slotListStr = "";
     Object.keys( AT.resourceRoles).forEach(function (resRoleName) {
@@ -179,9 +266,9 @@ class aCTIVITYeND extends eVENT {
     return `${evtStr}@${math.round(this.occTime, decPl)}`;
   }
   onEvent() {
-    var followupEvents=[],
+    const followupEvents=[],
         acty = this.activity,
-        AT = acty.constructor;  // activity type
+        AT = acty.constructor;  // the activity's type/class
     // if there is an onActivityEnd procedure, execute it
     if (typeof acty.onActivityEnd === "function") {
       followupEvents.push(...acty.onActivityEnd());
@@ -193,22 +280,40 @@ class aCTIVITYeND extends eVENT {
     }
     // compute resource utilization per activity type (per resource object or per count pool)
     for (const resRoleName of Object.keys( AT.resourceRoles)) {
-      if (resRoleName === "PERFORMER") continue;
-      let resUtilPerAT = sim.stat.resUtil[AT.name];
+      let resUtilPerAT = sim.stat.actTypes[AT.name].resUtil;
       if (AT.resourceRoles[resRoleName].range) {  // per resource object
-        let objIdStr = String(acty[resRoleName].id);
+        let objIdStr = String( acty[resRoleName].id);
         if (resUtilPerAT[objIdStr] === undefined) resUtilPerAT[objIdStr] = 0;
         resUtilPerAT[objIdStr] += acty.duration;
         // update the activity state of resource objects
         acty[resRoleName].activityState.delete( AT.name);
       } else {  // per count pool
-        let poolName = AT.resourceRoles[resRoleName].countPool;
+        let poolName = AT.resourceRoles[resRoleName].countPoolName;
         if (resUtilPerAT[poolName] === undefined) resUtilPerAT[poolName] = 0;
         resUtilPerAT[poolName] += acty.duration;
       }
     }
-    Object.keys( AT.resourceRoles).forEach( function (resRoleName) {
-    });
+    // if there are still planned activities
+    if (AT.plannedActivities.length > 0) {
+      const nextActy = AT.plannedActivities.dequeue();
+      // copy resource role slots
+      for (const resRoleName of Object.keys( AT.resourceRoles)) {
+        if (acty[resRoleName]) nextActy[resRoleName] = acty[resRoleName];
+      }
+      // start next activity with the resources already allocated before
+      followupEvents.push( new aCTIVITYsTART({plannedActivity: nextActy}));
+    } else {  // release resources
+      for (const resRoleName of Object.keys( AT.resourceRoles)) {
+        const resRole = AT.resourceRoles[resRoleName];
+        if (resRole.countPoolName) {
+          // release the used number of resources
+          resRole.resPool.release( resRole.card);
+        } else {
+          // release the used resource(s)
+          resRole.resPool.release( acty[resRoleName]);
+        }
+      }
+    }
     return followupEvents;
   }
 }

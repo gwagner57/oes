@@ -6,7 +6,6 @@ sim.model.time = "continuous";
 sim.model.timeUnit = "min";
 sim.model.eventTypes = ["PatientArrival"];
 sim.model.activityTypes = ["Examination"];
-sim.model.resourcePools = ["rooms","doctors"];
 /*
 sim.model.objectTypes = ["Doctor"];
 sim.model.resourcePools = {

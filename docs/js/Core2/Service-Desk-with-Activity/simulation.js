@@ -18,7 +18,10 @@ sim.scenario.idCounter = 11;  // start value of auto IDs
 // Initial State
 sim.scenario.setupInitialState = function () {
   // Create initial objects
-  var sd1 = new ServiceDesk({id: 1, name:"sd1", status: oes.ResourceStatusEL.AVAILABLE, queueLength: 0});
+  const sd1 = new ServiceDesk({id: 1, name:"sd1", status: oes.ResourceStatusEL.AVAILABLE});
+  // Initialize the individual resource pool "serviceDesks"
+  sim.resourcePools["serviceDesks"].clear();
+  sim.resourcePools["serviceDesks"].availResources.push( sd1);
   // Schedule initial events
   sim.FEL.add( new CustomerArrival({occTime: 1, serviceDesk: sd1}));
 }
@@ -30,8 +33,8 @@ sim.scenarios[1] = {
   title: "Scenario with two service desks",
   setupInitialState: function () {
     // Create initial objects
-    var sd1 = new ServiceDesk({id: 1, name:"sd1", status: oes.ResourceStatusEL.AVAILABLE, queueLength: 0}),
-        sd2 = new ServiceDesk({id: 2, name:"sd2", status: oes.ResourceStatusEL.AVAILABLE, queueLength: 0});
+    const sd1 = new ServiceDesk({id: 1, name:"sd1", status: oes.ResourceStatusEL.AVAILABLE}),
+          sd2 = new ServiceDesk({id: 2, name:"sd2", status: oes.ResourceStatusEL.AVAILABLE});
     // Schedule initial events
     sim.FEL.add( new CustomerArrival({occTime: 1, serviceDesk: sd1}));
     sim.FEL.add( new CustomerArrival({occTime: 2, serviceDesk: sd2}));
@@ -43,7 +46,6 @@ sim.scenarios[1] = {
 sim.model.setupStatistics = function () {
   sim.stat.arrivedCustomers = 0;
   sim.stat.departedCustomers = 0;
-  sim.stat.maxQueueLength = 0;
 };
 /*******************************************************
  Define an experiment (type)
