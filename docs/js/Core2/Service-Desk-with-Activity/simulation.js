@@ -44,8 +44,6 @@ sim.scenarios[1] = {
  Statistics variables
 ********************************************************/
 sim.model.setupStatistics = function () {
-  sim.stat.arrivedCustomers = 0;
-  sim.stat.departedCustomers = 0;
 };
 /*******************************************************
  Define an experiment (type)

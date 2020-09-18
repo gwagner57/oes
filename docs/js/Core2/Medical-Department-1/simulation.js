@@ -4,31 +4,26 @@
 sim.model.name = "Medical-Department-0";
 sim.model.time = "continuous";
 sim.model.timeUnit = "min";
-sim.model.objectTypes = ["MedicalDepartment"];
 sim.model.eventTypes = ["NewCase"];
 sim.model.activityTypes = ["Examination"];
 /*******************************************************
  Simulation Scenario
  ********************************************************/
-sim.scenario.title = "Basic scenario with one medical department";
-sim.scenario.durationInSimTime = 1000;
+sim.scenario.durationInSimTime = 100;
 //sim.scenario.durationInSimSteps = 1000;
 //sim.scenario.durationInCpuTime = 1000;  // seconds
 sim.scenario.idCounter = 11;  // start value of auto IDs
 // Initial State
 sim.scenario.setupInitialState = function () {
-  // Create initial objects
-  var md1 = new MedicalDepartment({id: 1, name:"md1", nmrOfAvailDoctors:9});
+  // Initialize the count pool "doctors"
+  sim.resourcePools["doctors"].available = 5;
   // Schedule initial events
-  sim.FEL.add( new NewCase({occTime: 1, medicalDepartment: md1}));
+  sim.FEL.add( new NewCase({occTime: 1}));
 }
 /*******************************************************
  Statistics variables
 ********************************************************/
 sim.model.setupStatistics = function () {
-  sim.stat.arrivedPatients = 0;
-  sim.stat.departedPatients = 0;
-  sim.stat.maxQueueLength = 0;
 };
 /*******************************************************
  Define an experiment (type)

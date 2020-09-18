@@ -1,37 +1,26 @@
 class Examination extends aCTIVITY {
-  constructor({id, startTime, duration}={}) {
+  constructor({id, startTime, duration, medicalDepartment}) {
     super({id, startTime, duration});
+    this.medicalDepartment = medicalDepartment;
   }
   onActivityEnd() {
-    var followupEvents = [], plannedExams = Examination.plannedActivities;
-    /*
-    sim.resourcePools["rooms"].release();
-    sim.resourcePools["doctors"].release();
-    */
+    var followupEvents = [], medDep = this.medicalDepartment,
+        plannedExams = medDep.plannedExaminations;
+    medDep.releaseDoctor();
     // update statistics
     sim.stat.departedPatients++;
-    /*
     // if there are still planned exams (waiting patients)
-    if (plannedExams.length > 0 &&
-        sim.resourcePools["rooms"].isAvailable() &&
-        sim.resourcePools["doctors"].isAvailable()) {
+    if (plannedExams.length > 0 && medDep.isDoctorAvailable()) {
       // allocate resources
-      sim.resourcePools["rooms"].allocate();
-      sim.resourcePools["doctors"].allocate();
+      medDep.allocateDoctor();
       // start next exam
       followupEvents.push( new aCTIVITYsTART({
-        plannedActivity: plannedExams.dequeue(),  // dequeue next planned exam
-        //resourceRoles: {"serviceDesk": this.serviceDesk}
+        plannedActivity: plannedExams.shift()  // dequeue next planned exam
       }));
     }
-    */
     return followupEvents;
   }
-  static duration() {return rand.uniform( 5, 9);}
 }
-// An examination requires a room and a doctor
-Examination.resourceRoles = {
-    "room": {countPoolName:"rooms", card:1},
-    "doctor": {countPoolName:"doctors", card:1}
-}
-Examination.PERFORMER = "doctor";
+Examination.duration = function () {
+  return rand.uniform(5,9);
+};

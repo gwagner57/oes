@@ -13,13 +13,13 @@
   diagram: </p><figure><img alt="???" src="../../../IDM0.svg"
   width="400" /></figure><p>Notice that this model does not define any object
   type, which implies that the system state is not composed of the states of
-  objects, but of the states of model variables, here it consists of the state
-  of the model variable <i>queueLength</i>. The discrete random variable for
-  modeling the random variation of service durations is implemented as a model
-  function <code>serviceTime</code> shown in the <i>Global Variables and
-  Functions</i> class. It samples integers between 2 and 4 from the empirical
-  probability distribution <i>Frequency{ 2:0.3, 3:0.5, 4:0.2}</i>. The model
-  can be coded with OESjs-Core0 in the following way:</p><pre>// (global) model variable
+  objects, but of the states of model variables (here the state of the model
+  variable <i>queueLength</i>). The discrete random variable for modeling the
+  random variation of service durations is implemented as a model function
+  <code>serviceTime</code> shown in the <i>Global Variables and Functions</i>
+  class. It samples integers between 2 and 4 from the empirical probability
+  distribution <i>Frequency{ 2:0.3, 3:0.5, 4:0.2}</i>. The model can be coded
+  with OESjs-Core0 in the following way:</p><pre>// (global) model variable
 sim.model.v.<strong>queueLength</strong> = 0;
 // (global) model function
 sim.model.f.<strong>serviceTime</strong> = function () {

@@ -26,8 +26,9 @@ sim.initializeSimulator = function () {
   } else {
     if (sim.model.OnEachTimeStep) sim.timeIncrement = 1;  // default
   }
-  if (sim.model.objectTypes === undefined) sim.model.objectTypes = [];
-  if (sim.model.eventTypes === undefined) sim.model.eventTypes = [];
+  // Make sure these lists are defined
+  sim.model.objectTypes ??= [];
+  sim.model.eventTypes ??= [];
   // A Map of all objects (accessible by ID)
   sim.objects = new Map();
   // The Future Events List
@@ -46,25 +47,28 @@ sim.initializeSimulator = function () {
     sim.Classes[evtTypeName] = util.getClass( evtTypeName);
   });
   // Assign scenarioNo = 0 to default scenario
-  if (sim.scenario.scenarioNo === undefined) sim.scenario.scenarioNo = 0;
-  if (!sim.scenario.title) sim.scenario.title = "Default scenario";
+  sim.scenario.scenarioNo ??= 0;
+  sim.scenario.title ??= "Default scenario";
   /*** Activity extensions **********************************************/
-  if (sim.model.activityTypes === undefined) sim.model.activityTypes = [];
+  sim.model.activityTypes ??= [];
   // Make activity classes accessible via their activity type name
   sim.model.activityTypes.forEach( function (actTypeName) {
     sim.Classes[actTypeName] = util.getClass( actTypeName);
   });
   // A map for resource pools if there are no explicit process owners
-  sim.resourcePools = {};
-  // Initialize the plannedActivities queues and resource pools
+  sim.resourcePools = Object.create(null);
+  // Initializations per activity type
   sim.model.activityTypes.forEach( function (actTypeName) {
     const AT = sim.Classes[actTypeName];
+    // Reset the generic (per activity) statistics
+    if (!AT.resourceRoles) AT.resourceRoles = Object.create(null);
+    // Initialize the plannedActivities queues
     AT.plannedActivities = new pLANNEDaCTIVITIESqUEUE();
+    // Initialize the resource pools
     for (const resRoleName of Object.keys( AT.resourceRoles)) {
       const resRole = AT.resourceRoles[resRoleName],
             cpn = resRole.countPoolName;
       if (cpn) {  // the resource role is associated with a count pool
-        sim.resourcePools[cpn] = new rESOURCEpOOL({name:cpn, available:0});
         resRole.resPool = sim.resourcePools[cpn];
       } else {  // the resource role is associated with an individual pool
         const rn = resRole.range.name,
@@ -85,11 +89,11 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   sim.step = 0;  // simulation loop step counter
   sim.time = 0;  // 1 time
   // Set default values for end time parameters
-  if (!sim.scenario.durationInSimTime) sim.scenario.durationInSimTime = Infinity;
-  if (!sim.scenario.durationInSimSteps) sim.scenario.durationInSimSteps = Infinity;
-  if (!sim.scenario.durationInCpuTime) sim.scenario.durationInCpuTime = Infinity;
+  sim.scenario.durationInSimTime ??= Infinity;
+  sim.scenario.durationInSimSteps ??= Infinity;
+  sim.scenario.durationInCpuTime ??= Infinity;
   // get ID counter from simulation scenario, or set to default value
-  sim.idCounter = sim.scenario.idCounter || 1000;
+  sim.idCounter = sim.scenario.idCounter ?? 1000;
   // set up a random number generator (RNG) method
   if (!sim.experimentType && sim.scenario.randomSeed) {
     // use David Bau's seedrandom RNG
@@ -109,17 +113,14 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
     sim.model.setupStatistics();
   }
   /*** Activity extensions **********************************************/
-  // Reset the generic (per activity) statistics
   sim.model.activityTypes.forEach( function (actTypeName) {
+    // Reset/clear the plannedActivities queues
+    sim.Classes[actTypeName].plannedActivities.length = 0;
     // Reset resource utilization statistics per activity type
     sim.stat.actTypes[actTypeName].resUtil = Object.create(null);
     // Reset generic queue length statistics per activity type
     sim.stat.actTypes[actTypeName].queueLength.max = 0;
     //sim.stat.actTypes[actTypeName].queueLength.avg = 0.0;
-  });
-  // Reset/clear the plannedActivities queues
-  sim.model.activityTypes.forEach( function (actTypeName) {
-    sim.Classes[actTypeName].plannedActivities.length = 0;
   });
   // Initialize resource pools
   for (const poolName of Object.keys( sim.resourcePools)) {
@@ -244,7 +245,7 @@ sim.runExperiment = async function () {
             outputStatistics: {...sim.stat}  // clone
           });
         } catch( err) {
-          console.log('error', err.message);
+          console.log("Error: ", err.message);
         }
       }
     }
@@ -387,19 +388,25 @@ sim.runExperiment = async function () {
   else runSimpleExperiment();
 }
 /*******************************************************
- * Initialize the ex-post statistics
+ * Initialize the pre-defined ex-post statistics
  ********************************************************/
 sim.initializeStatistics = function () {
+  // Per activity type
   if (Array.isArray( sim.model.activityTypes) && sim.model.activityTypes.length > 0) {
     sim.stat.actTypes = Object.create(null);  // an empty map
     sim.model.activityTypes.forEach( function (actTypeName) {
       sim.stat.actTypes[actTypeName] = Object.create(null);
-      // initialize resource utilization statistics  per activity type
-      sim.stat.actTypes[actTypeName].resUtil = Object.create(null);
-      // generic queue length statistics per activity type
+      // initialize throughput statistics
+      sim.stat.actTypes[actTypeName].enqueuedPlanActivities = 0;
+      sim.stat.actTypes[actTypeName].dequeuedPlanActivities = 0;
+      sim.stat.actTypes[actTypeName].startedActivities = 0;
+      sim.stat.actTypes[actTypeName].completedActivities = 0;
+      // generic queue length statistics
       sim.stat.actTypes[actTypeName].queueLength = Object.create(null);
       //sim.stat.actTypes[actTypeName].queueLength.avg = 0.0;
       sim.stat.actTypes[actTypeName].queueLength.max = 0;
+      // initialize resource utilization statistics
+      sim.stat.actTypes[actTypeName].resUtil = Object.create(null);
     });
   }
   /*

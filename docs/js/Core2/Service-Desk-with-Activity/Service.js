@@ -5,13 +5,13 @@ class Service extends aCTIVITY {
   /*
   onActivityStart() {return [];}
   */
+  /*
   onActivityEnd() {
     const followupEvents=[];
-    // update statistics
-    sim.stat.departedCustomers++;
     return followupEvents;
   }
-  static duration() {return rand.uniform( 1, 4);}
+  */
+static duration() {return rand.uniform( 1, 4);}
 }
 // A service requires a service desk.
 Service.resourceRoles = {

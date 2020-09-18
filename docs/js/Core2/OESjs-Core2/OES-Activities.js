@@ -15,8 +15,7 @@
  *  Activities often depend on resources. The actor(s) that (jointly) perform(s) an
  *  activity, called performer(s), can be viewed as (a) special resource(s). Since a
  *  resource-constrained activity can only be started when all required resources are
- *  available, it may first have to be enqueued as a *planned* activity (with partially
- *  assigned properties).
+ *  available, it may first have to be enqueued as a *planned* activity*.
  *
  *  As events, activities may also be associated with participating objects, which are
  *  not resources.
@@ -93,6 +92,7 @@ class pLANNEDaCTIVITIESqUEUE extends Array {
       return;
     }
     this.push( acty);
+    sim.stat.actTypes[AT.name].enqueuedPlanActivities += 1;
     // compute generic queue length statistics per activity type
     if (this.length > sim.stat.actTypes[AT.name].queueLength.max) {
       sim.stat.actTypes[AT.name].queueLength.max = this.length;
@@ -102,7 +102,10 @@ class pLANNEDaCTIVITIESqUEUE extends Array {
     aCTIVITY.ifAvailAllocReqResAndStartNextActivity( AT);
   }
   dequeue() {
-    return this.shift();
+    const acty = this.shift(),
+          AT = acty.constructor;
+    sim.stat.actTypes[AT.name].dequeuedPlanActivities += 1;
+    return acty;
   }
 }
 // An activity state (of an object) is a set of activity type names
@@ -163,9 +166,9 @@ class rESOURCEpOOL {
   }
   release( nmrOrRes) {  // number or resource(s)
     if (nmrOrRes === undefined) nmrOrRes = 1;
-    if (typeof nmrOrRes === "number") {
+    if (typeof nmrOrRes === "number" && Number.isInteger( this.available)) {
       this.available += nmrOrRes;
-    } else if (typeof nmrOrRes === "object") {
+    } else if (typeof nmrOrRes === "object" && Array.isArray( this.availResources)) {
       let resources = nmrOrRes;
       if (!Array.isArray( resources)) resources = [resources];
       for (const res of resources) {
@@ -181,8 +184,9 @@ at simulation step ${sim.step}!`);
           this.availResources.push( res);
         }
       }
-
     } else {
+      console.error(`Release attempt for pool ${this.name} with "nmrOrRes" = ${nmrOrRes} failed 
+at simulation step ${sim.step}!`);
     }
   }
   clear() {
@@ -221,14 +225,16 @@ class aCTIVITYsTART extends eVENT {
       if (typeof AT.duration === "function") acty.duration = AT.duration();
       else acty.duration = AT.duration;
     }
+    // update statistics
+    sim.stat.actTypes[AT.name].startedActivities += 1;
     // Set activity state for all involved resource objects
-    Object.keys( AT.resourceRoles).forEach( function (resRoleName) {
-      if (AT.resourceRoles[resRoleName].range) {
+    for (const resRoleName of Object.keys( AT.resourceRoles)) {
+      if (AT.resourceRoles[resRoleName].range) {  // an individual pool
         const resObj = acty[resRoleName];
         if (!resObj.activityState) resObj.activityState = new aCTIVITYsTATE();
         resObj.activityState.add( AT.name);
       }
-    });
+    }
     // if there is an onActivityStart procedure, execute it
     if (typeof acty.onActivityStart === "function") {
       followupEvents.push( ...acty.onActivityStart());
@@ -278,6 +284,8 @@ class aCTIVITYeND extends eVENT {
       acty.occTime = this.occTime;
       acty.duration = acty.occTime - acty.startTime;
     }
+    // update statistics
+    sim.stat.actTypes[AT.name].completedActivities += 1;
     // compute resource utilization per activity type (per resource object or per count pool)
     for (const resRoleName of Object.keys( AT.resourceRoles)) {
       let resUtilPerAT = sim.stat.actTypes[AT.name].resUtil;

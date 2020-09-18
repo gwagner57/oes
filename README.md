@@ -15,9 +15,8 @@ The simulators OES Core 1-4 incrementally extend OES Core 0 by adding further fe
 parameter variation experiments, as well as persistent storage and export of experiment results.
 
 2. OES Core 2 adds the concept of *activities*, which are composite events that have some duration and typically depend on resources,
-together with the concepts of *resource roles*, *resource constrainst* and *resource pools*. For an activity-based simulation model,
-the simulator can automatically compute (a) utilization statistics per activity type and resource, as well as (b) queue length and
-(c) cycle time statistics per activity type.
+together with the concepts of *resource roles*, *resource constraints* and *resource pools*. For an activity-based simulation model,
+the simulator can automatically compute (a) througput, (b) queue length, (c) cycle time, and (d) resource utilization statistics per activity type.
 
 3. OES Core 3 adds the concepts of *processing activities* and *processing networks*.
 

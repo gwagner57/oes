@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8"/>
  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-  <title>OES JavaScript Core 1 Simulator</title>
+  <title>OES JavaScript Core 2 Simulator</title>
   <meta name="viewport" content="width=device-width, initial-scale = 1.0" />
  <meta name="description"
-       content="The OESjs Core 1 simulator implements an architecture for Object Event Simulation (OES), extending the OESjs Core 0 simulator by adding fixed-increment time progression, a seedable random number generator, a set of sampling functions from various probability distributions (uniform, triangular, normal, exponential, etc.), multiple scenarios per model, multiple experiment types per model, model parameters, parameter variation experiments, as well as persistent storage and export of experiment results."/>
+       content="The OESjs Core 2 simulator implements an architecture for Object Event Simulation (OES), extending the OESjs Core 1 simulator by adding support for activities, which may be resource-constrained."/>
 
  <link rel="icon" type="image/png" href="img/favicon32px.png" sizes="32x32"/>
  <link rel="icon" type="image/png" href="img/favicon16px.png" sizes="16x16"/>
@@ -34,7 +34,7 @@
  <main>
   <h1>OES JavaScript Core 2 Simulator</h1>
   <p>The OESjs Core 2 simulator implements an architecture for Object Event Simulation (OES) that extends the OESjs Core 1 simulator by adding 
-   support for (typically resource-constrained) activities.</p>
+   support for activities, which may be resource-constrained.</p>
   <p>The activities extension includes the following additional code (files): (1) OES-Activities.js in OESjs-Core2, 
    (2) the sim.stat.initialize function in OESjs-Core2/simulator.js, (3) an extension of the oes.ui.showStatistics function in OESjs-Core2/simulatorUI.js</p>
   <p><a href="tutorial.html">Tutorial</a></p>
@@ -45,7 +45,7 @@
     </ul>
    </nav>
   <h3>Credits</h3>
-  <p>OESjs Core 1 is using:</p>
+  <p>OESjs Core 2 is using:</p>
   <ul>
    <li>David Bau's seedable random number generator <a href="https://github.com/davidbau/seedrandom">seedrandom</a>.</li>
    <li>Jake Archibald's IndexedDB library <a href="https://github.com/jakearchibald/idb">IDB</a>.</li>

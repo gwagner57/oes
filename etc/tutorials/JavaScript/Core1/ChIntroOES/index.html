@@ -6,17 +6,15 @@
     <title>Creating Object Event Simulations with OESjs-Core1</title>
   </head>
 
-  <body><p>The JavaScript-based simulator <i>OESjs-Core11</i> implements the
+  <body><p>The JavaScript-based simulator <i>OESjs-Core1</i> implements the
   <i>Object Event Simulation (<a href="https://sim4edu.com/OES"
   target="_top">OES</a>)</i> paradigm, representing a general <i>Discrete
   Event Simulation</i> approach based on <i>object-oriented</i> modeling and
-  <i>event scheduling</i>. In OES, a model normally defines various types of
-  objects and events, but OESjs-Core1 also supports models without objects, if
-  they define state variables in the form of global <i>model variables</i>,
-  instead.</p><p>The code of an OESjs-Core1 simulation consists of (1) the
-  OESjs-Core1 code files in the folder <kbd>OESjs-Core1</kbd>, (2) the library
-  code files in the <kbd>lib</kbd> folder and (3) the following files to be
-  created by the simulation developer:</p><ol>
+  <i>event scheduling</i>. </p><p>The code of an OESjs-Core1 simulation
+  consists of (1) the OESjs-Core1 library files in the folder
+  <kbd>OESjs-Core1</kbd>, (2) general library files in the <kbd>lib</kbd>
+  folder and (3) the following files to be created by the simulation
+  developer:</p><ol>
       <li>For each object type <i>ObjT</i>, a JS code file
       <kbd>ObjT.js</kbd>.</li>
 
@@ -36,7 +34,7 @@
       each statistics variable defined in the underlying model.</p></li>
 
       <li><p>Parameter variation experiments, for which a set of experiment
-      parameters with value set are defined such that each experiment
+      parameters with value sets are defined such that each experiment
       parameter corresponds to a model parameter. When an experiment is run,
       each experiment parameter value combination defines an experiment
       scenario, which is run repeatedly, according to the specified number or

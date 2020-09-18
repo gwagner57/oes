@@ -1,13 +1,11 @@
-class PatientArrival extends eVENT {
+class NewCase extends eVENT {
   constructor({ occTime, delay}) {
     super({occTime, delay});
   }
   onEvent() {
-    var followupEvents=[], plannedExams = Examination.plannedActivities;
+    var followupEvents=[];
     // Enqueue a new planned examination (of the newly arrived patient)
-    plannedExams.enqueue( new Examination());
-    // update statistics
-    sim.stat.arrivedPatients++;
+    Examination.plannedActivities.enqueue( new Examination());
     /*
     // if the required resources for an examination are available
     if (sim.resourcePools["rooms"].isAvailable() &&
@@ -17,16 +15,14 @@ class PatientArrival extends eVENT {
       sim.resourcePools["doctors"].allocate();
       // start next exam
       followupEvents.push( new aCTIVITYsTART({
-          plannedActivity: plannedExams.dequeue(),  // dequeue next planned exam
+          plannedActivity: Examination.plannedActivities.dequeue()
       }));
     }
     */
     return followupEvents;
   }
   createNextEvent() {
-    return new PatientArrival({
-      delay: PatientArrival.recurrence()
-    });
+    return new NewCase({delay: NewCase.recurrence()});
   }
   static recurrence() {
     return rand.exponential( 0.8);
