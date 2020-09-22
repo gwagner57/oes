@@ -84,33 +84,33 @@
   <i>queueLength</i> as a global variable</h4><p>As discussed above, the
   simplest model for the service desk problem with maximum queue length
   statistics (available in the Sim4edu library as <a
-  href="https://sim4edu.com/sims/14" target="_top">Service-Desk-0</a>) has only
-  one global variable: <i>queueLength</i>, which is a non-negative integer,
-  and a global function for computing the random service time, but no object
-  type.</p><p>An information model for Service-Desk-0 consists of a special
-  class for defining model variables and functions, and two classes for
-  defining the event types <i>Arrival</i> and <i>Departure</i>, as shown in <a
-  href="#figServiceDesk0"></a>.</p><figure id="figServiceDesk0"><figcaption>An
-  information design model for Service-Desk-0</figcaption><div><img alt="???"
-  src="../IDM0.svg" width="360" /></div></figure><p>In addition to an
-  information model, which captures the system's state structure, we also need
-  to make a process model that captures the dynamics of the service desk
-  system. The dynamics of a system consists of events triggering state changes
-  and follow-up events. A process model can be expressed with the help of
-  event rules, which define what happens when an event (of a certain type)
-  occurs, or, more specifically, which state changes and which follow-up
-  events are caused by an event of that type.</p><p>Event rules can be
-  expressed with the help of a process model diagram or in pseudo-code, or in
-  a simulation or programming language. The following <em>Event Graph</em>
-  provides a process design model for the Service-Desk-0 simulation scenario.
-  Circles represent events (or, more precisely, event types) and arrows, which
-  may be annotated with a delay expression, such as +serviceTime(), represent
-  event scheduling relationships. An arrow with a mini-diamond at its source
-  end represents a conditional event scheduling relationship where the
-  condition is expressed in brackets below or above the
-  arrow.</p><figure><figcaption>A process design model in the form of an Event
-  Graph, where the state variable <i>Q</i> stands for
-  <i>queueLength</i></figcaption><div><img alt="???"
+  href="https://sim4edu.com/sims/14" target="_top">Service-Desk-0</a>) has
+  only one global variable: <i>queueLength</i>, which is a non-negative
+  integer, and a global function for computing the random service time, but no
+  object type.</p><p>An information model for Service-Desk-0 consists of a
+  special class for defining model variables and functions, and two classes
+  for defining the event types <i>Arrival</i> and <i>Departure</i>, as shown
+  in <a href="#figServiceDesk0"></a>.</p><figure
+  id="figServiceDesk0"><figcaption>An information design model for
+  Service-Desk-0</figcaption><div><img alt="???" src="../IDM0.svg"
+  width="360" /></div></figure><p>In addition to an information design model
+  for defining the simulation system's state structure, we also need to make a
+  process design model for defining the dynamics of the simulation system. The
+  dynamics of a system consists of events triggering state changes and
+  follow-up events. A process model can be expressed with the help of event
+  rules, which define what happens when an event (of a certain type) occurs,
+  or, more specifically, which state changes and which follow-up events are
+  caused by an event of that type.</p><p>Event rules can be expressed with the
+  help of a process model diagram or in pseudo-code, or in a simulation or
+  programming language. The following <em>Event Graph</em> provides a process
+  design model for the Service-Desk-0 simulation scenario. Circles represent
+  events (or, more precisely, event types) and arrows, which may be annotated
+  with a delay expression, such as +serviceTime(), represent event scheduling
+  relationships. An arrow with a mini-diamond at its source end represents a
+  conditional event scheduling relationship where the condition is expressed
+  in brackets below or above the arrow.</p><figure><figcaption>A process
+  design model in the form of an Event Graph, where the state variable
+  <i>Q</i> stands for <i>queueLength</i></figcaption><div><img alt="???"
   src="../ServiceDesk0_EG.svg" width="360" /></div></figure><p>Event Graphs
   have originally been proposed by L. Schruben (<a
   href="https://dl.acm.org/citation.cfm?id=358460">1983</a>). Their visual

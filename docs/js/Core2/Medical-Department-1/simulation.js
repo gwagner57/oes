@@ -1,7 +1,7 @@
 /*******************************************************
  Simulation Model
 ********************************************************/
-sim.model.name = "Medical-Department-0";
+sim.model.name = "Medical-Department-1";
 sim.model.time = "continuous";
 sim.model.timeUnit = "min";
 sim.model.eventTypes = ["NewCase"];

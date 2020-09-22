@@ -15,9 +15,9 @@
 
     <!-- Facebook Open Graph annotations -->
 
-    <html:meta content="Sim4edu" name="og:site_name"/>
+    <html:meta content="OES" name="og:site_name"/>
 
-    <html:meta content="Tutorial: Web-Based Simulation with OESjs"
+    <html:meta content="Tutorial: Discrete Event Simulation with OESjs-Core1"
                name="og:title"/>
 
     <html:meta content="en" name="og:locale"/>
@@ -25,7 +25,7 @@
     <html:meta content="This tutorial article explains how to use the OESjs-Core1 simulation library, which implements an architecture for Object Event Simulation (OES), extending the OESjs Core 0 simulator by adding fixed-increment time progression, a seedable random number generator, a set of sampling functions from various probability distributions (uniform, triangular, normal, exponential, etc.), multiple scenarios per model, multiple experiment types per model, model parameters, parameter variation experiments, as well as persistent storage and export of experiment results."
                name="og:description"/>
 
-    <html:meta content="https://sim4edu.com/reading/IntroTutorial.html"
+    <html:meta content="https://gwagner57.github.io/oes/js/Core1/tutorial.html"
                name="og:url"/>
 
     <html:meta content="https://sim4edu.com/img/sim4edu.png" name="og:image"/>

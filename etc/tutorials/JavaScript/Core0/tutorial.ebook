@@ -15,9 +15,9 @@
 
     <!-- Facebook Open Graph annotations -->
 
-    <html:meta content="Sim4edu" name="og:site_name"/>
+    <html:meta content="OES" name="og:site_name"/>
 
-    <html:meta content="Tutorial: Web-Based Simulation with OESjs"
+    <html:meta content="Tutorial: Discrete Event Simulation with OESjs-Core0"
                name="og:title"/>
 
     <html:meta content="en" name="og:locale"/>
@@ -25,7 +25,7 @@
     <html:meta content="This article shows how to create and run a simulation model with the JavaScript-based simulation framework OESjs available on Sim4edu.com. OESjs implements the Object Event Simulation (OES) paradigm, representing a general Discrete Event Simulation approach based on object-oriented modeling and event scheduling."
                name="og:description"/>
 
-    <html:meta content="https://sim4edu.com/reading/IntroTutorial.html"
+    <html:meta content="https://gwagner57.github.io/oes/js/Core0/tutorial.html"
                name="og:url"/>
 
     <html:meta content="https://sim4edu.com/img/sim4edu.png" name="og:image"/>

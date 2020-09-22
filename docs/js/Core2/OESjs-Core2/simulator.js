@@ -69,6 +69,7 @@ sim.initializeSimulator = function () {
       const resRole = AT.resourceRoles[resRoleName],
             cpn = resRole.countPoolName;
       if (cpn) {  // the resource role is associated with a count pool
+        sim.resourcePools[cpn] = new rESOURCEpOOL( {name: cpn, available:0});
         resRole.resPool = sim.resourcePools[cpn];
       } else {  // the resource role is associated with an individual pool
         const rn = resRole.range.name,

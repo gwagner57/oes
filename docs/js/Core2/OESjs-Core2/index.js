@@ -127,7 +127,7 @@ function run() {
       simInfoEl.textContent = sim.experimentType.title;
       statisticsTableEl.querySelector("caption").textContent = "Experiment Results";
     } else {
-      simInfoEl.textContent = `Standalone scenario run (with a duration of ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}).`;
+      simInfoEl.textContent = `Standalone scenario run with a simulation time/duration of ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}.`;
       statisticsTableEl.querySelector("caption").textContent = "Statistics";
     }
   }

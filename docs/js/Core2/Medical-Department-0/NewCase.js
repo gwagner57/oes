@@ -4,8 +4,8 @@ class NewCase extends eVENT {
     this.medicalDepartment = medicalDepartment;
   }
   onEvent() {
-    var followupEvents=[], medDep = this.medicalDepartment;
-    medDep.plannedExaminations.push( new Examination({medicalDepartment: medDep}));
+    const followupEvents=[],
+        medDep = this.medicalDepartment;
     // update statistics
     sim.stat.arrivedPatients++;
     if (medDep.plannedExaminations.length > sim.stat.maxQueueLength) {
@@ -14,10 +14,12 @@ class NewCase extends eVENT {
     if (medDep.isDoctorAvailable()) {
       // allocate resources
       medDep.allocateDoctor();
-      // start next exam
+      // start next examination
       followupEvents.push( new aCTIVITYsTART({
-          plannedActivity: medDep.plannedExaminations.shift()  // dequeue next planned exam
+        plannedActivity: new Examination({medicalDepartment: medDep})
       }));
+    } else {  // queue up next planned examination
+      medDep.plannedExaminations.push( new Examination());
     }
     return followupEvents;
   }
