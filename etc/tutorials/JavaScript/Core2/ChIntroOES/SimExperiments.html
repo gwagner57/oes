@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Simulation Experiments</title>
+  </head>
+
+  <body><p>There are different types of simulation experiments. In a
+  <em>simple experiment</em>, a simulation scenario is run repeatedly by
+  defining a number of replications (iterations) for being able to compute
+  average statistics.</p><p>In a <em>parameter variation experiment</em>,
+  several variants of a simulation scenario (called <em>experiment
+  scenarios</em>), are defined by defining value sets for certain <em>model
+  parameters</em> (the <em>experiment parameters</em>), such that a parameter
+  variation experiment run consists of a set of experiment scenario runs, one
+  for each combination of parameter values.</p><p>An experiment type is
+  defined for a given simulation model and an experiment of that type is run
+  on top of a given simulation scenario for that model.</p><p>When running an
+  experiment, the resulting statistics data are stored in a database, which
+  allows looking them up later on or exporting them to data analysis tools
+  (such as Microsoft Excel and RStudio)</p><section><h4>2.6.1. Simple
+  Experiments</h4><p>A simple experiment type is defined with a
+  <code>sim.experimentType</code> record on top of a model by defining (1) the
+  number of <em>replications</em> and (2) possibly a list of <em>seed
+  values</em>, one for each replication. The following code shows an example
+  of a simple experiment type definition:</p><pre class="role-listing-1">sim.experimentType = {
+  title: "Simple Experiment with 10 replications, each running for 1000 time units (days)",
+  nmrOfReplications: 10,
+  seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012]
+};</pre><p>Running this simple experiment means running the underlying
+  scenario 10 times, each time with another random seed, as specified by the
+  list of seeds. The resulting statistics are composed of the statistics for
+  each replication complemented with a summary statistics listing averages,
+  standard deviations, min/max values and confidence intervals.</p><p>When no
+  seeds are defined, the experiment is run with implicit random seeds using
+  JavaScript's built-in random number generator, which implies that experiment
+  runs are not reproducible.</p></section><section><h4>2.6.2. Parameter
+  Variation Experiments</h4><p>A parameter variation experiment is defined
+  with (1) a number of <em>replications</em>, (2) a list of <em>seed
+  values</em> (one for each replication), and (3) one or more experiment
+  parameters. </p><p>An experiment parameter must have the same name as the
+  model parameter to which it refers. It defines a set of values for this
+  model variable, either using a <code>values</code> field or a combination of
+  a <code>startValue</code> and <code>endValue</code> field (and
+  <code>stepSize</code> for a non-default increment value) as in the following
+  example.</p><p>The following code shows an example of a parameter variation
+  experiment definition (on top of the <a
+  href="https://gwagner57.github.io/oes/js/Core1/Inventory-Management/index.html">Inventory-Management</a>
+  simulation model):</p><pre class="role-listing-1">sim.experimentTypes[1] = {
+  id: 1,
+  title: "Parameter variation experiment for exploring reorderInterval and targetInventory",
+  nmrOfReplications: 10,
+  seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012],
+  <b>parameterDefs</b>: [
+    {name:"reviewPolicy", values:["periodic"]},
+    {name:"reorderInterval", values:[2,3,4]},
+    {name:"targetInventory", startValue:80, endValue:100, stepSize:10},
+  ]
+};</pre><p>Notice that this experiment definition defines 9 experiment
+  scenarios resulting from the combinations of the values 2/3/4 and 80/90/100
+  for the parameters <i>reorderInterval</i> and <i>targetInventory</i>.
+  Running this parameter variation experiment means running each of the 9
+  experiment scenarios 10 times (each time with another random seed, as
+  specified by the list of seeds). The resulting statistics, as shown in the
+  following table, is computed by averaging all statistics variables defined
+  for the given model. </p><table border="1" class="expStatistics"
+      id="simLogTbl">
+      <thead>
+        <tr>
+          <th colspan="5">Experiment Results</th>
+        </tr>
+
+        <tr>
+          <th rowspan="2">Experiment scenario</th>
+
+          <th rowspan="2">Parameter values</th>
+
+          <th colspan="3">Statistics</th>
+        </tr>
+
+        <tr>
+          <th>nmrOfStockOuts</th>
+
+          <th>lostSales</th>
+
+          <th>serviceLevel</th>
+        </tr>
+      </thead>
+
+      <tbody id="simLog">
+        <tr>
+          <td>0</td>
+
+          <td>periodic,2,80</td>
+
+          <td>21.8</td>
+
+          <td>180.7</td>
+
+          <td>97.82</td>
+        </tr>
+
+        <tr>
+          <td>1</td>
+
+          <td>periodic,2,90</td>
+
+          <td>7.4</td>
+
+          <td>55.9</td>
+
+          <td>99.26</td>
+        </tr>
+
+        <tr>
+          <td>2</td>
+
+          <td>periodic,2,100</td>
+
+          <td>2.1</td>
+
+          <td>15.8</td>
+
+          <td>99.79</td>
+        </tr>
+
+        <tr>
+          <td>3</td>
+
+          <td>periodic,3,80</td>
+
+          <td>86.6</td>
+
+          <td>855.6</td>
+
+          <td>91.34</td>
+        </tr>
+
+        <tr>
+          <td>4</td>
+
+          <td>periodic,3,90</td>
+
+          <td>40.6</td>
+
+          <td>377.5</td>
+
+          <td>95.94</td>
+        </tr>
+
+        <tr>
+          <td>5</td>
+
+          <td>periodic,3,100</td>
+
+          <td>16.3</td>
+
+          <td>139.8</td>
+
+          <td>98.37</td>
+        </tr>
+
+        <tr>
+          <td>6</td>
+
+          <td>periodic,4,80</td>
+
+          <td>171.5</td>
+
+          <td>2067.5</td>
+
+          <td>82.85</td>
+        </tr>
+
+        <tr>
+          <td>7</td>
+
+          <td>periodic,4,90</td>
+
+          <td>110.6</td>
+
+          <td>1238.3</td>
+
+          <td>88.94</td>
+        </tr>
+
+        <tr>
+          <td>8</td>
+
+          <td>periodic,4,100</td>
+
+          <td>63.8</td>
+
+          <td>661.4</td>
+
+          <td>93.62</td>
+        </tr>
+      </tbody>
+    </table></section><section><h4>2.6.1. Storage and Export of Experiment
+  Results</h4><p>In OESjs-Core1, an experiment's output statistics data is
+  stored in a browser-managed database using JavaScript's <em>IndexedDB</em>
+  technology. The name of this database is the same as the name of the
+  simulation model. It can be inspected with the help of the browser's
+  developer tools, which are typically activated with the key combination
+  [Shift]+[Ctrl]+[I]. For instance, in Google's <em>Chrome</em> browser, one
+  has to go to Application/Storage/IndexedDB.</p><p>The experiment statistics
+  database consists of three tables containing data about (1) experiment runs,
+  (2) experiment scenarios, and (3) experiment scenario runs, which can be
+  exported to a CSV file. </p><section></section></section></body>
+</html>

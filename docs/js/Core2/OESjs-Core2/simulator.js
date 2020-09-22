@@ -27,7 +27,7 @@ sim.initializeSimulator = function () {
     if (sim.model.OnEachTimeStep) sim.timeIncrement = 1;  // default
   }
   // Make sure these lists are defined
-  sim.model.objectTypes ??= [];
+  sim.model.objectTypes ??= [];  // ES 2020
   sim.model.eventTypes ??= [];
   // A Map of all objects (accessible by ID)
   sim.objects = new Map();

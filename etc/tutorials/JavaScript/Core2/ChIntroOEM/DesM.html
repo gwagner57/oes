@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Making a Simulation Design Model</title>
+  </head>
+
+  <body><p>When making a simulation design based on the conceptual model of
+  the system under investigation, we may abstract away from certain items of
+  the conceptual model for obtaining a sufficiently simple design. The right
+  degree of abstraction depends on the purpose of the model.</p><p>In our
+  example, the purpose of the simulation model is to compute the <em>maximum
+  queue length</em> and the <em>utilization</em> of doctors. So, we may
+  abstract away from the object type <em>patients</em> since we don't need any
+  information about individual patients. If we don't need utilization
+  statistics per doctor, but only the average utilization of all doctors, then
+  we may also abstract away from the object type <i>doctors</i> This is the
+  approach chosen in our <i>Medical-Department-0</i> design model, while we
+  keep the object type <i>doctors</i> for modeling individual doctors in the
+  <i>Medical-Department-1</i> design model.</p><p>Since we abstract away from
+  individual patients, we rename <i>patient arrival</i> events to
+  <i>NewCase</i> events, each of them representing a new case for an
+  examination to be planned and performed.</p><p>The event type <i>NewCase</i>
+  is a type of exogenous events,<a class="role-index-term">exogenous event</a>
+  which are not caused by any causal regularity of the system under
+  investigation and, therefore, have to be modeled with a recurrence<a
+  class="role-index-term">recurrence</a> function that allows to compute the
+  time of the next occurrence of an event of that type.</p><p>We also model
+  the random variations of two variables, the recurrence of new cases and the
+  duration of examinations, in the form of random variables<a
+  class="role-index-term">random variable</a> as special class-level
+  ("static") operations, with a stereotype «rv», in the class to which they
+  belong, as shown in the diagrams below.</p><p>The recurrence of
+  <i>NewCase</i> events is modeled as a random variable with an exponential
+  distribution having an event rate of 0.7 per minute. The duration of
+  examinations is modeled as a random variable with a uniform distribution
+  having lower bound 5 and upper bound 9.</p><section><h4>1.2.1. The
+  Medical-Department-0 design model</h4><p>In the <a
+  href="https://gwagner57.github.io/oes/js/Core2/Medical-Department-0/index.html">Medical-Department-0</a>
+  information design model, we explicitly model the resource management of
+  doctors with the help of a counter variable for available doctors in the
+  form of an attribute <i>nmrOfAvailableDoctors</i>, and the operations
+  <i>isDoctorAvailable()</i>, <i>allocateDoctor()</i> and
+  <i>releaseDoctor()</i>, in the <i>MedicalDepartment</i>
+  class:</p><figure><div><img alt="???" src="../img/MedExam_CIM1-IDM0.svg"
+  width="400" /></div></figure><p>The <i>isDoctorAvailable</i> function simply
+  tests if <i>nmrOfAvailableDoctors</i> &gt; 0, while the procedures
+  <i>allocateDoctor</i> and <i>releaseDoctor</i> decrement and increment the
+  <i>nmrOfAvailableDoctors</i> counter.</p><p>In addition to an information
+  design model for defining the simulation system's state structure, we also
+  need to make a process design model for defining the dynamics of the
+  simulation system.</p><figure><figcaption>A process design model in the form
+  of a DPMN Process Diagram</figcaption><div><img
+  src="../img/MedDep_CPM1-PDM0.svg" /></div></figure><p>Notice that this
+  process design model contains the entire resource management logic for
+  (de-)allocating doctors to (from) examinations. Since resource management
+  can be defined in a generic way, this logic can be moved from the example
+  model to the simulator, as explained in the next section.</p><p>The
+  following table shows the two event rules defined by the above DPMN Process
+  Diagram, expressed in pseudo-code.</p><table border="1"
+      style="border-spacing:3px;width:100%;">
+      <thead>
+        <tr>
+          <td style="text-align:center;"><p><b>ON (event type)</b></p></td>
+
+          <td style="text-align:center;"><p><b>DO (event routine)</b></p></td>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td><p>NewCase( md) @ t<br />with md : MedicalDepartment</p></td>
+
+          <td><pre>newExam = new Examination({medicalDepartment: md});
+<b>IF</b> md.isDoctorAvailable()
+  md.allocateDoctor();
+  <b>SCHEDULE</b> new aCTIVITYsTART({plannedActivity: newExam});
+<b>ELSE</b> 
+  md.plannedExaminations.enqueue( newExam);</pre></td>
+        </tr>
+
+        <tr>
+          <td><p>Examination( md) @ t<br />with md :
+          MedicalDepartment</p></td>
+
+          <td><pre><b>IF</b> md.plannedExaminations.length = 0
+  md.releaseDoctor();
+<b>ELSE</b>
+  plannedExam = md.plannedExaminations.dequeue();
+  <b>SCHEDULE</b> new aCTIVITYsTART({plannedActivity: plannedExam});
+</pre></td>
+        </tr>
+      </tbody>
+    </table></section><section><h4>1.2.2. The Medical-Department-1 design
+  model</h4><p>In the <a
+  href="https://gwagner57.github.io/oes/js/Core2/Medical-Department-1/index.html">Medical-Department-1</a>
+  design model we make two simplifications: </p><ol>
+      <li>We drop the object type <i>MedicalDepartment</i>; since we only need
+      to model one medical department as the process owner, we can leave it
+      implicit. This is a general pattern: whenever there is only one process
+      owner, we can leave it implicit.</li>
+
+      <li>We use the generic resource management logic that is built into OES
+      Core 2, which relieves us from coding it ourselves.</li>
+    </ol><p>The resulting design information model only includes two classes:
+  the event type <i>NewCase</i> and the activity type <i>Examination</i>, as
+  shown on the left-hand side of the following class
+  diagram.</p><figure><div><img alt="???" src="../img/MedExam_CIM1-IDM1.svg"
+  width="600" /></div></figure><p>The right-hand side of this diagram shows
+  resource role "doctor" and its count pool "doctors", which instantiate the
+  OES Core 2 library classes <i>ResourceRole</i> and <i>CountPool</i>, which
+  specializes <i>ResourcePool</i>.</p><p>In the process design model, we can
+  use a <em>Resource-Dependent Activity Start</em> arrow, which implies the
+  generic resource management logic of OES Core 2:</p><figure><div><img
+  src="../img/MedDep_CPM1-PDM1.svg" width="300" /></div></figure><p>The
+  following table shows the event rules defined by the DPMN process diagram,
+  which now account for the fact that both types of events occur at a
+  particular service desk that is referenced by the event expression parameter
+  <i>sd</i>.</p><table border="1" style="border-spacing:3px;width:100%;">
+      <thead>
+        <tr>
+          <td style="text-align:center;"><p><b>ON (event type)</b></p></td>
+
+          <td style="text-align:center;"><p><b>DO (event routine)</b></p></td>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td><p>NewCase @ t<br /></p></td>
+
+          <td><pre>Examination.plannedActivities.enqueue( new Examination())</pre></td>
+        </tr>
+      </tbody>
+    </table><p>For the activity type <i>Examination</i>, we do not need an
+  event rule, since it is handled according to the implicit generic
+  resource-dependent activity start logic.</p></section></body>
+</html>

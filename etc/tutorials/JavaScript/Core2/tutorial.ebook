@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book xmlns="http://www.xmlmind.com/schema/ebook"
+      xmlns:xxe="http://www.xmlmind.com/xmleditor/namespace/extension"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:xs="http://www.w3.org/2001/XMLSchema"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:svg="http://www.w3.org/2000/svg"
+      xmlns:mml="http://www.w3.org/1998/Math/MathML"
+      xmlns:html="http://www.w3.org/1999/xhtml"
+      xmlns:ebk="http://www.xmlmind.com/schema/ebook">
+  <headcommon>
+    <html:meta content="width=device-width, initial-scale=1" name="viewport"/>
+
+    <html:link href="../../ebook.css" rel="stylesheet" type="text/css"/>
+
+    <!-- Facebook Open Graph annotations -->
+
+    <html:meta content="OES" name="og:site_name"/>
+
+    <html:meta content="Tutorial: Discrete Event Simulation with OESjs-Core2"
+               name="og:title"/>
+
+    <html:meta content="en" name="og:locale"/>
+
+    <html:meta content="This tutorial article explains how to use the OESjs-Core2 simulation library, which implements an architecture for Object Event Simulation (OES), extending the OESjs Core 1 simulator by adding support for activities, which may be resource-constrained."
+               name="og:description"/>
+
+    <html:meta content="https://gwagner57.github.io/oes/js/Core2/tutorial.html"
+               name="og:url"/>
+
+    <html:meta content="https://sim4edu.com/img/sim4edu.png" name="og:image"/>
+
+    <!-- recommended 1200 x 630 -->
+
+    <html:meta content="summary_large_image" name="twitter:card"/>
+  </headcommon>
+
+  <head>
+    <title>Tutorial: Discrete Event Simulation with OESjs-Core2</title>
+
+    <html:style><!-- styles for the title page -->
+div.role-book-title-div {
+  text-align: center;
+}
+h1.role-book-title {
+  margin: 4em 0;
+  padding-bottom: 0;
+  border-bottom-style: none;
+}
+span.button {
+  outline: 1px solid;
+  background: aliceblue;
+}
+table.expStatistics tbody td {
+    text-align: right;
+}
+
+div.role-book-title-div h1.role-book-title {
+    margin-bottom: 0.33em;
+}
+div[id$="subtitle"] {
+    margin-top: 0.33em;
+}
+
+
+div#share {
+    display: block; /*inline-block*/
+}
+ul.links {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0 1em;
+}
+ul.links li {
+    display: inline;
+    text-align: center;
+    cursor: pointer;
+    margin-right: 1em;
+}
+ul.links li:hover {
+    text-decoration: underline;
+}
+.icon-social {
+    width: 20px;
+    height: 20px;
+    background: #eee;
+}</html:style>
+  </head>
+
+  <body>
+    <content href="titlepage.html"/>
+  </body>
+
+  <frontmatter>
+    <toc/>
+
+    <lof/>
+
+    <lot/>
+  </frontmatter>
+
+  <chapter href="ChIntroOEM/index.html">
+    <section href="ChIntroOEM/CM.html" samepage="true"/>
+
+    <section href="ChIntroOEM/DesM.html" samepage="true"/>
+  </chapter>
+
+  <chapter href="ChIntroOES/index.html">
+    <section href="ChIntroOES/SimTime.html" samepage="true"/>
+
+    <section href="ChIntroOES/SimModels.html" samepage="true"/>
+
+    <section href="ChIntroOES/SimScenarios.html" samepage="true"/>
+
+    <section href="ChIntroOES/SimStatistics.html" samepage="true"/>
+
+    <section href="ChIntroOES/SimExperiments.html" samepage="true"/>
+
+    <section href="ChIntroOES/SimLog.html"/>
+  </chapter>
+
+  <appendix href="architecture.html"/>
+
+  <backmatter>
+    <index/>
+  </backmatter>
+</book>

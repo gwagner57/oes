@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Using the Simulation Log</title>
+  </head>
+
+  <body><p>The OESjs-Core1 simulator can generate a simulation log, which
+  allows to inspect the evolving states of a simulation run. Inspecting the
+  simulation log can help to understand the dynamics of a model, or it can be
+  used for finding logical flaws in it.</p><p>The contents of the simulation
+  log can be controlled by defining <em>labels</em> for those object
+  properties that are to be displayed in the log. For instance, in the case of
+  the <a
+  href="https://gwagner57.github.io/oes/js/Core1/Service-Desk-1/index.html"
+  target="_top">Service-Desk-1</a> model, a label "qLen" is defined for the
+  <code>queueLength</code> property of <i>ServiceDesk</i> objects by
+  setting</p><pre>ServiceDesk.labels = {"queueLength":"qLen"};</pre><p> This
+  results in the following simulation log:</p><table border="1">
+      <thead>
+        <tr>
+          <th>Step</th>
+
+          <th>Time</th>
+
+          <th>System State</th>
+
+          <th>Future Events</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>0</td>
+
+          <td>0</td>
+
+          <td>Service-Desk-1{ qLen: 0}</td>
+
+          <td>CustomerArrival@1</td>
+        </tr>
+
+        <tr>
+          <td>1</td>
+
+          <td>1</td>
+
+          <td>Service-Desk-1{ qLen: 1}</td>
+
+          <td>CustomerDeparture@5, CustomerArrival@6</td>
+        </tr>
+
+        <tr>
+          <td>2</td>
+
+          <td>5</td>
+
+          <td>Service-Desk-1{ qLen: 0}</td>
+
+          <td>CustomerArrival@6</td>
+        </tr>
+
+        <tr>
+          <td>3</td>
+
+          <td>6</td>
+
+          <td>Service-Desk-1{ qLen: 1}</td>
+
+          <td>CustomerArrival@7, CustomerDeparture@10</td>
+        </tr>
+
+        <tr>
+          <td>4</td>
+
+          <td>7</td>
+
+          <td>Service-Desk-1{ qLen: 2}</td>
+
+          <td>CustomerDeparture@10, CustomerArrival@10</td>
+        </tr>
+
+        <tr>
+          <td>5</td>
+
+          <td>10</td>
+
+          <td>Service-Desk-1{ qLen: 2}</td>
+
+          <td>CustomerArrival@12, CustomerDeparture@13</td>
+        </tr>
+
+        <tr>
+          <td>6</td>
+
+          <td>12</td>
+
+          <td>Service-Desk-1{ qLen: 3}</td>
+
+          <td>CustomerDeparture@13, CustomerArrival@16</td>
+        </tr>
+
+        <tr>
+          <td>7</td>
+
+          <td>13</td>
+
+          <td>Service-Desk-1{ qLen: 2}</td>
+
+          <td>CustomerArrival@16, CustomerDeparture@16</td>
+        </tr>
+
+        <tr>
+          <td>8</td>
+
+          <td>16</td>
+
+          <td>Service-Desk-1{ qLen: 2}</td>
+
+          <td>CustomerDeparture@19, CustomerArrival@21</td>
+        </tr>
+
+        <tr>
+          <td>9</td>
+
+          <td>19</td>
+
+          <td>Service-Desk-1{ qLen: 1}</td>
+
+          <td>CustomerArrival@21, CustomerDeparture@23</td>
+        </tr>
+      </tbody>
+    </table></body>
+</html>

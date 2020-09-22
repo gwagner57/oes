@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Making a Conceptual Model of the System under Investigation</title>
+  </head>
+
+  <body><p>As our first example, we model a medical department of a
+  hospital:</p><ul>
+      <li>Patients arrive at a medical department at random times.</li>
+
+      <li>If there are no other planned examinations waiting for the
+      availability of a doctor, and a doctor is available, any newly arrived
+      patient is immediately examined by that doctor. Otherwise, the planned
+      examination of the newly arrived patient is added to a list of planned
+      examinations representing a queue.</li>
+
+      <li>The duration of examinations varies, depending on the individual
+      case.</li>
+
+      <li>When an examination is completed,the next patient is examined by the
+      doctor, if there is still any planned examination in the queue.</li>
+    </ul><p>The potentially relevant <b>object types</b> of the system under
+  investigation are:</p><ul>
+      <li>patients,</li>
+
+      <li>medical departments,</li>
+
+      <li>doctors.</li>
+    </ul><p>The potentially relevant <b>event types</b> are:</p><ul>
+      <li>patient arrivals,</li>
+
+      <li>examination starts,</li>
+
+      <li>examination ends,</li>
+    </ul><p>Instead of considering the event types <em>examination starts</em>
+  and <em>examination ends</em>, we can consider the activity type
+  <em>examinations</em>. Thus, we get the following conceptual information
+  model (expressed as a UML class diagram):</p><figure
+  id="figServiceDesk0"><div><img alt="???" src="../img/MedExam_CIM1.svg"
+  width="600" /></div></figure><p>From the diagram we can infer that: </p><ul>
+      <li>For patient arrivals and for examinations, there is an association
+      with medical departments providing the <em>process owner</em>, such that
+      for any patient arrival event and examination activity a specific
+      medical department is in charge of handling the event or seeing to it
+      that the activity is going to be performed.</li>
+
+      <li>While patient arrivals have two participants: a patient and a
+      medical department, examinations have three participants: a patient, a
+      medical department and a doctor.</li>
+
+      <li>Examinations have one resource role, doctor, with a resource
+      constraint of exactly one, which means that exactly one doctor is
+      required for performing an examination.</li>
+
+      <li>The process owner of an examination, a medical department, has a
+      resource pool for doctors. The doctors needed for performing
+      examinations at this department are allocated from this pool, and the
+      department, as the process owner of examinations, has a business
+      procedure for allocating doctors to planned examinations (using certain
+      policies).</li>
+    </ul><p>In addition to a conceptual information model, which captures the
+  system's state structure, we also need to make a conceptual process model
+  that captures the dynamics of the system. A process model can be expressed
+  with the help of event rules, which define what happens when an event (of a
+  certain type) occurs, or, more specifically, which state changes and which
+  follow-up events are caused by an event of that type.</p><p>The following
+  conceptual process model (in the form of a conceptual DPMN process diagram)
+  is based on the information model above. It refers to the object types
+  <i>medical departments</i> and <i>doctors</i>, as well as to the event type
+  <i>patient arrivals</i> and to the activity type
+  <i>examinations</i>.</p><figure><div><img alt="???"
+  src="../img/MedDep_CPM1.svg" width="600" /></div></figure><p>This conceptual
+  process model describes two causal regularities in the form of the following
+  two event rules, each stated with two bullet points: one for describing all
+  the state changes and one for describing all the follow-up events brought
+  about by applying the rule.</p><ol>
+      <li><p>When a new patient arrives:</p><ul>
+          <li>if a doctor is available, then she is allocated to the
+          examination of that patient; otherwise, a new planned examination is
+          queued up;</li>
+
+          <li>if a doctor has been allocated, then start an examination of the
+          patient.</li>
+        </ul></li>
+
+      <li><p>When an examination is completed by a doctor:</p><ul>
+          <li>if the queue of planned examinations is empty, then the doctor
+          is released;</li>
+
+          <li>otherwise, the next planned examination by that doctor is
+          scheduled to start immediately.</li>
+        </ul></li>
+    </ol></body>
+</html>
