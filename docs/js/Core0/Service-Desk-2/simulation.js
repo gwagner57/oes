@@ -7,7 +7,7 @@ sim.scenario.idCounter = 11;  // start value of auto IDs
  Simulation Model
 ********************************************************/
 sim.model.time = "continuous";
-sim.model.timeUnit = "min";  // minutes
+sim.model.timeUnit = "min";
 sim.model.objectTypes = ["ServiceDesk", "Customer"];
 sim.model.eventTypes = ["CustomerArrival", "CustomerDeparture"];
 /*******************************************************

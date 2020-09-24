@@ -55,10 +55,12 @@
   implements an architecture for Object Event Simulation (OES), extending the
   OESjs Core 1 simulator by adding support for activities, which are composite
   events with some duration. Activities are composed of a start event and an
-  end event. Resource-constrained activities can only be started when their
-  required resources are available. Due to this dependency, a simulated
-  activity cannot be scheduled like a simulated event. Rather, it has to be
-  added to a queue of planned activities, from which it is dequeued, and
-  scheduled via an immediate activity start event, as soon as the required
-  resources become available. </p></body>
+  end event. Resource-constrained activities are modeled by means of
+  <em>Resource Roles</em> (with <em>Resource Constraints</em>) and
+  <em>Resource Pools</em>. They can only be started when their required
+  resources are available. Due to this dependency, a simulated activity cannot
+  be scheduled like a simulated event. Rather, it has to be added to a queue
+  of planned activities, from which it is dequeued, and scheduled via an
+  immediate activity start event, as soon as the required resources become
+  available. </p></body>
 </html>

@@ -4,8 +4,6 @@ class NewCase extends eVENT {
   }
   onEvent() {
     var followupEvents=[];
-    // Enqueue a new planned examination (of the newly arrived patient)
-    Examination.plannedActivities.enqueue( new Examination());
     return followupEvents;
   }
   createNextEvent() {
@@ -15,3 +13,6 @@ class NewCase extends eVENT {
     return rand.exponential( 0.8);
   }
 }
+// Enqueue a new planned examination (of the newly arrived patient)
+NewCase.successorActivity = "Examination";
+// = Examination.plannedActivities.enqueue( new Examination());

@@ -6,13 +6,13 @@ class Delivery extends eVENT {
   }
   onEvent() {
     var followupEvents=[];
-    this.receiver.quantityInStock += this.quantity;
+    this.receiver.stockQuantity += this.quantity;
     if (sim.model.p.reviewPolicy === "continuous") {
       // schedule another Delivery if stock level is not raised above reorder level
-      if (this.receiver.quantityInStock <= this.receiver.reorderLevel ) {
+      if (this.receiver.stockQuantity <= this.receiver.reorderPoint ) {
         followupEvents.push( new Delivery({
           delay: Delivery.leadTime(),
-          quantity: this.receiver.targetInventory - this.receiver.quantityInStock,
+          quantity: this.receiver.targetInventory - this.receiver.stockQuantity,
           receiver: this.receiver
         }));
       }

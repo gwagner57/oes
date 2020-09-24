@@ -14,6 +14,9 @@
  <link rel="stylesheet" type="text/css" href="css/normalize.css" />
  <link rel="stylesheet" type="text/css" href="css/prio-menu.css" />
  <link rel="stylesheet" type="text/css" href="css/main.css" />
+ <style>
+ p.description { font-size: smaller;}
+ </style>
 </head>
 <body>
  <header>
@@ -34,6 +37,7 @@
  <main>
   <h1>Simulation Examples</h1>
   <h2>OESjs Core 0</h2>
+  <p class="description">A minimal architecture for Object Event Simulation (OES), supporting models with (global) model variables and functions, object types, event types, and simple simulation experiments.</p>
    <nav>
     <ul>
      <li><a href="js/Core0/Service-Desk-0/index.html">Service-Desk-0</a></li>
@@ -44,6 +48,7 @@
    </nav>
   
   <h2>OESjs Core 1</h2>
+  <p class="description">Extends the OESjs Core 0 simulator by adding fixed-increment time progression, a seedable random number generator, a set of sampling functions from various probability distributions (uniform, triangular, normal, exponential, etc.), multiple scenarios per model, multiple experiment types per model, model parameters, parameter variation experiments, as well as persistent storage and export of experiment results.</p>
    <nav>
     <ul>
      <li><a href="js/Core1/Service-Desk/index.html">Service-Desk</a></li>
@@ -51,6 +56,15 @@
     </ul>
    </nav>
   
+  <h2>OESjs Core 2</h2>
+  <p class="description">Extends the OESjs Core 1 simulator by adding support for activities, which may be resource-constrained.</p>
+   <nav>
+    <ul>
+     <li><a href="js/Core2/Medical-Department-0/index.html">Medical-Department-0</a></li>
+     <li><a href="js/Core2/Medical-Department-1/index.html">Medical-Department-1</a></li>
+    </ul>
+   </nav>
+
  </main>
   <footer>
    <p>© 2020 G. Wagner (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>), Brandenburg University of Technology, Germany</p>

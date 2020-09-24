@@ -1,7 +1,7 @@
 /*******************************************************
  Simulation Scenario Settings
 ********************************************************/
-sim.scenario.title = "Basic scenario with a periodic review policy";
+sim.scenario.title = "Basic scenario with a continuous review policy";
 sim.scenario.durationInSimTime = 1000;  // days
 //sim.scenario.durationInSimSteps = 1000;
 //sim.scenario.durationInCpuTime = 1000;  // seconds
@@ -10,7 +10,7 @@ sim.scenario.durationInSimTime = 1000;  // days
 ********************************************************/
 sim.model.name = "Inventory-Management-1";
 sim.model.time = "discrete";
-sim.model.timeUnit = "D";  // days
+sim.model.timeUnit = "days";
 sim.model.objectTypes = ["SingleProductShop"];
 sim.model.eventTypes = ["DailyDemand", "Delivery"];
 // Model parameters
@@ -25,8 +25,8 @@ sim.scenario.setupInitialState = function () {
   const tvShop = new SingleProductShop({
     id: 1,
     name:"TV Shop",
-    quantityInStock: 80,
-    reorderLevel: 50,
+    stockQuantity: 80,
+    reorderPoint: 50,
     targetInventory: sim.model.p.targetInventory,
     reorderInterval: sim.model.p.reorderInterval
   });
@@ -68,8 +68,8 @@ sim.experimentTypes[1] = {
 sim.experimentTypes[2] = {
   id: 2,
   title: "Parameter variation experiment for comparing policies",
-  nmrOfReplications: 10,
-  seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012],
+  nmrOfReplications: 50,
+  //seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012],
   parameterDefs: [
     {name:"reviewPolicy", values:["continuous","periodic"]}
   ]

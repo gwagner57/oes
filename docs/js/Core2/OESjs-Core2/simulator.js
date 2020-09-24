@@ -169,7 +169,7 @@ sim.runScenario = function (createLog) {
       sim.step < sim.scenario.durationInSimSteps &&
       (new Date()).getTime() - startTime < sim.scenario.durationInCpuTime) {
     if (createLog) {
-      self.postMessage({ step: sim.step, time: sim.time,
+      postMessage({ step: sim.step, time: sim.time,
         // convert values() iterator to array
         objectsStr: [...sim.objects.values()].toString(),
         eventsStr: sim.FEL.toString()
@@ -189,6 +189,15 @@ sim.runScenario = function (createLog) {
         sim.FEL.add( f);
       }
       let EventClass = e.constructor;
+
+      /* ACTIVITIES extension START */
+      // schedule successor activities
+      if (EventClass.successorActivity) {
+        const ActivityClass = sim.Classes[EventClass.successorActivity];
+        ActivityClass.plannedActivities.enqueue( new ActivityClass());
+      }
+      /* ACTIVITIES extension END */
+
       // test if e is an exogenous event
       if (EventClass.recurrence) {
         // create and schedule next exogenous event
@@ -261,7 +270,7 @@ sim.runExperiment = async function () {
       });
     });
     // send experiment statistics to main thread
-    self.postMessage({simpleExperiment: exp});
+    postMessage({simpleExperiment: exp});
   }
   async function runParVarExperiment() {
     var cp = [], valueSets = [], M = 0,
@@ -340,13 +349,13 @@ sim.runExperiment = async function () {
         exp.scenarios[i].stat[varName] /= exp.nmrOfReplications;
       });
       // send statistics to main thread
-      self.postMessage({
+      postMessage({
         expScenNo: i,
         expScenParamValues: exp.scenarios[i].parameterValues,
         expScenStat: exp.scenarios[i].stat
       });
     }
-    self.postMessage({endTime: sim.endTime});
+    postMessage({endTime: sim.endTime});
   }
 
   if (exp.seeds && exp.seeds.length < exp.nmrOfReplications) {

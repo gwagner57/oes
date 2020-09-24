@@ -3,7 +3,7 @@
 ********************************************************/
 sim.model.name = "Service-Desk-1";
 sim.model.time = "continuous";
-sim.model.timeUnit = "m";  // minutes
+sim.model.timeUnit = "min";
 sim.model.objectTypes = ["ServiceDesk", "Customer"];
 sim.model.eventTypes = ["CustomerArrival", "CustomerDeparture"];
 /*******************************************************

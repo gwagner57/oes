@@ -6,7 +6,7 @@ class DailyDemand extends eVENT {
   }
   onEvent() {
     var q = this.quantity,
-        prevStockLevel = this.shop.quantityInStock;
+        prevStockLevel = this.shop.stockQuantity;
     // update lostSales if demand quantity greater than stock level
     if (q > prevStockLevel) {
       // increment the "nmrOfStockOuts" statistics variable by 1
@@ -14,16 +14,16 @@ class DailyDemand extends eVENT {
       // increment the "lostSales" statistics variable by the missing quantity
       sim.stat.lostSales += q - prevStockLevel;
     }
-    // update quantityInStock
-    this.shop.quantityInStock = Math.max( prevStockLevel-q, 0);
+    // update stockQuantity
+    this.shop.stockQuantity = Math.max( prevStockLevel-q, 0);
     switch (sim.model.p.reviewPolicy) {
     case "continuous":
       // schedule Delivery if stock level falls below reorder level
-      if (prevStockLevel > this.shop.reorderLevel &&
-          prevStockLevel - q <= this.shop.reorderLevel) {
+      if (prevStockLevel > this.shop.reorderPoint &&
+          prevStockLevel - q <= this.shop.reorderPoint) {
         return [new Delivery({
           delay: Delivery.leadTime(),
-          quantity: this.shop.targetInventory - this.shop.quantityInStock,
+          quantity: this.shop.targetInventory - this.shop.stockQuantity,
           receiver: this.shop
         })];
       } else return [];  // no follow-up events
@@ -32,7 +32,7 @@ class DailyDemand extends eVENT {
       if (sim.time % this.shop.reorderInterval === 0) {
         return [new Delivery({
           delay: Delivery.leadTime(),
-          quantity: this.shop.targetInventory - this.shop.quantityInStock,
+          quantity: this.shop.targetInventory - this.shop.stockQuantity,
           receiver: this.shop
         })];
       } else return [];  // no follow-up events

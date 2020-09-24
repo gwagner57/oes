@@ -234,7 +234,7 @@ sim.runExperiment = async function () {
       }
       // run experiment scenario replications
       for (let k=0; k < exp.nmrOfReplications; k++) {
-        if (exp.seeds.length > 0) {
+        if (exp.seeds && exp.seeds.length > 0) {
           sim.initializeScenarioRun({seed: exp.seeds[k], expParSlots: expParSlots});
         } else {
           sim.initializeScenarioRun({expParSlots: expParSlots});

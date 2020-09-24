@@ -6,7 +6,7 @@ sim.scenario.durationInSimTime = 1000;
  Simulation Model
 ********************************************************/
 sim.model.time = "discrete";
-sim.model.timeUnit = "min";  // minutes
+sim.model.timeUnit = "min";
 sim.model.objectTypes = ["ServiceDesk"];
 sim.model.eventTypes = ["CustomerArrival", "CustomerDeparture"];
 /*******************************************************

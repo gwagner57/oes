@@ -2,7 +2,7 @@
  Simulation Model
  ********************************************************/
 sim.model.time = "discrete";
-sim.model.timeUnit = "D";  // days
+sim.model.timeUnit = "days";
 sim.model.objectTypes = ["SingleProductShop"];
 sim.model.eventTypes = ["DailyDemand", "Delivery"];
 /*******************************************************

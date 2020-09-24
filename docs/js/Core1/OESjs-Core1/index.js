@@ -120,16 +120,20 @@ async function clearDatabase() {
   await idb.deleteDB( sim.model.name);
 }
 function run() {
-  var choice = selExpEl.value, data={};
-  if (choice) {
-    if (choice !== "0") {
+  var choice = parseInt( selExpEl.value), data={};
+  if (!isNaN( choice)) {
+    if (choice > 0) {
       if (!sim.experimentType) sim.experimentType = sim.experimentTypes[parseInt(choice)-1];
       simInfoEl.textContent = sim.experimentType.title;
       statisticsTableEl.querySelector("caption").textContent = "Experiment Results";
     } else {
-      simInfoEl.textContent = `Standalone scenario run (with a duration of ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}).`;
+      simInfoEl.textContent = `Standalone scenario run with a simulation time/duration of ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}.`;
       statisticsTableEl.querySelector("caption").textContent = "Statistics";
     }
+  }
+  if (choice < 2) {
+    document.getElementsByTagName("h1")[0].textContent += " with a " +
+        sim.model.p.reviewPolicy + " Review Policy";
   }
   // Hide UI elements
   formEl.style.display = "none";  // hide selection form
