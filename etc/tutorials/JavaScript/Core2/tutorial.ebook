@@ -36,7 +36,8 @@
   </headcommon>
 
   <head>
-    <title>Tutorial: Discrete Event Simulation with OESjs-Core2</title>
+    <title>Tutorial: Discrete Event Simulation <html:br/>with
+    OESjs-Core2</title>
 
     <html:style><!-- styles for the title page -->
 div.role-book-title-div {

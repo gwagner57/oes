@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="0.333in" height="0.333in" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 10240 10240" xmlns:xlink="http://www.w3.org/1999/xlink">
-	<title>sign_warning_voltage icon</title>
-	<desc>sign_warning_voltage icon from the IconExperience.com O-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
-	<path id="curve1" fill="#EDC87E" d="M5680 1282l3846 6712c117,205 117,439 0,644 -117,205 -319,322 -553,322l-7691 0c-235,0 -436,-117 -553,-322 -117,-205 -117,-439 0,-644l3846 -6712c117,-205 319,-322 553,-322 235,0 436,117 553,322zm-560 318l3840 6720 -7680 0 3840 -6720z"/>
-	<path id="curve0" fill="#808080" d="M4619 3840l1179 0c59,0 110,30 139,81 29,52 28,110 -2,161l-815 1358 701 0c57,0 106,27 136,76 30,49 33,105 7,156l-524 1048 228 0c67,0 125,39 149,102 24,63 9,131 -41,176l-926 847c-40,36 -91,50 -143,38 -53,-12 -93,-46 -113,-96l-344 -847c-21,-51 -15,-104 16,-150 31,-46 78,-71 133,-71l402 0 320 -640 -776 0c-48,0 -89,-19 -121,-55 -31,-36 -44,-80 -38,-127l274 -1920c11,-79 78,-137 158,-137z"/>
-</svg>

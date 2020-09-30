@@ -47,21 +47,22 @@
   and the operations <i>isDoctorAvailable()</i>, <i>allocateDoctor()</i> and
   <i>releaseDoctor()</i>, in the <i>MedicalDepartment</i>
   class:</p><figure><div><img alt="???" src="../img/MedExam_CIM1-IDM0.svg"
-  width="400" /></div></figure><p>The <i>isDoctorAvailable</i> function simply
+  width="500" /></div></figure><p>The <i>isDoctorAvailable</i> function simply
   tests if <i>nmrOfAvailableDoctors</i> &gt; 0, while the procedures
   <i>allocateDoctor</i> and <i>releaseDoctor</i> decrement and increment the
   <i>nmrOfAvailableDoctors</i> counter.</p><p>In addition to an information
   design model for defining the simulation system's state structure, we also
   need to make a process design model for defining the dynamics of the
-  simulation system.</p><figure><figcaption>A process design model in the form
-  of a DPMN Process Diagram</figcaption><div><img
+  simulation system.Since in OEM, the preferred process modeling language is
+  DPMN, we define the two event rules of the Medical-Department-0 design model
+  in the following DPMN Process Diagram:</p><figure><div><img
   src="../img/MedDep_CPM1-PDM0.svg" /></div></figure><p>Notice that this
   process design model contains the entire resource management logic for
   (de-)allocating doctors to (from) examinations. Since resource management
-  can be defined in a generic way, this logic can be moved from the example
-  model to the simulator, as explained in the next section.</p><p>The
-  following table shows the two event rules defined by the above DPMN Process
-  Diagram, expressed in pseudo-code.</p><table border="1"
+  can be defined in a generic way, this logic (and the related code) can be
+  moved from example models to the simulator, as explained in the next
+  section.</p><p>The following table shows the two event rules defined by the
+  above DPMN Process Diagram, expressed in pseudo-code.</p><table border="1"
       style="border-spacing:3px;width:100%;">
       <thead>
         <tr>
@@ -78,7 +79,7 @@
           <td><pre>newExam = new Examination( md);
 <b>IF</b> md.isDoctorAvailable()
   md.allocateDoctor();
-  <b>SCHEDULE</b> new aCTIVITYsTART( newExam);
+  <b>SCHEDULE</b> new <b>ActivityStart</b>( newExam);
 <b>ELSE</b> 
   md.plannedExaminations.enqueue( newExam);</pre></td>
         </tr>
@@ -91,35 +92,51 @@
   md.releaseDoctor();
 <b>ELSE</b>
   plannedExam = md.plannedExaminations.dequeue();
-  <b>SCHEDULE</b> new aCTIVITYsTART( plannedExam);
+  <b>SCHEDULE</b> new <b>ActivityStart</b>( plannedExam);
 </pre></td>
         </tr>
       </tbody>
     </table></section><section><h5>The Medical-Department-1 design
   model</h5><p>In the <a
   href="https://gwagner57.github.io/oes/js/Core2/Medical-Department-1/index.html">Medical-Department-1</a>
-  design model we make two simplifications: </p><ol>
+  information design model we make two simplifications: </p><ol>
       <li>We drop the object type <i>MedicalDepartment</i>; since we only need
       to model one medical department as the process owner, we can leave it
       implicit. This is a general pattern: whenever there is only one process
       owner, we can leave it implicit.</li>
 
-      <li>We use the generic resource management logic that is built into OES
-      Core 2, which relieves us from coding it ourselves.</li>
+      <li>Since we use the generic resource management logic that is built
+      into <em>OES Core 2</em>, we do not need to model the methods
+      <i>isDoctorAvailable</i>, <i>allocateDoctor</i> and
+      <i>releaseDoctor</i>.</li>
     </ol><p>The resulting information design model only includes two classes:
   the event type <i>NewCase</i> and the activity type <i>Examination</i>, as
   shown on the left-hand side of the following class
   diagram.</p><figure><div><img alt="???" src="../img/MedExam_CIM1-IDM1.svg"
-  width="600" /></div></figure><p>The right-hand side of this diagram shows
+  width="700" /></div></figure><p>The right-hand side of this diagram shows
   the resource role "doctor" and its count pool "doctors", which instantiate
-  the OES Core 2 library classes <i>ResourceRole</i> and <i>CountPool</i> (as
-  a special type of <i>ResourcePool)</i>.</p><p>In the process design model,
-  we can use a <em>Resource-Dependent Activity Start</em> arrow, which implies
-  the generic resource management logic of OES Core 2:</p><figure><div><img
-  src="../img/MedDep_CPM1-PDM1.svg" width="300" /></div></figure><p>Since in
-  this model, <i>NewCase</i> events and <i>Examination</i> activities are
-  handled according to the generic logic of <i>Activity Networks</i> built
-  into the OES Core 2 simulator, we do not need to model/specify any event
+  the <em>OES Core 2</em> library classes <i>ResourceRole</i> and
+  <i>CountPool</i> (as a special type of <i>ResourcePool)</i>.</p><p>In the <a
+  href="https://gwagner57.github.io/oes/js/Core2/Medical-Department-1/index.html">Medical-Department-1</a>
+  process design model we make corresponding simplifications as in the
+  information design model above:</p><ol>
+      <li>Leaving the process owner implicit, we drop the Pool
+      <i>MedicalDepartment</i>.</li>
+
+      <li>Since we use the generic resource management logic that is built
+      into <em>OES Core 2</em>, we do not need any resource management code
+      involving the methods <i>isDoctorAvailable</i>, <i>allocateDoctor</i>
+      and <i>releaseDoctor</i> in event rules.</li>
+    </ol><p>We also assign <i>Examination</i> as a <em>successor activity</em>
+  type to <i>NewCase</i> using a <em>Resource-Dependent Activity Start</em>
+  arrow as shown in the following DPMN diagram:</p><figure><div><img
+  src="../img/MedDep_CPM1-PDM1.svg" width="350" /></div></figure>Using a
+  <em>Resource-Dependent Activity Start</em> arrow from <i>NewCase</i> to
+  <i>Examination</i> relieves us from coding the enqueuing of a new
+  <i>Examination</i> activity in a <i>NewCase</i> event rule.<p>Since in this
+  model, <i>NewCase</i> events and <i>Examination</i> activities are handled
+  according to the generic logic of <i>Activity Networks</i> built into the
+  <em>OES Core 2</em> simulator, we do not need to model/specify any event
   rules. For having <i>NewCase</i> events succeeded by <i>Examination</i>
   activities, we just need to specify this event flow relationship (in
   OESjs-Core2) in the following way:</p><pre>NewCase.<b>successorActivity</b> = "Examination";</pre><p>The

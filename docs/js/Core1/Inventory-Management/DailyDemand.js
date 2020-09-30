@@ -9,7 +9,7 @@ class DailyDemand extends eVENT {
         prevStockLevel = this.shop.stockQuantity;
     // update lostSales if demand quantity greater than stock level
     if (q > prevStockLevel) {
-      // increment the "nmrOfStockOuts" statistics variable by 1
+      // increment the stock-out counter by 1
       sim.stat.nmrOfStockOuts++;
       // increment the "lostSales" statistics variable by the missing quantity
       sim.stat.lostSales += q - prevStockLevel;

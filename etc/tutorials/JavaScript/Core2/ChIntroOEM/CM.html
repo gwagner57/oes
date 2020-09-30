@@ -50,26 +50,29 @@
   class diagram):</p><figure id="figServiceDesk0"><div><img alt="???"
   src="../img/MedExam_CIM1.svg" width="600" /></div></figure><p>From the
   diagram we can infer that:</p><ul>
-      <li>For patient arrivals and for examinations, there is an association
-      with medical departments providing the <em>process owner</em>, such that
-      for any patient arrival event and examination activity a specific
-      medical department is in charge of handling the event or seeing to it
-      that the activity is going to be performed.</li>
+      <li>For <em>patient arrivals</em> and for <em>examinations</em>, there
+      is an association with <em>medical departments</em> providing the
+      <em>process owner</em>, such that for any <em>patient arrival</em> event
+      and <em>examination</em> activity a specific <em>medical department</em>
+      is in charge of handling the event or seeing to it that the activity is
+      going to be performed.</li>
 
-      <li>While patient arrivals have two participants: a patient and a
-      medical department, examinations have three participants: a patient, a
-      medical department and a doctor.</li>
+      <li>While <em>patient arrivals</em> have two participants: a
+      <em>patient</em> and a <em>medical department</em>,
+      <em>examinations</em> have three participants: a <em>patient</em>, a
+      <em>medical department</em> and a <em>doctor</em>.</li>
 
-      <li>Examinations have one resource role, doctor, with a resource
-      constraint of exactly one, which means that exactly one doctor is
-      required for performing an examination.</li>
+      <li><em>Examinations</em> have one resource role, <em>doctor</em>, with
+      a resource constraint of exactly one, which means that exactly one
+      <em>doctor</em> is required for performing an <em>examination</em>.</li>
 
-      <li>The process owner of an examination, a medical department, has a
-      resource pool for doctors. The doctors needed for performing
-      examinations at this department are allocated from this pool, and the
-      department, as the process owner of examinations, has a business
-      procedure for allocating doctors to planned examinations (using certain
-      policies).</li>
+      <li>The process owner of an <em>examination</em>, a <em>medical
+      department</em>, has a resource pool for <em>doctors</em>. The
+      <em>doctors</em> needed for performing <em>examinations</em> at this
+      department are allocated from this pool, and the department, as the
+      process owner of <em>examinations</em>, has a business procedure for
+      allocating <em>doctors</em> to planned <em>examinations</em> (using
+      certain policies).</li>
     </ul><p>In addition to a conceptual information model, which captures the
   system's state structure, we also need to make a conceptual process model
   that captures the dynamics of the system. A process model can be expressed
@@ -78,8 +81,9 @@
   changes</em> and which <em>follow-up events</em> are caused by an event of
   that type.</p><p>The following conceptual process model (in the form of a
   DPMN Process Diagram) is based on the information model above. It refers to
-  the object types <i>medical departments</i> and <i>doctors</i>, as well as
-  to the event type <i>patient arrivals</i> and to the activity type
+  a medical department as the <em>process owner</em>, visualized in the form
+  of a Pool container rectangle, and to <i>doctor objects</i>, as well as to
+  the event type <i>patient arrivals</i> and to the activity type
   <i>examinations</i>.</p><figure><div><img alt="???"
   src="../img/MedDep_CPM1.svg" width="600" /></div></figure><p>This conceptual
   process model describes two causal regularities in the form of the following
@@ -102,19 +106,28 @@
           <li>otherwise, the next planned examination by that doctor starts
           immediately.</li>
         </ul></li>
-    </ol></section><section><h4>An extended conceptual model </h4><p>For being
-  more realistic, we consider the fact that patients first need to be walked
-  by nurses to the room allocated to their examination before the examination
-  can start. So, in our extended model of a medical department we consider two
-  other resource types, <em>examination rooms</em> and <em>nurses</em>, and
-  another type of activity: <em>walks to rooms</em> (the walks of patients to
-  examination rooms guided by nurses):</p><ul>
+    </ol><p>Since the resource management logic in this example complies with
+  the standard resource management procedures, we can simplify the model by
+  using a <em>Resource-Dependent Activity Start</em> arrow between the event
+  type circle <em>patient arrivals</em> and the activity type rectangle
+  <em>examinations</em> for expressing the assumption of the standard resource
+  management logic built into OES Core 2, as shown in the following DPMN
+  process diagram: </p><figure><div><img alt="???"
+  src="../img/MedDep_CPM1a.svg"
+  width="300" /></div></figure></section><section><h4>An extended conceptual
+  model </h4><p>For being more realistic, we consider the fact that patients
+  first need to be walked by nurses to the room allocated to their examination
+  before the examination can start. So, in our extended model of a medical
+  department we consider two other resource types, <em>examination rooms</em>
+  and <em>nurses</em>, and another type of activity: <em>walks to rooms</em>
+  (the walks of patients to examination rooms guided by nurses):</p><ul>
       <li>Patients arrive at a medical department at random times.</li>
 
-      <li>When a new patient arrives, and a room and a nurse are available,
-      that nurse walks the patient to that room, otherwise the patient has to
-      wait for the availability of a room and a nurse (administratively, a new
-      planned walk is placed in the queue/list of planned walks).</li>
+      <li>When a new patient arrives, and an examination room and a nurse are
+      available, that nurse walks the patient to that room, otherwise the
+      patient has to wait for the availability of an examination room and a
+      nurse (administratively, a new planned walk is added to the queue/list
+      of planned walks).</li>
 
       <li>When a nurse has walked a patient to a room and a doctor is
       available, an examination of the patient by that doctor in the room
@@ -128,7 +141,7 @@
           waiting in a room for the availability of a doctor, the doctor goes
           to that room and starts the examination of that patient; otherwise,
           the planned examination of the newly arrived patient is added to a
-          list of planned examinations (representing a queue); </li>
+          list of planned examinations (representing a queue);</li>
 
           <li>if there is still another planned walk of a patient to a room
           waiting for the availability of a room, the room is allocated to
@@ -144,60 +157,90 @@
   relevant <b>event types</b> are <em>patient arrivals</em> and the activity
   types <em>walks to rooms</em> and <em>examinations</em>.</p><p>Thus, we get
   the following conceptual information model expressed as an OEM Class
-  Diagram:</p><figure id="figServiceDesk0"><div><img alt="???"
-  src="../img/MedExam_CIM1.svg" width="600" /></div></figure><p>From the
+  Diagram:</p><figure><div><img alt="???" src="../img/MedDep_CIM2.svg"
+  width="700" /></div></figure><p>Notice that in this model, (a) the performer
+  resource role is explicitly marked with «performer»: a <em>nurse</em> is a
+  performer of <em>walks to rooms</em> while a <em>doctor</em> is a performer
+  of <em>examinations</em>, and (b) the stereotypes «resource role» and
+  «resource pool» have been abbreviated by «rr» and «rp». </p><p>From the
   diagram we can infer that:</p><ul>
-      <li>For patient arrivals and for examinations, there is an association
-      with medical departments providing the <em>process owner</em>, such that
-      for any patient arrival event and examination activity a specific
-      medical department is in charge of handling the event or seeing to it
-      that the activity is going to be performed.</li>
+      <li>For the event type <em>patient arrivals</em> and for the activity
+      types <em>walks to rooms</em> and <em>examinations</em>, there is an
+      association with <em>medical departments</em> providing the <em>process
+      owner</em>.</li>
 
-      <li>While patient arrivals have two participants: a patient and a
-      medical department, examinations have three participants: a patient, a
-      medical department and a doctor.</li>
+      <li>While <em>patient arrivals</em> have two participants: a
+      <em>patient</em> and a <em>medical department</em>, <em>walks</em> and
+      <em>examinations</em> have four participants: a <em>medical
+      departmen</em>t, a <em>patient</em>, a <em>nurse</em> or a
+      <em>doctor</em>, and a <em>room</em>.</li>
 
-      <li>Examinations have one resource role, doctor, with a resource
-      constraint of exactly one, which means that exactly one doctor is
-      required for performing an examination.</li>
+      <li><em>Walks</em> have two resource roles, <em>nurse</em> and
+      <em>room</em>, both with a resource constraint of exactly one, which
+      means that exactly one <em>nurse</em> and one <em>room</em> are required
+      for performing a <em>walk</em>.</li>
 
-      <li>The process owner of an examination, a medical department, has a
-      resource pool for doctors. The doctors needed for performing
-      examinations at this department are allocated from this pool, and the
-      department, as the process owner of examinations, has a business
-      procedure for allocating doctors to planned examinations (using certain
-      policies).</li>
+      <li><em>Examinations</em> have two resource roles, <em>doctor</em> and
+      <em>room</em>, both with a resource constraint of exactly one.</li>
+
+      <li>The process owner of a <em>walk to a room</em> and a subsequent
+      <em>examination</em>, a <em>medical department</em>, has three resource
+      pools for <em>nurses</em>, <em>rooms</em> and <em>doctors</em>. All
+      required resources needed for performing <em>walks to room</em> and
+      <em>examinations</em> at this department are allocated from these pools,
+      and the department has corresponding business procedures for allocating
+      rooms, nurses and doctors using certain allocation policies.</li>
     </ul><p>In addition to a conceptual information model, which captures the
   system's state structure, we also need to make a conceptual process model
   that captures the dynamics of the system. A process model can be expressed
   with the help of event rules, which define what happens when an event (of a
   certain type) occurs, or, more specifically, which state changes and which
   follow-up events are caused by an event of that type.</p><p>The following
-  conceptual process model (in the form of an OEM/DPMN Process Diagram) is
-  based on the information model above. It refers to the object types
-  <i>medical departments</i> and <i>doctors</i>, as well as to the event type
-  <i>patient arrivals</i> and to the activity type
+  conceptual process model (in the form of a DPMN Process Diagram) is based on
+  the information model above. It refers to the object types <i>medical
+  departments</i> and <i>doctors</i>, as well as to the event type <i>patient
+  arrivals</i> and to the activity type
   <i>examinations</i>.</p><figure><div><img alt="???"
-  src="../img/MedDep_CPM1.svg" width="600" /></div></figure><p>This conceptual
-  process model describes two causal regularities in the form of the following
-  two event rules, each stated with two bullet points: one for describing all
-  the state changes and one for describing all the follow-up events brought
-  about by applying the rule.</p><ol>
+  src="../img/MedDep_CPM2.svg" width="800" /></div></figure><p>This process
+  model describes three causal regularities in the form of the following three
+  event rules:</p><ol>
       <li><p>When a new patient arrives:</p><ul>
-          <li>if a doctor is available, then she is allocated to the
-          examination of that patient; otherwise, a new planned examination is
-          queued up;</li>
+          <li>if a room and a nurse are available, they are allocated to the
+          walk of that patient to that room, otherwise a new planned walk is
+          placed in the corresponding queue;</li>
 
-          <li>if a doctor has been allocated, then start an examination of the
-          patient.</li>
+          <li>if a room has been allocated, then the nurse starts walking the
+          patient to the room.</li>
         </ul></li>
 
-      <li><p>When an examination is completed by a doctor:</p><ul>
-          <li>if the queue of planned examinations is empty, then the doctor
-          is released;</li>
+      <li><p>When a walk of a patient and nurse to a room is completed:</p><ul>
+          <li>if there is still a planned walk in the queue and a room is
+          available, then the room is allocated and the nurse is re-allocated
+          to the walk of the next patient to that room.<br />if a doctor is
+          available, she is allocated to the examination of that patient, else
+          a new planned examination of that patient is queued up;</li>
 
-          <li>otherwise, the next planned examination by that doctor is
-          scheduled to start immediately.</li>
+          <li>if a doctor has been allocated, then the examination of that
+          patient starts<br />if the nurse has been re-allocated, she starts
+          walking the next patient to the allocated room.</li>
         </ul></li>
-    </ol></section></body>
+
+      <li><p>When an examination of a patient is completed by a doctor in a
+      particular room:</p><ul>
+          <li>if there is still a planned examination (of another patient in
+          another room), then re-allocate the doctor to that planned
+          examination, else release the doctor;<br />if the waiting line is
+          not empty, re-allocate the room to the next patient, else release
+          the room;</li>
+
+          <li>if the doctor has been re-allocated to a planned examination,
+          that examination starts;<br />if the room has been re-allocated to
+          another patient, that patient starts walking to the room.</li>
+        </ul></li>
+    </ol><p>Since, again, the resource management logic in this example
+  complies with the standard resource management procedures built into OES
+  Core 2, we can simplify the model by using <em>Resource-Dependent Activity
+  Start</em> arrows, as shown in the following DPMN process
+  diagram:</p><figure><div><img alt="???" src="../img/MedDep_CPM2a.svg"
+  width="500" /></div></figure></section></body>
 </html>
