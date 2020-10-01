@@ -190,13 +190,13 @@ sim.runScenario = function (createLog) {
       }
       let EventClass = e.constructor;
 
-      /* ACTIVITIES extension START */
+      /**** ACTIVITIES extension START ****/
       // schedule successor activities
       if (EventClass.successorActivity) {
         const ActivityClass = sim.Classes[EventClass.successorActivity];
         ActivityClass.plannedActivities.enqueue( new ActivityClass());
       }
-      /* ACTIVITIES extension END */
+      /**** ACTIVITIES extension END ****/
 
       // test if e is an exogenous event
       if (EventClass.recurrence) {
