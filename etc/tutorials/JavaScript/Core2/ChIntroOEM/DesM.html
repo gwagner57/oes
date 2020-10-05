@@ -95,8 +95,8 @@
 </pre></td>
         </tr>
       </tbody>
-    </table></section><section><h5>The Medical-Department-1b design
-  model</h5><p>In the <a
+    </table></section><section id="sectMedDepDM1b"><h5>The
+  Medical-Department-1b design model</h5><p>In the <a
   href="https://gwagner57.github.io/oes/js/Core2/Medical-Department-1b/index.html">Medical-Department-1b</a>
   <em>information design</em> model we make two simplifications: </p><ol>
       <li>We drop the object type <i>MedicalDepartment</i>; since we only need
@@ -228,7 +228,17 @@ Examination.<b>resourceRoles</b> = {
   OESjs-Core2) in the following way:</p><pre>NewCase.<b>successorActivity</b> = "Examination";</pre><p>The
   simulator interprets this <i>successorActivity</i> assignment when creating
   follow-up events for <i>NewCase</i> events by enqueuing a planned
-  examination activity in the following way </p><pre>Examination.plannedActivities.<b>enqueue</b>( new Examination())</pre></section></section><section><h4>1.2.2. Design
-  models based on the extended conceptual
-  model</h4><p>T.B.D.</p></section></body>
+  examination activity in the following way </p><pre>Examination.plannedActivities.<b>enqueue</b>( new Examination())</pre></section></section><section><h4>1.2.2. A
+  design model based on the extended conceptual model</h4><p>In the <a
+  href="https://gwagner57.github.io/oes/js/Core2/Medical-Department-2/index.html">Medical-Department-2</a>
+  design model, we model two activity types: <i>WalkToRoom</i> activities
+  involve a <i>room</i> and are performed by a <i>nurse</i>, while
+  <i>Examination</i> activities involve a <i>room</i> and are performed by a
+  <i>doctor</i>. The resource pools <i>nurses</i> and <i>doctors</i> are
+  modeled as individual resource pools, while the resource pool <i>rooms</i>,
+  which is used by both <i>WalkToRoom</i> and <i>Examination</i> activities,
+  is modeled as a count pool. </p><p>The resulting information design model is
+  shown in the following class diagram:</p><figure><div><img alt="???"
+  src="../img/MedDep_CIM2-IDM1.svg"
+  width="750" /></div></figure></section></body>
 </html>

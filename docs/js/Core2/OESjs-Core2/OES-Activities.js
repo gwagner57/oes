@@ -92,19 +92,19 @@ class pLANNEDaCTIVITIESqUEUE extends Array {
       return;
     }
     this.push( acty);
-    sim.stat.actTypes[AT.name].enqueuedPlanActivities += 1;
+    sim.stat.actTypes[AT.name].enqueuedActivities += 1;
     // compute generic queue length statistics per activity type
     if (this.length > sim.stat.actTypes[AT.name].queueLength.max) {
       sim.stat.actTypes[AT.name].queueLength.max = this.length;
     }
     //TODO: compute average queue length statistics
-    // if available, allocate required resources and start next activity
+    // if available, allocate required resources and schedule next activity
     aCTIVITY.ifAvailAllocReqResAndStartNextActivity( AT);
   }
   dequeue() {
     const acty = this.shift(),
           AT = acty.constructor;
-    sim.stat.actTypes[AT.name].dequeuedPlanActivities += 1;
+    sim.stat.actTypes[AT.name].dequeuedActivities += 1;
     return acty;
   }
 }
@@ -126,12 +126,12 @@ oes.ResourceStatusEL = new eNUMERATION("ResourceStatusEL",
      an "available" counter of the available resources of some type
  (2) an individual pool is a queue of individual resource objects; if a resource
      role of an activity type does not specify an individualPoolName, this name
-     is formed from the role's range name (lower-cased and plural "s")
+     is formed from the role's range name (lower-cased and pluralized by appending "s")
  ****************************************************************************/
 class rESOURCEpOOL {
   constructor( {name, available, resources}) {
     this.name = name;
-    if (available) this.available = available;
+    if (available !== undefined) this.available = available;
     if (resources) {
       //this.resources = resources;
       this.busyResources = [];
@@ -216,7 +216,7 @@ class aCTIVITYsTART extends eVENT {
     return `${evtStr}@${math.round(this.occTime,decPl)}`;
   }
   onEvent() {
-    var slots={}, followupEvents=[],
+    var followupEvents=[],
         acty = this.plannedActivity,
         AT = acty.constructor;  // the activity's type/class
     acty.startTime = this.occTime;
@@ -241,19 +241,21 @@ class aCTIVITYsTART extends eVENT {
     }
     // Schedule an activity end event if the duration is known
     if (acty.duration) {
-      slots = {
+      const slots = {
         occTime: this.occTime + acty.duration,
         activity: acty
       };
+      if (AT.successorActivity) slots.successorActivity = AT.successorActivity;
       followupEvents.push( new aCTIVITYeND( slots));
     }
     return followupEvents;
   }
 }
 class aCTIVITYeND extends eVENT {
-  constructor({occTime, delay, activity}) {
+  constructor({occTime, delay, activity, successorActivity}) {
     super({occTime, delay});
     this.activity = activity;
+    this.successorActivity = successorActivity;
   }
   toString() {
     var decPl = oes.defaults.simLogDecimalPlaces,
@@ -285,7 +287,7 @@ class aCTIVITYeND extends eVENT {
       acty.duration = acty.occTime - acty.startTime;
     }
     // update statistics
-    sim.stat.actTypes[AT.name].completedActivities += 1;
+    sim.stat.actTypes[AT.name].completedActivities++;
     // compute resource utilization per activity type (per resource object or per count pool)
     for (const resRoleName of Object.keys( AT.resourceRoles)) {
       let resUtilPerAT = sim.stat.actTypes[AT.name].resUtil;
@@ -308,6 +310,8 @@ class aCTIVITYeND extends eVENT {
       for (const resRoleName of Object.keys( AT.resourceRoles)) {
         if (acty[resRoleName]) nextActy[resRoleName] = acty[resRoleName];
       }
+      /*****TODO: if other individual resources are available, release resources and allocate others
+      *  depending on resource allocation policy (e.g. round robin)   *****/
       // start next activity with the resources already allocated before
       followupEvents.push( new aCTIVITYsTART({plannedActivity: nextActy}));
     } else {  // release resources

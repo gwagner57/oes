@@ -1,7 +1,7 @@
 /*******************************************************
  Simulation Model
 ********************************************************/
-sim.model.name = "Medical-Department-1";
+sim.model.name = "Medical-Department-1c";
 sim.model.time = "continuous";
 sim.model.timeUnit = "min";
 sim.model.objectTypes = ["Doctor"];

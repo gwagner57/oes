@@ -6,20 +6,20 @@
     <title>Simulation Models</title>
   </head>
 
-  <body><section><h4>2.2.1. Model Variables and Functions</h4><p>In the simple
-  model of a service desk discussed in the previous section, we define one
-  (global) model variable, <i>queueLength</i>, one model function,
-  <i>serviceTime</i>(), and two event types, as shown in the following class
-  diagram: </p><figure><img alt="???" src="../../../IDM0.svg"
-  width="400" /></figure><p>Notice that this model does not define any object
-  type, which implies that the system state is not composed of the states of
-  objects, but of the states of model variables, here it consists of the state
-  of the model variable <i>queueLength</i>. The discrete random variable for
-  modeling the random variation of service durations is implemented as a model
-  function <code>serviceTime</code> shown in the <i>Global Variables and
-  Functions</i> class. It samples integers between 2 and 4 from the empirical
-  probability distribution <i>Frequency{ 2:0.3, 3:0.5, 4:0.2}</i>. The model
-  can be coded with OESjs-Core1 in the following way:</p><pre>// (global) model variable
+  <body><section><h4>2.2.1. Modeling an Activity Type with a Resource Role and
+  an Associated Count (Resource) Pool</h4><p>Based on the conceptual model of
+  <a href="../ChIntroOEM/CM.html#sectBasicConceptualModel"></a>, we implement
+  the following design model of a medical department discussed in <a
+  href="../ChIntroOEM/DesM.html#sectMedDepDM1b"></a>:: </p><figure
+  style="display:flex"><div><img alt="information design model 1b"
+  src="../img/MedDep_CIM1-IDM1b.svg" width="700" /></div><div><img
+  alt="process design model 1b" src="../img/MedDep_CPM1-PDM1.svg"
+  width="300" /></div></figure><p>Notice that this model does not define any
+  object type, since doctors are not modeled as individual persons, but as an
+  aggregate in the form of a <em>count pool</em>. The random variable for
+  modeling the random variation of the examination durations samples from the
+  exponential probability distribution <i>Exp(0.5)</i>. The model can be coded
+  with OESjs-Core1 in the following way:</p><pre>// (global) model variable
 sim.model.v.<strong>queueLength</strong> = 0;
 // (global) model function
 sim.model.f.<strong>serviceTime</strong> = function () {
