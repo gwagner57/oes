@@ -6,56 +6,40 @@
     <title>Statistics</title>
   </head>
 
-  <body><p>In scientific and engineering simulation projects the main goal is
-  getting estimates of the values of certain variables or performance
-  indicators with the help of statistical methods. In educational simulations,
-  statistics can be used for observing simulation runs and for learning the
-  dynamics of a simulation model. </p><p>For collecting statistics, suitable
-  <em>statistics variables</em> have to be defined, as in the following
-  example:</p><pre>sim.model.<b>setupStatistics</b> = function () {
-  sim.stat.arrivedCustomers = 0;
-  sim.stat.departedCustomers = 0;
-  sim.stat.maxQueueLength = 0;
-};</pre><p>Statistics variables have to be updated in <i>onEvent</i> methods.
-  For instance, the variables <i>arrivedCustomers</i> and
-  <i>maxQueueLength</i> are updated in the onEvent method of the
-  <i>CustomerArrival</i> event class:</p><pre>class CustomerArrival extends eVENT {
-  ...
-  onEvent() {
-    ...
-    // update statistics
-    sim.stat.<b>arrivedCustomers</b>++;
-    if (this.serviceDesk.queueLength &gt; sim.stat.maxQueueLength) {
-      sim.stat.<b>maxQueueLength</b> = this.serviceDesk.queueLength;
-    }
-    ...
-  }
-}</pre><p>In certain cases, a statistics variable can only be computed at the
-  end of a simulation run. For this purpose, there is the option to define a
-  <i>computeFinalStatistics</i> procedure:</p><pre>sim.model.<b>computeFinalStatistics</b> = function () {
-  // percentage of business days without stock-outs
-  sim.stat.serviceLevel = (sim.time - sim.stat.nmrOfStockOuts) / sim.time * 100;
-};</pre><p>After running a simulation scenario, the statistics results are
-  shown in a table:</p><table border="1">
+  <body><p>In activity-based Discrete Event Simulation, a simulator can
+  automatically collect the following statistics per activity type: (a)
+  throughput, (b) queue length, (c) waiting time, (d) cycle/throughput time,
+  and (e) resource utilization. </p><p>For instance, after running the <a
+  href="https://gwagner57.github.io/oes/js/Core2/Medical-Department-2/index.html"
+  target="_top">Medical-Department-2 scenario</a> , the following statistics
+  results are shown per activity type:</p><table border="1">
       <caption>Statistics</caption>
 
       <tbody>
         <tr>
-          <td>arrivedCustomers</td>
-
-          <td>289</td>
+          <td colspan="2">Per activity type</td>
         </tr>
 
         <tr>
-          <td>departedCustomers</td>
+          <td>WalkToRoom</td>
 
-          <td>288</td>
+          <td>{"queueLength":{"max":1},
+          "resUtil":{"11":0.17,"12":0.13,"rooms":0.1},
+          "waitingTime":{"max":0.7798804811537963},
+          "cycleTime":{"max":3.0721811842369107}, "enqueuedActivities":22,
+          "dequeuedActivities":21, "startedActivities":21,
+          "completedActivities":20}</td>
         </tr>
 
         <tr>
-          <td>maxQueueLength</td>
+          <td>Examination</td>
 
-          <td>4</td>
+          <td>{"queueLength":{"max":2},
+          "resUtil":{"1":0.38,"2":0.4,"3":0.44,"rooms":0.4},
+          "waitingTime":{"max":1.9928748013816602},
+          "cycleTime":{"max":10.16144680218823}, "enqueuedActivities":20,
+          "dequeuedActivities":20, "startedActivities":20,
+          "completedActivities":18}</td>
         </tr>
       </tbody>
     </table></body>

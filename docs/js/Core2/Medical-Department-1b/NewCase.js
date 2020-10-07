@@ -10,7 +10,7 @@ class NewCase extends eVENT {
     return new NewCase({delay: NewCase.recurrence()});
   }
   static recurrence() {
-    return rand.exponential( 0.8);
+    return rand.exponential( 0.3);
   }
 }
 // Enqueue a new planned examination (of the newly arrived patient)

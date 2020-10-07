@@ -114,9 +114,10 @@
   management logic built into OES Core 2, as shown in the following DPMN
   process diagram: </p><figure><div><img alt="???"
   src="../img/MedDep_CPM1a.svg"
-  width="300" /></div></figure></section><section><h4>An extended conceptual
-  model </h4><p>For being more realistic, we consider the fact that patients
-  first need to be walked by nurses to the room allocated to their examination
+  width="300" /></div></figure></section><section
+  id="sectExtendedConceptualModel"><h4>An extended conceptual model
+  </h4><p>For being more realistic, we consider the fact that patients first
+  need to be walked by nurses to the room allocated to their examination
   before the examination can start. So, in our extended model of a medical
   department we consider two other resource types, <em>examination rooms</em>
   and <em>nurses</em>, and another type of activity: <em>walks to rooms</em>
@@ -172,7 +173,7 @@
       <li>While <em>patient arrivals</em> have two participants: a
       <em>patient</em> and a <em>medical department</em>, <em>walks</em> and
       <em>examinations</em> have four participants: a <em>medical
-      departmen</em>t, a <em>patient</em>, a <em>nurse</em> or a
+      department</em>, a <em>patient</em>, a <em>nurse</em> or a
       <em>doctor</em>, and a <em>room</em>.</li>
 
       <li><em>Walks</em> have two resource roles, <em>nurse</em> and
@@ -215,10 +216,12 @@
 
       <li><p>When a walk of a patient and nurse to a room is completed:</p><ul>
           <li>if there is still a planned walk in the queue and a room is
-          available, then the room is allocated and the nurse is re-allocated
-          to the walk of the next patient to that room.<br />if a doctor is
-          available, she is allocated to the examination of that patient, else
-          a new planned examination of that patient is queued up;</li>
+          available, then the room is allocab</li>
+
+          <li>ted and the nurse is re-allocated to the walk of the next
+          patient to that room.<br />if a doctor is available, she is
+          allocated to the examination of that patient, else a new planned
+          examination of that patient is queued up;</li>
 
           <li>if a doctor has been allocated, then the examination of that
           patient starts<br />if the nurse has been re-allocated, she starts
@@ -242,5 +245,9 @@
   Core 2, we can simplify the model by using <em>Resource-Dependent Activity
   Start</em> arrows resulting in an <i>Activity Network</i> model, as shown in
   the following DPMN process diagram:</p><figure><div><img alt="???"
-  src="../img/MedDep_CPM2a.svg" width="500" /></div></figure></section></body>
+  src="../img/MedDep_CPM2a.svg" width="400" /></div></figure><p>We can exhibit
+  the two performer roles <em>doctor</em> and <em>nurse</em> with the help of
+  two corresponding <strong>Lanes</strong> shown within the process owner
+  <em>Pool</em>:</p><figure><div><img alt="???" src="../img/MedDep_CPM2b.svg"
+  width="300" /></div></figure></section></body>
 </html>

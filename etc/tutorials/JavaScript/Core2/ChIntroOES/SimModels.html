@@ -8,662 +8,85 @@
 
   <body><section><h4>2.2.1. Modeling an Activity Type with a Resource Role and
   an Associated Count (Resource) Pool</h4><p>Based on the conceptual model of
-  <a href="../ChIntroOEM/CM.html#sectBasicConceptualModel"></a>, we implement
-  the following design model of a medical department discussed in <a
-  href="../ChIntroOEM/DesM.html#sectMedDepDM1b"></a>:: </p><figure
+  <a href="../ChIntroOEM/CM.html#sectBasicConceptualModel"></a>, we choose a
+  design as defined by the following information design model of a medical
+  department (discussed in <a
+  href="../ChIntroOEM/DesM.html#sectMedDepDM1b"></a>): </p><figure
   style="display:flex"><div><img alt="information design model 1b"
-  src="../img/MedDep_CIM1-IDM1b.svg" width="700" /></div><div><img
-  alt="process design model 1b" src="../img/MedDep_CPM1-PDM1.svg"
-  width="300" /></div></figure><p>Notice that this model does not define any
-  object type, since doctors are not modeled as individual persons, but as an
-  aggregate in the form of a <em>count pool</em>. The random variable for
-  modeling the random variation of the examination durations samples from the
-  exponential probability distribution <i>Exp(0.5)</i>. The model can be coded
-  with OESjs-Core1 in the following way:</p><pre>// (global) model variable
-sim.model.v.<strong>queueLength</strong> = 0;
-// (global) model function
-sim.model.f.<strong>serviceTime</strong> = function () {
-  var r = math.getUniformRandomInteger( 0, 99);
-  if ( r &lt; 30) return 2;         // probability 0.30
-  else if ( r &lt; 80) return 3;    // probability 0.50
-  else return 4;                 // probability 0.20
-};</pre><p>You can <a
-  href="https://gwagner57.github.io/oes/js/Core1/Service-Desk-0/index.html"
-  target="_top">run this Service-Desk-0 model</a> from the project's GitHub
-  website. An example of a run of this model is shown in the following
-  simulation log: </p><table border="1">
-      <caption>Simulation Log</caption>
-
-      <thead>
-        <tr>
-          <th>Step</th>
-
-          <th>Time</th>
-
-          <th>System State</th>
-
-          <th>Future Events</th>
-        </tr>
-      </thead>
-
-      <tbody id="simLog">
-        <tr>
-          <td>0</td>
-
-          <td>0</td>
-
-          <td>queueLength: 0</td>
-
-          <td>CustomerArrival@1</td>
-        </tr>
-
-        <tr>
-          <td>1</td>
-
-          <td>1</td>
-
-          <td>queueLength: 1</td>
-
-          <td>CustomerDeparture@4, CustomerArrival@4</td>
-        </tr>
-
-        <tr>
-          <td>2</td>
-
-          <td>4</td>
-
-          <td>queueLength: 1</td>
-
-          <td>CustomerDeparture@6, CustomerArrival@7</td>
-        </tr>
-
-        <tr>
-          <td>3</td>
-
-          <td>6</td>
-
-          <td>queueLength: 0</td>
-
-          <td>CustomerArrival@7</td>
-        </tr>
-
-        <tr>
-          <td>4</td>
-
-          <td>7</td>
-
-          <td>queueLength: 1</td>
-
-          <td>CustomerDeparture@11, CustomerArrival@13</td>
-        </tr>
-
-        <tr>
-          <td>5</td>
-
-          <td>11</td>
-
-          <td>queueLength: 0</td>
-
-          <td>CustomerArrival@13</td>
-        </tr>
-
-        <tr>
-          <td>6</td>
-
-          <td>13</td>
-
-          <td>queueLength: 1</td>
-
-          <td>CustomerDeparture@15, CustomerArrival@19</td>
-        </tr>
-
-        <tr>
-          <td>7</td>
-
-          <td>15</td>
-
-          <td>queueLength: 0</td>
-
-          <td>CustomerArrival@19</td>
-        </tr>
-
-        <tr>
-          <td>...</td>
-
-          <td>...</td>
-
-          <td>...</td>
-
-          <td>...</td>
-        </tr>
-
-        <tr>
-          <td>49</td>
-
-          <td>114</td>
-
-          <td>queueLength: 0</td>
-
-          <td>CustomerArrival@117</td>
-        </tr>
-
-        <tr>
-          <td>50</td>
-
-          <td>117</td>
-
-          <td>queueLength: 1</td>
-
-          <td>CustomerArrival@118, CustomerDeparture@119</td>
-        </tr>
-
-        <tr>
-          <td>51</td>
-
-          <td>118</td>
-
-          <td>queueLength: 2</td>
-
-          <td>CustomerDeparture@119, CustomerArrival@119</td>
-        </tr>
-
-        <tr>
-          <td>52</td>
-
-          <td>119</td>
-
-          <td>queueLength: 2</td>
-
-          <td>CustomerArrival@121, CustomerDeparture@123</td>
-        </tr>
-
-        <tr>
-          <td>53</td>
-
-          <td>121</td>
-
-          <td>queueLength: 3</td>
-
-          <td>CustomerDeparture@123, CustomerArrival@124</td>
-        </tr>
-
-        <tr>
-          <td>54</td>
-
-          <td>123</td>
-
-          <td>queueLength: 2</td>
-
-          <td>CustomerArrival@124, CustomerDeparture@126</td>
-        </tr>
-
-        <tr>
-          <td>55</td>
-
-          <td>124</td>
-
-          <td>queueLength: 3</td>
-
-          <td>CustomerArrival@125, CustomerDeparture@126</td>
-        </tr>
-
-        <tr>
-          <td>56</td>
-
-          <td>125</td>
-
-          <td>queueLength: 4</td>
-
-          <td>CustomerDeparture@126, CustomerArrival@128</td>
-        </tr>
-
-        <tr>
-          <td>57</td>
-
-          <td>126</td>
-
-          <td>queueLength: 3</td>
-
-          <td>CustomerArrival@128, CustomerDeparture@128</td>
-        </tr>
-
-        <tr>
-          <td>58</td>
-
-          <td>128</td>
-
-          <td>queueLength: 3</td>
-
-          <td>CustomerArrival@129, CustomerDeparture@131</td>
-        </tr>
-
-        <tr>
-          <td>59</td>
-
-          <td>129</td>
-
-          <td>queueLength: 4</td>
-
-          <td>CustomerDeparture@131, CustomerArrival@133</td>
-        </tr>
-
-        <tr>
-          <td>60</td>
-
-          <td>131</td>
-
-          <td>queueLength: 3</td>
-
-          <td>CustomerArrival@133, CustomerDeparture@135</td>
-        </tr>
-
-        <tr>
-          <td>61</td>
-
-          <td>133</td>
-
-          <td>queueLength: 4</td>
-
-          <td>CustomerDeparture@135, CustomerArrival@137</td>
-        </tr>
-
-        <tr>
-          <td>62</td>
-
-          <td>135</td>
-
-          <td>queueLength: 3</td>
-
-          <td>CustomerArrival@137, CustomerDeparture@137</td>
-        </tr>
-
-        <tr>
-          <td>63</td>
-
-          <td>137</td>
-
-          <td>queueLength: 3</td>
-
-          <td>CustomerArrival@139, CustomerDeparture@141</td>
-        </tr>
-
-        <tr>
-          <td>64</td>
-
-          <td>139</td>
-
-          <td>queueLength: 4</td>
-
-          <td>CustomerDeparture@141, CustomerArrival@142</td>
-        </tr>
-
-        <tr>
-          <td>65</td>
-
-          <td>141</td>
-
-          <td>queueLength: 3</td>
-
-          <td>CustomerArrival@142, CustomerDeparture@144</td>
-        </tr>
-
-        <tr>
-          <td>66</td>
-
-          <td>142</td>
-
-          <td>queueLength: 4</td>
-
-          <td>CustomerDeparture@144, CustomerArrival@147</td>
-        </tr>
-
-        <tr>
-          <td>67</td>
-
-          <td>144</td>
-
-          <td>queueLength: 3</td>
-
-          <td>CustomerArrival@147, CustomerDeparture@148</td>
-        </tr>
-
-        <tr>
-          <td>68</td>
-
-          <td>147</td>
-
-          <td>queueLength: 4</td>
-
-          <td>CustomerDeparture@148, CustomerArrival@148</td>
-        </tr>
-
-        <tr>
-          <td>69</td>
-
-          <td>148</td>
-
-          <td>queueLength: 4</td>
-
-          <td>CustomerArrival@149, CustomerDeparture@151</td>
-        </tr>
-
-        <tr>
-          <td>70</td>
-
-          <td>149</td>
-
-          <td>queueLength: 5</td>
-
-          <td>CustomerDeparture@151, CustomerArrival@151</td>
-        </tr>
-
-        <tr>
-          <td>...</td>
-
-          <td>...</td>
-
-          <td>...</td>
-
-          <td>...</td>
-        </tr>
-      </tbody>
-    </table></section><section><h4>2.2.2. Object Types</h4><p>Object types are
-  defined in the form of classes. Consider the object type <i>ServiceDesk</i>
-  defined in the following <i>Service-Desk-1</i> model: </p><figure><img
-  alt="???" src="../../../IDM1.svg" width="400" /></figure><p>While
-  <code>queueLength</code> was defined as a global variable in the
-  <i>Service-Desk-0</i> model, it is now defined as an attribute of the object
-  type <i>ServiceDesk</i>:</p><pre>class <b>ServiceDesk</b> extends oBJECT {
-  constructor({ id, name, queueLength}) {
-    super( id, name);
-    this.<b>queueLength</b> = queueLength;
+  src="../img/MedDep_CIM1-IDM1b.svg" width="700" /></div></figure><p>Notice
+  that this model does not define any object type, since doctors are not
+  modeled as individual persons, but as an aggregate in the form of a
+  <em>count pool</em>. The random variable for modeling the random variation
+  of the examination durations samples from the exponential probability
+  distribution <i>Exp(0.5)</i>. The <i>NewCase</i> class can be coded with
+  OESjs-Core2 in the following way:</p><pre>class <b>NewCase</b> extends eVENT {
+  constructor({ occTime, delay}) {
+    super({occTime, delay});
   }
-  static <b>serviceTime</b>() {
-    var r = math.getUniformRandomInteger( 0, 99);
-    if ( r &lt; 30) return 2;         // probability 0.3
-    else if ( r &lt; 80) return 3;    // probability 0.5
-    else return 4;                 // probability 0.2
-  }
-}
-ServiceDesk.<b>labels</b> = {"queueLength":"qLen"};  // for the log</pre><p>Notice
-  that, in OESjs, object types are defined as subtypes of the pre-defined
-  class <code>oBJECT</code>, from which they inherit an integer-valued
-  <code>id</code> attribute and an optional <code>name</code> attribute. When
-  a property has a <code>label</code> (defined by the class-level (map-valued)
-  property <code>labels</code>), it is shown in the simulation log.</p><p>You
-  can <a
-  href="https://gwagner57.github.io/oes/js/Core1/Service-Desk-1/index.html"
-  target="_top">run this <i>simulation</i> model</a> from the project's GitHub
-  website.</p></section><section><h4>2.2.3. Event Types</h4><p>In OES, there
-  is a distinction between two kinds of events:</p><ol>
-      <li>events that are <em>caused</em> by other event occurrences during a
-      simulation run;</li>
-
-      <li><em>exogenous</em> events that seem to happen spontaneously, but may
-      be caused by factors, which are external to the simulation model.</li>
-    </ol><p>Here is an example of an exogenous event type definition in
-  OESjs-Core1:</p><pre>class <b>CustomerArrival</b> extends eVENT {
-  constructor({ occTime, serviceDesk}) {
-    super( occTime);
-    this.<b>serviceDesk</b> = serviceDesk;
-  }
-  onEvent() {
-    ...
-  }
-  createNextEvent() {
-    ...
-  }
-  static recurrence() {
-    ...
-  }
-}</pre><p>The definition of the <i>CustomerArrival</i> event type includes a
-  reference property <i>serviceDesk</i>, which is used for referencing the
-  service desk object at which a customer arrival event occurs. In OESjs,
-  event types are defined as subtypes of the pre-defined class
-  <code>eVENT</code>, from which they inherit an attribute
-  <code>occTime</code>, which holds the occurrence time<a
-  class="role-index-term">occurrence time</a> of an event. As opposed to
-  objects, events do normally not have an ID, nor a name. </p><p>Each event
-  type needs to define an <code>onEvent</code> method that implements the
-  event rule for events of the defined type. Event rules are discussed below.
-  </p><p>Exogenous events occur periodically. They are therefore defined with
-  a <em>recurrence</em> function,<a class="role-index-term">recurrence</a>
-  which provides the time in-between two events (often in the form of a random
-  variable). The recurrence function is defined as a class-level ("static")
-  method:</p><pre>class CustomerArrival extends eVENT {
-  ...
-  static <b>recurrence</b>() {
-    return math.getUniformRandomInteger( 1, 6);
-  }
-}</pre><p>Notice that the <i>recurrence</i> function of <i>CustomerArrival</i>
-  is coded with the library method <code
-  class="code">math.getUniformRandomInteger</code>, which allows sampling from
-  discrete uniform probability distribution functions. </p><p>In the case of
-  an exogenous event type definition, a <i>createNextEvent</i> method has to
-  be defined for assigning event properties and returning the next event of
-  that type, which is scheduled by invoking the <i>recurrence</i> function for
-  setting its <i>ocurrenceTime</i> and by copying all participant references
-  (such as the <i>serviceDesk</i> reference). </p><pre>class CustomerArrival extends eVENT {
-  ...
+  onEvent() {return [];}
   <b>createNextEvent</b>() {
-    return new CustomerArrival({
-      occTime: this.occTime + CustomerArrival.<b>recurrence</b>(),
-      serviceDesk: this.serviceDesk
-    });
+    return new NewCase({delay: NewCase.recurrence()});
   }
-}</pre><p>The second event type of the <i>Service-Desk-1</i> model,
-  <i>Departure</i>, is an example of a type of <i>caused</i> events:</p><pre>class <b>CustomerDeparture</b> extends eVENT {
-  constructor({ occTime, serviceDesk}) {
-    super( occTime);
-    this.serviceDesk = serviceDesk;
+  static <b>recurrence</b>() {return rand.exponential( 0.5);}
+}</pre><p>The <i>onEvent</i> method is empty since no event rules are needed
+  for this simple model. Its dynamics is entirely determined by the standard
+  logic of resource-dependent activity scheduling built into OES Core
+  2.</p><p>The <i>Examination</i> class can be coded in the following
+  way:</p><pre>class <b>Examination</b> extends aCTIVITY {
+  constructor({id, startTime, duration}={}) {
+    super({id, startTime, duration});
   }
-  onEvent() {
-    ...
+  static <b>duration</b>() {return rand.uniform( 5, 10);}
+}
+Examination.<b>resourceRoles</b> = {
+    "doctor": {<b>countPoolName</b>:"doctors", card:1}
+}</pre><p>The process resulting from <i>NewCase</i> events followed by
+  <i>Examination</i> activities is modeled with a <em>Resource-Dependent
+  Activity Start</em> arrow: </p><figure style="display:flex"><div><img
+  alt="process design model 1b" src="../img/MedDep_CPM1-PDM1b.svg"
+  width="300" /></div></figure><p>In OESjs-Core2, this simple process model is
+  coded with one line of code in the file <kbd>NewCase.js</kbd>:</p><pre>NewCase.<b>successorActivity</b> = "Examination";</pre></section><section><h4>2.2.2.
+  Modeling a Sequence of Two Activity Types </h4><p>The following information
+  design model of a medical department with two types of activities (discussed
+  in <a href="../ChIntroOEM/DesM.html#sectDesignModel4ExtCM"></a>) is based on
+  the conceptual information model discussed in <a
+  href="../ChIntroOEM/CM.html#sectExtendedConceptualModel"></a>:</p><figure><img
+  alt="???" src="../img/MedDep_CIM2-IDM1.svg" width="700" /></figure><p>The
+  class implementing the even type <i>NewCase</i> is defined as above. The
+  class implementing the activity type <i>WalkToRoom</i> is defined as
+  follows:</p><pre>class <b>WalkToRoom</b> extends aCTIVITY {
+  constructor({id, startTime, duration}={}) {
+    super({id, startTime, duration});
   }
-}</pre></section><section><h4>2.2.4. Event Rules</h4><p>An event rule<a
-  class="role-index-term">event rule</a> for an event type defines what
-  happens when an event of that type occurs, by specifying the caused state
-  changes and follow-up events. In OESjs, event rules are coded as
-  <code>onEvent</code> methods of the class that implements the event type.
-  These methods return a set of events (more precisely, a set of JS objects
-  representing events).</p><p>Notice that in the DES literature, event rule
-  methods are called <i>event routines</i><a class="role-index-term">event
-  routine</a>.</p><p>For instance, in the <code>CustomerArrival</code> class,
-  the following event rule method is defined:</p><pre>class <b>CustomerArrival</b> extends eVENT {
-  ...
-  <b>onEvent</b>() {
-    var followupEvents=[];
-    // increment queue length due to newly arrived customer
-    this.serviceDesk.<b>queueLength</b>++;
-    // update statistics
-    sim.stat.<b>arrivedCustomers</b>++;
-    if (this.serviceDesk.queueLength &gt; sim.stat.maxQueueLength) {
-      sim.stat.<b>maxQueueLength</b> = this.serviceDesk.queueLength;
-    }
-    // if the service desk is not busy
-    if (this.serviceDesk.queueLength === 1) {
-      followupEvents.push( <b>new CustomerDeparture</b>({
-        occTime: this.occTime + ServiceDesk.serviceTime(),
-        serviceDesk: this.serviceDesk
-      }));
-    }
-    return followupEvents;
+  static <b>duration</b>() {return rand.uniform( 0.5, 2.5);}
+}
+// A walk to a room requires a room and a nurse
+WalkToRoom.<b>resourceRoles</b> = {
+  "nurse": {range: Nurse, card:1},
+  "room": {countPoolName:"rooms", card:1}
+}</pre><p>The class implementing the activity type <i>Examination</i> is
+  defined as follows:</p><pre>class <b>Examination</b> extends aCTIVITY {
+  constructor({id, startTime, duration}={}) {
+    super({id, startTime, duration});
   }
-}</pre><p>The context of this event rule method is the event that triggers the
-  rule, that is, the variable <code>this</code> references a JS object that
-  represents the triggering event. Thus, the expression
-  <code>this.serviceDesk</code> refers to the service desk object associated
-  with the current customer arrival event, and the statement
-  <code>this.serviceDesk.queueLength++</code> increments the
-  <i>queueLength</i> attribute of this service desk object (as an immediate
-  state change).</p><p>The following event rule method is defined in the
-  <code>CustomerDeparture</code> class. </p><pre>class <b>CustomerDeparture</b> extends eVENT {
-  ...
-  <b>onEvent</b>() {
-    var followupEvents=[];
-    // decrement queue length due to departure
-    this.serviceDesk.<b>queueLength</b>--;
-    // update statistics
-    sim.stat.<b>departedCustomers</b>++;
-    // if there are still customers waiting
-    if (this.serviceDesk.queueLength &gt; 0) {
-      // start next service and schedule its end/departure
-      followupEvents.push( <b>new CustomerDeparture</b>({
-        occTime: this.occTime + ServiceDesk.serviceTime(),
-        serviceDesk: this.serviceDesk
-      }));
-    }
-    return followupEvents;
-  }
-}</pre></section><section><h4>2.2.5. Event Priorities</h4><p>An OES model may
-  imply the possibility of several events occurring at the same time.
-  Consequently, a simulator (like OESjs) must be able to process simultaneous
-  events.<a class="role-index-term">simultaneous events</a> In particular,
-  simulation models based on discrete time may create simulation states where
-  two or more events occur at the same time, but the model's logic requires
-  them to be processed in a certain order. Defining priorities for events of a
-  certain type helps to control the processing order of simultaneous
-  events.</p><p>Consider an example model based on discrete time with three
-  exogenous event types <i>StartOfMonth</i>, <i>EachDay</i> and
-  <i>EndOfMonth</i>, where the recurrence of StartOfMonth and EndOfMonth is
-  21, and the recurrence of EachDay is 1. In this example we want to control
-  that on simulation time 1 + <i>i</i> * 21 both a StartOfMonth and an EachDay
-  event occur simultaneously, but StartOfMonth should be processed before
-  EachDay, and on simulation time 21 + <i>i</i> * 21 both an EndOfMonth and an
-  EachDay event occur simultaneously, but EndOfMonth should be processed after
-  EachDay. This can be achieved by defining a high priority, say 2, to
-  StartOfMonth, a middle priority, say 1, to StartOfMonth, and a low priority,
-  say 0, to EndOfMonth. </p><p>Event priorities are defined as class-level
-  properties of event classes in the event type definition file. Thus, we
-  would define in <kbd>StartOfMonth.js</kbd>:</p><pre>StartOfMonth.priority = 2;</pre><p>and
-  in <kbd>EachDay.js</kbd>:</p><pre>EachDay.priority = 1;</pre><p>and finally
-  in <kbd>EndOfMonth.js</kbd>:</p><pre>EndOfMonth.priority = 0;</pre></section><section><h4>2.2.6.
-  Library Methods for Sampling Probability Distribution
-  Functions</h4><p>Random variables<a class="role-index-term">random
-  variable</a> are implemented as methods that sample specific <em>probability
-  distribution functions (PDFs)</em>.<a class="role-index-term">probability
-  distribution function</a> Simulation frameworks typically provide a library
-  of predefined parametrized PDF sampling methods, which can be used with one
-  or several (possibly seeded) streams of <a
-  href="https://en.wikipedia.org/wiki/Pseudorandom_number_generator"
-  target="_top">pseudo-random numbers</a>.</p><p>The OESjs simulator provides
-  the following predefined parametrized PDF sampling methods:</p><table
-      border="1">
-      <thead>
-        <tr>
-          <td style="text-align:center;"><b>Probability Distribution
-          Function</b></td>
-
-          <td style="text-align:center;"><b>OESjs Library Method</b></td>
-
-          <td style="text-align:center;"><b>Example</b></td>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr>
-          <td><a
-          href="https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)"
-          target="_top">Uniform</a></td>
-
-          <td><code>uniform</code>( <i>lowerBound</i>, <i>upperBound</i>)</td>
-
-          <td><code>rand.uniform( 0.5, 1.5)</code></td>
-        </tr>
-
-        <tr>
-          <td><a
-          href="https://en.wikipedia.org/wiki/Discrete_uniform_distribution"
-          target="_top">Discrete Uniform</a></td>
-
-          <td><code>uniformInt</code>( <i>lowerBound</i>,
-          <i>upperBound</i>)</td>
-
-          <td><code>rand.uniformInt( 1, 6)</code></td>
-        </tr>
-
-        <tr>
-          <td><a href="https://en.wikipedia.org/wiki/Triangular_distribution"
-          target="_top">Triangular</a></td>
-
-          <td><code>triangular</code>( <i>lowerBound</i>, <i>upperBound</i>,
-          <i>mode</i>)</td>
-
-          <td><code>rand.triangular( 0.5, 1.5, 1.0)</code></td>
-        </tr>
-
-        <tr>
-          <td><a href="https://en.wikipedia.org/wiki/Triangular_distribution"
-          target="_top">Frequency</a></td>
-
-          <td><code>frequency</code>( <i>frequencyMap</i>)</td>
-
-          <td><code>rand.frequency({"2":0.4, "3":0.6})</code></td>
-        </tr>
-
-        <tr>
-          <td><a href="http://en.wikipedia.org/wiki/Exponential_distribution"
-          target="_top">Exponential</a></td>
-
-          <td><code>exponential</code>( <i>eventRate</i>)</td>
-
-          <td><code>rand.exponential( 0.5)</code></td>
-        </tr>
-
-        <tr>
-          <td><a href="https://en.wikipedia.org/wiki/Gamma_distribution"
-          target="_top">Gamma</a></td>
-
-          <td><code>gamma</code>( <i>shape</i>, <i>scale</i>)</td>
-
-          <td><code>rand.gamma( 1.0, 2.0)</code></td>
-        </tr>
-
-        <tr>
-          <td><a href="https://en.wikipedia.org/wiki/Normal_distribution"
-          target="_top">Normal</a></td>
-
-          <td><code>normal</code>( <i>mean</i>, <i>stdDev</i>)</td>
-
-          <td><code>rand.normal( 1.5, 0.5)</code></td>
-        </tr>
-
-        <tr>
-          <td><a href="https://en.wikipedia.org/wiki/Pareto_distribution"
-          target="_top">Pareto</a></td>
-
-          <td><code>pareto</code>( <i>shape</i>)</td>
-
-          <td><code>rand.pareto( 2.0)</code></td>
-        </tr>
-
-        <tr>
-          <td><a href="https://en.wikipedia.org/wiki/Weibull_distribution"
-          target="_top">Weibull</a></td>
-
-          <td><code>weibull</code>( <i>scale</i>, <i>shape</i>)</td>
-
-          <td><code>rand.weibull( 1, 0.5)</code></td>
-        </tr>
-      </tbody>
-    </table><p>The OESjs library <kbd>rand.js</kbd> supports both unseeded and
-  seeded random number streams.<a class="role-index-term">random number
-  stream</a> By default, its PDF sampling methods are based on an unseeded
-  stream, using Marsaglia’s high-performance random number generator <a
-  href="https://en.wikipedia.org/wiki/Xorshift"
-  target="_top"><em>xorshift</em></a> that is built into the
-  <code>Math.random</code> function of modern JavaScript engines.</p><p>A
-  seeded random number stream, based on the slower <a
-  href="https://en.wikipedia.org/wiki/Mersenne_Twister" target="_top">Mersenne
-  Twister</a> algorithm, can be obtained by setting the scenario parameter
-  <code>sim.scenario.randomSeed</code> to a positive integer
-  value.</p><p>Additional streams can be defined and used in the following
-  way:</p><pre>var stream1 = new Random( 1234);
-var stream2 = new Random( 6789);
-var service1Duration = stream1.exponential( 0.5);
-var service2Duration = stream2.exponential( 1.5);</pre><p><b>Warning</b>:
-  Avoid using JavaScript's built-in <code>Math.random</code> in simulation
-  code. Always use <code>rand.uniform</code>, or one of the other probability
-  distribution functions from the <i>rand</i> library described above, for
-  generating random numbers.</p></section></body>
+  static <b>duration</b>() {return rand.uniform( 5, 10);}
+}
+// An examination requires a room and a doctor
+Examination.<b>resourceRoles</b> = {
+  "doctor": {range: Doctor, card:1},
+  "room": {countPoolName:"rooms", card:1}
+}</pre><p>The following process design model (discussed in <a
+  href="../ChIntroOEM/DesM.html#sectDesignModel4ExtCM"></a>) is based on the
+  conceptual process model discussed in <a
+  href="../ChIntroOEM/CM.html#sectExtendedConceptualModel"></a>:</p><figure><div><img
+  src="../img/MedDep_CPM2-PDM1b.svg" width="400" /></div></figure><p>This
+  process design model with its two <em>Resource-Dependent Activity Start</em>
+  arrows is implemented with just two statements on top of the classes
+  <i>NewCase</i> and <i>WalkToRoom</i>:</p><pre>// Enqueue a new planned walk
+NewCase.successorActivity = "WalkToRoom";
+// Enqueue a new planned examination
+WalkToRoom.successorActivity = "Examination";</pre><p>You can <a
+  href="https://gwagner57.github.io/oes/js/Core2/Medical-Department-2/index.html"
+  target="_top">run this Medical-Department-2 model</a> from the project's
+  GitHub website.</p></section></body>
 </html>

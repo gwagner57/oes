@@ -116,8 +116,6 @@ ul.links li:hover {
     <section href="ChIntroOES/SimStatistics.html" samepage="true"/>
 
     <section href="ChIntroOES/SimExperiments.html" samepage="true"/>
-
-    <section href="ChIntroOES/SimLog.html"/>
   </chapter>
 
   <appendix href="architecture.html"/>

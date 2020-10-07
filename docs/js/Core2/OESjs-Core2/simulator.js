@@ -35,7 +35,6 @@ sim.initializeSimulator = function () {
   sim.FEL = new EventList();
   // A map for statistics variables
   sim.stat = Object.create(null);
-  sim.initializeStatistics();
   // Create a className->Class map
   sim.Classes = Object.create(null);
   // Make object classes accessible via their object type name
@@ -55,6 +54,7 @@ sim.initializeSimulator = function () {
   sim.model.activityTypes.forEach( function (actTypeName) {
     sim.Classes[actTypeName] = util.getClass( actTypeName);
   });
+  oes.setupGenericStatistics();
   // A map for resource pools if there are no explicit process owners
   sim.resourcePools = Object.create(null);
   // Initializations per activity type
@@ -109,22 +109,22 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   }
   // Assign model parameters with experiment parameter values
   if (expParSlots) sim.assignModelParameters( expParSlots);
-  // Set up initial state and statistics
-  if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
-  //if (Object.keys( oes.EntryNode.instances).length > 0) oes.setupProcNetStatistics();
-  if (sim.model.setupStatistics) {  // reset model-specific statistics
-    sim.model.setupStatistics();
+  // reset model-specific statistics
+  if (sim.model.setupStatistics) sim.model.setupStatistics();
+  /***START Activity extensions BEFORE-setupInitialState ********************/
+  // Initialize resource pools
+  for (const poolName of Object.keys( sim.resourcePools)) {
+    sim.resourcePools[poolName].clear();
   }
-  /***START Activity extensions **********************************************/
-  sim.model.activityTypes.forEach( function (actTypeName) {
+  /***END Activity extensions BEFORE-setupInitialState *********************/
+  // Set up initial state
+  if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
+  /***START Activity extensions AFTER-setupInitialState ********************/
+  oes.initializeGenericStatistics();
+  for (const actTypeName of sim.model.activityTypes) {
     // Reset/clear the plannedActivities queues
     sim.Classes[actTypeName].plannedActivities.length = 0;
-    // Reset resource utilization statistics per activity type
-    sim.stat.actTypes[actTypeName].resUtil = Object.create(null);
-    // Reset generic queue length statistics per activity type
-    sim.stat.actTypes[actTypeName].queueLength.max = 0;
-    //sim.stat.actTypes[actTypeName].queueLength.avg = 0.0;
-  });
+  }
   // Initialize resource pools
   for (const poolName of Object.keys( sim.resourcePools)) {
     const nmrOfAvailRes = sim.resourcePools[poolName].available;
@@ -133,7 +133,7 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
       sim.resourcePools[poolName].size = nmrOfAvailRes;
     }
   }
-  /***END Activity extensions **********************************************/
+  /***END Activity extensions AFTER-setupInitialState *********************/
 };
 /*******************************************************************
  * Assign model parameters with experiment parameter values ********
@@ -166,29 +166,31 @@ sim.advanceSimulationTime = function () {
  Run a simulation scenario
  ********************************************************/
 sim.runScenario = function (createLog) {
-  var startTime = (new Date()).getTime();
+  const startTime = (new Date()).getTime();
   // Simulation Loop
   while (sim.time < sim.scenario.durationInSimTime &&
       sim.step < sim.scenario.durationInSimSteps &&
       (new Date()).getTime() - startTime < sim.scenario.durationInCpuTime) {
     if (createLog) {
+      let objStr = [...sim.objects.values()].toString();
+      if (objStr) objStr += " | ";
       postMessage({ step: sim.step, time: sim.time,
         // convert values() iterator to array
-        objectsStr: [...sim.objects.values()].toString(),
+        objectsStr: objStr + Object.values( sim.resourcePools).toString(),
         eventsStr: sim.FEL.toString()
       });
     }
     sim.advanceSimulationTime();
     // extract and process next events
-    let nextEvents = sim.FEL.removeNextEvents();
+    const nextEvents = sim.FEL.removeNextEvents();
     // sort simultaneous events according to priority order
     if (nextEvents.length > 1) nextEvents.sort( eVENT.rank);
     // process next (=current) events
-    for (let e of nextEvents) {
+    for (const e of nextEvents) {
       // apply event rule
-      let followUpEvents = e.onEvent();
+      const followUpEvents = e.onEvent();
       // schedule follow-up events
-      for (let f of followUpEvents) {
+      for (const f of followUpEvents) {
         sim.FEL.add( f);
       }
       const EventClass = e.constructor;
@@ -393,7 +395,6 @@ sim.runExperiment = async function () {
       dateTime: (new Date()).toISOString(),
     };
     try {
-      //await idbc.add( "experiment_runs", expRun);
       await sim.db.add("experiment_runs", expRun);
     } catch( err) {
       console.log("IndexedDB error: ", err.message);
@@ -401,35 +402,6 @@ sim.runExperiment = async function () {
   }
   if (exp.parameterDefs?.length) runParVarExperiment();
   else runSimpleExperiment();
-}
-/*******************************************************
- * Initialize the pre-defined ex-post statistics
- ********************************************************/
-sim.initializeStatistics = function () {
-  // Per activity type
-  if (Array.isArray( sim.model.activityTypes) && sim.model.activityTypes.length > 0) {
-    sim.stat.actTypes = Object.create(null);  // an empty map
-    sim.model.activityTypes.forEach( function (actTypeName) {
-      sim.stat.actTypes[actTypeName] = Object.create(null);
-      // initialize throughput statistics
-      sim.stat.actTypes[actTypeName].enqueuedActivities = 0;
-      sim.stat.actTypes[actTypeName].dequeuedActivities = 0;
-      sim.stat.actTypes[actTypeName].startedActivities = 0;
-      sim.stat.actTypes[actTypeName].completedActivities = 0;
-      // generic queue length statistics
-      sim.stat.actTypes[actTypeName].queueLength = Object.create(null);
-      //sim.stat.actTypes[actTypeName].queueLength.avg = 0.0;
-      sim.stat.actTypes[actTypeName].queueLength.max = 0;
-      // initialize resource utilization statistics
-      sim.stat.actTypes[actTypeName].resUtil = Object.create(null);
-    });
-  }
-  /*
-  // initialize PN statistics
-  if (Object.keys( oes.ProcessingNode.instances).length > 0) {
-    sim.stat.resUtil["pROCESSINGaCTIVITY"] = {};
-  }
-  */
 }
 /*******************************************************
  * Compute the final statistics

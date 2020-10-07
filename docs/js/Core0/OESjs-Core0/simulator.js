@@ -56,15 +56,15 @@ sim.runScenario = function () {
     }
     sim.advanceSimulationTime();
     // extract and process next events
-    let nextEvents = sim.FEL.removeNextEvents();
-    for (let e of nextEvents) {
+    const nextEvents = sim.FEL.removeNextEvents();
+    for (const e of nextEvents) {
       // apply event rule
-      let followUpEvents = e.onEvent();
+      const followUpEvents = e.onEvent();
       // schedule follow-up events
-      for (let f of followUpEvents) {
+      for (const f of followUpEvents) {
         sim.FEL.add( f);
       }
-      let EventClass = e.constructor;
+      const EventClass = e.constructor;
       // test if e is an exogenous event
       if (EventClass.recurrence) {
         // create and schedule next exogenous events

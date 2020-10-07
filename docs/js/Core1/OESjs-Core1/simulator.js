@@ -91,7 +91,7 @@ sim.advanceSimulationTime = function () {
  Run a simulation scenario
  ********************************************************/
 sim.runScenario = function (createLog) {
-  var startTime = (new Date()).getTime();
+  const startTime = (new Date()).getTime();
   // Simulation Loop
   while (sim.time < sim.scenario.durationInSimTime &&
       sim.step < sim.scenario.durationInSimSteps &&
@@ -105,18 +105,18 @@ sim.runScenario = function (createLog) {
     }
     sim.advanceSimulationTime();
     // extract and process next events
-    let nextEvents = sim.FEL.removeNextEvents();
+    const nextEvents = sim.FEL.removeNextEvents();
     // sort simultaneous events according to priority order
     if (nextEvents.length > 1) nextEvents.sort( eVENT.rank);
     // process next (=current) events
-    for (let e of nextEvents) {
+    for (const e of nextEvents) {
       // apply event rule
       let followUpEvents = e.onEvent();
       // schedule follow-up events
-      for (let f of followUpEvents) {
+      for (const f of followUpEvents) {
         sim.FEL.add( f);
       }
-      let EventClass = e.constructor;
+      const EventClass = e.constructor;
       // test if e is an exogenous event
       if (EventClass.recurrence) {
         // create and schedule next exogenous event

@@ -30,6 +30,6 @@ class NewCase extends eVENT {
     });
   }
   static recurrence() {
-    return rand.exponential( 0.7);
+    return rand.exponential( 0.3);
   }
 }

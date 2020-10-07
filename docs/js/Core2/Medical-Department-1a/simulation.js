@@ -1,7 +1,7 @@
 /*******************************************************
  Simulation Model
 ********************************************************/
-sim.model.name = "Medical-Department-0";
+sim.model.name = "Medical-Department-1a";
 sim.model.time = "continuous";
 sim.model.timeUnit = "min";
 sim.model.objectTypes = ["MedicalDepartment"];
@@ -18,7 +18,7 @@ sim.scenario.idCounter = 11;  // start value of auto IDs
 // Initial State
 sim.scenario.setupInitialState = function () {
   // Create initial objects
-  var md1 = new MedicalDepartment({id: 1, name:"md1", nmrOfAvailDoctors:9});
+  var md1 = new MedicalDepartment({id: 1, name:"md1", nmrOfAvailDoctors: 3});
   // Schedule initial events
   sim.FEL.add( new NewCase({occTime: 1, medicalDepartment: md1}));
 }

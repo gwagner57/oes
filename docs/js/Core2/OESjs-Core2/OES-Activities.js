@@ -48,10 +48,11 @@
 // An abstract class
 class aCTIVITY extends eVENT {
   // startTime=0 tells the eVENT constructor that this is an aCTIVITY
-  constructor({id, occTime, startTime=0, duration}) {
+  constructor({id, occTime, startTime=0, duration, enqueueTime}) {
     super({occTime, startTime, duration});
     if (id) this.id = id;
     else this.id = sim.idCounter++;  // activities need an ID
+    if (enqueueTime) this.enqueueTime = enqueueTime;
   }
   static ifAvailAllocReqResAndStartNextActivity( AT) {
     const nextActy = AT.plannedActivities[0];
@@ -91,6 +92,7 @@ class pLANNEDaCTIVITIESqUEUE extends Array {
       console.error("Attempt to push an "+ AT.name +" to wrong queue!");
       return;
     }
+    acty.enqueueTime = sim.time;
     this.push( acty);
     sim.stat.actTypes[AT.name].enqueuedActivities += 1;
     // compute generic queue length statistics per activity type
@@ -190,8 +192,20 @@ at simulation step ${sim.step}!`);
     }
   }
   clear() {
-    this.busyResources.length = 0;
-    this.availResources.length = 0;
+    if (this.available === undefined) {  // individual pool
+      this.busyResources.length = 0;
+      this.availResources.length = 0;
+    } else {  // count pool
+      this.available = 0;
+    }
+  }
+  toString() {
+    if (this.available === undefined) {  // individual pool
+      const availRes = this.availResources.map( r => r.name || r.id);
+      return `av. ${this.name}: ${availRes}`;
+    } else {
+      return `av. ${this.name}: ${this.available}`;
+    }
   }
 }
 
@@ -255,7 +269,7 @@ class aCTIVITYeND extends eVENT {
   constructor({occTime, delay, activity, successorActivity}) {
     super({occTime, delay});
     this.activity = activity;
-    this.successorActivity = successorActivity;
+    if (successorActivity) this.successorActivity = successorActivity;
   }
   toString() {
     var decPl = oes.defaults.simLogDecimalPlaces,
@@ -276,31 +290,36 @@ class aCTIVITYeND extends eVENT {
   onEvent() {
     const followupEvents=[],
         acty = this.activity,
-        AT = acty.constructor;  // the activity's type/class
+        AT = acty.constructor,  // the activity's type/class
+        waitingTimeStat = sim.stat.actTypes[AT.name].waitingTime,
+        cycleTimeStat = sim.stat.actTypes[AT.name].cycleTime,
+        resUtilPerAT = sim.stat.actTypes[AT.name].resUtil;
     // if there is an onActivityEnd procedure, execute it
     if (typeof acty.onActivityEnd === "function") {
       followupEvents.push(...acty.onActivityEnd());
     }
-    // set occTime and duration if there was no pre-set duration
+    acty.occTime = this.occTime;
+    // set duration if there was no pre-set duration
     if (!acty.duration) {
-      acty.occTime = this.occTime;
       acty.duration = acty.occTime - acty.startTime;
     }
     // update statistics
     sim.stat.actTypes[AT.name].completedActivities++;
+    const waitingTime = acty.startTime - acty.enqueueTime;
+    //waitingTimeStat.total += waitingTime;
+    if (waitingTimeStat.max < waitingTime) waitingTimeStat.max = waitingTime;
+    const cycleTime = acty.occTime - acty.enqueueTime;
+    //cycleTimeStat.total += cycleTime;
+    if (cycleTimeStat.max < cycleTime) cycleTimeStat.max = cycleTime;
     // compute resource utilization per activity type (per resource object or per count pool)
     for (const resRoleName of Object.keys( AT.resourceRoles)) {
-      let resUtilPerAT = sim.stat.actTypes[AT.name].resUtil;
-      if (AT.resourceRoles[resRoleName].range) {  // per resource object
-        let objIdStr = String( acty[resRoleName].id);
-        if (resUtilPerAT[objIdStr] === undefined) resUtilPerAT[objIdStr] = 0;
-        resUtilPerAT[objIdStr] += acty.duration;
+      const resRole = AT.resourceRoles[resRoleName];
+      if (resRole.range) {  // per resource object
+        resUtilPerAT[String(acty[resRoleName].id)] += acty.duration;
         // update the activity state of resource objects
         acty[resRoleName].activityState.delete( AT.name);
       } else {  // per count pool
-        let poolName = AT.resourceRoles[resRoleName].countPoolName;
-        if (resUtilPerAT[poolName] === undefined) resUtilPerAT[poolName] = 0;
-        resUtilPerAT[poolName] += acty.duration;
+        resUtilPerAT[resRole.countPoolName] += acty.duration;
       }
     }
     // if there are still planned activities
@@ -328,4 +347,76 @@ class aCTIVITYeND extends eVENT {
     }
     return followupEvents;
   }
+}
+/*******************************************************
+ * Set up the generic ex-post statistics
+ ********************************************************/
+oes.setupGenericStatistics = function () {
+  // Per activity type
+  if (Array.isArray( sim.model.activityTypes) && sim.model.activityTypes.length > 0) {
+    sim.stat.actTypes = Object.create(null);  // an empty map
+    for (const actTypeName of sim.model.activityTypes) {
+      sim.stat.actTypes[actTypeName] = Object.create(null);
+      // generic queue length statistics
+      sim.stat.actTypes[actTypeName].queueLength = Object.create(null);
+      // resource utilization statistics
+      sim.stat.actTypes[actTypeName].resUtil = Object.create(null);
+      // waiting time statistics
+      sim.stat.actTypes[actTypeName].waitingTime = Object.create(null);
+      // cycle time statistics
+      sim.stat.actTypes[actTypeName].cycleTime = Object.create(null);
+    }
+  }
+  //if (Object.keys( oes.EntryNode.instances).length > 0) oes.setupProcNetStatistics();
+  /*
+  // initialize PN statistics
+  if (Object.keys( oes.ProcessingNode.instances).length > 0) {
+    sim.stat.resUtil["pROCESSINGaCTIVITY"] = {};
+  }
+  */
+}
+/*******************************************************
+ * Initialize the pre-defined ex-post statistics
+ ********************************************************/
+oes.initializeGenericStatistics = function () {
+  // Per activity type
+  if (Array.isArray( sim.model.activityTypes) && sim.model.activityTypes.length > 0) {
+    for (const actTypeName of sim.model.activityTypes) {
+      const actStat = sim.stat.actTypes[actTypeName],
+          resUtilPerAT = actStat.resUtil,
+          AT = sim.Classes[actTypeName];
+      // initialize throughput statistics
+      actStat.enqueuedActivities = 0;
+      actStat.dequeuedActivities = 0;
+      actStat.startedActivities = 0;
+      actStat.completedActivities = 0;
+      // generic queue length statistics
+      //actStat.queueLength.avg = 0.0;
+      actStat.queueLength.max = 0;
+      // waiting time statistics
+      //actStat.waitingTime.avg = 0.0;
+      actStat.waitingTime.max = 0;
+      // cycle time statistics
+      //actStat.cycleTime.avg = 0.0;
+      actStat.cycleTime.max = 0;
+      // initialize resource utilization per resource object or per count pool
+      for (const resRoleName of Object.keys( AT.resourceRoles)) {
+        const resRole = AT.resourceRoles[resRoleName];
+        if (resRole.range) {  // per resource object
+          for (const resObj of resRole.resPool.availResources) {
+            resUtilPerAT[String(resObj.id)] = 0;
+          }
+        } else {  // per count pool
+          resUtilPerAT[resRole.countPoolName] = 0;
+        }
+      }
+    }
+  }
+  //if (Object.keys( oes.EntryNode.instances).length > 0) oes.setupProcNetStatistics();
+  /*
+  // initialize PN statistics
+  if (Object.keys( oes.ProcessingNode.instances).length > 0) {
+    sim.stat.resUtil["pROCESSINGaCTIVITY"] = {};
+  }
+  */
 }

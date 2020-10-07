@@ -179,6 +179,9 @@ function run() {
 }
 
 if (sim.scenarios.length > 0) {
+  // Assign scenarioNo = 0 to default scenario
+  sim.scenario.scenarioNo ??= 0;
+  sim.scenario.title ??= "Default scenario";
   // Assign sim.scenarios[0] if not defined
   if (!sim.scenarios[0]) sim.scenarios[0] = sim.scenario;
 } else {

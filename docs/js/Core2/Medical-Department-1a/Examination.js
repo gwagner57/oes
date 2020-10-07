@@ -23,5 +23,5 @@ class Examination extends aCTIVITY {
   }
 }
 Examination.duration = function () {
-  return rand.uniform(5,9);
+  return rand.uniform(5,10);
 };
