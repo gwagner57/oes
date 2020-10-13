@@ -82,43 +82,88 @@ oes.ui.showStatistics = function (stat, tableEl) {
   */
 }
 /*********************************************************************
- Create the table head for simple experiment results
- **********************************************************************/
-oes.ui.createSimpleExpResultsTableHead = function (stat, tableEl)  {
-  var N = Object.keys(stat).length, statVarHeadings="", colHeadingsRow="";
-  let theadEl = tableEl.createTHead();
-  Object.keys(stat).forEach( function (v) {
-    statVarHeadings += "<th>"+ v +"</th>";
-  })
-  colHeadingsRow = `<tr><th rowspan='2'>Replication</th><th colspan='${N}'>Statistics</th></tr>`;
-  theadEl.innerHTML = colHeadingsRow + "<tr>"+ statVarHeadings +"</tr>";
-  tableEl.style.overflowX = "auto";  // horizontal scrolling
-}
-/*********************************************************************
  Show the results of a simple experiment
  **********************************************************************/
 oes.ui.showSimpleExpResults = function (exp, tableEl) {
-  var nmrOfRepl = exp.nmrOfReplications, rowEl=null;
-  var tbodyEl = tableEl.tBodies[0];
+  const nmrOfRepl = exp.nmrOfReplications,
+        tbodyEl = tableEl.tBodies[0],
+        decPl = oes.defaults.expostStatDecimalPlaces,
+        NS = 6;  // number of summary statistics
+
+  function createSimpleExpResultsTableHead()  {
+    // number of user-defined statistics
+    const M = Object.keys( exp.replicStat).length - 1;  // deduct "actTypes"
+    // number of activity types
+    const N = Object.keys( exp.replicStat.actTypes).length;
+    var colHeadingsRow="", usrDefStatVarHeads="", actTypeHeads="",
+        perActyStatHeads = "<th>enqu</th><th>start</th><th>compl</th><th>qLen</th><th>wTime</th><th>cTime</th>";
+    for (let i=1; i < N; i++) {
+      perActyStatHeads += "<th>enqu</th><th>start</th><th>compl</th><th>qLen</th><th>wTime</th><th>cTime</th>";
+    }
+    for (const key of Object.keys( exp.replicStat)) {
+      const thStartTag = N>0 ? "<th rowspan='2'>" : "<th>";
+      usrDefStatVarHeads += key !== "actTypes" ? thStartTag + key +"</th>" : "";
+    }
+    actTypeHeads = Object.keys( exp.replicStat.actTypes).reduce( function (prev, curr) {
+      return prev + `<th colspan='${NS}'>${curr}</th>`;
+    },"");
+    colHeadingsRow = `<tr><th rowspan='${2 + (N>0?1:0)}'>Replication</th>`;
+    colHeadingsRow += M > 0 ? `<th colspan='${M}'>User-Def. Statistics</th>`:"";
+    colHeadingsRow += N > 0 ? `<th colspan='${N*NS}'>Statistics per activity type</th>`:"";
+    colHeadingsRow += "</tr>";
+    let theadEl = tableEl.createTHead();
+    theadEl.innerHTML = colHeadingsRow +
+        "<tr>"+ usrDefStatVarHeads + actTypeHeads +"</tr>" +
+        "<tr>"+ perActyStatHeads +"</tr>";
+    tableEl.style.overflowX = "auto";  // horizontal scrolling
+  }
+  createSimpleExpResultsTableHead();
   for (let i=0; i < nmrOfRepl; i++) {
-    rowEl = tbodyEl.insertRow();  // create new table row
+    const rowEl = tbodyEl.insertRow();  // create new table row
     rowEl.insertCell().textContent = String(i+1);  // replication No
-    Object.keys( exp.replicStat).forEach( function (varName) {
-      var decPl = oes.defaults.expostStatDecimalPlaces,
-          val = exp.replicStat[varName][i];
-      rowEl.insertCell().textContent = math.round( val, decPl);
-    });
+    for (const varName of Object.keys( exp.replicStat)) {
+      if (varName !== "actTypes") {  // key is a user-defined statistics variable name
+        const val = exp.replicStat[varName][i];
+        rowEl.insertCell().textContent = math.round( val, decPl);
+      }
+    }
+    for (const actTypeName of Object.keys( exp.replicStat.actTypes)) {
+      const replActStat = exp.replicStat.actTypes[actTypeName];
+      for (const statVarName of ["enqueuedActivities","startedActivities","completedActivities"]) {
+        rowEl.insertCell().textContent = replActStat[statVarName][i];
+      }
+      for (const statVarName of ["queueLength","waitingTime","cycleTime"]) {
+          const val = replActStat[statVarName].max[i];
+        rowEl.insertCell().textContent = Number.isInteger(val) ? val : math.round( val, decPl);
+      }
+      /*****TODO: support also the following statistics *****/
+      //actStat.resUtil = {};
+    }
   }
   // create footer with summary statistics
-  Object.keys( math.stat.summary).forEach( function (aggr) {
+  for (const aggr of Object.keys( math.stat.summary)) {
     rowEl = tbodyEl.insertRow();  // create new table row
     rowEl.insertCell().textContent = math.stat.summary[aggr].label;
-    Object.keys( exp.summaryStat).forEach( function (varName) {
-      var decPl = oes.defaults.expostStatDecimalPlaces,
-          val = exp.summaryStat[varName][aggr];
-      rowEl.insertCell().textContent = math.round( val, decPl);
-    });
-  });
+    for (const varName of Object.keys( exp.summaryStat)) {
+      if (varName !== "actTypes") {  // key is a user-defined statistics variable name
+        const val = exp.summaryStat[varName][aggr];
+        rowEl.insertCell().textContent = math.round( val, decPl);
+      }
+    }
+    for (const actTypeName of Object.keys( exp.summaryStat.actTypes)) {
+      const sumActStat = exp.summaryStat.actTypes[actTypeName];
+      for (const statVarName of ["enqueuedActivities","startedActivities","completedActivities"]) {
+        const val = sumActStat[statVarName][aggr];
+        rowEl.insertCell().textContent = math.round( val, decPl);
+      }
+      for (const statVarName of ["queueLength","waitingTime","cycleTime"]) {
+        const val = sumActStat[statVarName][aggr];
+        rowEl.insertCell().textContent = math.round( val, decPl);
+      }
+      /*****TODO: support also the following statistics *****/
+      //actStat.resUtil = {};
+    }
+  }
 }
 /*********************************************************************
  Create the table head for parameter variation experiment results

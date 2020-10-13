@@ -10,7 +10,7 @@ sim.model.activityTypes = ["WalkToRoom", "Examination"];
 /*******************************************************
  Simulation Scenario
  ********************************************************/
-sim.scenario.durationInSimTime = 100;
+sim.scenario.durationInSimTime = 1000;
 //sim.scenario.durationInSimSteps = 1000;
 //sim.scenario.durationInCpuTime = 1000;  // seconds
 sim.scenario.idCounter = 11;  // start value of auto IDs
@@ -42,9 +42,7 @@ sim.scenarios[1] = {
         n1 = new Nurse({id: 11, name:"n1", status: oes.ResourceStatusEL.AVAILABLE}),
         n2 = new Nurse({id: 12, name:"n2", status: oes.ResourceStatusEL.AVAILABLE});
     // Initialize the individual resource pools
-    //sim.resourcePools["doctors"].clear();
     sim.resourcePools["doctors"].availResources.push( d1, d2, d3);
-    //sim.resourcePools["nurses"].clear();
     sim.resourcePools["nurses"].availResources.push( n1, n2);
     // Initialize the count pools
     sim.resourcePools["rooms"].available = 4;

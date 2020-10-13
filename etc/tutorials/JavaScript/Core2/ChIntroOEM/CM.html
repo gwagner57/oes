@@ -63,7 +63,7 @@
       <em>medical department</em> and a <em>doctor</em>.</li>
 
       <li><em>Examinations</em> have one resource role, <em>doctor</em>, with
-      a resource constraint of exactly one, which means that exactly one
+      a resource cardinality constraint of exactly one, which means that exactly one
       <em>doctor</em> is required for performing an <em>examination</em>.</li>
 
       <li>The process owner of an <em>examination</em>, a <em>medical
@@ -177,12 +177,12 @@
       <em>doctor</em>, and a <em>room</em>.</li>
 
       <li><em>Walks</em> have two resource roles, <em>nurse</em> and
-      <em>room</em>, both with a resource constraint of exactly one, which
+      <em>room</em>, both with a resource cardinality constraint of exactly one, which
       means that exactly one <em>nurse</em> and one <em>room</em> are required
       for performing a <em>walk</em>.</li>
 
       <li><em>Examinations</em> have two resource roles, <em>doctor</em> and
-      <em>room</em>, both with a resource constraint of exactly one.</li>
+      <em>room</em>, both with a resource cardinality constraint of exactly one.</li>
 
       <li>The process owner of a <em>walk to a room</em> and a subsequent
       <em>examination</em>, a <em>medical department</em>, has three resource
@@ -249,5 +249,11 @@
   the two performer roles <em>doctor</em> and <em>nurse</em> with the help of
   two corresponding <strong>Lanes</strong> shown within the process owner
   <em>Pool</em>:</p><figure><div><img alt="???" src="../img/MedDep_CPM2b.svg"
-  width="300" /></div></figure></section></body>
+  width="300" /></div></figure><p>Notice that the use of Lanes (marking
+  disjoint subrectangles) is a convenient visual syntax for displaying the
+  performer roles when the different performers have a non-overlapping set of
+  activity types. However, when activities of a certain type are performed
+  jointly by more than one performer (e.g., when a doctor and a nurse jointly
+  perform an examination), a different visual syntax needs to be
+  introduced..</p></section></body>
 </html>

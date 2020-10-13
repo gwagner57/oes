@@ -133,15 +133,7 @@ function run() {
   }
   // Hide UI elements
   formEl.style.display = "none";  // hide selection form
-  sim.model.setupStatistics();
-  if (sim.experimentType) {
-    if (!sim.experimentType.parameterDefs) {
-      oes.ui.createSimpleExpResultsTableHead( sim.stat, statisticsTableEl);
-    } else {
-      oes.ui.createParVarExpResultsTableHead( sim.stat, statisticsTableEl);
-    }
-  }
-  data = {simToRun: selExpEl.value,
+  data = {simToRun: choice,
       createLog: logCheckboxEl.checked,
       storeExpRes: storeExpResCheckboxEl.checked};
   if (sim.scenarios.length > 0) {

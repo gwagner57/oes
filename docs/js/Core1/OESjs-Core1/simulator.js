@@ -184,31 +184,29 @@ sim.runExperiment = async function () {
     self.postMessage({simpleExperiment: exp});
   }
   async function runParVarExperiment() {
-    var cp = [], valueSets = [], M = 0,
-        N = exp.parameterDefs.length,
-        increm = 0, x = 0, expPar = {},
-        valueCombination = [], expParSlots = {};
+    const valueSets = [], expParSlots = {},
+          N = exp.parameterDefs.length;
     exp.scenarios = [];
     // create a list of value sets, one set for each parameter
     for (let i=0; i < N; i++) {
-      expPar = exp.parameterDefs[i];
+      const expPar = exp.parameterDefs[i];
       if (!expPar.values) {
         // create value set
         expPar.values = [];
-        increm = expPar.stepSize || 1;
-        for (x = expPar.startValue; x <= expPar.endValue; x += increm) {
+        const increm = expPar.stepSize || 1;
+        for (let x = expPar.startValue; x <= expPar.endValue; x += increm) {
           expPar.values.push( x);
         }
       }
       valueSets.push( expPar.values);
     }
-    cp = math.cartesianProduct( valueSets);
-    M = cp.length;  // size of cartesian product
+    const cp = math.cartesianProduct( valueSets);
+    const M = cp.length;  // size of cartesian product
     // set up statistics variables
     sim.model.setupStatistics();
     // loop over all combinations of experiment parameter values
     for (let i=0; i < M; i++) {
-      valueCombination = cp[i];  // an array list of values, one for each parameter
+      const valueCombination = cp[i];  // an array list of values, one for each parameter
       // initialize the scenario record
       exp.scenarios[i] = {stat: Object.create(null)};
       exp.scenarios[i].parameterValues = valueCombination;

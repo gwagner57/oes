@@ -7,9 +7,23 @@
   </head>
 
   <body><p>In activity-based Discrete Event Simulation, a simulator can
-  automatically collect the following statistics per activity type: (a)
-  throughput, (b) queue length, (c) waiting time, (d) cycle/throughput time,
-  and (e) resource utilization. </p><p>For instance, after running the <a
+  automatically collect the following statistics per activity type and
+  simulation run: </p><ol>
+      <li>Throughput quantities: (a) number of enqueued activities, (b) number
+      of started activities (= number of dequeued activities), and (c) number
+      of completed activities.</li>
+
+      <li>Queue length statistics: maximum queue length, average queue length,
+      etc.</li>
+
+      <li>Waiting time statistics: maximum waiting time, average waiting time,
+      etc.</li>
+
+      <li>Cycle time statistics: maximum cycle time, average cycle time,
+      etc.</li>
+
+      <li>Resource utilization per resource object.</li>
+    </ol><p>For instance, after running the <a
   href="https://gwagner57.github.io/oes/js/Core2/Medical-Department-2/index.html"
   target="_top">Medical-Department-2 scenario</a> , the following statistics
   results are shown per activity type:</p><table border="1">
