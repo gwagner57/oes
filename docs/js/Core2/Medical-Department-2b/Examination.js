@@ -4,9 +4,10 @@ class Examination extends aCTIVITY {
   }
   static duration() {return rand.uniform( 5, 10);}
 }
-// An examination requires a room and a doctor
+// An examination requires a doctor, two nurses and a room
 Examination.resourceRoles = {
   "doctor": {range: Doctor},
+  "nurse": {range: Nurse, card:2},
   "room": {countPoolName:"rooms"}
 }
-Examination.PERFORMER = "doctor";
+Examination.PERFORMERS = ["doctor", "nurse"];

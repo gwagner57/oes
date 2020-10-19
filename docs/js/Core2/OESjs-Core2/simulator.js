@@ -188,7 +188,7 @@ sim.runScenario = function (createLog) {
     // process next (=current) events
     for (const e of nextEvents) {
       // apply event rule
-      const followUpEvents = e.onEvent();
+      const followUpEvents = typeof e.onEvent === "function" ? e.onEvent() : [];
       // schedule follow-up events
       for (const f of followUpEvents) {
         sim.FEL.add( f);
@@ -196,12 +196,11 @@ sim.runScenario = function (createLog) {
       const EventClass = e.constructor;
 
       /**** ACTIVITIES extension START ****/
-      // if event class with successorActivity or aCTIVITYeND event with e.successorActivity
-      const succActy = EventClass.successorActivity || e.successorActivity;
-      if (succActy) {
+      // if event class with successorActivity
+      if (EventClass.successorActivity) {
+        const SuccActivityClass = sim.Classes[EventClass.successorActivity];
         // enqueue successor activity
-        const ActivityClass = sim.Classes[succActy];
-        ActivityClass.plannedActivities.enqueue( new ActivityClass());
+        SuccActivityClass.plannedActivities.enqueue( new SuccActivityClass());
       }
       /**** ACTIVITIES extension END ****/
 

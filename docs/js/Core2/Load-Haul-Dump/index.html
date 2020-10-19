@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Medical-Department-1a</title>
+  <title>Load-Haul-Dump-1</title>
   <meta name="viewport" content="width=device-width, initial-scale = 1.0" />
   <style>
     table {
@@ -15,7 +15,15 @@
       border: thin solid black;
       padding: 0.2em;
     }
-  </style>
+    figure {
+        margin: 1em auto;
+        text-align: center;
+    }
+    figure.right {
+        float: right;
+        margin-left: 1em;
+        margin-bottom: 1em;
+    }  </style>
     <script src="../lib/math.js"></script>
     <script src="../lib/util.js"></script>
     <script src="../lib/idb5.js"></script>
@@ -34,7 +42,10 @@
     <script src="simulation.js"></script>
 </head>
 <body>
- <h1>Medical-Department-1a</h1>
+ <h1>Load-Haul-Dump-1</h1>
+ <figure class="right"><img alt="" src="CPM.svg" width="600" /></figure>
+ <p>The model is described by the DPMN process diagram to the right.</p>
+ <p>The simulation scenario has 5 trucks and 1 wheel loader.</p>
  <form id="run">
      <div><label>Select scenario: <select name="selScen"></select></label></div>
      <div><button type="button" onclick="run()">Run</button> <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>

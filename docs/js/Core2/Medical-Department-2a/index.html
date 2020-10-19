@@ -24,7 +24,7 @@
       // Create initial objects/maps/arrays
       const sim = Object.create(null); // instead of {}
       sim.model = Object.create(null);
-      sim.model.v = Object.create(null); // model parameters
+      sim.model.v = Object.create(null); // model variables
       sim.model.p = Object.create(null); // model parameters
       sim.scenario = Object.create(null);
       sim.scenarios = [];
@@ -35,6 +35,8 @@
 </head>
 <body>
  <h1>Medical-Department-2a</h1>
+ <p>A <em>walk to a room</em> requires a room and a nurse, while an <em>examination</em> requires a room and a doctor.</p>
+ <p>The scenario has 3 doctors, 2 nurses and 3 rooms.</p>
  <form id="run">
      <div><label>Select scenario: <select name="selScen"></select></label></div>
      <div><button type="button" onclick="run()">Run</button> <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>

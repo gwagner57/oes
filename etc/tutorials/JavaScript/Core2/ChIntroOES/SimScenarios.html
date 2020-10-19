@@ -18,7 +18,7 @@
   doctors:</p><pre>sim.scenario.durationInSimTime = 1000;
 sim.scenario.<b>setupInitialState</b> = function () {
   // Initialize the count pool "doctors"
-  sim.<b>resourcePools</b>["doctors"].available = 3;
+  sim.<b>resourcePools</b>["doctors"].<b>available</b> = 3;
   // Schedule initial events
   sim.FEL.add( new NewCase({occTime: 1}));
 }</pre><p>You can <a
@@ -624,9 +624,9 @@ sim.scenario.<b>setupInitialState</b> = function () {
   Medical-Department-1b, the count pool for doctors is replaced with an
   individual pool.</p></section><section><h4>2.3.1. A Simulation Scenario for
   Medical-Department-2</h4><p>The default simulation scenario for the
-  <i>Medical-Department-2</i> model defines an initial state with a three
+  <i>Medical-Department-2</i> model defines an initial state with three
   doctors in the individual pool "doctors", two nurses in the individual pool
-  "nurses" and 3 rooms in th count pool "rooms":</p><pre>sim.scenario.durationInSimTime = 1000;
+  "nurses" and three rooms in the count pool "rooms":</p><pre>sim.scenario.durationInSimTime = 1000;
 sim.scenario.<b>setupInitialState</b> = function () {
   const d1 = new Doctor({id: 1, status: oes.ResourceStatusEL.AVAILABLE}),
       d2 = new Doctor({id: 2, status: oes.ResourceStatusEL.AVAILABLE}),

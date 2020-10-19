@@ -54,37 +54,41 @@ class aCTIVITY extends eVENT {
     else this.id = sim.idCounter++;  // activities need an ID
     if (enqueueTime) this.enqueueTime = enqueueTime;
   }
+}
+// Define a datatype class for queues of planned activities
+class pLANNEDaCTIVITIESqUEUE extends Array {
+  constructor() {
+    super();
+  }
   static ifAvailAllocReqResAndStartNextActivity( AT) {
     const nextActy = AT.plannedActivities[0];
     // Are all required resources available?
     if (Object.keys( AT.resourceRoles)
+        // test only for resources not yet assigned
+        .filter( resRoleName => !nextActy[resRoleName])
         .map( resRoleName => AT.resourceRoles[resRoleName])
         .every( resRole => (resRole.resPool.isAvailable( resRole.card)))) {
       // remove next activity from queue
       AT.plannedActivities.dequeue();
       // Allocate all required resources
       for (const resRoleName of Object.keys( AT.resourceRoles)) {
-        const resRole = AT.resourceRoles[resRoleName];
-        // allocate the required quantity of resources from the pool
-        const allocatedRes = resRole.resPool.allocate( resRole.card);
-        if (allocatedRes) {
-          // create an activity property slot for this resource role
-          if (allocatedRes.length === 1) {
-            nextActy[resRoleName] = allocatedRes[0];
-          } else {
-            nextActy[resRoleName] = allocatedRes;
+        if (!nextActy[resRoleName]) {
+          const resRole = AT.resourceRoles[resRoleName];
+          // allocate the required quantity of resources from the pool
+          const allocatedRes = resRole.resPool.allocate( resRole.card);
+          if (allocatedRes) {  // individual resource pool
+            // create an activity property slot for this resource role
+            if (allocatedRes.length === 1) {
+              nextActy[resRoleName] = allocatedRes[0];
+            } else {
+              nextActy[resRoleName] = allocatedRes;
+            }
           }
         }
       }
       // start next activity with the allocated resources
       sim.FEL.add( new aCTIVITYsTART({plannedActivity: nextActy}));
     }
-  }
-}
-// Define a datatype class for queues of planned activities
-class pLANNEDaCTIVITIESqUEUE extends Array {
-  constructor() {
-    super();
   }
   enqueue( acty) {
     const AT = acty.constructor;
@@ -101,7 +105,7 @@ class pLANNEDaCTIVITIESqUEUE extends Array {
     }
     //TODO: compute average queue length statistics
     // if available, allocate required resources and schedule next activity
-    aCTIVITY.ifAvailAllocReqResAndStartNextActivity( AT);
+    pLANNEDaCTIVITIESqUEUE.ifAvailAllocReqResAndStartNextActivity( AT);
   }
   dequeue() {
     const acty = this.shift(),
@@ -244,9 +248,12 @@ class aCTIVITYsTART extends eVENT {
     // Set activity state for all involved resource objects
     for (const resRoleName of Object.keys( AT.resourceRoles)) {
       if (AT.resourceRoles[resRoleName].range) {  // an individual pool
-        const resObj = acty[resRoleName];
-        if (!resObj.activityState) resObj.activityState = new aCTIVITYsTATE();
-        resObj.activityState.add( AT.name);
+        let resObjects = acty[resRoleName];
+        if (!Array.isArray( resObjects)) resObjects = [resObjects];
+        for (const resObj of resObjects) {
+          if (!resObj.activityState) resObj.activityState = new aCTIVITYsTATE();
+          resObj.activityState.add( AT.name);
+        }
       }
     }
     // if there is an onActivityStart procedure, execute it
@@ -259,17 +266,15 @@ class aCTIVITYsTART extends eVENT {
         occTime: this.occTime + acty.duration,
         activity: acty
       };
-      if (AT.successorActivity) slots.successorActivity = AT.successorActivity;
       followupEvents.push( new aCTIVITYeND( slots));
     }
     return followupEvents;
   }
 }
 class aCTIVITYeND extends eVENT {
-  constructor({occTime, delay, activity, successorActivity}) {
+  constructor({occTime, delay, activity}) {
     super({occTime, delay});
     this.activity = activity;
-    if (successorActivity) this.successorActivity = successorActivity;
   }
   toString() {
     var decPl = oes.defaults.simLogDecimalPlaces,
@@ -315,35 +320,45 @@ class aCTIVITYeND extends eVENT {
     for (const resRoleName of Object.keys( AT.resourceRoles)) {
       const resRole = AT.resourceRoles[resRoleName];
       if (resRole.range) {  // per resource object
-        resUtilPerAT[String(acty[resRoleName].id)] += acty.duration;
-        // update the activity state of resource objects
-        acty[resRoleName].activityState.delete( AT.name);
+        let resObjects = acty[resRoleName];
+        if (!Array.isArray( resObjects)) resObjects = [resObjects];
+        for (const resObj of resObjects) {
+          resUtilPerAT[String(resObj.id)] += acty.duration;
+          // update the activity state of resource objects
+          resObj.activityState.delete( AT.name);
+        }
       } else {  // per count pool
         resUtilPerAT[resRole.countPoolName] += acty.duration;
       }
     }
-    // if there are still planned activities
-    if (AT.plannedActivities.length > 0) {
-      const nextActy = AT.plannedActivities.dequeue();
-      // copy resource role slots
+    if (AT.successorActivity) {  // enqueue a successor activity according to the process model
+      const SuccAT = typeof AT.successorActivity === "function" ?
+                     sim.Classes[AT.successorActivity()] : sim.Classes[AT.successorActivity],
+            succActy = new SuccAT();
+      // By default, keep (individual) resources that are shared between AT and SuccAT
       for (const resRoleName of Object.keys( AT.resourceRoles)) {
-        if (acty[resRoleName]) nextActy[resRoleName] = acty[resRoleName];
-      }
-      /*****TODO: if other individual resources are available, release resources and allocate others
-      *  depending on resource allocation policy (e.g. round robin)   *****/
-      // start next activity with the resources already allocated before
-      followupEvents.push( new aCTIVITYsTART({plannedActivity: nextActy}));
-    } else {  // release resources
-      for (const resRoleName of Object.keys( AT.resourceRoles)) {
-        const resRole = AT.resourceRoles[resRoleName];
-        if (resRole.countPoolName) {
-          // release the used number of resources
-          resRole.resPool.release( resRole.card);
-        } else {
-          // release the used resource(s)
-          resRole.resPool.release( acty[resRoleName]);
+        if (SuccAT.resourceRoles[resRoleName] && acty[resRoleName]) {
+          succActy[resRoleName] = acty[resRoleName];
+          delete acty[resRoleName];
         }
       }
+      SuccAT.plannedActivities.enqueue( succActy);
+    }
+    // release all resources of acty
+    for (const resRoleName of Object.keys( AT.resourceRoles)) {
+      const resRole = AT.resourceRoles[resRoleName];
+      if (resRole.countPoolName) {
+        // release the used number of count pool resources
+        resRole.resPool.release( resRole.card);
+      } else {
+        // release the used individual resource if it has not been transferred to succActy
+        if (acty[resRoleName]) resRole.resPool.release( acty[resRoleName]);
+      }
+    }
+    // if there are still planned activities of type AT
+    if (AT.plannedActivities.length > 0) {
+      // if available, allocate required resources and schedule next activity
+      pLANNEDaCTIVITIESqUEUE.ifAvailAllocReqResAndStartNextActivity( AT);
     }
     return followupEvents;
   }

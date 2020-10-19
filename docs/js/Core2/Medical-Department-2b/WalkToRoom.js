@@ -6,8 +6,9 @@ class WalkToRoom extends aCTIVITY {
 }
 // A walk to a room requires a room and a nurse
 WalkToRoom.resourceRoles = {
-  "nurse": {range: Nurse},
-  "room": {countPoolName:"rooms"}
+  "nurse": {range: Nurse, card:1},
+  "room": {countPoolName:"rooms", card:1}
 }
 WalkToRoom.PERFORMER = "nurse";
+// Enqueue a new planned examination
 WalkToRoom.successorActivity = "Examination";

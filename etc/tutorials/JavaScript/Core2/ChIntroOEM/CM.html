@@ -63,8 +63,9 @@
       <em>medical department</em> and a <em>doctor</em>.</li>
 
       <li><em>Examinations</em> have one resource role, <em>doctor</em>, with
-      a resource cardinality constraint of exactly one, which means that exactly one
-      <em>doctor</em> is required for performing an <em>examination</em>.</li>
+      a resource cardinality constraint of exactly one, which means that
+      exactly one <em>doctor</em> is required for performing an
+      <em>examination</em>.</li>
 
       <li>The process owner of an <em>examination</em>, a <em>medical
       department</em>, has a resource pool for <em>doctors</em>. The
@@ -82,9 +83,9 @@
   that type.</p><p>The following conceptual process model (in the form of a
   DPMN Process Diagram) is based on the information model above. It refers to
   a medical department as the <em>process owner</em>, visualized in the form
-  of a Pool container rectangle, and to <i>doctor objects</i>, as well as to
-  the event type <i>patient arrivals</i> and to the activity type
-  <i>examinations</i>.</p><figure><div><img alt="???"
+  of a container rectangle (called "Pool" in BPMN, but not in DPMN), and to
+  <i>doctor objects</i>, as well as to the event type <i>patient arrivals</i>
+  and to the activity type <i>examinations</i>.</p><figure><div><img alt="???"
   src="../img/MedDep_CPM1.svg" width="600" /></div></figure><p>This conceptual
   process model describes two causal regularities in the form of the following
   two event rules, each stated with two bullet points: one for describing the
@@ -177,12 +178,13 @@
       <em>doctor</em>, and a <em>room</em>.</li>
 
       <li><em>Walks</em> have two resource roles, <em>nurse</em> and
-      <em>room</em>, both with a resource cardinality constraint of exactly one, which
-      means that exactly one <em>nurse</em> and one <em>room</em> are required
-      for performing a <em>walk</em>.</li>
+      <em>room</em>, both with a resource cardinality constraint of exactly
+      one, which means that exactly one <em>nurse</em> and one <em>room</em>
+      are required for performing a <em>walk</em>.</li>
 
       <li><em>Examinations</em> have two resource roles, <em>doctor</em> and
-      <em>room</em>, both with a resource cardinality constraint of exactly one.</li>
+      <em>room</em>, both with a resource cardinality constraint of exactly
+      one.</li>
 
       <li>The process owner of a <em>walk to a room</em> and a subsequent
       <em>examination</em>, a <em>medical department</em>, has three resource
@@ -216,29 +218,28 @@
 
       <li><p>When a walk of a patient and nurse to a room is completed:</p><ul>
           <li>if there is still a planned walk in the queue and a room is
-          available, then the room is allocab</li>
+          available, then the room is allocated and the nurse is re-allocated
+          to the walk of the next patient to that room;<br />if a doctor is
+          available, she is allocated to the examination of that patient, else
+          a new planned examination of that patient is queued up;</li>
 
-          <li>ted and the nurse is re-allocated to the walk of the next
-          patient to that room.<br />if a doctor is available, she is
-          allocated to the examination of that patient, else a new planned
-          examination of that patient is queued up;</li>
-
-          <li>if a doctor has been allocated, then the examination of that
-          patient starts<br />if the nurse has been re-allocated, she starts
+          <li>if a doctor has been allocated, then the examination of the
+          patient starts;<br />if the nurse has been re-allocated, she starts
           walking the next patient to the allocated room.</li>
         </ul></li>
 
       <li><p>When an examination of a patient is completed by a doctor in a
       particular room:</p><ul>
           <li>if there is still a planned examination (of another patient in
-          another room), then re-allocate the doctor to that planned
-          examination, else release the doctor;<br />if the waiting line is
-          not empty, re-allocate the room to the next patient, else release
-          the room;</li>
+          another room), the doctor is re-allocated to that planned
+          examination, else the doctor is released;<br />if the waiting line
+          is not empty, the room is re-allocated to the next patient, else it
+          is released;</li>
 
           <li>if the doctor has been re-allocated to a planned examination,
           that examination starts;<br />if the room has been re-allocated to
-          another patient, that patient starts walking to the room.</li>
+          another patient and a nurse is available, that nurse starts walking
+          the patient to the room.</li>
         </ul></li>
     </ol><p>Since, again, the resource management logic in this example
   complies with the standard resource management procedures built into OES
@@ -248,7 +249,7 @@
   src="../img/MedDep_CPM2a.svg" width="400" /></div></figure><p>We can exhibit
   the two performer roles <em>doctor</em> and <em>nurse</em> with the help of
   two corresponding <strong>Lanes</strong> shown within the process owner
-  <em>Pool</em>:</p><figure><div><img alt="???" src="../img/MedDep_CPM2b.svg"
+  rectangle:</p><figure><div><img alt="???" src="../img/MedDep_CPM2b.svg"
   width="300" /></div></figure><p>Notice that the use of Lanes (marking
   disjoint subrectangles) is a convenient visual syntax for displaying the
   performer roles when the different performers have a non-overlapping set of
