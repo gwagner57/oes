@@ -9,4 +9,10 @@ GoBackToLoadingSite.resourceRoles = {
   "truck": {range: Truck}
 }
 GoBackToLoadingSite.PERFORMER = "truck";
+
 GoBackToLoadingSite.successorActivity = "Load";
+/***** Variant 2: Prevent empty Load-Haul-Dump sequences
+GoBackToLoadingSite.successorActivity = function () {
+  return sim.model.v.nmrOfLoads > 0 ? "Load":"GoHome";
+}
+*/

@@ -15,14 +15,18 @@
  <div id="frontMatter">
   <h1><span>Load-Haul-Dump-1 Model Description</span> <a href="index.html">Back to simulation</a></h1> 
   <figure class="right"><img alt="" src="../../../img/Blue_dump_truck.svg" width="240" /></figure>
-  <section id="shortDescription">An earth hauling service company accepts requests for hauling large quantities of earth 
-   from a loading site to a dump site, using a wheel loader and a number of trucks.</section> 
+  <section id="shortDescription">A haul service company accepts requests for hauling large quantities of earth
+   from a loading site to a dump site, using dump trucks and wheel loaders.</section>
  </div>
- <details><summary>Conceptual Model</summary>
+ <details>
+  <summary>Conceptual Model</summary>
+  <p>A haul service company has resource pools for trucks and wheel loaders. While <em>go (back) to loading site</em>, <em>haul</em>,
+   <em>dump</em> and <em>go home</em> activities just require a <em>truck</em> (or a <em>wheel loader</em>) as a resource,
+   <em>load</em> activities require both a <em>truck</em> and a <em>wheel loader</em>.</p>
   <details><summary>Conceptual Information Model</summary>
    <p>The potentially relevant object types are:</p> 
     <ol>
-      <li>earth hauling service company,</li>
+      <li>haul service company,</li>
       <li>wheel loaders,</li>
       <li>trucks.</li>
     </ol> 
@@ -35,129 +39,67 @@
     <p>Potentially relevant types of events and activities are:</p> 
     <ol>
      <li>requests coming in from customers,</li>
-     <li>going to the loading site (an activity performed by trucks),</li>
-     <li>loading (an activity performed by the wheel loader using a truck as a resource),</li>
-     <li>hauling (an activity performed by trucks),</li>
-     <li>dumping (an activity performed by trucks),</li>
-     <li>going back to loading site (an activity performed by trucks),</li>
-     <li>going home when the job is done (an activity performed by trucks).</li>
+     <li>going to the loading site (an activity performed by trucks and by wheel loaders),</li>
+     <li>loading (performed by wheel loaders using trucks as resources),</li>
+     <li>hauling (performed by trucks),</li>
+     <li>dumping (performed by trucks),</li>
+     <li>going back to loading site (performed by trucks),</li>
+     <li>going home when the job is done (performed by trucks and by wheel loaders).</li>
     </ol>
-	<p>Both object types and event types, together with their participation associations, can be visually described in a UML class diagram, as shown below.</p> 
-	<figure> <img src="CIM.svg" width="600" /> <figcaption>A conceptual information model describing object types and event types.</figcaption></figure>
+	<p>Both object types and event types, together with their participation associations, can be visually described
+     in a conceptual information model in the form of a UML class diagram, as shown below.</p>
+	<figure> <img src="CIM.svg" width="500" /> <figcaption>A conceptual information model describing object, event
+     and activity types.</figcaption></figure>
+    <p>Notice that the association end stereotypes «rr» and «rp» denote <em>resource roles</em> and <em>resource pools</em>.
+     A haul service company has resource pools for trucks and wheel loaders. The activity types <em>haul</em>,
+     <em>dump</em> and <em>go back to loading site</em> have a resource role <em>truck</em> for assigning a truck
+     to any activity of one of those types. The activity types <em>go to loading site</em> and <em>go home</em> have
+     either a a resource role <em>truck</em> or a resource role <em>wheel loader</em>. The activity type <em>load</em> has both
+     resource role <em>truck</em> and a resource role <em>wheel loaders</em> for assigning at least one and at most two
+     wheel loaders to any <em>load</em> activity (as indicated by the multiplicity "1..2" at the «rr» association end
+     at the class <em>wheel loaders</em>).</p>
   </details> 
   <details><summary>Conceptual Process Model</summary>
-   <p>The involved types of events can be related with each other via resource-dependent activity start arrows and event scheduling arrows, as shown in the
-  following DPMN process diagram:</p> 
-  <figure> <img src="CPM.svg" width="600" /> <figcaption>A conceptual DPMN process diagram.</figcaption> </figure> 
-  </details> 
- </details> 
-  <section class="mbd collapsed"><h1><span>►</span>Simulation Design Model <sup
-  class="expl-req">?</sup></h1> <div class="expl" id="expl-DM"></div> <section><h1>Information Design Model <sup class="expl-req">?</sup></h1> <div
-  class="expl" id="expl-IDM"></div> <p>In the current simulation project, the purpose of the simulation model is to compute two statistics: the
-  <em>service utilization</em> and <em>the maximum queue length</em>. We may therefore abstract away from many of the object types from the conceptual
-  information model:</p> <ul>
-      <li><code>Customer</code>: we don't need any information about individual customers;</li>
-      <li><code>ServiceQueue</code>: we don't need to know who is next, it's sufficient to know <em>the length of the queue</em>;</li>
-      <li><code>ServiceDesk</code>: we don't need any information about the service desks, the information if <em>the service desk is busy</em> or not
-      is obtained by testing if the queue's length is greater than 0.</li>
-      <li><code>ServiceClerk</code>: we don't need any information about service clerks.</li>
-    </ul><p>Consequently, a computational design for the purpose of computing the two statistics <em>maximum queue length</em> and <em>service
-  utilization</em> is obtained by modeling only one object type: <b><code>ServiceDesk</code></b> with one (integer-valued) attribute
-  <code>queueLength</code>. The varying duration of a service is modeled with a function <code>serviceDuration()</code> representing a random variable
-  based on an empirical probability distribution function with a probability of 30% for the value 2, 50% for 3 and 20% for 4 (time units),
-  symbolically expressed as <i>Freq(</i> 2:0.3, 3:0.5, 4:0.2<i>)</i>.</p><p>Concerning the event types described in the conceptual information model,
-  the goal is to keep only those of them, which are really needed, in the design model. This question is closely related to the question, which types
-  of state changes and follow-up event creation have to be modeled for being able to answer the research question(s).</p><p>In the case of the given
-  two research questions, we need to keep track of changes of the queue length and we need to be able to add up the service durations. For keeping
-  track of queue length changes, we need to consider all types of events that may change the queue length: <em>customer arrivals</em> and <em>customer
-  departures</em>. For being able to add up the service durations, we need to catch <em>service start</em> and <em>service end
-  events</em>.</p><p>After identifying the relevant event types, we can look for further simplification opportunities by analyzing their possible
-  temporal coincidence. Clearly, we can consider customer departures to occur immediately after the corresponding service end events, without having
-  any effects that could not be merged. Therefore, we can drop service end events, and take care of their effects (the cumulative service time
-  computation) when handling the related customer departure event.</p><p>In addition, we can drop service start events, since they temporally coincide
-  with customer arrivals when the queue is empty, or otherwise (when the queue is not empty) they coincide with service end (and, hence, with customer
-  departure) events, because each service end event causes a new service start event as long as the queue is not empty.</p><p>As a result of the above
-  considerations, we get the following two types of events:</p><ul>
-      <li><b><code>CustomerArrival</code></b> with a reference property <code>serviceDesk</code> with range <code>ServiceDesk</code>. As an exogenous
-      event type, <code>CustomerArrival</code> has a <code>recurrence</code> function representing a random variable for computing the time in-between
-      two subsequent event occurrences. It is a design choice to use a uniform distribution function with lower bound 1 and upper bound 6,
-      symbolically expressed as <i>U(</i> 1, 6<i>)</i>.</li>
-      <li><b><code>CustomerDeparture</code></b> with a reference property <code>serviceDesk</code> with range <code>ServiceDesk</code>.</li>
-    </ul><p>Notice that, for simplicity, we consider the customer that is currently being served to be part of the queue. In this way, in the
-  simulation program, we can check if the service desk is busy by testing if the length of the queue is greater than 0.</p><p>An alternative approach
-  would be not considering the currently served customer as part of the queue, but rather use a Boolean attribute <code>isBusy</code> for being able
-  to keep track if the service desk is still busy with serving a customer.</p><p>The object types and event types described above, together with their
-  participation associations ("service desks participate in customer arrival events and in customer departure events"), are visually described in the
-  following UML class diagram:</p> <figure> <img src="media/img/IDM.svg" width="500" /> <figcaption>An information design model describing object
-  types and event types.</figcaption> </figure> <p>Notice how functions representing random variables, like <code>serviceDuration()</code> and
-  <code>recurrence()</code>, are marked with the keyword (or UML stereotype) «rv» standing for "random variable".</p> </section><section><h1>Process
-  Design Model <sup class="expl-req">?</sup></h1> <div class="expl" id="expl-PDM"></div> <table>
-      <caption>Event rule design table.</caption>
-      <thead>
-        <tr>
-          <td>ON (event type)</td>
-          <td>DO (event routine)</td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>CustomerArrival( sd) @ t</td>
-          <td style="font-size:smaller">INCREMENT sd.queueLength<br /> IF sd.queueLength = 1<br /> THEN SCHEDULE CustomerDeparture( sd) @ (t +
-          sd.serviceDuration())</td>
-        </tr>
-        <tr>
-          <td>CustomerDeparture( sd) @ t</td>
-          <td style="font-size:smaller">DECREMENT sd.queueLength<br /> IF sd.queueLength &gt; 0<br /> THEN SCHEDULE CustomerDeparture( sd) @ (t +
-          sd.serviceDuration())</td>
-        </tr>
-      </tbody>
-    </table> <table>
-      <caption>From conceptual event rule models to rule design models.</caption>
-      <thead>
-        <tr>
-          <th>Conceptual rule models</th>
-          <th>Rule design models</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><img src="media/img/Arrival_CRM.svg" width="250" /></td>
-          <td><img src="media/img/Arrival_RDM.svg" width="400" /></td>
-        </tr>
-        <tr>
-          <td><img src="media/img/ServiceStart_CRM.svg" width="250" /></td>
-          <td rowspan="2"><img src="media/img/Departure_RDM.svg" width="350" /></td>
-        </tr>
-        <tr>
-          <td><img src="media/img/ServiceEnd_CRM.svg" width="250" /></td>
-        </tr>
-      </tbody>
-    </table> <figure> <img src="media/img/PDM.svg" width="600" /> <figcaption>A process design model integrating both event rule design
-  models.</figcaption> </figure> </section> </section> <section class="mbd collapsed"><h1><span>►</span>See also</h1> <section><h1>Other OES Models
-  for the Same System/Problem/Domain</h1> <ol>
-      <!--
-     <li><a href="../1/index.html">ServiceDesk-1</a>: A service queue model
-       (one service and one queue) with two statistics: <i>maximum queue length</i> and <i>service utilization</i>.
-       The model abstracts away from individual customers and from the composition of the queue.</li>
-     -->
-      <li><a href="../2/index.html">ServiceDesk-2</a>: A service queue model (one service and one queue) with one statistic: the Mean Response Time,
-      which is the average length of time a customer spends in the system from arrival to departure. For recording their arrival time, individual
-      customers are represented explicitly in a <i>waitingCustomers</i> queue.</li>
-      <li><a href="../3/index.html">ServiceDesk-3</a>: A service queue model where the service is modeled as an activity with the service desk as its
-      resource, for which the utilization statistics is computed automatically.</li>
-      <li><a href="../12/index.html">ServiceDesk-4</a>: A service queue model where the service desk is modeled as a processing node of a processing
-      network that has an entry node and an exit node for arriving and departing customers. The model is based on the pre-defined <i>Processing
-      Network</i> concepts: WorkObject, Arrival, EntryNode, ProcessingNode and ExitNode, such that processing objects 'flow through the system'.</li>
-      <li><a href="../9/index.html">ConsecutiveServices</a>: An activity-based service queue model of two consecutive service providers with customer
-      waiting lines.</li>
-      <li><a href="../11/index.html">ProcessingNetwork-1</a>: A service queue model where service providers are modeled as processing nodes (with
-      input queues) within a processing network that has an entry node and an exit node for arriving and departing customers. The model is based on
-      the pre-defined <i>Processing Network</i> concepts: WorkObject, Arrival, EntryNode, ProcessingNode and ExitNode, such that processing objects
-      'flow through the system'.</li>
-    </ol> </section> <section><h1>Similar Models Implemented with Other Frameworks</h1> <ol>
-      <li><a href="http://ccl.northwestern.edu/netlogo/models/community/Queueing_Simulation_Discrete_Event">Queueing_Simulation_Discrete_Event</a>:
-      This NetLogo simulation uses NetLogo's tick-advance primitive to advance simulation time by non-integral amounts. However, NetLogo's standard
-      ticks display is unable to display non-integral values, so a custom ticks display has to be programmed. Copyright 2010, Nick Bennett.</li>
-    </ol> </section> </section> <p><a href="index.html">Back to simulation</a></p>
+   <p>The involved types of events and activities can be related with each other via <em>resource-dependent activity start arrows</em> and
+    <em>event scheduling arrows</em>, as shown in the following DPMN process diagram:</p>
+   <figure> <img src="CPMa.svg" width="600" /> <figcaption>A DPMN diagram showing a conceptual process model.</figcaption> </figure>
+   <p>The model shows that when a load-haul-dump request comes in, the haul service company deploys multiple trucks and wheel loaders to the
+    loading site (having each of them performing a <em>go to loading site</em> activity). Each of these activities leads to enqueing
+    a new <em>load</em> activity, as indicated by the <em>resource-dependent activity start arrow</em> from the
+    <em>go to loading site</em> activity shape to the <em>load</em> activity shape. Such an enqueued (planned) activity
+    is going to be dequeued and started as soon as the required resources are available. This means that as soon as a
+    wheel loader is available the next <em>load</em> activity is going to be started. When a <em>load</em> activity is completed,
+    a <em>haul</em> activity and then a <em>dump</em> activity are going to start immediately, as indicated by the
+    <em>event scheduling arrows</em> between them.</p>
+   <p>A more complete model prevents trucks to go back to the loading site and perform a load f even when the job
+    has been completed during the go back activity (resulting in haul and dump activities with an empty truck). For
+    avoiding this uneconomic behavior, a second decision if the job has been done needs to be taken after the go back
+    activity. In addition, the model has to describe that wheel loaders also go home when their job has been done.
+    This is shown in the following refined model:</p>
+    <figure> <img src="CPMb.svg" width="600" /> <figcaption>A refined conceptual process model.</figcaption> </figure>
+  </details>
+ </details>
+ <details><summary>Simulation Design Model</summary>
+  <p>In our simulation design, we consider only one particular haul service company, which does not have to be modeled explicitly.
+   Also, we abstract away from the fact that also wheel loaders have to go to, and return from, the loading site by assuming
+   that they are already at the site when the dump trucks arrive.</p>
+  <details><summary>Information Design Model</summary>
+   <p>In the information design model, we need to define a <i>status</i> attribute for all resource object types, such
+    as <i>Truck</i> and <i>WheelLoader</i>, and a duration function, typically representing a random variable,
+    for each activity type:</p>
+   <figure> <img src="IDM.svg" width="600" />
+    <figcaption>An information design model defining object, event and activity types.</figcaption>
+   </figure>
+   <p>Notice how functions representing random variables, like <code>duration()</code>, are marked with
+    the keyword (or UML stereotype) «rv» standing for "random variable".</p>
+  </details>
+  <details><summary>Process Design Model</summary>
+   <p>In the process design model, we need to specify the state changes caused by events (including activity start and end events)
+    and the constructor arguments for scheduling follow-up events, using model variables (possibly referencing resource pools),
+    as shown in the following DPMN diagram:</p>
+   <figure> <img src="PDM.svg" width="700" /> <figcaption>A computationally complete process design for the Load-Haul-Dump-1 model.</figcaption> </figure>
+  </details>
+ </details>
+ <p><a href="index.html">Back to simulation</a></p>
 </body>
 </html>

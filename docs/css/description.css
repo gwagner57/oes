@@ -26,36 +26,41 @@ div#frontMatter > h1 {
   margin-top: 0;
   margin-bottom: 0.33em;
 }
-div#frontMatter > h1 > div {  /* hyperlink */
-  display: inline-block;
-  margin-left: 2em;
-  font-size: 45%;
-  width: 6em;
-}
 div#frontMatter > h1 > a {  /* hyperlink */
   display: inline-block;
   margin-left: 2em;
   font-size: 45%;
   width: 6em;
 }
+div#frontMatter {
+  margin-bottom: 1.33em;
+}
 #model-name {
   margin-top: 0;
   margin-bottom: 0.33em;
 }
-div#frontMatter>section>h1, body>section>h1 {
+section > h2 {
   font-size: 1.2em;
-  margin-bottom: 0.33em;
-}
-body>section>section>h1 {
-  font-size: 1.1em;
-}
-body > section > h1 {
   background-color: azure;
   margin-bottom: 0.2em;
 }
-body > section > h1 > span {
+section > h2 > span {
   margin-right: 0.5em;
 }
+details {
+  margin-bottom: 1.33em;
+}
+details > summary {
+  font-weight: bold;
+  background-color: azure;
+}
+body > details > summary {
+  font-size: 1.5em;
+}
+body > details > details > summary {
+  font-size: 1.2em;
+}
+
 body section p {
   margin-top: 0em;
   margin-bottom: 0.33em;

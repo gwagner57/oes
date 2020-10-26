@@ -5,14 +5,13 @@ class Request extends eVENT {
   }
   onEvent() {
     const followupEvents=[],
-          nmrOfAvailTrucks = sim.resourcePools["trucks"].availResources.length,
-          allocatedTrucks = sim.resourcePools["trucks"].allocate( nmrOfAvailTrucks),
-          truckCapacity = 15;  // m3
-    sim.model.v.nmrOfLoads = this.quantity / truckCapacity;
+          allocatedTrucks = sim.resourcePools["trucks"].allocateAll();
+    sim.model.v.nmrOfLoads = Math.ceil( this.quantity / Truck.capacity);
     for (const t of allocatedTrucks) {
       const goActy = new GoToLoadingSite();
+      // assign required resource
       goActy.truck = t;
-      // start next activity with the allocated resources
+      // start GoToLoadingSite activity
       followupEvents.push( new aCTIVITYsTART({plannedActivity: goActy}));
     }
     return followupEvents;
