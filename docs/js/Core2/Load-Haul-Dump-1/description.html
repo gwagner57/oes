@@ -63,8 +63,9 @@
    <p>The involved types of events and activities can be related with each other via <em>resource-dependent activity start arrows</em> and
     <em>event scheduling arrows</em>, as shown in the following DPMN process diagram:</p>
    <figure> <img src="CPMa.svg" width="600" /> <figcaption>A DPMN diagram showing a conceptual process model.</figcaption> </figure>
-   <p>The model shows that when a load-haul-dump request comes in, the haul service company deploys multiple trucks and wheel loaders to the
-    loading site (having each of them performing a <em>go to loading site</em> activity). Each of these activities leads to enqueing
+   <p>The model shows that when a load-haul-dump request comes in, as indicated by the double arrow,
+    the haul service company deploys multiple trucks and wheel loaders to the
+    loading site (each of them performs a <em>go to loading site</em> activity). Each of these activities leads to enqueing
     a new <em>load</em> activity, as indicated by the <em>resource-dependent activity start arrow</em> from the
     <em>go to loading site</em> activity shape to the <em>load</em> activity shape. Such an enqueued (planned) activity
     is going to be dequeued and started as soon as the required resources are available. This means that as soon as a
