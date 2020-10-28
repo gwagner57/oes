@@ -39,10 +39,13 @@
  *  is a set of the type names of those activities, in which the object is
  *  currently participating).
  *
- *  TODO: introduce
- *   - alternative resource pools
- *   - individual resource pools based on pre-defined object type rESOURCE( status / isAvailable, allocate, release)
- *     specializing oBJECT, such that a resource type is defined by specializing rESOURCE
+ *  TODO:
+ *   - assign default count pool (by name) to resource roles without range
+ *   - introduce alternative resource pools
+ *   - introduce task priorities
+ *   - support the two allocation policies: (1) allocate all resources at once, and (2) allocate resources step by step
+ *   - ? introduce object type rESOURCE (with status attribute) specializing oBJECT,
+ *     such that a resource type is defined by specializing rESOURCE
  *   - an optional processOwner (= institutional agent); if there is only one (= no collaboration), it may be left implicit
  */
 // An abstract class

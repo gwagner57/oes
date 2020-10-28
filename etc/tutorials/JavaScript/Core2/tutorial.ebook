@@ -122,6 +122,28 @@ ul.links li:hover {
     <section href="ChIntroOES/SimExperiments.html" samepage="true"/>
   </chapter>
 
+  <chapter>
+    <head>
+      <title>Issues in Activity-Based Modeling</title>
+    </head>
+
+    <section href="ChActivityBasedModeling/Resources-out-of-order.html"/>
+
+    <section href="ChActivityBasedModeling/ResourcePools-assigned-to-multiple-activities.html"/>
+
+    <section href="ChActivityBasedModeling/Alternative-resource-pools.html"/>
+
+    <section href="ChActivityBasedModeling/Task-priorities.html"/>
+  </chapter>
+
+  <appendix>
+    <head>
+      <title>Further Example Models</title>
+    </head>
+
+    <section href="ExampleModels/Load-Haul-Dump.html"/>
+  </appendix>
+
   <appendix href="architecture.html"/>
 
   <backmatter>

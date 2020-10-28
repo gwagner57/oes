@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>The Load-Haul-Dump Business Process</title>
+  </head>
+
+  <body><p>A haul service company accepts requests for hauling large
+  quantities of earth from a loading site to a dump site, using dump trucks
+  and wheel loaders.</p><p>You can <a
+  href="https://gwagner57.github.io/oes/js/Core2/Load-Haul-Dump-1/">run this
+  model</a> from the OES GitHub website.</p><section><h4>Conceptual
+  Model</h4><p>A haul service company has resource pools for trucks and wheel
+  loaders. While <em>go (back) to loading site</em>, <em>haul</em>,
+  <em>dump</em> and <em>go home</em> activities just require a <em>truck</em>
+  (or a <em>wheel loader</em>) as a resource, <em>load</em> activities require
+  both a <em>truck</em> and a <em>wheel loader</em>.</p><h5>Conceptual
+  Information Model</h5><p>The potentially relevant object types are:</p><ol>
+      <li>haul service company,</li>
+
+      <li>wheel loaders,</li>
+
+      <li>trucks.</li>
+    </ol><p>Potentially relevant types of events and activities are:</p><ol>
+      <li>requests coming in from customers,</li>
+
+      <li>going to the loading site (an activity performed by trucks and by
+      wheel loaders),</li>
+
+      <li>loading (performed by wheel loaders using trucks as resources),</li>
+
+      <li>hauling (performed by trucks),</li>
+
+      <li>dumping (performed by trucks),</li>
+
+      <li>going back to loading site (performed by trucks),</li>
+
+      <li>going home when the job is done (performed by trucks and by wheel
+      loaders).</li>
+    </ol><p>Both object types and event types, together with their
+  participation associations, can be visually described in a conceptual
+  information model in the form of a UML class diagram, as shown
+  below.</p><figure><figcaption>A conceptual information model describing
+  object, event and activity types.</figcaption><img alt="???"
+  src="../img/CIM7774527373595755602_2zfrdoij.svg"
+  width="500" /></figure><p>Notice that the association end stereotypes «rr»
+  and «rp» denote <em>resource roles</em> and <em>resource pools</em>. A haul
+  service company has resource pools for trucks and wheel loaders. The
+  activity types <em>haul</em>, <em>dump</em> and <em>go back to loading
+  site</em> have a resource role <em>truck</em> for assigning a truck to any
+  activity of one of those types. The activity types <em>go to loading
+  site</em> and <em>go home</em> have either a a resource role <em>truck</em>
+  or a resource role <em>wheel loader</em>. The activity type <em>load</em>
+  has both resource role <em>truck</em> and a resource role <em>wheel
+  loaders</em> for assigning at least one and at most two wheel loaders to any
+  <em>load</em> activity (as indicated by the multiplicity "1..2" at the «rr»
+  association end at the class <em>wheel loaders</em>).</p><h5>Conceptual
+  Process Model</h5><p>The involved types of events and activities can be
+  related with each other via <em>resource-dependent activity start
+  arrows</em> and <em>event scheduling arrows</em>, as shown in the following
+  DPMN process diagram:</p><figure><figcaption>A DPMN diagram showing a
+  conceptual process model.</figcaption><img alt="???"
+  src="../img/CPMa8814437953840628216_2zfrdoij.svg"
+  width="600" /></figure><p>The model shows that when a load-haul-dump request
+  comes in, as indicated by the double arrow, the haul service company deploys
+  multiple trucks and wheel loaders to the loading site (each of them performs
+  a <em>go to loading site</em> activity). Each of these activities leads to
+  enqueing a new <em>load</em> activity, as indicated by the
+  <em>resource-dependent activity start arrow</em> from the <em>go to loading
+  site</em> activity shape to the <em>load</em> activity shape. Such an
+  enqueued (planned) activity is going to be dequeued and started as soon as
+  the required resources are available. This means that as soon as a wheel
+  loader is available the next <em>load</em> activity is going to be started.
+  When a <em>load</em> activity is completed, a <em>haul</em> activity and
+  then a <em>dump</em> activity are going to start immediately, as indicated
+  by the <em>event scheduling arrows</em> between them.</p><p>A more complete
+  model prevents trucks to go back to the loading site and perform a load
+  activity even when the job has been completed during the go back activity
+  (resulting in haul and dump activities with an empty truck). For avoiding
+  this uneconomic behavior, a second decision if the job has been done needs
+  to be taken after the go back activity. In addition, the model has to
+  describe that wheel loaders also go home when their job has been done. This
+  is shown in the following refined model:</p><figure><figcaption>A refined
+  conceptual process model.</figcaption><img alt="???"
+  src="../img/CPMb12638172786339576246_2zfrdoij.svg"
+  width="600" /></figure></section><section><h4>Simulation Design
+  Model</h4><p>In our simulation design, we consider only one particular haul
+  service company, which does not have to be modeled explicitly. Also, we
+  abstract away from the fact that also wheel loaders have to go to, and
+  return from, the loading site by assuming that they are already at the site
+  when the dump trucks arrive.</p><h5>Information Design Model</h5><p>In the
+  information design model, we need to define a <i>status</i> attribute for
+  all resource object types, such as <i>Truck</i> and <i>WheelLoader</i>, and
+  a duration function, typically representing a random variable, for each
+  activity type:</p><figure><figcaption>An information design model defining
+  object, event and activity types.</figcaption><img alt="???"
+  src="../img/IDM16039384957458866837_2zfqip1j.svg"
+  width="600" /></figure><p>Notice how functions representing random
+  variables, like <code>duration()</code>, are marked with the keyword (or UML
+  stereotype) «rv» standing for "random variable".</p><h5>Process Design
+  Model</h5><p>In the process design model, we need to specify the state
+  changes caused by events (including activity start and end events) and the
+  constructor arguments for scheduling follow-up events, using model variables
+  (possibly referencing resource pools), as shown in the following DPMN
+  diagram:</p><figure><figcaption>A computationally complete process design
+  for the Load-Haul-Dump business process.</figcaption><img alt="???"
+  src="../img/PDM3006707569242369135_2zfqip1j.svg"
+  width="700" /></figure></section></body>
+</html>

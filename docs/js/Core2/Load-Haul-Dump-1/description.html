@@ -48,7 +48,7 @@
     </ol>
 	<p>Both object types and event types, together with their participation associations, can be visually described
      in a conceptual information model in the form of a UML class diagram, as shown below.</p>
-	<figure> <img src="CIM.svg" width="500" /> <figcaption>A conceptual information model describing object, event
+	<figure> <img src="img/CIM.svg" width="500" /> <figcaption>A conceptual information model describing object, event
      and activity types.</figcaption></figure>
     <p>Notice that the association end stereotypes «rr» and «rp» denote <em>resource roles</em> and <em>resource pools</em>.
      A haul service company has resource pools for trucks and wheel loaders. The activity types <em>haul</em>,
@@ -62,7 +62,7 @@
   <details><summary>Conceptual Process Model</summary>
    <p>The involved types of events and activities can be related with each other via <em>resource-dependent activity start arrows</em> and
     <em>event scheduling arrows</em>, as shown in the following DPMN process diagram:</p>
-   <figure> <img src="CPMa.svg" width="600" /> <figcaption>A DPMN diagram showing a conceptual process model.</figcaption> </figure>
+   <figure> <img src="img/CPMa.svg" width="600" /> <figcaption>A DPMN diagram showing a conceptual process model.</figcaption> </figure>
    <p>The model shows that when a load-haul-dump request comes in, as indicated by the double arrow,
     the haul service company deploys multiple trucks and wheel loaders to the
     loading site (each of them performs a <em>go to loading site</em> activity). Each of these activities leads to enqueing
@@ -72,12 +72,12 @@
     wheel loader is available the next <em>load</em> activity is going to be started. When a <em>load</em> activity is completed,
     a <em>haul</em> activity and then a <em>dump</em> activity are going to start immediately, as indicated by the
     <em>event scheduling arrows</em> between them.</p>
-   <p>A more complete model prevents trucks to go back to the loading site and perform a load f even when the job
+   <p>A more complete model prevents trucks to go back to the loading site and perform a load activity even when the job
     has been completed during the go back activity (resulting in haul and dump activities with an empty truck). For
     avoiding this uneconomic behavior, a second decision if the job has been done needs to be taken after the go back
     activity. In addition, the model has to describe that wheel loaders also go home when their job has been done.
     This is shown in the following refined model:</p>
-    <figure> <img src="CPMb.svg" width="600" /> <figcaption>A refined conceptual process model.</figcaption> </figure>
+    <figure> <img src="img/CPMb.svg" width="600" /> <figcaption>A refined conceptual process model.</figcaption> </figure>
   </details>
  </details>
  <details><summary>Simulation Design Model</summary>
@@ -88,7 +88,7 @@
    <p>In the information design model, we need to define a <i>status</i> attribute for all resource object types, such
     as <i>Truck</i> and <i>WheelLoader</i>, and a duration function, typically representing a random variable,
     for each activity type:</p>
-   <figure> <img src="IDM.svg" width="600" />
+   <figure> <img src="img/IDM.svg" width="600" />
     <figcaption>An information design model defining object, event and activity types.</figcaption>
    </figure>
    <p>Notice how functions representing random variables, like <code>duration()</code>, are marked with
@@ -98,7 +98,7 @@
    <p>In the process design model, we need to specify the state changes caused by events (including activity start and end events)
     and the constructor arguments for scheduling follow-up events, using model variables (possibly referencing resource pools),
     as shown in the following DPMN diagram:</p>
-   <figure> <img src="PDM.svg" width="700" /> <figcaption>A computationally complete process design for the Load-Haul-Dump-1 model.</figcaption> </figure>
+   <figure> <img src="img/PDM.svg" width="700" /> <figcaption>A computationally complete process design for the Load-Haul-Dump-1 model.</figcaption> </figure>
   </details>
  </details>
  <p><a href="index.html">Back to simulation</a></p>

@@ -665,11 +665,11 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>1</td>
 
-          <td>Doctor-1{ st: 1},Doctor-2{ st: 1},Doctor-3{ st: 1},Nurse-11{ st:
-          2},Nurse-12{ st: 1} | av. nurses: n2, av. rooms: 2, av. doctors:
+          <td>Doctor-1{ st: 1}, Doctor-2{ st: 1}, Doctor-3{ st: 1}, Nurse-11{ st:
+          2}, Nurse-12{ st: 1} | av. nurses: n2, av. rooms: 2, av. doctors:
           d1,d2,d3</td>
 
-          <td>WalkToRoomStart{ n1, }@1.01, NewCase@1.85</td>
+          <td>WalkToRoomStart{n1}@1.01, NewCase@1.85</td>
         </tr>
 
         <tr>
@@ -677,11 +677,11 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>1.01</td>
 
-          <td>Doctor-1{ st: 1},Doctor-2{ st: 1},Doctor-3{ st: 1},Nurse-11{ st:
-          2, act: {WalkToRoom}},Nurse-12{ st: 1} | av. nurses: n2, av. rooms:
+          <td>Doctor-1{ st: 1}, Doctor-2{ st: 1}, Doctor-3{ st: 1}, Nurse-11{ st:
+          2, act: {WalkToRoom}}, Nurse-12{ st: 1} | av. nurses: n2, av. rooms:
           2, av. doctors: d1,d2,d3</td>
 
-          <td>NewCase@1.85, WalkToRoomEnd{ n1, }@2.28</td>
+          <td>NewCase@1.85, WalkToRoomEnd{n1}@2.28</td>
         </tr>
 
         <tr>
@@ -689,11 +689,11 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>1.85</td>
 
-          <td>Doctor-1{ st: 1},Doctor-2{ st: 1},Doctor-3{ st: 1},Nurse-11{ st:
-          2, act: {WalkToRoom}},Nurse-12{ st: 2} | av. nurses: , av. rooms: 1,
+          <td>Doctor-1{ st: 1}, Doctor-2{ st: 1}, Doctor-3{ st: 1}, Nurse-11{ st:
+          2, act: {WalkToRoom}}, Nurse-12{ st: 2} | av. nurses: , av. rooms: 1,
           av. doctors: d1,d2,d3</td>
 
-          <td>WalkToRoomStart{ n2, }@1.86, WalkToRoomEnd{ n1, }@2.28,
+          <td>WalkToRoomStart{n2}@1.86, WalkToRoomEnd{n1}@2.28,
           NewCase@6.27</td>
         </tr>
 
@@ -702,11 +702,11 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>1.86</td>
 
-          <td>Doctor-1{ st: 1},Doctor-2{ st: 1},Doctor-3{ st: 1},Nurse-11{ st:
-          2, act: {WalkToRoom}},Nurse-12{ st: 2, act: {WalkToRoom}} | av.
+          <td>Doctor-1{ st: 1}, Doctor-2{ st: 1}, Doctor-3{ st: 1}, Nurse-11{ st:
+          2, act: {WalkToRoom}}, Nurse-12{ st: 2, act: {WalkToRoom}} | av.
           nurses: , av. rooms: 1, av. doctors: d1,d2,d3</td>
 
-          <td>WalkToRoomEnd{ n1, }@2.28, WalkToRoomEnd{ n2, }@3.99,
+          <td>WalkToRoomEnd{n1}@2.28, WalkToRoomEnd{n2}@3.99,
           NewCase@6.27</td>
         </tr>
 
@@ -715,11 +715,11 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>2.28</td>
 
-          <td>Doctor-1{ st: 2},Doctor-2{ st: 1},Doctor-3{ st: 1},Nurse-11{ st:
-          1, act: {}},Nurse-12{ st: 2, act: {WalkToRoom}} | av. nurses: n1,
+          <td>Doctor-1{ st: 2}, Doctor-2{ st: 1}, Doctor-3{ st: 1}, Nurse-11{ st:
+          1, act: {}}, Nurse-12{ st: 2, act: {WalkToRoom}} | av. nurses: n1,
           av. rooms: 1, av. doctors: d2,d3</td>
 
-          <td>ExaminationStart{ d1, }@2.29, WalkToRoomEnd{ n2, }@3.99,
+          <td>ExaminationStart{ d1}@2.29, WalkToRoomEnd{n2}@3.99,
           NewCase@6.27</td>
         </tr>
 
@@ -728,11 +728,11 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>2.29</td>
 
-          <td>Doctor-1{ st: 2, act: {Examination}},Doctor-2{ st: 1},Doctor-3{
-          st: 1},Nurse-11{ st: 1, act: {}},Nurse-12{ st: 2, act: {WalkToRoom}}
+          <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 1}, Doctor-3{
+          st: 1}, Nurse-11{ st: 1, act: {}}, Nurse-12{ st: 2, act: {WalkToRoom}}
           | av. nurses: n1, av. rooms: 1, av. doctors: d2,d3</td>
 
-          <td>WalkToRoomEnd{ n2, }@3.99, NewCase@6.27, ExaminationEnd{ d1,
+          <td>WalkToRoomEnd{n2}@3.99, NewCase@6.27, ExaminationEnd{ d1,
           }@10.83</td>
         </tr>
 
@@ -741,11 +741,11 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>3.99</td>
 
-          <td>Doctor-1{ st: 2, act: {Examination}},Doctor-2{ st: 2},Doctor-3{
-          st: 1},Nurse-11{ st: 1, act: {}},Nurse-12{ st: 1, act: {}} | av.
+          <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2}, Doctor-3{
+          st: 1}, Nurse-11{ st: 1, act: {}}, Nurse-12{ st: 1, act: {}} | av.
           nurses: n1,n2, av. rooms: 1, av. doctors: d3</td>
 
-          <td>ExaminationStart{ d2, }@4, NewCase@6.27, ExaminationEnd{ d1,
+          <td>ExaminationStart{ d2}@4, NewCase@6.27, ExaminationEnd{ d1,
           }@10.83</td>
         </tr>
 
@@ -754,12 +754,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>4</td>
 
-          <td>Doctor-1{ st: 2, act: {Examination}},Doctor-2{ st: 2, act:
-          {Examination}},Doctor-3{ st: 1},Nurse-11{ st: 1, act: {}},Nurse-12{
+          <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2, act:
+          {Examination}}, Doctor-3{ st: 1}, Nurse-11{ st: 1, act: {}}, Nurse-12{
           st: 1, act: {}} | av. nurses: n1,n2, av. rooms: 1, av. doctors:
           d3</td>
 
-          <td>NewCase@6.27, ExaminationEnd{ d1, }@10.83, ExaminationEnd{ d2,
+          <td>NewCase@6.27, ExaminationEnd{ d1}@10.83, ExaminationEnd{ d2,
           }@13.28</td>
         </tr>
 
@@ -768,12 +768,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>6.27</td>
 
-          <td>Doctor-1{ st: 2, act: {Examination}},Doctor-2{ st: 2, act:
-          {Examination}},Doctor-3{ st: 1},Nurse-11{ st: 2, act: {}},Nurse-12{
+          <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2, act:
+          {Examination}}, Doctor-3{ st: 1}, Nurse-11{ st: 2, act: {}}, Nurse-12{
           st: 1, act: {}} | av. nurses: n2, av. rooms: 0, av. doctors: d3</td>
 
-          <td>WalkToRoomStart{ n1, }@6.28, NewCase@7.19, ExaminationEnd{ d1,
-          }@10.83, ExaminationEnd{ d2, }@13.28</td>
+          <td>WalkToRoomStart{n1}@6.28, NewCase@7.19, ExaminationEnd{ d1,
+          }@10.83, ExaminationEnd{ d2}@13.28</td>
         </tr>
 
         <tr>
@@ -781,13 +781,13 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>6.28</td>
 
-          <td>Doctor-1{ st: 2, act: {Examination}},Doctor-2{ st: 2, act:
-          {Examination}},Doctor-3{ st: 1},Nurse-11{ st: 2, act:
-          {WalkToRoom}},Nurse-12{ st: 1, act: {}} | av. nurses: n2, av. rooms:
+          <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2, act:
+          {Examination}}, Doctor-3{ st: 1}, Nurse-11{ st: 2, act:
+          {WalkToRoom}}, Nurse-12{ st: 1, act: {}} | av. nurses: n2, av. rooms:
           0, av. doctors: d3</td>
 
-          <td>NewCase@7.19, WalkToRoomEnd{ n1, }@8.77, ExaminationEnd{ d1,
-          }@10.83, ExaminationEnd{ d2, }@13.28</td>
+          <td>NewCase@7.19, WalkToRoomEnd{n1}@8.77, ExaminationEnd{ d1,
+          }@10.83, ExaminationEnd{ d2}@13.28</td>
         </tr>
 
         <tr>
@@ -795,13 +795,13 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>7.19</td>
 
-          <td>Doctor-1{ st: 2, act: {Examination}},Doctor-2{ st: 2, act:
-          {Examination}},Doctor-3{ st: 1},Nurse-11{ st: 2, act:
-          {WalkToRoom}},Nurse-12{ st: 1, act: {}} | av. nurses: n2, av. rooms:
+          <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2, act:
+          {Examination}}, Doctor-3{ st: 1}, Nurse-11{ st: 2, act:
+          {WalkToRoom}}, Nurse-12{ st: 1, act: {}} | av. nurses: n2, av. rooms:
           0, av. doctors: d3</td>
 
-          <td>NewCase@8.5, WalkToRoomEnd{ n1, }@8.77, ExaminationEnd{ d1,
-          }@10.83, ExaminationEnd{ d2, }@13.28</td>
+          <td>NewCase@8.5, WalkToRoomEnd{n1}@8.77, ExaminationEnd{ d1,
+          }@10.83, ExaminationEnd{ d2}@13.28</td>
         </tr>
 
         <tr>
@@ -809,13 +809,13 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>8.5</td>
 
-          <td>Doctor-1{ st: 2, act: {Examination}},Doctor-2{ st: 2, act:
-          {Examination}},Doctor-3{ st: 1},Nurse-11{ st: 2, act:
-          {WalkToRoom}},Nurse-12{ st: 1, act: {}} | av. nurses: n2, av. rooms:
+          <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2, act:
+          {Examination}}, Doctor-3{ st: 1}, Nurse-11{ st: 2, act:
+          {WalkToRoom}}, Nurse-12{ st: 1, act: {}} | av. nurses: n2, av. rooms:
           0, av. doctors: d3</td>
 
-          <td>WalkToRoomEnd{ n1, }@8.77, ExaminationEnd{ d1, }@10.83,
-          NewCase@13.06, ExaminationEnd{ d2, }@13.28</td>
+          <td>WalkToRoomEnd{n1}@8.77, ExaminationEnd{ d1}@10.83,
+          NewCase@13.06, ExaminationEnd{ d2}@13.28</td>
         </tr>
 
         <tr>
@@ -823,12 +823,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>8.77</td>
 
-          <td>Doctor-1{ st: 2, act: {Examination}},Doctor-2{ st: 2, act:
-          {Examination}},Doctor-3{ st: 1},Nurse-11{ st: 2, act: {}},Nurse-12{
+          <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2, act:
+          {Examination}}, Doctor-3{ st: 1}, Nurse-11{ st: 2, act: {}}, Nurse-12{
           st: 1, act: {}} | av. nurses: n2, av. rooms: 0, av. doctors: d3</td>
 
-          <td>WalkToRoomStart{ n1, }@8.78, ExaminationEnd{ d1, }@10.83,
-          NewCase@13.06, ExaminationEnd{ d2, }@13.28</td>
+          <td>WalkToRoomStart{n1}@8.78, ExaminationEnd{ d1}@10.83,
+          NewCase@13.06, ExaminationEnd{ d2}@13.28</td>
         </tr>
 
         <tr>
@@ -836,13 +836,13 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>8.78</td>
 
-          <td>Doctor-1{ st: 2, act: {Examination}},Doctor-2{ st: 2, act:
-          {Examination}},Doctor-3{ st: 1},Nurse-11{ st: 2, act:
-          {WalkToRoom}},Nurse-12{ st: 1, act: {}} | av. nurses: n2, av. rooms:
+          <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2, act:
+          {Examination}}, Doctor-3{ st: 1}, Nurse-11{ st: 2, act:
+          {WalkToRoom}}, Nurse-12{ st: 1, act: {}} | av. nurses: n2, av. rooms:
           0, av. doctors: d3</td>
 
-          <td>WalkToRoomEnd{ n1, }@10.66, ExaminationEnd{ d1, }@10.83,
-          NewCase@13.06, ExaminationEnd{ d2, }@13.28</td>
+          <td>WalkToRoomEnd{n1}@10.66, ExaminationEnd{ d1}@10.83,
+          NewCase@13.06, ExaminationEnd{ d2}@13.28</td>
         </tr>
 
         <tr>
@@ -850,12 +850,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>10.66</td>
 
-          <td>Doctor-1{ st: 2, act: {Examination}},Doctor-2{ st: 2, act:
-          {Examination}},Doctor-3{ st: 1},Nurse-11{ st: 2, act: {}},Nurse-12{
+          <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2, act:
+          {Examination}}, Doctor-3{ st: 1}, Nurse-11{ st: 2, act: {}}, Nurse-12{
           st: 1, act: {}} | av. nurses: n2, av. rooms: 0, av. doctors: d3</td>
 
-          <td>WalkToRoomStart{ n1, }@10.67, ExaminationEnd{ d1, }@10.83,
-          NewCase@13.06, ExaminationEnd{ d2, }@13.28</td>
+          <td>WalkToRoomStart{n1}@10.67, ExaminationEnd{ d1}@10.83,
+          NewCase@13.06, ExaminationEnd{ d2}@13.28</td>
         </tr>
 
         <tr>
@@ -863,13 +863,13 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>10.67</td>
 
-          <td>Doctor-1{ st: 2, act: {Examination}},Doctor-2{ st: 2, act:
-          {Examination}},Doctor-3{ st: 1},Nurse-11{ st: 2, act:
-          {WalkToRoom}},Nurse-12{ st: 1, act: {}} | av. nurses: n2, av. rooms:
+          <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2, act:
+          {Examination}}, Doctor-3{ st: 1}, Nurse-11{ st: 2, act:
+          {WalkToRoom}}, Nurse-12{ st: 1, act: {}} | av. nurses: n2, av. rooms:
           0, av. doctors: d3</td>
 
-          <td>ExaminationEnd{ d1, }@10.83, WalkToRoomEnd{ n1, }@12.65,
-          NewCase@13.06, ExaminationEnd{ d2, }@13.28</td>
+          <td>ExaminationEnd{ d1}@10.83, WalkToRoomEnd{n1}@12.65,
+          NewCase@13.06, ExaminationEnd{ d2}@13.28</td>
         </tr>
 
         <tr>
@@ -877,13 +877,13 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>10.83</td>
 
-          <td>Doctor-1{ st: 2, act: {}},Doctor-2{ st: 2, act:
-          {Examination}},Doctor-3{ st: 1},Nurse-11{ st: 2, act:
-          {WalkToRoom}},Nurse-12{ st: 1, act: {}} | av. nurses: n2, av. rooms:
+          <td>Doctor-1{ st: 2, act: {}}, Doctor-2{ st: 2, act:
+          {Examination}}, Doctor-3{ st: 1}, Nurse-11{ st: 2, act:
+          {WalkToRoom}}, Nurse-12{ st: 1, act: {}} | av. nurses: n2, av. rooms:
           0, av. doctors: d3</td>
 
-          <td>ExaminationStart{ d1, }@10.84, WalkToRoomEnd{ n1, }@12.65,
-          NewCase@13.06, ExaminationEnd{ d2, }@13.28</td>
+          <td>ExaminationStart{ d1}@10.84, WalkToRoomEnd{n1}@12.65,
+          NewCase@13.06, ExaminationEnd{ d2}@13.28</td>
         </tr>
 
         <tr>
@@ -891,13 +891,13 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>10.84</td>
 
-          <td>Doctor-1{ st: 2, act: {Examination}},Doctor-2{ st: 2, act:
-          {Examination}},Doctor-3{ st: 1},Nurse-11{ st: 2, act:
-          {WalkToRoom}},Nurse-12{ st: 1, act: {}} | av. nurses: n2, av. rooms:
+          <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2, act:
+          {Examination}}, Doctor-3{ st: 1}, Nurse-11{ st: 2, act:
+          {WalkToRoom}}, Nurse-12{ st: 1, act: {}} | av. nurses: n2, av. rooms:
           0, av. doctors: d3</td>
 
-          <td>WalkToRoomEnd{ n1, }@12.65, NewCase@13.06, ExaminationEnd{ d2,
-          }@13.28, ExaminationEnd{ d1, }@15.87</td>
+          <td>WalkToRoomEnd{n1}@12.65, NewCase@13.06, ExaminationEnd{ d2,
+          }@13.28, ExaminationEnd{ d1}@15.87</td>
         </tr>
 
         <tr>
@@ -905,12 +905,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>12.65</td>
 
-          <td>Doctor-1{ st: 2, act: {Examination}},Doctor-2{ st: 2, act:
-          {Examination}},Doctor-3{ st: 2},Nurse-11{ st: 1, act: {}},Nurse-12{
+          <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2, act:
+          {Examination}}, Doctor-3{ st: 2}, Nurse-11{ st: 1, act: {}}, Nurse-12{
           st: 1, act: {}} | av. nurses: n2,n1, av. rooms: 0, av. doctors:</td>
 
-          <td>ExaminationStart{ d3, }@12.66, NewCase@13.06, ExaminationEnd{
-          d2, }@13.28, ExaminationEnd{ d1, }@15.87</td>
+          <td>ExaminationStart{ d3}@12.66, NewCase@13.06, ExaminationEnd{
+          d2}@13.28, ExaminationEnd{ d1}@15.87</td>
         </tr>
 
         <tr>
@@ -918,13 +918,13 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>12.66</td>
 
-          <td>Doctor-1{ st: 2, act: {Examination}},Doctor-2{ st: 2, act:
-          {Examination}},Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st: 1,
-          act: {}},Nurse-12{ st: 1, act: {}} | av. nurses: n2,n1, av. rooms:
+          <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2, act:
+          {Examination}}, Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st: 1,
+          act: {}}, Nurse-12{ st: 1, act: {}} | av. nurses: n2,n1, av. rooms:
           0, av. doctors:</td>
 
-          <td>NewCase@13.06, ExaminationEnd{ d2, }@13.28, ExaminationEnd{ d1,
-          }@15.87, ExaminationEnd{ d3, }@18.38</td>
+          <td>NewCase@13.06, ExaminationEnd{ d2}@13.28, ExaminationEnd{ d1,
+          }@15.87, ExaminationEnd{ d3}@18.38</td>
         </tr>
 
         <tr>
@@ -932,13 +932,13 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>13.06</td>
 
-          <td>Doctor-1{ st: 2, act: {Examination}},Doctor-2{ st: 2, act:
-          {Examination}},Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st: 1,
-          act: {}},Nurse-12{ st: 1, act: {}} | av. nurses: n2,n1, av. rooms:
+          <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2, act:
+          {Examination}}, Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st: 1,
+          act: {}}, Nurse-12{ st: 1, act: {}} | av. nurses: n2,n1, av. rooms:
           0, av. doctors:</td>
 
-          <td>ExaminationEnd{ d2, }@13.28, ExaminationEnd{ d1, }@15.87,
-          NewCase@16.21, ExaminationEnd{ d3, }@18.38</td>
+          <td>ExaminationEnd{ d2}@13.28, ExaminationEnd{ d1}@15.87,
+          NewCase@16.21, ExaminationEnd{ d3}@18.38</td>
         </tr>
 
         <tr>
@@ -946,13 +946,13 @@ sim.scenario.<b>setupInitialState</b> = function () {
 
           <td>13.28</td>
 
-          <td>Doctor-1{ st: 2, act: {Examination}},Doctor-2{ st: 2, act: {}},
-          Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st: 1, act:
-          {}},Nurse-12{ st: 1, act: {}} | av. nurses: n2,n1, av. rooms: 0, av.
+          <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2, act: {}},
+          Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st: 1, act:
+          {}}, Nurse-12{ st: 1, act: {}} | av. nurses: n2,n1, av. rooms: 0, av.
           doctors:</td>
 
-          <td>ExaminationStart{ d2, }@13.29, ExaminationEnd{ d1, }@15.87,
-          NewCase@16.21, ExaminationEnd{ d3, }@18.38</td>
+          <td>ExaminationStart{ d2}@13.29, ExaminationEnd{ d1}@15.87,
+          NewCase@16.21, ExaminationEnd{ d3}@18.38</td>
         </tr>
 
         <tr>
@@ -961,12 +961,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>13.29</td>
 
           <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2, act:
-          {Examination}}, Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st:
-          1, act: {}},Nurse-12{ st: 1, act: {}} | av. nurses: n2,n1, av.
+          {Examination}}, Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st:
+          1, act: {}}, Nurse-12{ st: 1, act: {}} | av. nurses: n2,n1, av.
           rooms: 0, av. doctors:</td>
 
-          <td>ExaminationEnd{ d1, }@15.87, NewCase@16.21, ExaminationEnd{ d3,
-          }@18.38, ExaminationEnd{ d2, }@22.51</td>
+          <td>ExaminationEnd{ d1}@15.87, NewCase@16.21, ExaminationEnd{ d3,
+          }@18.38, ExaminationEnd{ d2}@22.51</td>
         </tr>
 
         <tr>
@@ -975,11 +975,11 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>15.87</td>
 
           <td>Doctor-1{ st: 1, act: {}}, Doctor-2{ st: 2, act: {Examination}},
-          Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st: 1, act:
-          {}},Nurse-12{ st: 1, act: {}} | av. nurses: n2,n1, av. rooms: 1, av.
+          Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st: 1, act:
+          {}}, Nurse-12{ st: 1, act: {}} | av. nurses: n2,n1, av. rooms: 1, av.
           doctors: d1</td>
 
-          <td>NewCase@16.21, ExaminationEnd{ d3, }@18.38, ExaminationEnd{ d2,
+          <td>NewCase@16.21, ExaminationEnd{ d3}@18.38, ExaminationEnd{ d2,
           }@22.51</td>
         </tr>
 
@@ -989,12 +989,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>16.21</td>
 
           <td>Doctor-1{ st: 1, act: {}}, Doctor-2{ st: 2, act: {Examination}},
-          Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st: 1, act:
-          {}},Nurse-12{ st: 2, act: {}} | av. nurses: n1, av. rooms: 0, av.
+          Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st: 1, act:
+          {}}, Nurse-12{ st: 2, act: {}} | av. nurses: n1, av. rooms: 0, av.
           doctors: d1</td>
 
-          <td>WalkToRoomStart{ n2, }@16.22, NewCase@17.02, ExaminationEnd{ d3,
-          }@18.38, ExaminationEnd{ d2, }@22.51</td>
+          <td>WalkToRoomStart{n2}@16.22, NewCase@17.02, ExaminationEnd{ d3,
+          }@18.38, ExaminationEnd{ d2}@22.51</td>
         </tr>
 
         <tr>
@@ -1003,12 +1003,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>16.22</td>
 
           <td>Doctor-1{ st: 1, act: {}}, Doctor-2{ st: 2, act: {Examination}},
-          Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st: 1, act:
-          {}},Nurse-12{ st: 2, act: {WalkToRoom}} | av. nurses: n1, av. rooms:
+          Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st: 1, act:
+          {}}, Nurse-12{ st: 2, act: {WalkToRoom}} | av. nurses: n1, av. rooms:
           0, av. doctors: d1</td>
 
-          <td>WalkToRoomEnd{ n2, }@17, NewCase@17.02, ExaminationEnd{ d3,
-          }@18.38, ExaminationEnd{ d2, }@22.51</td>
+          <td>WalkToRoomEnd{n2}@17, NewCase@17.02, ExaminationEnd{ d3,
+          }@18.38, ExaminationEnd{ d2}@22.51</td>
         </tr>
 
         <tr>
@@ -1017,12 +1017,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>17</td>
 
           <td>Doctor-1{ st: 1, act: {}}, Doctor-2{ st: 2, act: {Examination}},
-          Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st: 1, act:
-          {}},Nurse-12{ st: 2, act: {}} | av. nurses: n1, av. rooms: 0, av.
+          Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st: 1, act:
+          {}}, Nurse-12{ st: 2, act: {}} | av. nurses: n1, av. rooms: 0, av.
           doctors: d1</td>
 
-          <td>WalkToRoomStart{ n2, }@17.01, NewCase@17.02, ExaminationEnd{ d3,
-          }@18.38, ExaminationEnd{ d2, }@22.51</td>
+          <td>WalkToRoomStart{n2}@17.01, NewCase@17.02, ExaminationEnd{ d3,
+          }@18.38, ExaminationEnd{ d2}@22.51</td>
         </tr>
 
         <tr>
@@ -1031,12 +1031,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>17.01</td>
 
           <td>Doctor-1{ st: 1, act: {}}, Doctor-2{ st: 2, act: {Examination}},
-          Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st: 1, act:
-          {}},Nurse-12{ st: 2, act: {WalkToRoom}} | av. nurses: n1, av. rooms:
+          Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st: 1, act:
+          {}}, Nurse-12{ st: 2, act: {WalkToRoom}} | av. nurses: n1, av. rooms:
           0, av. doctors: d1</td>
 
-          <td>NewCase@17.02, ExaminationEnd{ d3, }@18.38, WalkToRoomEnd{ n2,
-          }@19.47, ExaminationEnd{ d2, }@22.51</td>
+          <td>NewCase@17.02, ExaminationEnd{ d3}@18.38, WalkToRoomEnd{n2,
+          }@19.47, ExaminationEnd{ d2}@22.51</td>
         </tr>
 
         <tr>
@@ -1045,12 +1045,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>17.02</td>
 
           <td>Doctor-1{ st: 1, act: {}}, Doctor-2{ st: 2, act: {Examination}},
-          Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st: 1, act:
-          {}},Nurse-12{ st: 2, act: {WalkToRoom}} | av. nurses: n1, av. rooms:
+          Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st: 1, act:
+          {}}, Nurse-12{ st: 2, act: {WalkToRoom}} | av. nurses: n1, av. rooms:
           0, av. doctors: d1</td>
 
-          <td>ExaminationEnd{ d3, }@18.38, WalkToRoomEnd{ n2, }@19.47,
-          NewCase@19.67, ExaminationEnd{ d2, }@22.51</td>
+          <td>ExaminationEnd{ d3}@18.38, WalkToRoomEnd{n2}@19.47,
+          NewCase@19.67, ExaminationEnd{ d2}@22.51</td>
         </tr>
 
         <tr>
@@ -1059,12 +1059,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>18.38</td>
 
           <td>Doctor-1{ st: 1, act: {}}, Doctor-2{ st: 2, act: {Examination}},
-          Doctor-3{ st: 2, act: {}},Nurse-11{ st: 1, act: {}},Nurse-12{ st: 2,
+          Doctor-3{ st: 2, act: {}}, Nurse-11{ st: 1, act: {}}, Nurse-12{ st: 2,
           act: {WalkToRoom}} | av. nurses: n1, av. rooms: 0, av. doctors:
           d1</td>
 
-          <td>ExaminationStart{ d3, }@18.39, WalkToRoomEnd{ n2, }@19.47,
-          NewCase@19.67, ExaminationEnd{ d2, }@22.51</td>
+          <td>ExaminationStart{ d3}@18.39, WalkToRoomEnd{n2}@19.47,
+          NewCase@19.67, ExaminationEnd{ d2}@22.51</td>
         </tr>
 
         <tr>
@@ -1073,12 +1073,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>18.39</td>
 
           <td>Doctor-1{ st: 1, act: {}}, Doctor-2{ st: 2, act: {Examination}},
-          Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st: 1, act:
-          {}},Nurse-12{ st: 2, act: {WalkToRoom}} | av. nurses: n1, av. rooms:
+          Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st: 1, act:
+          {}}, Nurse-12{ st: 2, act: {WalkToRoom}} | av. nurses: n1, av. rooms:
           0, av. doctors: d1</td>
 
-          <td>WalkToRoomEnd{ n2, }@19.47, NewCase@19.67, ExaminationEnd{ d2,
-          }@22.51, ExaminationEnd{ d3, }@27.41</td>
+          <td>WalkToRoomEnd{n2}@19.47, NewCase@19.67, ExaminationEnd{ d2,
+          }@22.51, ExaminationEnd{ d3}@27.41</td>
         </tr>
 
         <tr>
@@ -1087,12 +1087,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>19.47</td>
 
           <td>Doctor-1{ st: 1, act: {}}, Doctor-2{ st: 2, act: {Examination}},
-          Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st: 1, act:
-          {}},Nurse-12{ st: 2, act: {}} | av. nurses: n1, av. rooms: 0, av.
+          Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st: 1, act:
+          {}}, Nurse-12{ st: 2, act: {}} | av. nurses: n1, av. rooms: 0, av.
           doctors: d1</td>
 
-          <td>WalkToRoomStart{ n2, }@19.48, NewCase@19.67, ExaminationEnd{ d2,
-          }@22.51, ExaminationEnd{ d3, }@27.41</td>
+          <td>WalkToRoomStart{n2}@19.48, NewCase@19.67, ExaminationEnd{ d2,
+          }@22.51, ExaminationEnd{ d3}@27.41</td>
         </tr>
 
         <tr>
@@ -1101,12 +1101,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>19.48</td>
 
           <td>Doctor-1{ st: 1, act: {}}, Doctor-2{ st: 2, act: {Examination}},
-          Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st: 1, act:
-          {}},Nurse-12{ st: 2, act: {WalkToRoom}} | av. nurses: n1, av. rooms:
+          Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st: 1, act:
+          {}}, Nurse-12{ st: 2, act: {WalkToRoom}} | av. nurses: n1, av. rooms:
           0, av. doctors: d1</td>
 
-          <td>NewCase@19.67, WalkToRoomEnd{ n2, }@20.95, ExaminationEnd{ d2,
-          }@22.51, ExaminationEnd{ d3, }@27.41</td>
+          <td>NewCase@19.67, WalkToRoomEnd{n2}@20.95, ExaminationEnd{ d2,
+          }@22.51, ExaminationEnd{ d3}@27.41</td>
         </tr>
 
         <tr>
@@ -1115,12 +1115,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>19.67</td>
 
           <td>Doctor-1{ st: 1, act: {}}, Doctor-2{ st: 2, act: {Examination}},
-          Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st: 1, act:
-          {}},Nurse-12{ st: 2, act: {WalkToRoom}} | av. nurses: n1, av. rooms:
+          Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st: 1, act:
+          {}}, Nurse-12{ st: 2, act: {WalkToRoom}} | av. nurses: n1, av. rooms:
           0, av. doctors: d1</td>
 
-          <td>WalkToRoomEnd{ n2, }@20.95, ExaminationEnd{ d2, }@22.51,
-          ExaminationEnd{ d3, }@27.41, NewCase@28.91</td>
+          <td>WalkToRoomEnd{n2}@20.95, ExaminationEnd{ d2}@22.51,
+          ExaminationEnd{ d3}@27.41, NewCase@28.91</td>
         </tr>
 
         <tr>
@@ -1129,12 +1129,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>20.95</td>
 
           <td>Doctor-1{ st: 1, act: {}}, Doctor-2{ st: 2, act: {Examination}},
-          Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st: 1, act:
-          {}},Nurse-12{ st: 2, act: {}} | av. nurses: n1, av. rooms: 0, av.
+          Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st: 1, act:
+          {}}, Nurse-12{ st: 2, act: {}} | av. nurses: n1, av. rooms: 0, av.
           doctors: d1</td>
 
-          <td>WalkToRoomStart{ n2, }@20.96, ExaminationEnd{ d2, }@22.51,
-          ExaminationEnd{ d3, }@27.41, NewCase@28.91</td>
+          <td>WalkToRoomStart{n2}@20.96, ExaminationEnd{ d2}@22.51,
+          ExaminationEnd{ d3}@27.41, NewCase@28.91</td>
         </tr>
 
         <tr>
@@ -1143,12 +1143,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>20.96</td>
 
           <td>Doctor-1{ st: 1, act: {}}, Doctor-2{ st: 2, act: {Examination}},
-          Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st: 1, act:
-          {}},Nurse-12{ st: 2, act: {WalkToRoom}} | av. nurses: n1, av. rooms:
+          Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st: 1, act:
+          {}}, Nurse-12{ st: 2, act: {WalkToRoom}} | av. nurses: n1, av. rooms:
           0, av. doctors: d1</td>
 
-          <td>ExaminationEnd{ d2, }@22.51, WalkToRoomEnd{ n2, }@23.2,
-          ExaminationEnd{ d3, }@27.41, NewCase@28.91</td>
+          <td>ExaminationEnd{ d2}@22.51, WalkToRoomEnd{n2}@23.2,
+          ExaminationEnd{ d3}@27.41, NewCase@28.91</td>
         </tr>
 
         <tr>
@@ -1157,12 +1157,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>22.51</td>
 
           <td>Doctor-1{ st: 1, act: {}}, Doctor-2{ st: 2, act: {}}, Doctor-3{
-          st: 2, act: {Examination}},Nurse-11{ st: 1, act: {}},Nurse-12{ st:
+          st: 2, act: {Examination}}, Nurse-11{ st: 1, act: {}}, Nurse-12{ st:
           2, act: {WalkToRoom}} | av. nurses: n1, av. rooms: 0, av. doctors:
           d1</td>
 
-          <td>ExaminationStart{ d2, }@22.52, WalkToRoomEnd{ n2, }@23.2,
-          ExaminationEnd{ d3, }@27.41, NewCase@28.91</td>
+          <td>ExaminationStart{ d2}@22.52, WalkToRoomEnd{n2}@23.2,
+          ExaminationEnd{ d3}@27.41, NewCase@28.91</td>
         </tr>
 
         <tr>
@@ -1171,12 +1171,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>22.52</td>
 
           <td>Doctor-1{ st: 1, act: {}}, Doctor-2{ st: 2, act: {Examination}},
-          Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st: 1, act:
-          {}},Nurse-12{ st: 2, act: {WalkToRoom}} | av. nurses: n1, av. rooms:
+          Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st: 1, act:
+          {}}, Nurse-12{ st: 2, act: {WalkToRoom}} | av. nurses: n1, av. rooms:
           0, av. doctors: d1</td>
 
-          <td>WalkToRoomEnd{ n2, }@23.2, ExaminationEnd{ d3, }@27.41,
-          NewCase@28.91, ExaminationEnd{ d2, }@30.15</td>
+          <td>WalkToRoomEnd{n2}@23.2, ExaminationEnd{ d3}@27.41,
+          NewCase@28.91, ExaminationEnd{ d2}@30.15</td>
         </tr>
 
         <tr>
@@ -1185,12 +1185,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>23.2</td>
 
           <td>Doctor-1{ st: 2, act: {}}, Doctor-2{ st: 2, act: {Examination}},
-          Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st: 1, act:
-          {}},Nurse-12{ st: 1, act: {}} | av. nurses: n1,n2, av. rooms: 0, av.
+          Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st: 1, act:
+          {}}, Nurse-12{ st: 1, act: {}} | av. nurses: n1,n2, av. rooms: 0, av.
           doctors:</td>
 
-          <td>ExaminationStart{ d1, }@23.21, ExaminationEnd{ d3, }@27.41,
-          NewCase@28.91, ExaminationEnd{ d2, }@30.15</td>
+          <td>ExaminationStart{ d1}@23.21, ExaminationEnd{ d3}@27.41,
+          NewCase@28.91, ExaminationEnd{ d2}@30.15</td>
         </tr>
 
         <tr>
@@ -1199,12 +1199,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>23.21</td>
 
           <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2, act:
-          {Examination}}, Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st:
-          1, act: {}},Nurse-12{ st: 1, act: {}} | av. nurses: n1,n2, av.
+          {Examination}}, Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st:
+          1, act: {}}, Nurse-12{ st: 1, act: {}} | av. nurses: n1,n2, av.
           rooms: 0, av. doctors:</td>
 
-          <td>ExaminationEnd{ d3, }@27.41, NewCase@28.91, ExaminationEnd{ d2,
-          }@30.15, ExaminationEnd{ d1, }@31.35</td>
+          <td>ExaminationEnd{ d3}@27.41, NewCase@28.91, ExaminationEnd{ d2,
+          }@30.15, ExaminationEnd{ d1}@31.35</td>
         </tr>
 
         <tr>
@@ -1213,12 +1213,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>27.41</td>
 
           <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2, act:
-          {Examination}}, Doctor-3{ st: 2, act: {}},Nurse-11{ st: 1, act:
-          {}},Nurse-12{ st: 1, act: {}} | av. nurses: n1,n2, av. rooms: 0, av.
+          {Examination}}, Doctor-3{ st: 2, act: {}}, Nurse-11{ st: 1, act:
+          {}}, Nurse-12{ st: 1, act: {}} | av. nurses: n1,n2, av. rooms: 0, av.
           doctors:</td>
 
-          <td>ExaminationStart{ d3, }@27.42, NewCase@28.91, ExaminationEnd{
-          d2, }@30.15, ExaminationEnd{ d1, }@31.35</td>
+          <td>ExaminationStart{ d3}@27.42, NewCase@28.91, ExaminationEnd{
+          d2}@30.15, ExaminationEnd{ d1}@31.35</td>
         </tr>
 
         <tr>
@@ -1227,12 +1227,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>27.42</td>
 
           <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2, act:
-          {Examination}}, Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st:
-          1, act: {}},Nurse-12{ st: 1, act: {}} | av. nurses: n1,n2, av.
+          {Examination}}, Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st:
+          1, act: {}}, Nurse-12{ st: 1, act: {}} | av. nurses: n1,n2, av.
           rooms: 0, av. doctors:</td>
 
-          <td>NewCase@28.91, ExaminationEnd{ d2, }@30.15, ExaminationEnd{ d1,
-          }@31.35, ExaminationEnd{ d3, }@33.7</td>
+          <td>NewCase@28.91, ExaminationEnd{ d2}@30.15, ExaminationEnd{ d1,
+          }@31.35, ExaminationEnd{ d3}@33.7</td>
         </tr>
 
         <tr>
@@ -1241,12 +1241,12 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>28.91</td>
 
           <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 2, act:
-          {Examination}}, Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st:
-          1, act: {}},Nurse-12{ st: 1, act: {}} | av. nurses: n1,n2, av.
+          {Examination}}, Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st:
+          1, act: {}}, Nurse-12{ st: 1, act: {}} | av. nurses: n1,n2, av.
           rooms: 0, av. doctors:</td>
 
-          <td>ExaminationEnd{ d2, }@30.15, ExaminationEnd{ d1, }@31.35,
-          ExaminationEnd{ d3, }@33.7, NewCase@34.09</td>
+          <td>ExaminationEnd{ d2}@30.15, ExaminationEnd{ d1}@31.35,
+          ExaminationEnd{ d3}@33.7, NewCase@34.09</td>
         </tr>
 
         <tr>
@@ -1255,8 +1255,8 @@ sim.scenario.<b>setupInitialState</b> = function () {
           <td>30.15</td>
 
           <td>Doctor-1{ st: 2, act: {Examination}}, Doctor-2{ st: 1, act: {}},
-          Doctor-3{ st: 2, act: {Examination}},Nurse-11{ st: 1, act:
-          {}},Nurse-12{ st: 1, act: {}} | av. nurses: n1,n2, av. rooms: 1, av.
+          Doctor-3{ st: 2, act: {Examination}}, Nurse-11{ st: 1, act:
+          {}}, Nurse-12{ st: 1, act: {}} | av. nurses: n1,n2, av. rooms: 1, av.
           doctors: d2</td>
 
           <td>ExaminationEnd{ d1}@31.35, ExaminationEnd{ d3}@33.7,
