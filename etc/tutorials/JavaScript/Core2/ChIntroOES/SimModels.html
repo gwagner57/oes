@@ -6,20 +6,35 @@
     <title>Simulation Models</title>
   </head>
 
-  <body><section><h4>2.2.1. Modeling an Activity Type with a Resource Role and
-  an Associated Count (Resource) Pool</h4><p>Based on the conceptual model of
-  <a href="../ChIntroOEM/CM.html#sectBasicConceptualModel"></a>, we choose a
-  design as defined by the following information design model of a medical
-  department (discussed in <a
-  href="../ChIntroOEM/DesM.html#sectMedDepDM1b"></a>): </p><figure
-  style="display:flex"><div><img alt="information design model 1b"
-  src="../img/MedDep_CIM1-IDM1b.svg" width="700" /></div></figure><p>Notice
-  that this model does not define any object type, since doctors are not
-  modeled as individual persons, but as an aggregate in the form of a
-  <em>count pool</em>. The random variable for modeling the random variation
-  of the examination durations samples from the exponential probability
-  distribution <i>Exp(0.5)</i>. The <i>NewCase</i> class can be coded with
-  OESjs-Core2 in the following way:</p><pre>class <b>NewCase</b> extends eVENT {
+  <body><section><h4>2.2.1. An Activity Type with a Class-Level Resource Role
+  and a Count Pool</h4><p>Based on the conceptual model of <a
+  href="../ChIntroOEM/CM.html"></a>, we choose the design discussed in <a
+  href="../ChIntroOEM/DesM.html"></a> in the subsection "The
+  Medical-Department-1b design model" and defined by the following information
+  design model: </p><figure style="display:flex"><div><img
+  alt="information design model 1b" src="../img/MedDep_CIM1-IDM1b.svg"
+  width="700" /></div></figure><p>Notice that this model </p><ol>
+      <li><p>Does not define an object type <i>Doctor</i>, since the doctors
+      of the department are not modeled as a collection of individual persons,
+      but as an abstract aggregate in the form of a <em>count
+      pool</em>.</p></li>
+
+      <li>Does not link the resource role <i>doctor</i> to the count pool
+      <i>doctors</i> because linking a resource pool to an activity type for
+      any of its resource roles has to be done by a process model, either
+      implicitly or explicitly. By default, if there is a resource pool with
+      the same (but pluralized) name as a resource role, it is implicitly
+      assigned to that resource role. In general, an information design model
+      may be the basis for many process models, and each of them may assign a
+      different resource pool to the same resource role of an activity
+      type.</li>
+    </ol><p>The random variable <i>recurrence</i> for modeling the random
+  variation of the time between new cases samples from the exponential
+  probability distribution with an event rate of 0.3, while the random
+  variable for the <i>duration</i> of an examination samples from the uniform
+  probability distribution with lower bound 5 and upper bound 10 (representing
+  minutes). </p><p>The <i>NewCase</i> class can be coded with OESjs-Core2 in
+  the following way:</p><pre>class <b>NewCase</b> extends eVENT {
   constructor({ occTime, delay}) {
     super({occTime, delay});
   }
@@ -27,7 +42,7 @@
   <b>createNextEvent</b>() {
     return new NewCase({delay: NewCase.recurrence()});
   }
-  static <b>recurrence</b>() {return rand.exponential( 0.5);}
+  static <b>recurrence</b>() {return rand.exponential( 0.3);}
 }</pre><p>The <i>onEvent</i> method is empty since no event rules are needed
   for this simple model. Its dynamics is entirely determined by the standard
   logic of resource-dependent activity scheduling built into OES Core
@@ -52,7 +67,7 @@ Examination.<b>resourceRoles</b> = {
   the conceptual information model discussed in <a
   href="../ChIntroOEM/CM.html#sectExtendedConceptualModel"></a>:</p><figure><img
   alt="???" src="../img/MedDep_CIM2-IDM1.svg" width="700" /></figure><p>The
-  class implementing the even type <i>NewCase</i> is defined as above. The
+  class implementing the event type <i>NewCase</i> is defined as above. The
   class implementing the activity type <i>WalkToRoom</i> is defined as
   follows:</p><pre>class <b>WalkToRoom</b> extends aCTIVITY {
   constructor({id, startTime, duration}={}) {

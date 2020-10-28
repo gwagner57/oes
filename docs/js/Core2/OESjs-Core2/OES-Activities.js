@@ -40,7 +40,7 @@
  *  currently participating).
  *
  *  TODO: introduce
- *   - cycle time statistics per activity type
+ *   - alternative resource pools
  *   - individual resource pools based on pre-defined object type rESOURCE( status / isAvailable, allocate, release)
  *     specializing oBJECT, such that a resource type is defined by specializing rESOURCE
  *   - an optional processOwner (= institutional agent); if there is only one (= no collaboration), it may be left implicit

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<book xmlns="http://www.xmlmind.com/schema/ebook"
+<book titlelabels="part chapter appendix section figure table example equation"
+      xreflabels="chapter-number appendix-number section-number figure-number table-number equation-number example-number"
+      xmlns="http://www.xmlmind.com/schema/ebook"
       xmlns:xxe="http://www.xmlmind.com/xmleditor/namespace/extension"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -33,6 +35,8 @@
     <!-- recommended 1200 x 630 -->
 
     <html:meta content="summary_large_image" name="twitter:card"/>
+
+    <html:link href="../../icons/" rel="resource" type="inode/directory"/>
   </headcommon>
 
   <head>
