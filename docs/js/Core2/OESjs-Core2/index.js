@@ -147,13 +147,13 @@ function run() {
   worker.postMessage( data);
   // on incoming messages from worker
   worker.onmessage = function (e) {
-    if (e.data.step) {  // create log entry
+    if (e.data.step) {  // create simulation log entry
       simLogTableEl.parentElement.style.display = "block";
       oes.ui.logSimulationStep( simLogTableEl, e.data.step, e.data.time,
           e.data.objectsStr, e.data.eventsStr);
     } else if (e.data.expScenNo !== undefined) {  // parameter variation experiment
       oes.ui.showResultsFromParVarExpScenarioRun( e.data, statisticsTableEl);
-    } else {
+    } else { // standalone scenario run or simple experiment
       let simEndTime = (new Date()).getTime() - simStartTime;
       // Show execution time
       execInfoEl.textContent = `Execution time: ${simEndTime} ms`;

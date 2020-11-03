@@ -67,15 +67,23 @@ sim.initializeSimulator = function () {
     for (const resRoleName of Object.keys( AT.resourceRoles)) {
       const resRole = AT.resourceRoles[resRoleName];
       let pn = "";
-      if (resRole.countPoolName) {  // the resource role is associated with a count pool
-        pn = resRole.countPoolName;
-        // create only if not yet created
-        sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, available:0});
-      } else {  // the resource role is associated with an individual pool
+      if (resRole.range) {  // the resource role is associated with an individual pool
         let rn = resRole.range.name;
         pn = rn.charAt(0).toLowerCase() + rn.slice(1) + "s";
         // create only if not yet created
         sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, resources:[]});
+      } else if (resRole.countPoolName) {
+        // a count pool has been assigned to the resource role
+        pn = resRole.countPoolName;
+        // create only if not yet created
+        sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, available:0});
+      } else {
+        // create default name for count pool
+        pn = resRoleName + (!resRole.card||resRole.card===1 ? "s":"");
+        // assign count pool to the resource role
+        resRole.countPoolName = pn;
+        // create pool only if not yet created
+        sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, available:0});
       }
       // assign the (newly created) pool to the resource role
       resRole.resPool = sim.resourcePools[pn];

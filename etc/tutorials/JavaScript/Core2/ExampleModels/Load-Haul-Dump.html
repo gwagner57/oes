@@ -11,12 +11,15 @@
   and wheel loaders.</p><p>You can <a
   href="https://gwagner57.github.io/oes/js/Core2/Load-Haul-Dump-1/">run this
   model</a> from the OES GitHub website.</p><section><h4>Conceptual
-  Model</h4><p>A haul service company has resource pools for trucks and wheel
-  loaders. While <em>go (back) to loading site</em>, <em>haul</em>,
-  <em>dump</em> and <em>go home</em> activities just require a <em>truck</em>
-  (or a <em>wheel loader</em>) as a resource, <em>load</em> activities require
-  both a <em>truck</em> and a <em>wheel loader</em>.</p><h5>Conceptual
-  Information Model</h5><p>The potentially relevant object types are:</p><ol>
+  Model</h4><figure style="float:right"><div><img alt="???"
+  src="../../../../../docs/img/Load-Truck-Scenario.svg"
+  width="600" /></div></figure><p>A haul service company has resource pools
+  for trucks and wheel loaders. While <em>go (back) to loading site</em>,
+  <em>haul</em>, <em>dump</em> and <em>go home</em> activities just require a
+  <em>truck</em> (or a <em>wheel loader</em>) as a resource, <em>load</em>
+  activities require both a <em>truck</em> and a <em>wheel
+  loader</em>.</p><h5>Conceptual Information Model</h5><p>The potentially
+  relevant object types are:</p><ol>
       <li>haul service company,</li>
 
       <li>wheel loaders,</li>
@@ -66,7 +69,7 @@
   comes in, as indicated by the double arrow, the haul service company deploys
   multiple trucks and wheel loaders to the loading site (each of them performs
   a <em>go to loading site</em> activity). Each of these activities leads to
-  enqueing a new <em>load</em> activity, as indicated by the
+  enqueuing a new <em>load</em> activity, as indicated by the
   <em>resource-dependent activity start arrow</em> from the <em>go to loading
   site</em> activity shape to the <em>load</em> activity shape. Such an
   enqueued (planned) activity is going to be dequeued and started as soon as
@@ -84,17 +87,17 @@
   is shown in the following refined model:</p><figure><figcaption>A refined
   conceptual process model.</figcaption><img alt="???"
   src="../img/CPMb12638172786339576246_2zfrdoij.svg"
-  width="600" /></figure></section><section><h4>Simulation Design
-  Model</h4><p>In our simulation design, we consider only one particular haul
-  service company, which does not have to be modeled explicitly. Also, we
-  abstract away from the fact that also wheel loaders have to go to, and
-  return from, the loading site by assuming that they are already at the site
-  when the dump trucks arrive.</p><h5>Information Design Model</h5><p>In the
-  information design model, we need to define a <i>status</i> attribute for
-  all resource object types, such as <i>Truck</i> and <i>WheelLoader</i>, and
-  a duration function, typically representing a random variable, for each
-  activity type:</p><figure><figcaption>An information design model defining
-  object, event and activity types.</figcaption><img alt="???"
+  width="600" /></figure></section><section><h4>Simulation Design</h4><p>In
+  our simulation design, we consider only one particular haul service company,
+  which does not have to be modeled explicitly. Also, we abstract away from
+  the fact that also wheel loaders have to go to, and return from, the loading
+  site by assuming that they are already at the site when the dump trucks
+  arrive.</p><h5>Information Design Model</h5><p>In the information design
+  model, we need to define a <i>status</i> attribute for all resource object
+  types, such as <i>Truck</i> and <i>WheelLoader</i>, and a duration function,
+  typically representing a random variable, for each activity
+  type:</p><figure><figcaption>An information design model defining object,
+  event and activity types.</figcaption><img alt="???"
   src="../img/IDM16039384957458866837_2zfqip1j.svg"
   width="600" /></figure><p>Notice how functions representing random
   variables, like <code>duration()</code>, are marked with the keyword (or UML
@@ -106,5 +109,10 @@
   diagram:</p><figure><figcaption>A computationally complete process design
   for the Load-Haul-Dump business process.</figcaption><img alt="???"
   src="../img/PDM3006707569242369135_2zfqip1j.svg"
-  width="700" /></figure></section></body>
+  width="700" /></figure></section><section><h4>Implementation</h4><p>We show
+  how to implement the design model with (1) OESjs, (2) AnyLogic, and (3)
+  Simio.</p><h5>Implementation with OESjs</h5><p>We have to define classes for
+  all object, event and activity types, by extending the predefined OESjs
+  classes <code>oBJECT</code>, <code>eVENT</code> and <code>aCTIVITY</code>. .
+  </p><p></p></section></body>
 </html>

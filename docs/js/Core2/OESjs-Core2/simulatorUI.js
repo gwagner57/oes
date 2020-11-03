@@ -24,7 +24,8 @@ oes.ui.logSimulationStep = function (simLogTableEl, step, time, objectsStr, even
 oes.ui.showStatistics = function (stat, tableEl) {
   var decPl = oes.defaults.expostStatDecimalPlaces,
       tbodyEl = tableEl.tBodies[0];
-  for (let varName of Object.keys( stat)) {
+  // show user-defined statistics
+  for (const varName of Object.keys( stat)) {
     // skip pre-defined statistics (collection) variables
     if (["actTypes","resUtil"].includes( varName)) continue;
     let rowEl = tbodyEl.insertRow();  // create new table row

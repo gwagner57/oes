@@ -9,5 +9,8 @@ class NewCase extends eVENT {
     return rand.exponential( 0.3);
   }
 }
+/*******************************************************
+ *** Process Model Items *******************************
+ *******************************************************/
 // Enqueue a new planned walk
 NewCase.successorActivity = "WalkToRoom";

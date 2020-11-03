@@ -1,26 +1,15 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Medical-Department-2b</title>
-  <meta name="viewport" content="width=device-width, initial-scale = 1.0" />
-  <style>
-    table {
-      border: thin solid black;
-      /* margin: 1em auto; */
-      border-collapse: collapse;
-      empty-cells: show;
-    }
-    table td, table th {
-      border: thin solid black;
-      padding: 0.2em;
-    }
-  </style>
-    <script src="../lib/math.js"></script>
-    <script src="../lib/util.js"></script>
-    <script src="../lib/idb5.js"></script>
-    <script src="../OESjs-Core2/simulatorUI.js"></script>
-    <script>
+ <meta charset="utf-8">
+ <title>Medical-Department-2b</title>
+ <meta name="viewport" content="width=device-width, initial-scale = 1.0" />
+ <link href="../../../css/index.css" rel="stylesheet" />
+ <script src="../lib/math.js"></script>
+ <script src="../lib/util.js"></script>
+ <script src="../lib/idb5.js"></script>
+ <script src="../OESjs-Core2/simulatorUI.js"></script>
+ <script>
       // Create initial objects/maps/arrays
       const sim = Object.create(null); // instead of {}
       sim.model = Object.create(null);
@@ -30,10 +19,13 @@
       sim.scenarios = [];
       sim.stat = Object.create(null);
       sim.experimentTypes = [];
-    </script>
-    <script src="simulation.js"></script>
+ </script>
+ <script src="simulation.js"></script>
 </head>
 <body>
+ <div><small>An <em><a href="https://gwagner57.github.io/oes/">Object Event Simulation (OES)</a></em> example model.
+  You can download and inspect its code from the <a href="https://github.com/gwagner57/oes/tree/master/docs/js/Core2">OES
+  GitHub repo</a>.</small></div>
  <h1>Medical-Department-2b</h1>
  <p>Like <a href="../Medical-Department-2a/index.html">Medical-Department-2a</a>, but now an <em>examination</em> requires not only a doctor and a room, but also two nurses.</p>
  <p>The scenario has 3 doctors, 7 nurses and 4 rooms.</p>

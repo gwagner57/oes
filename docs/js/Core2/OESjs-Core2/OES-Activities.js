@@ -40,17 +40,18 @@
  *  currently participating).
  *
  *  TODO:
- *   - assign default count pool (by name) to resource roles without range
  *   - introduce alternative resource pools
- *   - introduce task priorities
+ *   - introduce resource allocation priorities defined per activity
  *   - support the two allocation policies: (1) allocate all resources at once, and (2) allocate resources step by step
  *   - ? introduce object type rESOURCE (with status attribute) specializing oBJECT,
  *     such that a resource type is defined by specializing rESOURCE
  *   - an optional processOwner (= institutional agent); if there is only one (= no collaboration), it may be left implicit
+ *     if there is are two or more processOwners, can an activity type be included in more than one process container (= Pool)?
+ *     if yes, it may have different performers (and other resource pools) in different process containers
  */
 // An abstract class
 class aCTIVITY extends eVENT {
-  // startTime=0 tells the eVENT constructor that this is an aCTIVITY
+  // startTime=0 indicates to the eVENT constructor that this is an aCTIVITY
   constructor({id, occTime, startTime=0, duration, enqueueTime}) {
     super({occTime, startTime, duration});
     if (id) this.id = id;

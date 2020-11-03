@@ -6,7 +6,13 @@ class Examination extends aCTIVITY {
 }
 // An examination requires a room and a doctor
 Examination.resourceRoles = {
-  "doctor": {range: Doctor},
-  "room": {countPoolName:"rooms"}
+  // implying an individual pool with default name "doctors"
+  "doctor": {range: Doctor}, // by default card=1
+  // implying a count pool with default name "rooms" like with {countPoolName:"rooms"}
+  "room": {card:1}
 }
+/*******************************************************
+ *** Process Model Items *******************************
+ *******************************************************/
+// define the PERFORMER resource role
 Examination.PERFORMER = "doctor";

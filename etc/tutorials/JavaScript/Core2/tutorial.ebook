@@ -133,7 +133,7 @@ ul.links li:hover {
 
     <section href="ChActivityBasedModeling/Alternative-resource-pools.html"/>
 
-    <section href="ChActivityBasedModeling/Task-priorities.html"/>
+    <section href="ChActivityBasedModeling/Resource-allocation-priorities.html"/>
   </chapter>
 
   <appendix>

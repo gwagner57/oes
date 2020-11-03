@@ -6,9 +6,17 @@ class WalkToRoom extends aCTIVITY {
 }
 // A walk to a room requires a room and a nurse
 WalkToRoom.resourceRoles = {
-  "nurse": {range: Nurse, card:1},
-  "room": {countPoolName:"rooms", card:1}
+  // implying an individual pool with default name "nurses"
+  "nurse": {range: Nurse},
+  // implying a count pool, see below for its name (countPoolName="rooms")
+  "room": {card:1}
 }
+/*******************************************************
+ *** Process Model Items *******************************
+ *******************************************************/
+// define the PERFORMER resource role
 WalkToRoom.PERFORMER = "nurse";
-// Enqueue a new planned examination
+// assign resource pools to resource roles
+WalkToRoom.resourceRoles["room"].countPoolName = "rooms";
+// enqueue a new planned examination
 WalkToRoom.successorActivity = "Examination";
