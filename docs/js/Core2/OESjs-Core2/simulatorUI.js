@@ -7,6 +7,14 @@ if (typeof oes !== "object") {
     simLogDecimalPlaces: 2
   };
 }
+oes.ui.actStat = {
+  enqu: {title:"enqueued activities"},
+  start: {title:"started activities"},
+  compl: {title:"completed activities"},
+  qLen: {title:"maximum queue length"},
+  wTime: {title:"maximum waiting time"},
+  cTime: {title:"maximum cycle time"}
+};
 /*******************************************************
  Create a simulation log entry (table row)
  ********************************************************/
@@ -21,29 +29,60 @@ oes.ui.logSimulationStep = function (simLogTableEl, step, time, objectsStr, even
 /*******************************************************
  Display the standalone scenario statistics
  ********************************************************/
-oes.ui.showStatistics = function (stat, tableEl) {
-  var decPl = oes.defaults.expostStatDecimalPlaces,
-      tbodyEl = tableEl.tBodies[0];
-  // show user-defined statistics
-  for (const varName of Object.keys( stat)) {
-    // skip pre-defined statistics (collection) variables
-    if (["actTypes","resUtil"].includes( varName)) continue;
-    let rowEl = tbodyEl.insertRow();  // create new table row
-    rowEl.insertCell().textContent = varName;
-    rowEl.insertCell().textContent = math.round( stat[varName], decPl);
+oes.ui.showStatistics = function (stat) {
+  var decPl = oes.defaults.expostStatDecimalPlaces;
+
+  function createActStatTableHead()  {
+    // number of user-defined statistics
+    const actStat = oes.ui.actStat,
+          NAS = Object.keys( actStat).length;  // number of activity statistics
+    var perActyStatHeading="";
+    for (let actStatShortLabel of Object.keys( actStat)) {
+      perActyStatHeading += `<th title="${actStat[actStatShortLabel].title}">${actStatShortLabel}</th>`;
+    }
+    return perActyStatHeading;
   }
-  // show statistics per activity type
+  // create table for user-defined statistics
+  if (Object.keys( stat).length > 1) {
+    const usrStatTblElem = document.createElement("table"),
+          tbodyEl = document.createElement("tbody");
+    usrStatTblElem.id = "userDefinedStatisticsTbl";
+    usrStatTblElem.innerHTML = '<caption>User-defined statistics</caption>';
+    usrStatTblElem.appendChild( tbodyEl);
+    for (const varName of Object.keys( stat)) {
+      // skip pre-defined statistics (collection) variables
+      if (["actTypes","resUtil"].includes( varName)) continue;
+      let rowEl = tbodyEl.insertRow();  // create new table row
+      rowEl.insertCell().textContent = varName;
+      rowEl.insertCell().textContent = math.round( stat[varName], decPl);
+    }
+    document.getElementById("simInfo").insertAdjacentElement(
+        "afterend", usrStatTblElem);
+  }
+  // create table for statistics per activity type
   if (Object.keys( stat.actTypes).length > 0) {
+    const actStatTblElem = document.createElement("table"),
+        tbodyEl = document.createElement("tbody");
+    actStatTblElem.id = "activityStatisticsTbl";
+    actStatTblElem.innerHTML = '<caption>Activity statistics</caption>';
+    actStatTblElem.appendChild( tbodyEl);
     let rowEl = tbodyEl.insertRow();
-    let cellEl = rowEl.insertCell();
-    cellEl.colSpan = 2;
-    cellEl.textContent = "Per activity type";
-    Object.keys( stat.actTypes).forEach( function (actTypeName) {
-      var qLenStat = stat.actTypes[actTypeName];
-      let rowEl = tbodyEl.insertRow();
+    rowEl.innerHTML = "<tr><th>Activity type</th>"+ createActStatTableHead() +
+        "<th>resource utilization</th></tr>";
+    for (const actTypeName of Object.keys( stat.actTypes)) {
+      const actStat = stat.actTypes[actTypeName];
+      const rowEl = tbodyEl.insertRow();
       rowEl.insertCell().textContent = actTypeName;
-      rowEl.insertCell().textContent = JSON.stringify( qLenStat);
-    });
+      rowEl.insertCell().textContent = actStat.enqueuedActivities;
+      rowEl.insertCell().textContent = actStat.startedActivities;
+      rowEl.insertCell().textContent = actStat.completedActivities;
+      rowEl.insertCell().textContent = actStat.queueLength.max;
+      rowEl.insertCell().textContent = math.round( actStat.waitingTime.max, decPl);
+      rowEl.insertCell().textContent = math.round( actStat.cycleTime.max, decPl);
+      rowEl.insertCell().textContent = JSON.stringify( actStat.resUtil);
+    }
+    document.getElementById("execInfo").insertAdjacentElement(
+        "beforebegin", actStatTblElem);
   }
   /* show resource utilization statistics
   if (Object.keys( stat.resUtil).length > 0) {
@@ -85,32 +124,40 @@ oes.ui.showStatistics = function (stat, tableEl) {
 /*********************************************************************
  Show the results of a simple experiment
  **********************************************************************/
-oes.ui.showSimpleExpResults = function (exp, tableEl) {
+oes.ui.showSimpleExpResults = function (exp) {
   const nmrOfRepl = exp.nmrOfReplications,
-        tbodyEl = tableEl.tBodies[0],
-        decPl = oes.defaults.expostStatDecimalPlaces,
-        NS = 6;  // number of summary statistics
+        decPl = oes.defaults.expostStatDecimalPlaces;
+  const tableEl = document.createElement("table"),
+        tbodyEl = document.createElement("tbody");
+  tableEl.id = "statisticsTbl";
+  tableEl.innerHTML = '<caption>Experiment results</caption>';
+  tableEl.appendChild( tbodyEl);
 
   function createSimpleExpResultsTableHead()  {
     // number of user-defined statistics
-    const M = Object.keys( exp.replicStat).length - 1;  // deduct "actTypes"
-    // number of activity types
-    const N = Object.keys( exp.replicStat.actTypes).length;
+    const M = Object.keys( exp.replicStat).length - 1,  // deduct "actTypes"
+          // number of activity types
+          N = Object.keys( exp.replicStat.actTypes).length,
+          actStat = oes.ui.actStat,
+          NAS = Object.keys( actStat).length;  // number of activity statistics
     var colHeadingsRow="", usrDefStatVarHeads="", actTypeHeads="",
-        perActyStatHeads = "<th>enqu</th><th>start</th><th>compl</th><th>qLen</th><th>wTime</th><th>cTime</th>";
-    for (let i=1; i < N; i++) {
-      perActyStatHeads += "<th>enqu</th><th>start</th><th>compl</th><th>qLen</th><th>wTime</th><th>cTime</th>";
+        perActyStatHeading="", perActyStatHeads = "";
+    for (let actStatShortLabel of Object.keys( actStat)) {
+      perActyStatHeading += `<th title="${actStat[actStatShortLabel].title}">${actStatShortLabel}</th>`;
+    }
+    for (let i=0; i < N; i++) {
+      perActyStatHeads += perActyStatHeading;
     }
     for (const key of Object.keys( exp.replicStat)) {
       const thStartTag = N>0 ? "<th rowspan='2'>" : "<th>";
       usrDefStatVarHeads += key !== "actTypes" ? thStartTag + key +"</th>" : "";
     }
     actTypeHeads = Object.keys( exp.replicStat.actTypes).reduce( function (prev, curr) {
-      return prev + `<th colspan='${NS}'>${curr}</th>`;
+      return prev + `<th colspan='${NAS}'>${curr}</th>`;
     },"");
     colHeadingsRow = `<tr><th rowspan='${2 + (N>0?1:0)}'>Replication</th>`;
     colHeadingsRow += M > 0 ? `<th colspan='${M}'>User-Def. Statistics</th>`:"";
-    colHeadingsRow += N > 0 ? `<th colspan='${N*NS}'>Statistics per activity type</th>`:"";
+    colHeadingsRow += N > 0 ? `<th colspan='${N*NAS}'>Statistics per activity type</th>`:"";
     colHeadingsRow += "</tr>";
     let theadEl = tableEl.createTHead();
     theadEl.innerHTML = colHeadingsRow +
@@ -165,6 +212,7 @@ oes.ui.showSimpleExpResults = function (exp, tableEl) {
       //actStat.resUtil = {};
     }
   }
+  document.getElementById("simInfo").insertAdjacentElement( "afterend", tableEl);
 }
 /*********************************************************************
  Create the table head for parameter variation experiment results

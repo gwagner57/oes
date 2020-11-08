@@ -6,6 +6,6 @@ class Examination extends aCTIVITY {
 }
 // An examination requires a doctor
 Examination.resourceRoles = {
-    "doctor": {countPoolName:"doctors", card:1}
+    "doctor": {card:1}
 }
 Examination.PERFORMER = "doctor";

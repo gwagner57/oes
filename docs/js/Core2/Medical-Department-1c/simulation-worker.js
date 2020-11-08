@@ -45,8 +45,6 @@ onmessage = function (e) {
     }
     if (e.data.simToRun === "0") {
       sim.runStandaloneScenario( e.data.createLog);
-      // send statistics to main thread
-      self.postMessage({statistics: sim.stat, endTime: sim.endTime});
     } else {
       let expNo = parseInt( e.data.simToRun) - 1;
       sim.experimentType = sim.experimentTypes[expNo];

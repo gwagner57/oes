@@ -5,7 +5,6 @@ const formEl = document.forms["run"],
     storeExpResCheckboxEl = formEl["storeExpRes"],
     selExpEl = formEl["selExp"],
     simLogTableEl = document.getElementById("simLog"),
-    statisticsTableEl = document.getElementById("statisticsTbl"),
     simInfoEl = document.getElementById("simInfo"),
     execInfoEl = document.getElementById("execInfo");
 function setupUI() {
@@ -125,10 +124,6 @@ function run() {
     if (choice !== "0") {
       if (!sim.experimentType) sim.experimentType = sim.experimentTypes[parseInt(choice)-1];
       simInfoEl.textContent = sim.experimentType.title;
-      statisticsTableEl.querySelector("caption").textContent = "Experiment Results";
-    } else {
-      simInfoEl.textContent = `Standalone scenario run with a simulation time/duration of ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}.`;
-      statisticsTableEl.querySelector("caption").textContent = "Statistics";
     }
   }
   // Hide UI elements
@@ -154,13 +149,17 @@ function run() {
     } else if (e.data.expScenNo !== undefined) {  // parameter variation experiment
       oes.ui.showResultsFromParVarExpScenarioRun( e.data, statisticsTableEl);
     } else { // standalone scenario run or simple experiment
-      let simEndTime = (new Date()).getTime() - simStartTime;
+      let executionTime = (new Date()).getTime() - simStartTime;
       // Show execution time
-      execInfoEl.textContent = `Execution time: ${simEndTime} ms`;
+      execInfoEl.textContent = `Execution time: ${executionTime} ms`;
       if (e.data.statistics) {  // statistics from standalone scenario run
-        oes.ui.showStatistics( e.data.statistics, statisticsTableEl);
+        let duration = "";
+        if (sim.scenario.durationInSimTime) duration = `${sim.scenario.durationInSimTime} ${sim.model.timeUnit}`;
+        else duration = `${Math.ceil( e.data.endTime)} ${sim.model.timeUnit}`;
+        simInfoEl.textContent = `Standalone scenario run with a simulation time/duration of ${duration}.`;
+        oes.ui.showStatistics( e.data.statistics);
       } else if (e.data.simpleExperiment) {
-        oes.ui.showSimpleExpResults( e.data.simpleExperiment, statisticsTableEl);
+        oes.ui.showSimpleExpResults( e.data.simpleExperiment);
       }
     }
   }

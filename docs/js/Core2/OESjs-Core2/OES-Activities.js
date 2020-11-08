@@ -346,10 +346,10 @@ class aCTIVITYeND extends eVENT {
     }
     // update statistics
     sim.stat.actTypes[AT.name].completedActivities++;
-    const waitingTime = acty.startTime - acty.enqueueTime;
+    const waitingTime = acty.enqueueTime ? acty.startTime - acty.enqueueTime : 0;
     //waitingTimeStat.total += waitingTime;
     if (waitingTimeStat.max < waitingTime) waitingTimeStat.max = waitingTime;
-    const cycleTime = acty.occTime - acty.enqueueTime;
+    const cycleTime = waitingTime + acty.occTime - acty.startTime;
     //cycleTimeStat.total += cycleTime;
     if (cycleTimeStat.max < cycleTime) cycleTimeStat.max = cycleTime;
     // compute resource utilization per activity type (per resource object or per count pool)

@@ -58,7 +58,7 @@ sim.initializeSimulator = function () {
   // A map for resource pools if there are no explicit process owners
   sim.resourcePools = Object.create(null);
   // Initializations per activity type
-  sim.model.activityTypes.forEach( function (actTypeName) {
+  for (const actTypeName of sim.model.activityTypes) {
     const AT = sim.Classes[actTypeName];
     AT.resourceRoles ??= Object.create(null);
     // Create the plannedActivities queues
@@ -66,6 +66,8 @@ sim.initializeSimulator = function () {
     // Create the resource pools
     for (const resRoleName of Object.keys( AT.resourceRoles)) {
       const resRole = AT.resourceRoles[resRoleName];
+      // set default cardinality
+      if (!resRole.card && !resRole.minCard) resRole.card = 1;
       let pn = "";
       if (resRole.range) {  // the resource role is associated with an individual pool
         let rn = resRole.range.name;
@@ -88,7 +90,7 @@ sim.initializeSimulator = function () {
       // assign the (newly created) pool to the resource role
       resRole.resPool = sim.resourcePools[pn];
     }
-  });
+  }
 }
 /*******************************************************************
  * Initialize a (standalone or experiment scenario) simulation run *
@@ -221,7 +223,9 @@ sim.runScenario = function (createLog) {
     // end simulation if no time increment and no more events
     if (!sim.timeIncrement && sim.FEL.isEmpty()) break;
   }
-  sim.computeFinalStatistics();  // resource utilization
+  // compute generic statistics (incl. resource utilization)
+  sim.computeFinalStatistics();
+  // compute user-defined statistics
   if (sim.model.computeFinalStatistics) sim.model.computeFinalStatistics();
 }
 /*******************************************************
@@ -232,6 +236,8 @@ sim.runStandaloneScenario = function (createLog) {
   if (!sim.scenario.randomSeed) sim.initializeScenarioRun();
   else sim.initializeScenarioRun({seed: sim.scenario.randomSeed});
   sim.runScenario( createLog);
+  // send statistics to main thread
+  self.postMessage({statistics: sim.stat, endTime: sim.time});
 }
 /*******************************************************
  Run an Experiment (in a JS worker)
@@ -240,7 +246,7 @@ sim.runExperiment = async function () {
   var exp = sim.experimentType, expRun={},
       compositeStatVarNames = ["actTypes"],
       simpleStatVarNames = [];
-  // set up statistics variables
+  // set up user-defined statistics variables
   sim.model.setupStatistics();
   // create a list of the names of simple statistics variables
   simpleStatVarNames = Object.keys( sim.stat).filter(
@@ -420,7 +426,6 @@ sim.runExperiment = async function () {
         expScenStat: exp.scenarios[i].stat
       });
     }
-    self.postMessage({endTime: sim.endTime});
   }
 
   if (exp.seeds && exp.seeds.length < exp.nmrOfReplications) {

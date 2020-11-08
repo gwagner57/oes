@@ -27,6 +27,12 @@
   You can download and inspect its code from the <a href="https://github.com/gwagner57/oes/tree/master/docs/js/Core2">OES
   GitHub repo</a>.</small></div>
  <h1>Medical-Department-1a</h1>
+ <p>Instead of using the built-in resource management (implied by using the <i>successorActivity</i> property
+  implementing Rescource-Dependent Activity Start arrows), the resource management of doctors is explicitly modeled.
+  The process owner, a medical department, is modeled explicitly with a queue-valued property <i>plannedExaminations</i>
+  and a counter attribute <i>nmrOfAvailDoctors</i> for representing the <em>count pool</em> information of how many doctors are available.</p>
+ <p>In <a href="../Medical-Department-1b/index.html">Medical-Department-1b</a>, the same model is implemented with the
+  built-in resource management by setting a successor activity with <code>NewCase.successorActivity = "Examination"</code>.</p>
  <form id="run">
      <div><label>Select scenario: <select name="selScen"></select></label></div>
      <div><button type="button" onclick="run()">Run</button> <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>
