@@ -1,6 +1,6 @@
-# OES Rust Core 0 Simulator 
+# OES Python Core 0 Simulator 
 
-The OESrs Core 0 simulator implements a minimal architecture for Object Event Simulation (OES), supporting models with 
+The OESpy Core 0 simulator implements a minimal architecture for Object Event Simulation (OES), supporting models with 
 (global) model variables and functions, object types, event types, and simple simulation experiments.
 
 <figure><figcaption>The OES Core 0 information architecture</figcaption>
