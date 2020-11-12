@@ -1,0 +1,59 @@
+<!-- ===========================================================================
+* Inventory Management - An example of a discrete event simulation.
+* Copyright 2015-2016 Gerd Wagner.
+* Chair of Internet Technology, Brandenburg University of Technology, Germany.
+* @license The MIT License (MIT)
+================================================================================ -->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>DES Example Inventory Management</title>
+ <meta name="viewport" content="width=device-width, initial-scale = 1.0" />
+ <link href="../../../css/index.css" rel="stylesheet" />
+ <script src="../lib/math.js"></script>
+ <script src="../lib/util.js"></script>
+ <script src="../lib/idb5.js"></script>
+ <script src="../OESjs-Core1/simulatorUI.js"></script>
+ <script>
+      // Create initial objects/maps/arrays
+      const sim = Object.create(null); // instead of {}
+      sim.model = Object.create(null);
+      sim.model.v = Object.create(null); // model variables
+      sim.model.p = Object.create(null); // model parameters
+      sim.scenario = Object.create(null);
+      sim.scenarios = [];
+      sim.stat = Object.create(null);
+      sim.experimentTypes = [];
+ </script>
+ <script src="simulation.js"></script>
+</head>
+<body>
+ <div><small>An <em><a href="https://gwagner57.github.io/oes/">Object Event Simulation (OES)</a></em> example model.
+  You can download and inspect its code from the <a href="https://github.com/gwagner57/oes/tree/master/docs/js/Core1">OES
+  GitHub repo</a>.</small></div>
+ <h1>Inventory Management</h1>
+ <form id="run">
+  <div><label>Select scenario: <select name="selScen"></select></label></div>
+  <div><button type="button" onclick="run()">Run</button> <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>
+  <div><label>Simulation log <input name="log" type="checkbox"/></label></div>
+  <div style="display: none"><label>Store exper. results <input name="storeExpRes" type="checkbox"/></label>
+      <button type="button" onclick="exportExperResults()">Export exper. results</button>
+      <button type="button" onclick="clearDatabase()">Clear database</button></div>
+ </form>
+ <table style="display: none">
+     <caption>Simulation Log</caption>
+     <thead>
+     <tr><th>Step</th><th>Time</th><th>System State</th><th>Future Events</th></tr>
+     </thead>
+     <tbody id="simLog"></tbody>
+ </table>
+ <p id="simInfo"></p>
+ <table id="statisticsTbl">
+     <caption></caption>
+     <tbody></tbody>
+ </table>
+ <p id="execInfo"></p>
+ <script src="../OESjs-Core1/index.js"></script>
+</body>
+</html>

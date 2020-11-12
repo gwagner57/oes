@@ -1,6 +1,6 @@
-# OES Rust Core 1 Simulator 
+# OES Python Core 1 Simulator 
 
-The OESrs Core 1 simulator implements an architecture for Object Event Simulation (OES), extending the OESjs Core 0 simulator 
+The OESpy Core 1 simulator implements an architecture for Object Event Simulation (OES), extending the OESjs Core 0 simulator 
 by adding fixed-increment time progression, a seedable random number generator, a set of sampling functions from various 
 probability distributions (uniform, triangular, normal, exponential, etc.), multiple scenarios per model, 
 multiple experiment types per model, model parameters, parameter variation experiments, as well as persistent storage 
