@@ -74,21 +74,24 @@ sim.initializeSimulator = function () {
         pn = rn.charAt(0).toLowerCase() + rn.slice(1) + "s";
         // create only if not yet created
         sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, resources:[]});
-      } else if (resRole.countPoolName) {
-        // a count pool has been assigned to the resource role
-        pn = resRole.countPoolName;
-        // create only if not yet created
-        sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, available:0});
-      } else {
-        // create default name for count pool
-        pn = resRoleName + (!resRole.card||resRole.card===1 ? "s":"");
-        // assign count pool to the resource role
-        resRole.countPoolName = pn;
-        // create pool only if not yet created
+      } else {  // the resource role is associated with a count pool
+        if (resRole.countPoolName) {
+          // a count pool has been explicitly assigned to the resource role
+          pn = resRole.countPoolName;
+        } else {
+          // create default name for implicit count pool
+          pn = resRoleName + (!resRole.card||resRole.card===1 ? "s":"");
+          // assign count pool to the resource role
+          resRole.countPoolName = pn;
+        }
+        // create count pool only if not yet created
         sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, available:0});
       }
       // assign the (newly created) pool to the resource role
       resRole.resPool = sim.resourcePools[pn];
+      // Subscribe activity types to resource pools
+      sim.resourcePools[pn].dependentActivityTypes ??= [];  //TODO: better a set
+      sim.resourcePools[pn].dependentActivityTypes.push( AT);
     }
   }
 }
@@ -159,7 +162,7 @@ sim.assignModelParameters = function (expParSlots) {
 sim.advanceSimulationTime = function () {
   sim.nextEvtTime = sim.FEL.getNextOccurrenceTime();  // 0 if there is no next event
   // increment the step counter
-  sim.step += 1;
+  sim.step++;
   // advance simulation time
   if (sim.timeIncrement) {  // fixed-increment time progression
     // fixed-increment time progression simulations may also have events

@@ -1,4 +1,4 @@
-class Request extends eVENT {
+class HaulServiceRequest extends eVENT {
   constructor({ occTime, delay, quantity}) {
     super({occTime, delay});
     this.quantity = quantity;
@@ -18,7 +18,7 @@ class Request extends eVENT {
   }
 /*
   createNextEvent() {
-    return new Request({delay: Request.recurrence()});
+    return new HaulServiceRequest({delay: HaulServiceRequest.recurrence()});
   }
   static recurrence() {
     return rand.exponential( 0.3);

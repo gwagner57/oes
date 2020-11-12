@@ -65,6 +65,7 @@ class pLANNEDaCTIVITIESqUEUE extends Array {
     super();
   }
   static ifAvailAllocReqResAndStartNextActivity( AT) {
+    if (AT.plannedActivities.length === 0) return;
     const nextActy = AT.plannedActivities[0];
     // Are all required resources available?
     if (Object.keys( AT.resourceRoles)
@@ -205,6 +206,7 @@ class rESOURCEpOOL {
         if (i === -1) {
           console.error(`The pool ${this.name} does not contain resource ${res.toString()} 
 at simulation step ${sim.step}!`);
+          return;
         } else {
           // remove resource from busyResources list
           this.busyResources.splice( i, 1);
@@ -216,6 +218,11 @@ at simulation step ${sim.step}!`);
     } else {
       console.error(`Release attempt for pool ${this.name} with "nmrOrRes" = ${nmrOrRes} failed 
 at simulation step ${sim.step}!`);
+      return;
+    }
+    // try starting enqueued planned activities depending on this type of resource
+    for (const AT of this.dependentActivityTypes) {
+      pLANNEDaCTIVITIESqUEUE.ifAvailAllocReqResAndStartNextActivity( AT);
     }
   }
   clear() {

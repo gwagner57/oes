@@ -13,7 +13,6 @@ sim.model.activityTypes = ["WalkToRoom", "Examination"];
 sim.scenario.durationInSimTime = 1000;
 //sim.scenario.durationInSimSteps = 1000;
 //sim.scenario.durationInCpuTime = 1000;  // seconds
-sim.scenario.idCounter = 11;  // start value of auto IDs
 // Initial State
 sim.scenario.setupInitialState = function () {
   const d1 = new Doctor({id: 1, name:"d1", status: oes.ResourceStatusEL.AVAILABLE}),
@@ -47,7 +46,7 @@ sim.scenarios[1] = {
     // Initialize the count pools
     sim.resourcePools["rooms"].available = 4;
     // Schedule initial events
-    sim.FEL.add( new Request({occTime: 1}));
+    sim.FEL.add( new NewCase({occTime: 1}));
   }
 };
 /*******************************************************
