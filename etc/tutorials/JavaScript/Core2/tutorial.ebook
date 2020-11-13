@@ -89,6 +89,11 @@ ul.links li:hover {
     width: 20px;
     height: 20px;
     background: #eee;
+}
+
+figure.right {
+    float: right;
+    margin-left: 1em;
 }</html:style>
   </head>
 

@@ -62,7 +62,7 @@
   information model in the form of a UML class diagram, as shown below.</p>
   <figure> <img src="img/CIM.svg" width="500" /> <figcaption>A conceptual
   information model describing object, event and activity
-  types.</figcaption></figure> <p>Notice that the association end stereotypes
+  types.</figcaption></figure><p>Notice that the association end stereotypes
   «rr» and «rp» denote <em>resource roles</em> and <em>resource pools</em>. A
   haul service company has resource pools for trucks and wheel loaders. The
   activity types <em>haul</em>, <em>dump</em> and <em>go back to loading
@@ -73,17 +73,17 @@
   has both resource role <em>truck</em> and a resource role <em>wheel
   loaders</em> for assigning at least one and at most two wheel loaders to any
   <em>load</em> activity (as indicated by the multiplicity "1..2" at the «rr»
-  association end at the class <em>wheel loaders</em>).</p> </details><details
-  open="open"><summary>Conceptual Process Model</summary> <p>The involved
-  types of events and activities can be related with each other via
+  association end at the class <em>wheel loaders</em>).</p></details><details
+  open="open"><summary>Conceptual Process Model</summary><p>The involved types
+  of events and activities can be related with each other via
   <em>resource-dependent activity start arrows</em> and <em>event scheduling
   arrows</em>, as shown in the following DPMN process diagram:</p> <figure>
   <img src="img/CPMa.svg" width="600" /> <figcaption>A DPMN diagram showing a
-  conceptual process model.</figcaption> </figure> <p>The model shows that
-  when a load-haul-dump request comes in, as indicated by the double arrow,
-  the haul service company deploys multiple trucks and wheel loaders to the
+  conceptual process model.</figcaption> </figure><p>The model shows that when
+  a load-haul-dump request comes in, as indicated by the double arrow, the
+  haul service company deploys multiple trucks and wheel loaders to the
   loading site (each of them performs a <em>go to loading site</em> activity).
-  Each of these activities leads to enqueing a new <em>load</em> activity, as
+  Each of these activities leads to enqueuing a new <em>load</em> activity, as
   indicated by the <em>resource-dependent activity start arrow</em> from the
   <em>go to loading site</em> activity shape to the <em>load</em> activity
   shape. Such an enqueued (planned) activity is going to be dequeued and

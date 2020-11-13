@@ -4,7 +4,7 @@ class GoToLoadingSite extends aCTIVITY {
   }
   static duration() {return rand.triangular( 30, 50, 40);}
 }
-// An examination requires a doctor, two nurses and a room
+// An GoToLoadingSite activity requires a truck
 GoToLoadingSite.resourceRoles = {
   "truck": {range: Truck}
 }
