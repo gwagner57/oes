@@ -1,6 +1,6 @@
 # python implementation of the math functions from the math.js file
 # Status: Almost finished
-from statistics import stdev, mean
+from statistics import stdev, fmean as mean
 from random import randint, uniform
 from itertools import product
 
