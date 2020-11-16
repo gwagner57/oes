@@ -118,18 +118,18 @@
   pools), as shown in the following DPMN diagram:</p><figure><figcaption>A
   computationally complete process design for the Load-Haul-Dump business
   process.</figcaption><img alt="???" src="../img/LoadHaulDump_PDM.svg"
-  width="700" /></figure></details></details><details><summary>Implementation
-  with OESjs</summary><p>The JavaScript-based simulator OESjs implements the
-  Object Event Simulation paradigm, and, consequently, allows a
-  straight-forward coding of OEM class models and DPMN process
-  models.</p><h5>Implementing the Information Design Model</h5><details
-  open="open"><summary>Implementing the Information Design
+  width="700" /></figure></details></details><details
+  open="open"><summary>Implementation with OESjs</summary><p>The
+  JavaScript-based simulator OESjs implements the Object Event Simulation
+  paradigm, and, consequently, allows a straight-forward coding of OEM class
+  models and DPMN process models.</p><h5>Implementing the Information Design
+  Model</h5><details open="open"><summary>Implementing the Information Design
   Model</summary><p>For implementing the information design model, we have to
   code all object types, event types and activity types specified in the model
-  in the form of classes.</p><figure><img alt="???"
-  src="../img/LoadHaulDump-Truck_IDM.svg" style="float:right"
-  width="300" /></figure><p>The <code>Truck</code> object class can be coded
-  with OESjs-Core2 in the following way:</p><pre>class <b>Truck</b> extends oBJECT {
+  in the form of classes.</p><figure class="right"><img alt="???"
+  src="../img/LoadHaulDump-Truck_IDM.svg" width="300" /></figure><p>The
+  <code>Truck</code> object class can be coded with OESjs-Core2 in the
+  following way:</p><pre>class <b>Truck</b> extends oBJECT {
   constructor({ id, name, <b>status</b>}) {
     super( id, name);
     <b>this.status</b> = status;
@@ -140,8 +140,8 @@ Truck.<b>capacity</b> = 15;  // m3
   <code>status</code> property for them. We also define a class-level property
   <code>capacity</code> for modeling their load capacity, assuming that all
   trucks have the same capacity.</p><p>The <i>WheelLoader</i> object class is
-  coded in the same way as <i>Truck</i>.</p><figure><img alt="???"
-  src="../img/LoadHaulDump-HaulRequest_IDM.svg" style="float:right"
+  coded in the same way as <i>Truck</i>.</p><figure class="right"><img
+  alt="???" src="../img/LoadHaulDump-HaulRequest_IDM.svg"
   width="180" /></figure><p>The <code>HaulRequest</code> event class can be
   coded in the following way:</p><pre>class <b>HaulRequest</b> extends eVENT {
   constructor({ occTime, delay, <b>quantity</b>}) {
@@ -151,37 +151,45 @@ Truck.<b>capacity</b> = 15;  // m3
   onEvent() {
     ...
   }
-}</pre><p>Notice that a <i>HaulRequest</i> event class has a
-  <code>quantity</code> property. Its <code>onEvent</code> method is not part
-  of the information design model. Rather, it is implementing an event rule
-  specified in the process design model. Consequently, it will be discussed
-  below.</p><p>The <i>HaulRequest</i> activity class can be coded in the
-  following way:</p> <pre>class HaulRequest extends eVENT {
-  constructor({ occTime, delay, quantity}) {
-    super({occTime, delay});
-    this.quantity = quantity;
+}</pre><p>Any event in OES can be created either with a value for the property
+  <code>occTime</code> (standing for <em>occurrence time</em>) or with a value
+  for the property <code>delay</code>. In the latter case, the event's
+  occurrence time is automatically derived by adding the value of
+  <code>delay</code> to the current simulation time. In addition, the
+  <i>HaulRequest</i> event class has a property <code>quantity</code> for
+  specifying the quantity to be hauled.. </p><p>The <code>onEvent</code>
+  method of the <i>HaulRequest</i> event class is not part of the information
+  design model. Rather, it is implementing an event rule specified in the
+  process design model. Consequently, it will be discussed below.</p><figure
+  class="right"><img alt="???"
+  src="../img/LoadHaulDump-GoToLoadingSite_IDM.svg"
+  width="400" /></figure><p>The <i>GoToLoadingSite</i> activity class can be
+  coded in the following way:</p><pre>class <b>GoToLoadingSite</b> extends aCTIVITY {
+  constructor({id, startTime, duration}={}) {
+    super({id, startTime, duration});
   }
-  onEvent() {
-    const followupEvents=[],
-          allocatedTrucks = sim.resourcePools["trucks"].allocateAll();
-    sim.model.v.nmrOfLoads = Math.ceil( this.quantity / Truck.capacity);
-    for (const t of allocatedTrucks) {
-      const goActy = new GoToLoadingSite();
-      // assign truck as required resource
-      goActy.truck = t;
-      // start GoToLoadingSite activity
-      followupEvents.push( new aCTIVITYsTART({plannedActivity: goActy}));
-    }
-    return followupEvents;
-  }
-}</pre></details><p>.</p><details open="open"><summary>Implementing the
-  Process Design Model</summary><p>A DPMN process design model can be
-  decomposed into a set of event rule design models, one for each type of
-  event specified in the design model. Starting with the <i>HaulRequest</i>
-  event rule design model, we show how the event rules specified by each of
-  these event rule design models can be coded in the form of an
-  <code>onEvent</code> method.</p><figure><figcaption>A design model for the
-  HaulRequest event rule.</figcaption><img alt="???"
+  static <b>duration</b>() {return rand.triangular( 30, 50, 40);}
+}
+GoToLoadingSite.<b>resourceRoles</b> = {
+  "truck": {range: Truck}
+}</pre><p>When an activity is created as a JS object during a simulation run,
+  the value of its <code>duration</code> property is obtained by invoking the
+  <code>duration()</code> function defined for its activity class (as a
+  class-level function). These functions typically implement a random variable
+  by invoking a random variate sampling function, such as
+  <code>rand.triangular(30,50,40)</code>, which samples from the triangular
+  probability distribution function.</p><p>Notice how the resource role
+  association between <i>GoToLoadingSite</i> and <i>Truck</i>, which defines
+  the resource reference property <i>GoToLoadingSite::truck</i>, is
+  implemented by a corresponding entry in the map-valued class-level property
+  <i>GoToLoadingSite.resourceRoles</i>.</p></details><details
+  open="open"><summary>Implementing the Process Design Model</summary><p>A
+  DPMN process design model can be decomposed into a set of event rule design
+  models, one for each type of event specified in the design model. Starting
+  with the <i>HaulRequest</i> event rule design model, we show how the event
+  rules specified by each of these event rule design models can be coded in
+  the form of an <code>onEvent</code> method.</p><figure><figcaption>A design
+  model for the HaulRequest event rule.</figcaption><img alt="???"
   src="../img/LoadHaulDump-HaulRequest_RDM.svg" width="300" /></figure><p>In
   the following <i>HaulRequest</i> event rule method <code>onEvent</code>, all
   available trucks are allocated to the current haul request, and, after
@@ -201,5 +209,5 @@ Truck.<b>capacity</b> = 15;  // m3
     }
     return followupEvents;
   }
-}</pre> </details></details></body>
+}</pre><p></p><pre>GoToLoadingSite.successorActivity = "Load"</pre></details></details></body>
 </html>
