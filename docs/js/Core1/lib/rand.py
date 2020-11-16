@@ -10,7 +10,6 @@ from scipy.stats import uniform
 from scipy.stats import triang
 from scipy.stats import pareto
 from scipy.stats import weibull_max
-from scipy.stats import weibull_min
 import matplotlib.pyplot as plt
 import sys
 if not sys.warnoptions:
