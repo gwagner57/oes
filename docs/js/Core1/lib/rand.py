@@ -9,7 +9,8 @@ from scipy.stats import norm
 from scipy.stats import uniform
 from scipy.stats import triang
 from scipy.stats import pareto
-
+from scipy.stats import weibull_max
+from scipy.stats import weibull_min
 import matplotlib.pyplot as plt
 import sys
 if not sys.warnoptions:
@@ -97,8 +98,16 @@ class Rand:
                      hist_kws={"linewidth": 15,'alpha':1})
    	ax.set(xlabel='Pareto Distribution ', ylabel='Frequency')
    	plt.show()
+   def weibull1(self,shape,scale):
 
-
+      data_weibull = weibull_max.rvs(c=shape, scale=scale, size=10000)
+      ax = sns.distplot(data_weibull,
+                     bins=100,
+                     kde=True,
+                     color='skyblue',
+                     hist_kws={"linewidth": 15,'alpha':1})
+      ax.set(xlabel='weibull_max ', ylabel='Frequency')
+      plt.show()
 rand = Rand()
 rand.print_all()
 rand.exponential(0.5)
@@ -107,4 +116,5 @@ rand.normal(1.5, 0.5)
 rand.uniform1(0.5, 1.5)
 rand.triangular(0.5, 1.5, 1.0)
 rand.pareto1(2.0)
-
+rand.weibull1(1,0.5)
+rand.weibull2(1,0.5)
