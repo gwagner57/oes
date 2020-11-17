@@ -11,6 +11,8 @@ from scipy.stats import triang
 from scipy.stats import pareto
 from scipy.stats import weibull_max
 from scipy.stats import randint
+from scipy import stats 
+import numpy as np  
 import matplotlib.pyplot as plt
 import sys
 if not sys.warnoptions:
@@ -119,8 +121,12 @@ class Rand:
                      hist_kws={"linewidth": 15,'alpha':1})
       ax.set(xlabel='weibull_max ', ylabel='Frequency')
       plt.show()
-
-
+   #test code for frequency distribution
+      arr = [14, 31, 27, 27, 31, 13, 14, 13]  
+  
+      print ("Itemfrequency : \n", stats.itemfreq(arr)) 
+  
+      print ("\n\nBincount : \n", np.bincount(arr))
 rand = Rand()
 rand.print_all()
 rand.exponential(0.5)
