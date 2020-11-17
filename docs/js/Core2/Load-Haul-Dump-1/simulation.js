@@ -6,7 +6,7 @@ sim.model.time = "continuous";
 sim.model.timeUnit = "min";
 
 sim.model.objectTypes = ["Truck", "WheelLoader"];
-sim.model.eventTypes = ["HaulServiceRequest"];
+sim.model.eventTypes = ["HaulRequest"];
 sim.model.activityTypes = ["GoToLoadingSite","Load","Haul","Dump","GoBackToLoadingSite","GoHome"];
 
 sim.model.v.nmrOfLoads = 66;
@@ -28,7 +28,7 @@ sim.scenario.setupInitialState = function () {
   sim.resourcePools["trucks"].availResources.push( t1, t2, t3, t4, t5);
   sim.resourcePools["wheelLoaders"].availResources.push( wl1);
   // Schedule initial events
-  sim.FEL.add( new HaulServiceRequest({occTime: 1, quantity: 990}));
+  sim.FEL.add( new HaulRequest({occTime: 1, quantity: 990}));
 }
 /*******************************************************
  Alternative Scenarios
@@ -48,7 +48,7 @@ sim.scenarios[1] = {
     sim.resourcePools["trucks"].availResources.push( t1, t2, t3, t4, t5);
     sim.resourcePools["wheelLoaders"].availResources.push( wl1, wl2);
     // Schedule initial events
-    sim.FEL.add( new HaulServiceRequest({occTime: 1, quantity: 990}));
+    sim.FEL.add( new HaulRequest({occTime: 1, quantity: 990}));
   }
 };
 /*******************************************************
