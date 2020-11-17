@@ -10,6 +10,7 @@ from scipy.stats import uniform
 from scipy.stats import triang
 from scipy.stats import pareto
 from scipy.stats import weibull_max
+from scipy.stats import randint
 import matplotlib.pyplot as plt
 import sys
 if not sys.warnoptions:
@@ -76,6 +77,17 @@ class Rand:
    	ax.set(xlabel='Uniform Distribution ', ylabel='Frequency')
    	plt.show()
 
+   def uniformInt(self,lowerBound, upperBound):
+      data_uniform1 = randint.rvs(low =1, high =31, loc=0, size=1000, random_state=None)
+
+      ax = sns.distplot(data_uniform1,
+                     bins=100,
+                     kde=True,
+                     color='skyblue',
+                     hist_kws={"linewidth": 15,'alpha':1})
+      ax.set(xlabel='Discrete Uniform Distribution ', ylabel='Frequency')
+      plt.show()
+
    def triangular(self, lowerBound, upperBound, mode):
    	data_uniform = triang.rvs(size=10000, c=mode, loc = lowerBound, scale=upperBound)
 
@@ -107,12 +119,15 @@ class Rand:
                      hist_kws={"linewidth": 15,'alpha':1})
       ax.set(xlabel='weibull_max ', ylabel='Frequency')
       plt.show()
+
+
 rand = Rand()
 rand.print_all()
 rand.exponential(0.5)
 rand.gamma1(1.0, 2.0)
 rand.normal(1.5, 0.5)
 rand.uniform1(0.5, 1.5)
+rand.uniformInt(1, 6)
 rand.triangular(0.5, 1.5, 1.0)
 rand.pareto1(2.0)
 rand.weibull1(1,0.5)

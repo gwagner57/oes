@@ -161,8 +161,8 @@ rand.frequency = function (freqMap) {
   var valuesAreNumeric = !isNaN( parseInt( valueStrings[0]));
   var randX = rand.gen();
   for (let i=0; i <= cumProbs.length; i++) {
-    if (randX < cumProbs[i]) return valuesAreNumeric ?
-        parseInt( valueStrings[i]) : valueStrings[i];
+    if (randX < cumProbs[i])
+      return valuesAreNumeric ? parseInt(valueStrings[i]) : valueStrings[i];
   }
 };
 
