@@ -64,7 +64,7 @@ OES Core 1 adds the following features to OES Core 0:
 OES Core 2 adds the following features to OES Core 1:
 
 - activities as composite events, having a start event and an end event, and a duration as the time in-between their start and end events
-- resource roles with resource constraints
+- resource roles with resource cardinality constraints
 - resource pools
 - automated (a) throughput, (b) queue length, (c) cycle time, and (d) resource utilization statistics per activity type
 

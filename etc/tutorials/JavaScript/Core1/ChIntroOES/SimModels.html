@@ -653,17 +653,18 @@ ServiceDesk.<b>labels</b> = {"queueLength":"qLen"};  // for the log</pre><p>Noti
   href="https://en.wikipedia.org/wiki/Xorshift"
   target="_top"><em>xorshift</em></a> that is built into the
   <code>Math.random</code> function of modern JavaScript engines.</p><p>A
-  seeded random number stream, based on the slower <a
-  href="https://en.wikipedia.org/wiki/Mersenne_Twister" target="_top">Mersenne
-  Twister</a> algorithm, can be obtained by setting the scenario parameter
+  seeded random number stream, based on David Bau's seedable random number
+  generator <a href="https://github.com/davidbau/seedrandom">seedrandom</a>,
+  can be obtained by setting the scenario parameter
   <code>sim.scenario.randomSeed</code> to a positive integer
   value.</p><p>Additional streams can be defined and used in the following
   way:</p><pre>var stream1 = new Random( 1234);
 var stream2 = new Random( 6789);
 var service1Duration = stream1.exponential( 0.5);
-var service2Duration = stream2.exponential( 1.5);</pre><p><b>Warning</b>:
-  Avoid using JavaScript's built-in <code>Math.random</code> in simulation
-  code. Always use <code>rand.uniform</code>, or one of the other probability
-  distribution functions from the <i>rand</i> library described above, for
-  generating random numbers.</p></section></body>
+var service2Duration = stream2.exponential( 1.5);</pre><blockquote
+  class="role-warning"><p>Avoid using JavaScript's built-in
+  <code>Math.random</code> in simulation code. Always use
+  <code>rand.uniform</code>, or one of the other probability distribution
+  functions from the <kbd>rand.js</kbd> library described above, for
+  generating random numbers.</p></blockquote></section></body>
 </html>
