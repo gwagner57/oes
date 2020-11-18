@@ -23,25 +23,24 @@
   width="400" /></figure> <section id="shortDescription">A haul service
   company accepts requests for hauling large quantities of earth from a
   loading site to a dump site, using dump trucks and wheel
-  loaders.</section></div><details open="open"><summary>Conceptual
-  Model</summary><p>A haul service company has resource pools for dump trucks
-  and wheel loaders. While <em>go (back) to loading site</em>, <em>haul</em>,
-  <em>dump</em> and <em>go home</em> activities just require a <em>truck</em>
-  (or a <em>wheel loader</em>) as a resource, <em>load</em> activities require
-  both a <em>truck</em> and a <em>wheel loader</em>.</p><details
-  open="open"><summary>Conceptual Information Model</summary><p>The
-  potentially relevant object types are:</p><ol>
+  loaders.</section><p>You can <a
+  href="https://gwagner57.github.io/oes/js/Core2/Load-Haul-Dump-1/">run this
+  model</a> from the OES GitHub website, or inspect its <a
+  href="https://github.com/gwagner57/oes/tree/master/docs/js/Core2/Load-Haul-Dump-1">OESjs
+  code</a>.</p><details><summary>Conceptual Model</summary><p>A haul service
+  company has resource pools for dump trucks and wheel loaders. While the
+  activities <em>go (back) to loading site</em>, <em>haul</em>, <em>dump</em>
+  and <em>go home</em> just require a <em>truck</em> (or a <em>wheel
+  loader</em>) as a resource, <em>load</em> activities require both a
+  <em>truck</em> and a <em>wheel loader</em>.</p><details><summary>Conceptual
+  Information Model</summary><p>The potentially relevant object types
+  are:</p><ol>
       <li>haul service company,</li>
 
       <li>wheel loaders,</li>
 
       <li>dump trucks.</li>
-    </ol> <!--
-     <figure class="right-float">
-       <img src="CIM-ObjT.svg" width="450"/>
-       <figcaption>A conceptual model describing object types.</figcaption>
-     </figure>
---> <p>Potentially relevant types of events and activities are:</p><ol>
+    </ol><p>Potentially relevant types of events and activities are:</p><ol>
       <li>haul requests coming in from customers,</li>
 
       <li>going to the loading site (an activity performed by trucks and by
@@ -57,82 +56,248 @@
 
       <li>going home when the job is done (performed by trucks and by wheel
       loaders).</li>
-    </ol> <p>Both object types and event types, together with their
+    </ol><p>Both object types and event types, together with their
   participation associations, can be visually described in a conceptual
-  information model in the form of a UML class diagram, as shown below.</p>
-  <figure> <img src="img/CIM.svg" width="500" /> <figcaption>A conceptual
-  information model describing object, event and activity
-  types.</figcaption></figure><p>Notice that the association end stereotypes
-  «rr» and «rp» denote <em>resource roles</em> and <em>resource pools</em>. A
-  haul service company has resource pools for trucks and wheel loaders. The
+  information model in the form of a UML class diagram, as shown
+  below.</p><figure><figcaption>A conceptual information model describing
+  object, event and activity types.</figcaption><img alt="???"
+  src="../img/CIM7774527373595755602_2zfrdoij.svg"
+  width="500" /></figure><p>Notice that the association end annotations «rr»
+  and «rp» denote <em>resource roles</em> and <em>resource pools</em>. A haul
+  service company has resource pools for trucks and wheel loaders. The
   activity types <em>haul</em>, <em>dump</em> and <em>go back to loading
   site</em> have a resource role <em>truck</em> for assigning a truck to any
   activity of one of those types. The activity types <em>go to loading
   site</em> and <em>go home</em> have either a a resource role <em>truck</em>
-  or a resource role <em>wheel loader</em>. The activity type <em>load</em>
-  has both resource role <em>truck</em> and a resource role <em>wheel
-  loaders</em> for assigning at least one and at most two wheel loaders to any
-  <em>load</em> activity (as indicated by the multiplicity "1..2" at the «rr»
-  association end at the class <em>wheel loaders</em>).</p></details><details
-  open="open"><summary>Conceptual Process Model</summary><p>The involved types
-  of events and activities can be related with each other via
-  <em>resource-dependent activity start arrows</em> and <em>event scheduling
-  arrows</em>, as shown in the following DPMN process diagram:</p> <figure>
-  <img src="img/CPMa.svg" width="600" /> <figcaption>A DPMN diagram showing a
-  conceptual process model.</figcaption> </figure><p>The model shows that when
-  a load-haul-dump request comes in, as indicated by the double arrow, the
-  haul service company deploys multiple trucks and wheel loaders to the
-  loading site (each of them performs a <em>go to loading site</em> activity).
-  Each of these activities leads to enqueuing a new <em>load</em> activity, as
-  indicated by the <em>resource-dependent activity start arrow</em> from the
-  <em>go to loading site</em> activity shape to the <em>load</em> activity
-  shape. Such an enqueued (planned) activity is going to be dequeued and
-  started as soon as the required resources are available. This means that as
-  soon as a wheel loader is available the next <em>load</em> activity is going
-  to be started. When a <em>load</em> activity is completed, a <em>haul</em>
-  activity and then a <em>dump</em> activity are going to start immediately,
-  as indicated by the <em>event scheduling arrows</em> between them.</p> <p>A
-  more complete model prevents trucks to go back to the loading site and
-  perform a load activity even when the job has been completed during the go
-  back activity (resulting in haul and dump activities with an empty truck).
-  For avoiding this uneconomic behavior, a second decision if the job has been
-  done needs to be taken after the go back activity. In addition, the model
-  has to describe that wheel loaders also go home when their job has been
-  done. This is shown in the following refined model:</p> <figure> <img
-  src="img/CPMb.svg" width="600" /> <figcaption>A refined conceptual process
-  model.</figcaption> </figure>
-  </details></details><details><summary>Simulation Design</summary> <p>In our
-  simulation design, we consider only one particular haul service company,
-  which does not have to be modeled explicitly. Also, we abstract away from
-  the fact that also wheel loaders have to go to, and return from, the loading
-  site by assuming that they are already at the site when the dump trucks
-  arrive.</p> <details><summary>Information Design Model</summary> <p>In the
-  information design model, we need to define a <i>status</i> attribute for
-  all resource object types, such as <i>Truck</i> and <i>WheelLoader</i>, and
-  a duration function, typically representing a random variable, for each
-  activity type:</p> <figure> <img src="img/IDM.svg" width="600" />
-  <figcaption>An information design model defining object, event and activity
-  types.</figcaption> </figure> <p>Notice how functions representing random
-  variables, like <code>duration()</code>, are marked with the keyword (or UML
-  stereotype) «rv» standing for "random variable".</p> </details>
-  <details><summary>Process Design Model</summary> <p>In the process design
+  or a resource role <em>wheel loader</em>, as indicated by the
+  <em>alternative association</em> constraint expressed with a dashed line
+  annotated with <em>{xor}</em>. The activity type <em>load</em> has both
+  resource role <em>truck</em> and a resource role <em>wheel loaders</em> for
+  assigning at least one and at most two wheel loaders to any <em>load</em>
+  activity (as indicated by the multiplicity "1..2" at the «rr» association
+  end at the class <em>wheel
+  loaders</em>).</p></details><details><summary>Conceptual Process
+  Model</summary><p>The involved types of events and activities can be related
+  with each other via <em>resource-dependent activity start arrows</em> and
+  <em>event scheduling arrows</em>, as shown in the following DPMN process
+  diagram:</p><figure><figcaption>A DPMN diagram showing a conceptual process
+  model.</figcaption><img alt="???" src="../img/LoadHaulDump_CPMa.svg"
+  width="600" /></figure><p>The model shows that when a load-haul-dump request
+  comes in, as indicated by the double arrow, the haul service company deploys
+  multiple trucks and wheel loaders to the loading site (each of them performs
+  a <em>go to loading site</em> activity). Each of these activities leads to
+  enqueuing a new <em>load</em> activity, as indicated by the
+  <em>resource-dependent activity start arrow</em> from the <em>go to loading
+  site</em> activity shape to the <em>load</em> activity shape. Such an
+  enqueued (planned) activity is going to be dequeued and started as soon as
+  the required resources are available. This means that as soon as a wheel
+  loader is available the next <em>load</em> activity is going to be started.
+  When a <em>load</em> activity is completed, a <em>haul</em> activity and
+  then a <em>dump</em> activity are going to start immediately, as indicated
+  by the <em>event scheduling arrows</em> between them.</p><p>A more complete
+  model prevents trucks to go back to the loading site and perform a load
+  activity even when the job has been completed during the go back activity
+  (resulting in haul and dump activities with an empty truck). For avoiding
+  this uneconomic behavior, a second decision if the job has been done needs
+  to be taken after the go back activity. In addition, the model has to
+  describe that wheel loaders also go home when their job has been done. This
+  is shown in the following refined model:</p><figure><figcaption>A refined
+  conceptual process model.</figcaption><img alt="???"
+  src="../img/LoadHaulDump_CPMb.svg"
+  width="600" /></figure></details></details><details><summary>Simulation
+  Design</summary><p>In our simulation design, we consider only one particular
+  haul service company, which does not have to be modeled explicitly. Also, we
+  abstract away from the fact that also wheel loaders have to go to, and
+  return from, the loading site by assuming that they are already at the site
+  when the dump trucks arrive.</p><details open="open"><summary>Information
+  Design Model</summary> <p>In the information design model, we need to define
+  a <i>status</i> attribute for all resource object types, such as
+  <i>Truck</i> and <i>WheelLoader</i>, and a duration function, typically
+  representing a random variable, for each activity
+  type:</p><figure><figcaption>An information design model defining object,
+  event and activity types.</figcaption><img alt="???"
+  src="../img/LoadHaulDump_IDM.svg" width="600" /></figure><p>Notice how
+  functions representing random variables, like the <code>duration</code>
+  function of all activity types, are marked with the keyword (or UML
+  'stereotype') «rv» standing for "random variable". These random variable
+  functions sample from a probability distribution function (PDF), which is
+  symbolically indicated with expressions like Tri(30,50,40) standing for the
+  triangular PDF with lower and upper bounds 30 and 50, and a median of 40.
+  </p><p>Each activity type is associated with <i>Truck</i> or
+  <i>WheelLoader</i> as their resource role(s), indicated with the association
+  end stereotype «rr» standing for "resource role".</p></details><details
+  open="open"><summary>Process Design Model</summary><p>In the process design
   model, we need to specify the state changes caused by events (including
   activity start and end events) and the constructor arguments for scheduling
   follow-up events, using model variables (possibly referencing resource
-  pools), as shown in the following DPMN diagram:</p> <figure> <img
-  src="img/PDM.svg" width="700" /> <figcaption>A computationally complete
-  process design for the Load-Haul-Dump-1 model.</figcaption> </figure>
-  </details> </details><details><summary>Implementation with OESjs</summary>
-  <p>The JavaScript-based simulator OESjs implements the Object Event
-  Simulation paradigm, and, consequently, allows a straight-forward coding of
-  OEM class models and DPMN process models.</p> <details><summary>Implementing
-  the Information Design Model</summary> </details> <details><summary>Process
-  Design Model</summary> <p>In the process design model, we need to specify
-  the state changes caused by events (including activity start and end events)
-  and the constructor arguments for scheduling follow-up events, using model
-  variables (possibly referencing resource pools), as shown in the following
-  DPMN diagram:</p> <figure> <img src="img/PDM.svg" width="700" />
-  <figcaption>A computationally complete process design for the
-  Load-Haul-Dump-1 model.</figcaption> </figure> </details> </details> <p><a
-  href="index.html">Back to simulation</a></p></body>
+  pools), as shown in the following DPMN diagram:</p><figure><figcaption>A
+  computationally complete process design for the Load-Haul-Dump business
+  process.</figcaption><img alt="???" src="../img/LoadHaulDump_PDM.svg"
+  width="700" /></figure></details></details><details><summary>Implementation
+  with OESjs</summary><p>The JavaScript-based simulator OESjs implements the
+  Object Event Simulation paradigm, and, consequently, allows a
+  straight-forward coding of OEM class models and DPMN process
+  models.</p><details open="open"><summary>Implementing the Information Design
+  Model</summary><p>For implementing the information design model, we have to
+  code all object types, event types and activity types specified in the model
+  in the form of classes.</p><figure class="right"><img alt="???"
+  src="../img/LoadHaulDump-Truck_IDM.svg" width="300" /></figure><p>The
+  <code>Truck</code> object class can be coded with OESjs-Core2 in the
+  following way:</p><pre>class <b>Truck</b> extends oBJECT {
+  constructor({ id, name, <b>status</b>}) {
+    super( id, name);  // invoke the oBJECT constructor
+    <b>this.status</b> = status;
+  }
+}
+// a class-level attribute
+Truck.<b>capacity</b> = 15;  // m3</pre><p>All object classes inherit an
+  <code>id</code> attribute and a <code>name</code> attribute from the
+  pre-defined OES foundation class <code>oBJECT</code>. Since trucks are
+  resource objects, we need to define a <code>status</code> property for them.
+  We also define a class-level attribute <code>capacity</code> for modeling
+  their load capacity, assuming that all trucks have the same
+  capacity.</p><p>The <i>WheelLoader</i> object class is coded in the same way
+  as <i>Truck</i>.</p><figure class="right"><img alt="???"
+  src="../img/LoadHaulDump-HaulRequest_IDM.svg" width="180" /></figure><p>The
+  <code>HaulRequest</code> event class can be coded in the following
+  way:</p><pre>class <b>HaulRequest</b> extends eVENT {
+  constructor({ occTime, delay, <b>quantity</b>}) {
+    super({occTime, delay});
+    <b>this.quantity</b> = quantity;
+  }
+  onEvent() {
+    ...
+  }
+}</pre><p>All event classes inherit an <code>occTime</code> attribute and a
+  <code>delay</code> attribute from the pre-defined OES foundation class
+  <code>eVENT</code>. Any event in OES can be created either with a value for
+  the attribute <code>occTime</code> (standing for <em>occurrence time</em>)
+  or with a value for the attribute <code>delay</code>. In the latter case,
+  the event's occurrence time is automatically derived by adding the value of
+  <code>delay</code> to the current simulation time. In addition, the
+  <i>HaulRequest</i> event class has a property <code>quantity</code> for
+  specifying the quantity to be hauled.. </p><p>The <code>onEvent</code>
+  method of the <i>HaulRequest</i> event class is not part of the information
+  design model. Rather, it is implementing an event rule specified in the
+  process design model. Consequently, it will be discussed below.</p><figure
+  class="right"><img alt="???"
+  src="../img/LoadHaulDump-GoToLoadingSite_IDM.svg"
+  width="400" /></figure><p>The <i>GoToLoadingSite</i> activity class can be
+  coded in the following way:</p><pre>class <b>GoToLoadingSite</b> extends aCTIVITY {
+  constructor({id, startTime, duration}={}) {
+    super({id, startTime, duration});
+  }
+  static <b>duration</b>() {return rand.triangular( 30, 50, 40);}
+}
+GoToLoadingSite.<b>resourceRoles</b> = {
+  "truck": {range: Truck}
+}</pre><p>All activity classes inherit the attributes <code>id</code>,
+  <code>startTime</code> and <code>duration</code> from the pre-defined OES
+  foundation class <code>aCTIVITY</code>. When an activity is created as a JS
+  object during a simulation run, the value of its <code>duration</code>
+  property is obtained by invoking the <code>duration()</code> function
+  defined as a class-level ("static") function for its activity class. These
+  activity duration functions typically implement a random variable by
+  invoking a random variate sampling function, such as
+  <code>rand.triangular(30,50,40)</code>, which samples from the triangular
+  probability distribution function (with min/max=30/50 and
+  mode=40).</p><p>Notice how the resource role association between
+  <i>GoToLoadingSite</i> and <i>Truck</i>, which defines the resource
+  reference property <i>GoToLoadingSite::truck</i>, is coded by a
+  corresponding entry in the map-valued class-level property
+  <code>resourceRoles</code>.</p></details><details
+  open="open"><summary>Implementing the Process Design Model</summary><p>A
+  DPMN process design model can be decomposed into a set of event rule design
+  models, one for each type of event specified in the design model. Starting
+  with the <code>HaulRequest</code> event rule design model, we show how the
+  event rules specified by each of these event rule design models can be coded
+  in the form of an <code>onEvent</code> method.</p><figure><figcaption>A
+  design model for the <code>HaulRequest</code> event rule.</figcaption><img
+  alt="???" src="../img/LoadHaulDump-HaulRequest_RDM.svg"
+  width="400" /></figure><p>In the following <code>HaulRequest</code> event
+  rule method <code>onEvent</code>, all available trucks are allocated to the
+  current haul request, and, after computing the number of loads, for each of
+  the allocated trucks a new <code>GoToLoadingSite</code> activity is
+  started:</p><pre>class <b>HaulRequest</b> extends eVENT {
+  ...
+  <b>onEvent</b>() {
+    const followupEvents=[],
+          allocatedTrucks = sim.resourcePools["trucks"].<b>allocateAll</b>();
+    // assign model variable
+    sim.model.v.<b>nmrOfLoads</b> = Math.ceil( this.quantity / Truck.capacity);
+    for (const t of allocatedTrucks) {
+      const goActy = <b>new GoToLoadingSite</b>();
+      // assign truck as required resource
+      goActy.truck = t;
+      // start GoToLoadingSite activity
+      followupEvents.push( <b>new aCTIVITYsTART</b>({plannedActivity: goActy}));
+    }
+    return followupEvents;
+  }
+}</pre><p>Since activities are composite events, we also have event rules for
+  them. The following <i>GoToLoadingSite</i> event rule is triggered whenever
+  a <i>GoToLoadingSite</i> activity is completed, since the completion of an
+  activity counts as its occurrence event.</p><figure><figcaption>A design
+  model for the <code>GoToLoadingSite</code> event rule.</figcaption><img
+  alt="???" src="../img/LoadHaulDump-GoToLoadingSite_RDM.svg"
+  width="300" /></figure><p>This rule states that whenever a
+  <i>GoToLoadingSite</i> activity ends (or is completed), then a new planned
+  <i>Load</i> activity is enqueued, if no wheel loader is available, or,
+  otherwise, a new <i>Load</i> activity is started. In OESjs, it is coded in
+  the following declarative way: </p><pre>GoToLoadingSite.<b>successorActivity</b> = "Load"</pre><p>Such
+  a successor activity assignment allows the simulator to check if the
+  required resources are available and then start the successor activity, or,
+  otherwise, enqueue a new planned successor
+  activity.</p><figure><figcaption>A design model for the <code>Load</code>
+  event rule.</figcaption><img alt="???"
+  src="../img/LoadHaulDump-Load_RDM.svg" width="300" /></figure><p>This rule
+  states that whenever a <i>Load</i> activity ends, the model variable
+  <i>nmrOfLoads</i> is decremented by 1, and a <i>Haul</i> activity is
+  immediately started (as a successor activity). Since the <i>Haul</i>
+  activity doesn't require any additional resources, there is no need to
+  enqueue a planned activity and wait for the availability of resources. In
+  OESjs, this rule is coded in the following way:</p><pre>class <b>Load</b> extends aCTIVITY {
+  ...
+  <b>onActivityEnd</b>() {
+    const followupEvents = [];
+    // decrement nmrOfLoads counter
+    sim.model.v.nmrOfLoads--;
+    return followupEvents;
+  }
+  ...
+}
+Load.<b>successorActivity</b> = "Haul";</pre><p>Notice that the state change
+  expressed in the <i>modelVariables</i> object rectangle, the decrementation
+  of <i>nmrOfLoads</i>, is taken care of in the <code>onActivityEnd</code>
+  method of the <code>Load</code> activity class. Instead of explicitly
+  scheduling the start of the succeeding <code>Haul</code> activity in that
+  method, we simply define <code>Haul</code> to be the successor activity of
+  <code>Load</code>.</p><figure><figcaption>A design model for the
+  <code>Haul</code> event rule.</figcaption><img alt="???"
+  src="../img/LoadHaulDump-Haul_RDM.svg" width="300" /></figure><p>The
+  <i>Haul</i> event rule states that whenever a <i>Haul</i> activity ends, it
+  is immediately succeeded by a <i>Dump</i> activity. It is coded in the
+  following way:</p><pre>Haul.<b>successorActivity</b> = "Dump";</pre><figure><figcaption>A
+  design model for the <code>Dump</code> event rule.</figcaption><img
+  alt="???" src="../img/LoadHaulDump-Dump_RDM.svg"
+  width="400" /></figure><p>The <i>Dump</i> event rule states that when a
+  <i>Dump</i> activity ends and the model variable <i>nmrOfLoads</i> has the
+  value 0, it is immediately succeeded by a <i>GoHome</i> activity, otherwise
+  it is immediately succeeded by a <i>GoBackToLoadingSite</i> activity. The
+  rule is coded by defining the successor activity as a function returning
+  either "GoBackToLoadingSite" or "GoHome" in the following way:</p><pre>Dump.<b>successorActivity</b> = function () {
+  return sim.model.v.nmrOfLoads === 0 ? "GoHome":"GoBackToLoadingSite";
+}</pre><figure><figcaption>A design model for the
+  <code>GoBackToLoadingSite</code> event rule.</figcaption><img alt="???"
+  src="../img/LoadHaulDump-GoBackToLoadingSite_RDM.svg"
+  width="400" /></figure><p>The <i>GoBackToLoadingSite</i> event rule states
+  that when a <i>GoBackToLoadingSite</i> activity ends and the model variable
+  <i>nmrOfLoads</i> still has a value greater than 0, a new planned
+  <i>Load</i> activity is enqueued; otherwise a <i>GoHome</i> activity is
+  immediately started. The rule is coded by defining the successor activity of
+  <i>GoBackToLoadingSite</i> as a function returning either "Load" or "GoHome"
+  in the following way:</p><pre>GoBackToLoadingSite.<b>successorActivity</b> = function () {
+  return sim.model.v.nmrOfLoads &gt; 0 ? "Load":"GoHome";
+}</pre></details></details></div> <p><a href="index.html">Back to
+  simulation</a></p></body>
 </html>
