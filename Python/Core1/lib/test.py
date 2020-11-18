@@ -1,5 +1,6 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 import math
+import random
 import rand as rnd
 import plots as plt
 
