@@ -84,8 +84,9 @@ class Rand:
       cumcout, lowerlimit, binsize, extrapoints = stats.cumfreq(arrayOfkeys, numbins = 4, weights = weights)
       print(cumcout)
       return cumcout
-   def pertdist1(self):
-      pert = PERT(10, 190, 200)
+
+   def pertdist1(self, minimum, most_likely, maximum):
+      pert = PERT(minimum, most_likely, maximum)
       pert = sns.kdeplot(pert.rvs(10000, random_state = Rand.rng))
 
    #test code for frequency distribution
