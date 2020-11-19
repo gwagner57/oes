@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
 
-    <title>The Load-Haul-Dump Business Process Model</title>
+    <title>The Load-Haul-Dump Model</title>
   </head>
 
   <body><figure style="float:right"><div><img alt="???"
@@ -14,14 +14,14 @@
   href="https://gwagner57.github.io/oes/js/Core2/Load-Haul-Dump-1/">run this
   model</a> from the OES GitHub website, or inspect its <a
   href="https://github.com/gwagner57/oes/tree/master/docs/js/Core2/Load-Haul-Dump-1">OESjs
-  code</a>.</p><details open="open"><summary>Conceptual Model</summary><p>A
-  haul service company has resource pools for dump trucks and wheel loaders.
-  While the activities <em>go (back) to loading site</em>, <em>haul</em>,
-  <em>dump</em> and <em>go home</em> just require a <em>truck</em> (or a
-  <em>wheel loader</em>) as a resource, <em>load</em> activities require both
-  a <em>truck</em> and a <em>wheel loader</em>.</p><details
-  open="open"><summary>Conceptual Information Model</summary><p>The
-  potentially relevant object types are:</p><ol>
+  code</a>.</p><details><summary>Conceptual Model</summary><p>A haul service
+  company has resource pools for dump trucks and wheel loaders. While the
+  activities <em>go (back) to loading site</em>, <em>haul</em>, <em>dump</em>
+  and <em>go home</em> just require a <em>truck</em> (or a <em>wheel
+  loader</em>) as a resource, <em>load</em> activities require both a
+  <em>truck</em> and a <em>wheel loader</em>.</p><details><summary>Conceptual
+  Information Model</summary><p>The potentially relevant object types
+  are:</p><ol>
       <li>haul service company,</li>
 
       <li>wheel loaders,</li>
@@ -90,35 +90,35 @@
   is shown in the following refined model:</p><figure><figcaption>A refined
   conceptual process model.</figcaption><img alt="???"
   src="../img/LoadHaulDump_CPMb.svg"
-  width="600" /></figure></details></details><details
-  open="open"><summary>Simulation Design</summary><p>In our simulation design,
-  we consider only one particular haul service company, which does not have to
-  be modeled explicitly. Also, we abstract away from the fact that also wheel
-  loaders have to go to, and return from, the loading site by assuming that
-  they are already at the site when the dump trucks
-  arrive.</p><details><summary>Information Design Model</summary> <p>In the
-  information design model, we need to define a <i>status</i> attribute for
-  all resource object types, such as <i>Truck</i> and <i>WheelLoader</i>, and
-  a duration function, typically representing a random variable, for each
-  activity type:</p><figure><figcaption>An information design model defining
-  object, event and activity types.</figcaption><img alt="???"
-  src="../img/LoadHaulDump_IDM.svg" width="600" /></figure><p>Notice how
-  functions representing random variables, like the <code>duration</code>
-  function of all activity types, are marked with the keyword (or UML
-  'stereotype') «rv» standing for "random variable". These random variable
-  functions sample from a probability distribution function (PDF), which is
-  symbolically indicated with expressions like Tri(30,50,40) standing for the
-  triangular PDF with lower and upper bounds 30 and 50, and a median of 40.
-  </p><p>Each activity type is associated with <i>Truck</i> or
-  <i>WheelLoader</i> as their resource role(s), indicated with the association
-  end stereotype «rr» standing for "resource role".</p></details><details
-  open="open"><summary>Process Design Model</summary><p>In the process design
-  model, we need to specify the state changes caused by events (including
-  activity start and end events) and the constructor arguments for scheduling
-  follow-up events, using model variables (possibly referencing resource
-  pools), as shown in the following DPMN diagram:</p><figure><figcaption>A
-  computationally complete process design for the Load-Haul-Dump business
-  process.</figcaption><img alt="???" src="../img/LoadHaulDump_PDM.svg"
+  width="600" /></figure></details></details><details><summary>Simulation
+  Design</summary><p>In our simulation design, we consider only one particular
+  haul service company, which does not have to be modeled explicitly. Also, we
+  abstract away from the fact that also wheel loaders have to go to, and
+  return from, the loading site by assuming that they are already at the site
+  when the dump trucks arrive.</p><details><summary>Information Design
+  Model</summary> <p>In the information design model, we need to define a
+  <i>status</i> attribute for all resource object types, such as <i>Truck</i>
+  and <i>WheelLoader</i>, and a duration function, typically representing a
+  random variable, for each activity type:</p><figure><figcaption>An
+  information design model defining object, event and activity
+  types.</figcaption><img alt="???" src="../img/LoadHaulDump_IDM.svg"
+  width="600" /></figure><p>Notice how functions representing random
+  variables, like the <code>duration</code> function of all activity types,
+  are marked with the keyword (or UML 'stereotype') «rv» standing for "random
+  variable". These random variable functions sample from a probability
+  distribution function (PDF), which is symbolically indicated with
+  expressions like Tri(30,50,40) standing for the triangular PDF with lower
+  and upper bounds 30 and 50, and a median of 40. </p><p>Each activity type is
+  associated with <i>Truck</i> or <i>WheelLoader</i> as their resource
+  role(s), indicated with the association end stereotype «rr» standing for
+  "resource role".</p></details><details><summary>Process Design
+  Model</summary><p>In the process design model, we need to specify the state
+  changes caused by events (including activity start and end events) and the
+  constructor arguments for scheduling follow-up events, using model variables
+  (possibly referencing resource pools), as shown in the following DPMN
+  diagram:</p><figure><figcaption>A computationally complete process design
+  for the Load-Haul-Dump business process.</figcaption><img alt="???"
+  src="../img/LoadHaulDump_PDM.svg"
   width="700" /></figure></details></details><details><summary>Implementation
   with OESjs</summary><p>The JavaScript-based simulator OESjs implements the
   Object Event Simulation paradigm, and, consequently, allows a
@@ -284,7 +284,7 @@ Load.<b>successorActivity</b> = "Haul";</pre><p>Notice that the state change
   <i>GoBackToLoadingSite</i> as a function returning either "Load" or "GoHome"
   in the following way:</p><pre>GoBackToLoadingSite.<b>successorActivity</b> = function () {
   return sim.model.v.nmrOfLoads &gt; 0 ? "Load":"GoHome";
-}</pre></details></details><details open="open"><summary>Implementation with
+}</pre></details></details><details><summary>Implementation with
   AnyLogic</summary><p>Since AnyLogic does not support Activity-Based Discrete
   Event Simulation, but only <a
   href="https://sim4edu.com/explain/what-is-process-oriented-simulation.html">Processing
@@ -319,7 +319,8 @@ Load.<b>successorActivity</b> = "Haul";</pre><p>Notice that the state change
       model).</li>
     </ol><p>For instance, the activity type <i>Load</i> with its resource
   roles <i>wheelLoader</i> and <i>truck</i> is implemented as a <i>Service</i>
-  element with</p><ol>
+  element with</p><figure class="right"><img alt="???"
+  src="../img/LoadHaulDump-Load_IDM.svg" width="500" /></figure><ol>
       <li>its <i>duration</i> function, sampling the U(10,20) distribution,
       entered as "uniform(10,20)" in the <i>Delay time</i> field of the
       <i>Load</i> Service element.</li>
@@ -327,19 +328,17 @@ Load.<b>successorActivity</b> = "Haul";</pre><p>Notice that the state change
       <li>its resource role <i>wheelLoader</i> entered in the from of a
       resource pool <i>wheelLoaders</i> in the <i>Resource pool</i> field of
       the <i>Load</i> Service element, and its resource cardinality constraint
-      of exactly one entered as "1" in the field <i>number of units</i>. </li>
-    </ol><figure class="right"><img alt="???"
-  src="../img/LoadHaulDump-GoToLoadingSite_IDM.svg"
-  width="400" /></figure></details><details open="open"><summary>Implementing
-  the Process Design Model with AnyLogic</summary><figure><figcaption>A DPMN
-  process design model for the Load-Haul-Dump business
-  process.</figcaption><img alt="???" src="../img/LoadHaulDump_PDM.svg"
-  width="700" /></figure><p>While the DPMN process starts with the event
-  <i>HaulRequest</i>, the AnyLogic process starts with the entry ("source")
-  node <i>truckEntry</i> having the field <i>"Arrivals defined by"</i> set to
-  "Calls of inject() function", which means that, for creating 5 trucks
-  arriving at <i>truckEntry</i>, the inject function needs to be invoked in
-  the <i>"On startup"</i> procedure of <i>Main</i> in the following way:
+      of exactly one entered as "1" in the field <i>number of units</i>.</li>
+    </ol></details><details open="open"><summary>Implementing the Process
+  Design Model with AnyLogic</summary><figure><figcaption>A DPMN process
+  design model for the Load-Haul-Dump business process.</figcaption><img
+  alt="???" src="../img/LoadHaulDump_PDM.svg" width="700" /></figure><p>While
+  the DPMN process starts with the event <i>HaulRequest</i>, the AnyLogic
+  process starts with the entry node <i>truckEntry</i> (a "source" element)
+  having the field <i>"Arrivals defined by"</i> set to "Calls of inject()
+  function", which means that, for creating 5 trucks arriving at
+  <i>truckEntry</i>, the inject function needs to be invoked in the <i>"On
+  startup"</i> procedure of <i>Main</i> in the following way:
   <code>truckEntry.inject(5)</code>.</p><p>For simplicity, the
   <i>GoToLoadingSite</i> activity of the DPMN model is
   discarded.</p><figure><figcaption>An AnyLogic process diagram for the
@@ -353,5 +352,20 @@ Load.<b>successorActivity</b> = "Haul";</pre><p>Notice that the state change
   their <i>duration</i> function defined in the class model).</p><p>The two
   decision diamonds of the DPMN model are implemented with corresponding
   <i>"SelectOutput"</i> elements called "test_if_job_done_1" and
-  "test_if_job_done_2".</p></details></details></body>
+  "test_if_job_done_2".</p><blockquote
+  class="role-attention"><p>Unfortunately, PN modeling tools, like AnyLogic,
+  do not support the general concept of activities (and Activity Networks),
+  but only the special concept of <em>processing activities</em>. A processing
+  activity has a processing object ("entity") as a mandatory participant, in
+  addition to resource objects. While in a PN model, a relevant statistics is
+  the throughput time of processing objects, we do not have this statistics in
+  an Activity Network model like Load-Haul-Dump.</p><p>For instance, in the
+  AnyLogic Load-Haul-Dump model above, trucks are processing objects and the
+  processing activity <i>Load</i> is performed at the processing node
+  <i>Load</i> by a wheel loader that is processing a truck. Consequently, the
+  <i>Load</i>, <i>Haul</i>, <i>Dump</i> and <i>GoBack</i> elements in the
+  AnyLogic process diagram do not represent activities, but rather processing
+  nodes. While processing nodes/activities do have a processing capacity and a
+  location, activities in general don't.
+  </p></blockquote></details></details></body>
 </html>
