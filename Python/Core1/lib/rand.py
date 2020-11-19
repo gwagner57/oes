@@ -13,6 +13,8 @@ from scipy.stats import pareto
 from scipy.stats import weibull_max
 from scipy.stats import randint
 from scipy.stats import cumfreq
+from pert import PERT
+
 from scipy import stats 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -82,7 +84,9 @@ class Rand:
       cumcout, lowerlimit, binsize, extrapoints = stats.cumfreq(arrayOfkeys, numbins = 4, weights = weights)
       print(cumcout)
       return cumcout
-
+   def pertdist1(self):
+      pert = PERT(10, 190, 200)
+      pert = sns.kdeplot(pert.rvs(10000, random_state = Rand.rng))
 
    #test code for frequency distribution
       # arr = [14, 31, 27, 27, 31, 13, 14, 13]  
