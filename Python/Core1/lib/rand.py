@@ -28,8 +28,8 @@ sns.set(color_codes=True)
 sns.set(rc={'figure.figsize':(5,5)})
 
 class Rand:
-   seed_value = 0
-   rng = 0
+   seed_value = 200
+   rng = 1
    def __init__(rand, seed_value):
       rand.rng = seed(seed_value)
       
@@ -80,7 +80,7 @@ class Rand:
          arrayOfkeys.append(int(key))
          weights.append(frequencyMap[key])
       cumcout, lowerlimit, binsize, extrapoints = stats.cumfreq(arrayOfkeys, numbins = 4, weights = weights)
-
+      print(cumcout)
       return cumcout
 
 
