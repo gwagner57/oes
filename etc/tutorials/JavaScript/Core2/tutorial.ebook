@@ -147,6 +147,8 @@ figure.right {
     </head>
 
     <section href="ExampleModels/Load-Haul-Dump.html"/>
+
+    <section href="ExampleModels/Make-and-Deliver-Pizza.html"/>
   </appendix>
 
   <appendix href="architecture.html"/>
