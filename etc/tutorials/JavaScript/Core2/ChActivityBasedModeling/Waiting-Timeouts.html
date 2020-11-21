@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Waiting Timeouts</title>
+  </head>
+
+  <body><p>In certain cases, enqueued activities may have a <em>waiting
+  timeout</em>, which means that such an enqueued activity will not be
+  started, but removed from the queue, if its waiting time is longer than its
+  timeout. This mechanism can be used for modeling the behavior of humans
+  loosing patience in a queue called <em>reneging</em> in queuing
+  theory.</p><p>In OESjs this can be coded by defining a class-level
+  ("static") function <code>waitingTimeout</code> in a resource-constrained
+  activity class, as shown in the following example. Typically, the timeout
+  (or maximum waiting time) provided by such a function is sampled from a
+  probability distribution function.</p><pre>class <b>TakeOrder</b> extends aCTIVITY {
+  constructor({id, startTime, duration}={}) {
+    super({id, startTime, duration});
+  }
+  static duration() {
+    return rand.uniform( 1, 4);
+  }
+  static <b>waitingTimeout</b>() {
+    return rand.uniformInt( 3, 6);
+  }
+}
+TakeOrder.<b>resourceRoles</b> = {
+  "orderTaker": {range: OrderTaker}
+}</pre></body>
+</html>

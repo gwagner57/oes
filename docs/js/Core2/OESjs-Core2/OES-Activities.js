@@ -66,7 +66,16 @@ class pLANNEDaCTIVITIESqUEUE extends Array {
   }
   static ifAvailAllocReqResAndStartNextActivity( AT) {
     if (AT.plannedActivities.length === 0) return;
-    const nextActy = AT.plannedActivities[0];
+    let nextActy = AT.plannedActivities[0];
+    // take care of waiting timeouts
+    while (nextActy.waitingTimeout && sim.time > nextActy.waitingTimeout) {
+      // remove nextActy from queue
+      AT.plannedActivities.dequeue();
+      // update statistics
+      sim.stat.actTypes[AT.name].waitingTimeouts += 1;
+      if (AT.plannedActivities.length === 0) return;
+      else nextActy = AT.plannedActivities[0];
+    }
     // Are all required resources available?
     if (Object.keys( AT.resourceRoles)
         // test only for resources not yet assigned
@@ -107,6 +116,9 @@ class pLANNEDaCTIVITIESqUEUE extends Array {
       return;
     }
     acty.enqueueTime = sim.time;
+    if (AT.waitingTimeout) {
+      acty.waitingTimeout = sim.time + AT.waitingTimeout();
+    }
     this.push( acty);
     sim.stat.actTypes[AT.name].enqueuedActivities += 1;
     // compute generic queue length statistics per activity type
@@ -120,7 +132,6 @@ class pLANNEDaCTIVITIESqUEUE extends Array {
   dequeue() {
     const acty = this.shift(),
           AT = acty.constructor;
-    sim.stat.actTypes[AT.name].dequeuedActivities += 1;
     return acty;
   }
 }
@@ -454,7 +465,7 @@ oes.initializeGenericStatistics = function () {
           AT = sim.Classes[actTypeName];
       // initialize throughput statistics
       actStat.enqueuedActivities = 0;
-      actStat.dequeuedActivities = 0;
+      actStat.waitingTimeouts = 0;
       actStat.startedActivities = 0;
       actStat.completedActivities = 0;
       // generic queue length statistics
