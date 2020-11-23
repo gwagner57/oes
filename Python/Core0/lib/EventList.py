@@ -11,7 +11,7 @@ class EventList:
             
     def getNextOccurrenceTime(self):
         if len(self.events) > 0:
-            return self.events[0]
+            return self.events[0].occTime
         else:
             return 0
         
