@@ -150,9 +150,9 @@ figure.right {
       <title>Further Example Models</title>
     </head>
 
-    <section href="ExampleModels/Load-Haul-Dump.html"/>
-
     <section href="ExampleModels/Make-and-Deliver-Pizza.html"/>
+
+    <section href="ExampleModels/Load-Haul-Dump.html"/>
   </appendix>
 
   <appendix href="architecture.html"/>

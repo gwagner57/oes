@@ -5,37 +5,42 @@
 
     <meta content="IE=edge" http-equiv="X-UA-Compatible" />
 
-    <title>Load-Haul-Dump-1 Simulation Model Description</title>
+    <title>Make-and-Deliver-Pizza-1 Simulation Model Description</title>
 
     <meta content="width=device-width, initial-scale = 1.0" name="viewport" />
 
     <meta content="en" http-equiv="Content-Language" />
 
-    <meta content="A simulation about an earth hauling service company, which accepts requests for hauling large quantities of earth     from a loading site to a dump site, using a wheel loader and a number of trucks."
+    <meta content="A simulation about a pizza service company that takes phone orders and then makes and delivers the ordered pizzas."
           name="description" />
 
     <link href="../../../css/description.css" rel="stylesheet" />
   </head>
 
-  <body><div id="frontMatter"> <h1><span>Load-Haul-Dump-1 Model
+  <body><div id="frontMatter"> <h1><span>Make-and-Deliver-Pizza-1a Model
   Description</span> <a href="index.html">Back to simulation</a></h1><p
   id="copyright">© 2020 (<a
   href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
-  Brandenburg University of Technology, Germany.</p> <figure
-  class="right"><img alt="" src="../../../img/Load-Truck-Scenario.svg"
-  width="400" /></figure> <section id="shortDescription">A haul service
-  company accepts requests for hauling large quantities of earth from a
-  loading site to a dump site, using dump trucks and wheel
-  loaders.</section><p>You can inspect the model's <a
-  href="https://github.com/gwagner57/oes/tree/master/docs/js/Core2/Load-Haul-Dump-1">OESjs
-  code</a> on the OES GitHub repo.</p><details><summary>Conceptual
-  Model</summary><p>A haul service company has resource pools for dump trucks
-  and wheel loaders. While the activities <em>go (back) to loading site</em>,
-  <em>haul</em>, <em>dump</em> and <em>go home</em> just require a
-  <em>truck</em> (or a <em>wheel loader</em>) as a resource, <em>load</em>
-  activities require both a <em>truck</em> and a <em>wheel
-  loader</em>.</p><details><summary>Conceptual Information
-  Model</summary><p>The potentially relevant object types are:</p><ol>
+  Brandenburg University of Technology, Germany.</p><figure class="right"><img
+  alt="" src="img/Pizza-Delivery.svg" width="240" /><small>Image by <a
+  href="https://www.flaticon.com/authors/monkik">monkik</a></small></figure><section
+  id="shortDescription"><p>A pizza service company takes phone orders for
+  making and delivering pizzas, with the help of order takers, pizza makers,
+  ovens and a crew of pizza delivery scooter drivers. From time to time the
+  order takers cannot cope with the number of incoming calls, and then
+  customers grow impatient and hang up the phone without placing an
+  order.</p></section><p>You can inspect the model's <a
+  href="https://github.com/gwagner57/oes/tree/master/docs/js/Core2/Make-and-Deliver-Pizza-1a">OESjs
+  code</a> on the OES GitHub repo.</p></div><details
+  open="open"><summary>Conceptual Model</summary><p>A pizza service company
+  has resource pools for order takers, pizza makers, pizza ovens, delivery
+  staff and scooters. While <em>take order</em> activities may be performed by
+  an <em>order taker</em> (or, alternatively by a <em>pizza maker</em>),
+  <em>make pizza</em> activities require both an <em>oven</em> and a <em>pizza
+  maker</em>. Finally, <i><em>deliver</em> pizza</i> activities require a
+  delivery staff member and a scooter.</p><details><summary>Conceptual
+  Information Model</summary><p>The potentially relevant object types
+  are:</p><ol>
       <li>haul service company,</li>
 
       <li>wheel loaders,</li>
@@ -320,6 +325,6 @@ Load.<b>successorActivity</b> = "Haul";</pre><p>Notice that the state change
   <i>GoBackToLoadingSite</i> as a function returning either "Load" or "GoHome"
   in the following way:</p><pre>GoBackToLoadingSite.<b>successorActivity</b> = function () {
   return sim.model.v.nmrOfLoads &gt; 0 ? "Load":"GoHome";
-}</pre></details></details></div> <p><a href="index.html">Back to
+}</pre></details></details> <p><a href="index.html">Back to
   simulation</a></p></body>
 </html>

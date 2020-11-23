@@ -11,6 +11,9 @@ h1 > a {
     margin-left: 1em;
     font-size: 50%
 }
+#copyright {
+  font-size: 80%;
+}
 table {
     border: thin solid black;
     /* margin: 1em auto; */

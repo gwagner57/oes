@@ -21,12 +21,12 @@
   operation" in the book <a
   href="https://www.anylogic.com/resources/books/the-art-of-process-centric-modeling-with-anylogic/">The
   Art of Process-Centric Modeling with AnyLogic</a> by Arash
-  Mahdavi.</p></blockquote><details><summary>Conceptual Model</summary><p>A
-  haul service company has resource pools for dump trucks and wheel loaders.
-  While the activities <em>go (back) to loading site</em>, <em>haul</em>,
-  <em>dump</em> and <em>go home</em> just require a <em>truck</em> (or a
-  <em>wheel loader</em>) as a resource, <em>load</em> activities require both
-  a <em>truck</em> and a <em>wheel
+  Mahdavi.</p></blockquote><details open="open"><summary>Conceptual
+  Model</summary><p>A haul service company has resource pools for dump trucks
+  and wheel loaders. While the activities <em>go (back) to loading site</em>,
+  <em>haul</em>, <em>dump</em> and <em>go home</em> just require a
+  <em>truck</em> (or a <em>wheel loader</em>) as a resource, <em>load</em>
+  activities require both a <em>truck</em> and a <em>wheel
   loader</em>.</p><details><summary>Conceptual Information
   Model</summary><p>The potentially relevant object types are:</p><ol>
       <li>haul service company,</li>
@@ -73,31 +73,58 @@
   Model</summary><p>The involved types of events and activities can be related
   with each other via <em>resource-dependent activity start arrows</em> and
   <em>event scheduling arrows</em>, as shown in the following DPMN process
-  diagram:</p><figure><figcaption>A DPMN diagram showing a conceptual process
-  model.</figcaption><img alt="???" src="../img/LoadHaulDump_CPMa.svg"
-  width="600" /></figure><p>The model shows that when a load-haul-dump request
-  comes in, as indicated by the double arrow, the haul service company deploys
-  multiple trucks and wheel loaders to the loading site (each of them performs
-  a <em>go to loading site</em> activity). Each of these activities leads to
-  enqueuing a new <em>load</em> activity, as indicated by the
-  <em>resource-dependent activity start arrow</em> from the <em>go to loading
-  site</em> activity shape to the <em>load</em> activity shape. Such an
-  enqueued (planned) activity is going to be dequeued and started as soon as
-  the required resources are available. This means that as soon as a wheel
-  loader is available the next <em>load</em> activity is going to be started.
-  When a <em>load</em> activity is completed, a <em>haul</em> activity and
-  then a <em>dump</em> activity are going to start immediately, as indicated
-  by the <em>event scheduling arrows</em> between them.</p><p>A more complete
-  model prevents trucks to go back to the loading site and perform a load
-  activity even when the job has been completed during the go back activity
-  (resulting in haul and dump activities with an empty truck). For avoiding
-  this uneconomic behavior, a second decision if the job has been done needs
-  to be taken after the go back activity. In addition, the model has to
-  describe that wheel loaders also go home when their job has been done. This
-  is shown in the following refined model:</p><figure><figcaption>A refined
-  conceptual process model.</figcaption><img alt="???"
-  src="../img/LoadHaulDump_CPMb.svg"
-  width="600" /></figure></details></details><details
+  diagram:</p><figure><img
+  alt="A DPMN diagram showing a conceptual process model"
+  src="../img/LoadHaulDump_CPMa.svg" width="600" /></figure><p>Notice that
+  there are three types of arrows in this DPMN diagram:</p><ol>
+      <li><strong><em>Event Scheduling</em></strong> arrows, like the one
+      between <em>load</em> and <em>haul</em>, have the meaning that the
+      succeeding activity is started as soon as the preceding activity has
+      been completed (there is no need for enqueuing a planned activity, since
+      all resources required by the succeeding activity are provided by the
+      preceding activity). Event Scheduling arrows are not part of BPMN,
+      rather they have been proposed by Schruben (1983) for <a
+      href="https://dl.acm.org/citation.cfm?id=358460" rel="nofollow noopener"
+      target="_blank">Event Graphs</a>.</li>
+
+      <li>A <strong><em>Multiple Events Scheduling</em></strong> arrow, like
+      the one between <em>requests</em> and <em>go to loading site</em>, means
+      that one instance of the preceding event type triggers multiple
+      instances of the succeeding event type. In our example model, this means
+      that one <em>request</em> event is followed by multiple <em>go to
+      loading site</em> activities, one for each truck and each wheel loader
+      assigned to the job.</li>
+
+      <li>A <strong><em>Resource-Dependent Activity Start</em></strong> arrow,
+      like the one between <em>go to loading site</em> and <em>load</em>
+      activities, means that as soon as an activity of the preceding activity
+      type has been completed, a new planned activity is added to the queue of
+      planned activities of the succeeding type (and started as soon as all
+      required resources are available).</li>
+    </ol><p>The model shows that when a haul request comes in, the haul
+  service company deploys multiple trucks and wheel loaders to the loading
+  site, each of them performing a <em>go to loading site</em> activity, as
+  indicated by the double arrow between the <i>haul requests</i> event circle
+  and the <em>go to loading site</em> activity rectangle. Each of these
+  activities leads to enqueuing a new planned <em>load</em> activity, as
+  indicated by the <em>resource-dependent activity start arrow</em> from the
+  <em>go to loading site</em> activity shape to the <em>load</em> activity
+  shape. Such an enqueued (planned) activity is going to be dequeued and
+  started as soon as the required resources become available. This means that
+  as soon as a wheel loader is available, the next <em>load</em> activity is
+  going to be started. When a <em>load</em> activity is completed, a
+  <em>haul</em> activity and then a <em>dump</em> activity are going to start
+  immediately, as indicated by the <em>event scheduling arrows</em> between
+  them.</p><p>A more complete model prevents trucks to go back to the loading
+  site and perform a load activity even when the job has been completed during
+  the go back activity (resulting in haul and dump activities with an empty
+  truck). For avoiding this uneconomic behavior, a second decision if the job
+  has been done needs to be taken after the go back activity. In addition, the
+  model has to describe that wheel loaders also go home when their job has
+  been done. This is shown in the following refined
+  model:</p><figure><figcaption>A refined conceptual process
+  model.</figcaption><img alt="???" src="../img/LoadHaulDump_CPMb.svg"
+  width="650" /></figure></details></details><details
   open="open"><summary>Simulation Design</summary><p>In our simulation design,
   we consider only one particular haul service company, which does not have to
   be modeled as an explicit object. Also, we abstract away from the fact that
@@ -118,20 +145,28 @@
   triangular PDF with lower and upper bounds 30 and 50, and a median of 40.
   </p><p>Each activity type is associated with <i>Truck</i> or
   <i>WheelLoader</i> as their resource role(s), indicated with the association
-  end stereotype «rr» standing for "resource
-  role".</p></details><details><summary>Process Design Model</summary><p>In
-  the process design model, we need to specify the state changes caused by
-  events (including activity start and end events) and the constructor
-  arguments for scheduling follow-up events, using model variables (possibly
-  referencing resource pools), as shown in the following DPMN
-  diagram:</p><figure><figcaption>A computationally complete process design
-  for the Load-Haul-Dump business process.</figcaption><img alt="???"
+  end stereotype «rr» standing for "resource role".</p></details><details
+  open="open"><summary>Process Design Model</summary><p>A process design
+  model, in the form of a DPMN process diagram as shown below, is derived from
+  a conceptual process model by</p><ol>
+      <li>Abstracting away from items that are not design-relevant.</li>
+
+      <li>Defining event variables, if needed.</li>
+
+      <li>Defining object variables in the form of Data Object boxes for
+      specifying state changes of objects affected by events.</li>
+
+      <li>Formalizing decision conditions on the basis of event and object
+      variables.</li>
+    </ol><figure><figcaption>A computationally complete process design for the
+  Load-Haul-Dump business process.</figcaption><img alt="???"
   src="../img/LoadHaulDump_PDM.svg"
-  width="700" /></figure></details></details><details><summary>Implementation
-  with OESjs</summary><p>The JavaScript-based simulator OESjs implements the
-  Object Event Simulation paradigm, and, consequently, allows a
-  straight-forward coding of OEM class models and DPMN process
-  models.</p><details open="open"><summary>Implementing the Information Design
+  width="700" /></figure></details></details><details
+  open="open"><summary>Implementation with OESjs</summary><p>The
+  JavaScript-based simulator OESjs implements the Object Event Simulation
+  paradigm, and, consequently, allows a straight-forward coding of OEM class
+  models and DPMN process models.</p><details
+  open="open"><summary>Implementing the Information Design
   Model</summary><p>For implementing the information design model, we have to
   code all object types, event types and activity types specified in the model
   in the form of classes.</p><figure class="right"><img alt="???"
@@ -199,14 +234,14 @@ GoToLoadingSite.<b>resourceRoles</b> = {
   <i>GoToLoadingSite</i> and <i>Truck</i>, which defines the resource
   reference property <i>GoToLoadingSite::truck</i>, is coded by a
   corresponding entry in the map-valued class-level property
-  <code>resourceRoles</code>.</p></details><details
-  open="open"><summary>Implementing the Process Design Model</summary><p>A
-  DPMN process design model can be decomposed into a set of event rule design
-  models, one for each type of event specified in the design model. Starting
-  with the <code>HaulRequest</code> event rule design model, we show how the
-  event rules specified by each of these event rule design models can be coded
-  in the form of an <code>onEvent</code> method.</p><figure><figcaption>A
-  design model for the <code>HaulRequest</code> event rule.</figcaption><img
+  <code>resourceRoles</code>.</p></details><details><summary>Implementing the
+  Process Design Model</summary><p>A DPMN process design model can be
+  decomposed into a set of event rule design models, one for each type of
+  event specified in the design model. Starting with the
+  <code>HaulRequest</code> event rule design model, we show how the event
+  rules specified by each of these event rule design models can be coded in
+  the form of an <code>onEvent</code> method.</p><figure><figcaption>A design
+  model for the <code>HaulRequest</code> event rule.</figcaption><img
   alt="???" src="../img/LoadHaulDump-HaulRequest_RDM.svg"
   width="400" /></figure><p>In the following <code>HaulRequest</code> event
   rule method <code>onEvent</code>, all available trucks are allocated to the
