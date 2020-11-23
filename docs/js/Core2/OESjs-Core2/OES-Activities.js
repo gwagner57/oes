@@ -459,6 +459,8 @@ oes.setupGenericStatistics = function () {
 oes.initializeGenericStatistics = function () {
   // Per activity type
   if (Array.isArray( sim.model.activityTypes) && sim.model.activityTypes.length > 0) {
+    sim.stat.includeTimeouts = sim.model.activityTypes.some(
+        actTypeName => typeof sim.Classes[actTypeName].waitingTimeout === "function");
     for (const actTypeName of sim.model.activityTypes) {
       const actStat = sim.stat.actTypes[actTypeName],
           resUtilPerAT = actStat.resUtil,
