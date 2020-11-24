@@ -39,6 +39,10 @@ div#frontMatter {
   margin-top: 0;
   margin-bottom: 0.33em;
 }
+#copyright {
+  font-size: 80%;
+}
+
 section > h2 {
   font-size: 1.2em;
   background-color: azure;

@@ -17,7 +17,7 @@ function setupUI() {
     util.fillSelectWithOptionsFromStringList( selScenEl, optionTextItems);
   }
   // fill run choice control
-  optionTextItems = ["Standalone scenario"];
+  optionTextItems = ["Standalone simulation"];
   if (sim.experimentTypes.length > 0) {
     for (let expT of sim.experimentTypes) {
       optionTextItems.push( expT.title);
@@ -148,15 +148,15 @@ function run() {
           e.data.objectsStr, e.data.eventsStr);
     } else if (e.data.expScenNo !== undefined) {  // parameter variation experiment
       oes.ui.showResultsFromParVarExpScenarioRun( e.data, statisticsTableEl);
-    } else { // standalone scenario run or simple experiment
+    } else { // standalone simulation run or simple experiment
       let executionTime = (new Date()).getTime() - simStartTime;
       // Show execution time
       execInfoEl.textContent = `Execution time: ${executionTime} ms`;
-      if (e.data.statistics) {  // statistics from standalone scenario run
+      if (e.data.statistics) {  // statistics from standalone simulation run
         let duration = "";
         if (sim.scenario.durationInSimTime) duration = `${sim.scenario.durationInSimTime} ${sim.model.timeUnit}`;
         else duration = `${Math.ceil( e.data.endTime)} ${sim.model.timeUnit}`;
-        simInfoEl.textContent = `Standalone scenario run with a simulation time/duration of ${duration}.`;
+        simInfoEl.textContent = `Standalone simulation run with a simulation time/duration of ${duration}.`;
         oes.ui.showStatistics( e.data.statistics);
       } else if (e.data.simpleExperiment) {
         oes.ui.showSimpleExpResults( e.data.simpleExperiment);

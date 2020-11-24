@@ -9,6 +9,7 @@ if (typeof oes !== "object") {
 }
 oes.ui.actStat = {
   enqu: {title:"enqueued activities"},
+  tmout: {title:"number of waiting timeouts (reneging)"},
   start: {title:"started activities"},
   compl: {title:"completed activities"},
   qLen: {title:"maximum queue length"},
@@ -30,20 +31,23 @@ oes.ui.logSimulationStep = function (simLogTableEl, step, time, objectsStr, even
  Display the standalone scenario statistics
  ********************************************************/
 oes.ui.showStatistics = function (stat) {
-  var decPl = oes.defaults.expostStatDecimalPlaces;
+  var decPl = oes.defaults.expostStatDecimalPlaces,
+      nmrOfPredefStatSlots = "includeTimeouts" in stat ? 2 : 1;
+  var perActyStatTblHeadElemsString="";
 
   function createActStatTableHead()  {
-    // number of user-defined statistics
-    const actStat = oes.ui.actStat,
-          NAS = Object.keys( actStat).length;  // number of activity statistics
+    const actStat = oes.ui.actStat;
     var perActyStatHeading="";
+    if (!stat.includeTimeouts) delete actStat.tmout;
     for (let actStatShortLabel of Object.keys( actStat)) {
-      perActyStatHeading += `<th title="${actStat[actStatShortLabel].title}">${actStatShortLabel}</th>`;
+      perActyStatHeading +=
+          `<th title="${actStat[actStatShortLabel].title}">${actStatShortLabel}</th>`;
     }
     return perActyStatHeading;
   }
+  perActyStatTblHeadElemsString = createActStatTableHead();
   // create table for user-defined statistics
-  if (Object.keys( stat).length > 1) {
+  if (Object.keys( stat).length > nmrOfPredefStatSlots) {
     const usrStatTblElem = document.createElement("table"),
           tbodyEl = document.createElement("tbody");
     usrStatTblElem.id = "userDefinedStatisticsTbl";
@@ -51,7 +55,7 @@ oes.ui.showStatistics = function (stat) {
     usrStatTblElem.appendChild( tbodyEl);
     for (const varName of Object.keys( stat)) {
       // skip pre-defined statistics (collection) variables
-      if (["actTypes","resUtil"].includes( varName)) continue;
+      if (["actTypes","resUtil","includeTimeouts"].includes( varName)) continue;
       let rowEl = tbodyEl.insertRow();  // create new table row
       rowEl.insertCell().textContent = varName;
       rowEl.insertCell().textContent = math.round( stat[varName], decPl);
@@ -67,13 +71,16 @@ oes.ui.showStatistics = function (stat) {
     actStatTblElem.innerHTML = '<caption>Activity statistics</caption>';
     actStatTblElem.appendChild( tbodyEl);
     let rowEl = tbodyEl.insertRow();
-    rowEl.innerHTML = "<tr><th>Activity type</th>"+ createActStatTableHead() +
+    rowEl.innerHTML = "<tr><th>Activity type</th>"+ perActyStatTblHeadElemsString +
         "<th>resource utilization</th></tr>";
     for (const actTypeName of Object.keys( stat.actTypes)) {
       const actStat = stat.actTypes[actTypeName];
       const rowEl = tbodyEl.insertRow();
       rowEl.insertCell().textContent = actTypeName;
       rowEl.insertCell().textContent = actStat.enqueuedActivities;
+      if (stat.includeTimeouts) {
+        rowEl.insertCell().textContent = actStat.waitingTimeouts;
+      }
       rowEl.insertCell().textContent = actStat.startedActivities;
       rowEl.insertCell().textContent = actStat.completedActivities;
       rowEl.insertCell().textContent = actStat.queueLength.max;
