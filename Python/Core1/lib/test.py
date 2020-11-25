@@ -4,7 +4,9 @@ import random
 import rand as rnd
 import plots as plt
 
-seed = rnd.Rand(1234)
+seed = rnd.Rand( random.randint( 1,1000 ) )
+
+#print(seed.seed)
 
 exponential_value = seed.exponential( 0.5 )
 plt.make_plot( "Exponential", exponential_value )

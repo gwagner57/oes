@@ -27,10 +27,11 @@ sns.set( color_codes=True )
 sns.set( rc = { 'figure.figsize':(5,5) } )
 
 class Rand:
-   seed 
-   def __init__( seed_value = random.random() ):
+   
+   def __init__( self, seed_value = 42):
          self.seed = seed_value
-         # print("seed_value: ", seed_value)
+         # self.seed = random.seed( seed_value )
+         print("seed_value: ", self.seed)
       
    def exponential( self, lambda1 ):
       data_expon = expon.rvs ( scale = 1/lambda1, loc = 0, size = 1000, random_state = self.seed )
