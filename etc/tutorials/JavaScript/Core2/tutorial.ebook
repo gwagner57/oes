@@ -134,11 +134,11 @@ figure.right {
 
     <section href="ChActivityBasedModeling/Resources-out-of-order.html"/>
 
-    <section href="ChActivityBasedModeling/ResourcePools-assigned-to-multiple-activities.html"/>
+    <section href="ChActivityBasedModeling/Waiting-Timeouts.html"/>
 
     <section href="ChActivityBasedModeling/Admissible-Resources.html"/>
 
-    <section href="ChActivityBasedModeling/Waiting-Timeouts.html"/>
+    <section href="ChActivityBasedModeling/OrganizationalPositions.html"/>
 
     <section href="ChActivityBasedModeling/Alternative-resource-pools.html"/>
 

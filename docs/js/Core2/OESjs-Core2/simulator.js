@@ -29,13 +29,13 @@ sim.initializeSimulator = function () {
   // Make sure these lists are defined
   sim.model.objectTypes ??= [];  // ES 2020
   sim.model.eventTypes ??= [];
-  // A Map of all objects (accessible by ID)
+  // a Map of all objects (accessible by ID)
   sim.objects = new Map();
   // The Future Events List
   sim.FEL = new EventList();
-  // A map for statistics variables
+  // a map for statistics variables
   sim.stat = Object.create(null);
-  // Create a className->Class map
+  // a className->Class map
   sim.Classes = Object.create(null);
   // Make object classes accessible via their object type name
   sim.model.objectTypes.forEach( function (objTypeName) {
@@ -54,8 +54,8 @@ sim.initializeSimulator = function () {
   sim.model.activityTypes.forEach( function (actTypeName) {
     sim.Classes[actTypeName] = util.getClass( actTypeName);
   });
-  oes.setupGenericStatistics();
-  // A map for resource pools if there are no explicit process owners
+  oes.setupActivityStatistics();
+  // a map for resource pools if there are no explicit process owners
   sim.resourcePools = Object.create(null);
   // Initializations per activity type
   for (const actTypeName of sim.model.activityTypes) {
@@ -66,14 +66,14 @@ sim.initializeSimulator = function () {
     // Create the resource pools
     for (const resRoleName of Object.keys( AT.resourceRoles)) {
       const resRole = AT.resourceRoles[resRoleName];
+      let pn = "";
       // set default cardinality
       if (!resRole.card && !resRole.minCard) resRole.card = 1;
-      let pn = "";
       if (resRole.range) {  // the resource role is associated with an individual pool
         let rn = resRole.range.name;
         pn = rn.charAt(0).toLowerCase() + rn.slice(1) + "s";
         // create only if not yet created
-        sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, resources:[]});
+        sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, range: resRole.range});
       } else {  // the resource role is associated with a count pool
         if (resRole.countPoolName) {
           // a count pool has been explicitly assigned to the resource role
@@ -90,8 +90,14 @@ sim.initializeSimulator = function () {
       // assign the (newly created) pool to the resource role
       resRole.resPool = sim.resourcePools[pn];
       // Subscribe activity types to resource pools
-      sim.resourcePools[pn].dependentActivityTypes ??= [];  //TODO: better a set
       sim.resourcePools[pn].dependentActivityTypes.push( AT);
+    }
+  }
+  // Assign alternativeResourcePools
+  for (const pn of Object.keys( sim.resourcePools)) {
+    const rp = sim.resourcePools[pn];
+    if (rp.range) {  // an individual pool
+
     }
   }
 }
@@ -133,7 +139,7 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   // Set up initial state
   if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
   /***START Activity extensions AFTER-setupInitialState ********************/
-  oes.initializeGenericStatistics();
+  oes.initializeActivityStatistics();
   for (const actTypeName of sim.model.activityTypes) {
     // Reset/clear the plannedActivities queues
     sim.Classes[actTypeName].plannedActivities.length = 0;

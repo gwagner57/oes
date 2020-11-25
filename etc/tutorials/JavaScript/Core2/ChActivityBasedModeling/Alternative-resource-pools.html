@@ -6,5 +6,31 @@
     <title>Alternative Resources</title>
   </head>
 
-  <body><p>T.B.D.</p></body>
+  <body><p>Certain activities allow alternative resources, when no standard
+  resources are available. For instance, in a pizza service company, when no
+  order taker is available, and a new order call comes in, an available pizza
+  baker can take the order, Or in a hospital, where nurses guide patients to
+  an examination room, when no nurse is available, a receptionist can guide a
+  patient to an examination room.</p><p>The general conceptual pattern is that
+  for certain types of activities <i>A</i> (like <i>GuideToRoom</i>), a
+  resource role <i>r</i> (like <i>guide</i>) may be played not only by
+  instances of its direct resource role type <i>R</i> (like <i>Guide</i>), but
+  also by instances of an alternative resource role type <i>R'</i> (like
+  <i>ExaminationAssistant</i>), if it is a subtype of <i>R</i> (<i>Guide</i>),
+  or an organizational position <i>P</i> (like <i>Nurse</i>), if it is a
+  subtype of <i>R</i> (<i>Guide</i>) or <i>R'</i>
+  (<i>ExaminationAssistant</i>).</p><p>When a direct resource role type
+  <i>R</i> of an activity type <i>A</i> is not abstract, then its instances
+  are the preferred resources of activities of type <i>A</i>, and its
+  (possibly preference-rank-annotated) subtypes specify types of alternative
+  resources.</p><h4>Preferred and Alternative Resource Pools</h4><p>While
+  resource roles are defined in an Object-Event-Activity (OEA) class design
+  model, organizational positions and resource pools are defined, and assigned
+  to resource roles, in an OEM organization design model, which is based on
+  the resource role types defined in the OEA class design model. </p><p>By
+  default, for any non-abstract resource role type <i>R</i> and for any
+  organizational position <i>P</i> assigned as the range of a resource role
+  <i>r</i>, a simulator can create a resource pool with the same (yet
+  pluralized) name, holding objects instantiating <i>R</i> or <i>P</i>, and
+  assign it to <i>r</i> as the preferred resource pool. </p></body>
 </html>

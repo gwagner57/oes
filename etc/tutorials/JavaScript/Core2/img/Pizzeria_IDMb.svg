@@ -551,15 +551,15 @@
 				<v:ud v:nameU="visVersion" v:val="VT0(14):26"/>
 			</v:userDefs>
 			<title>Generalization</title>
-			<desc>«alt»</desc>
+			<desc>«ar»</desc>
 			<g id="shape143-198" v:mID="143" v:groupContext="shape" transform="translate(7.2,24.8)">
 				<title>Discriminator</title>
 			</g>
 			<g id="shape142-199" v:mID="142" v:groupContext="groupContent">
 				<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-				<v:textRect cx="32.586" cy="245.101" width="26.36" height="17.6036"/>
+				<v:textRect cx="32.586" cy="245.101" width="24.63" height="17.6036"/>
 				<path d="M0 255.9 L34.45 255.9 L34.45 286.63" class="st5"/>
-				<text x="24.31" y="247.5" class="st2" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>«alt»</text>			</g>
+				<text x="25.18" y="247.5" class="st2" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>«ar»</text>			</g>
 		</g>
 		<g id="group20-203" transform="translate(229.942,-49.6694)" v:mID="20" v:groupContext="group">
 			<v:userDefs>

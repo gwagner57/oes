@@ -159,10 +159,12 @@ class rESOURCEpOOL {
   constructor( {name, available, resources}) {
     this.name = name;
     if (available !== undefined) this.available = available;
-    if (resources) {
-      //this.resources = resources;
-      this.busyResources = [];
-      this.availResources = [];
+    //this.resources = resources;
+    //this.alternativeResourcePools = [];
+    this.busyResources = [];
+    this.availResources = [];
+    this.dependentActivityTypes = [];
+    if (Array.isArray( resources)) {
       for (let res of resources) {
         if (res.status === oes.ResourceStatusEL.AVAILABLE) this.availResources.push( res);
         else if (res.status === oes.ResourceStatusEL.BUSY) this.busyResources.push( res);
@@ -427,9 +429,9 @@ class aCTIVITYeND extends eVENT {
   }
 }
 /*******************************************************
- * Set up the generic ex-post statistics
+ * Set up the generic activity ex-post statistics
  ********************************************************/
-oes.setupGenericStatistics = function () {
+oes.setupActivityStatistics = function () {
   // Per activity type
   if (Array.isArray( sim.model.activityTypes) && sim.model.activityTypes.length > 0) {
     sim.stat.actTypes = Object.create(null);  // an empty map
@@ -456,7 +458,7 @@ oes.setupGenericStatistics = function () {
 /*******************************************************
  * Initialize the pre-defined ex-post statistics
  ********************************************************/
-oes.initializeGenericStatistics = function () {
+oes.initializeActivityStatistics = function () {
   // Per activity type
   if (Array.isArray( sim.model.activityTypes) && sim.model.activityTypes.length > 0) {
     sim.stat.includeTimeouts = sim.model.activityTypes.some(
