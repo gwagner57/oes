@@ -9,13 +9,13 @@ sys.path.insert(1, module_path)
 import math_lib
 
 class Delivery(eVENT):
-    def __init__(self, quantity, receiver, occTime = None, delay = None):
-        super().__init__(occTime, delay)
+    def __init__(self, sim, quantity, receiver, occTime = None, delay = None):
+        super().__init__(sim, occTime, delay)
         self.delay = delay
         self.quantity = quantity
         self.receiver = receiver
         
-    def onEvent(self):
+    def onEvent(self, sim):
         self.receiver.quantityInStock = self.receiver.quantityInStock + self.quantity
         if (self.receiver.quantityInStock <= self.receiver.reorderLevel):
             delay = Delivery.leadTime()

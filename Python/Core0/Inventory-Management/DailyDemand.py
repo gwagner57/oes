@@ -8,18 +8,21 @@ module_path = os.path.abspath('lib/')
 sys.path.insert(1, module_path)
 import math_lib
 
+from Delivery import Delivery
+
 class DailyDemand(eVENT):
-    def __init__(self, occTime, quantity, shop):
-        super().__init__(occTime)
+    def __init__(self, sim, occTime, quantity, shop):
+        super().__init__(sim, occTime)
         self.quantity = quantity
         self.shop = shop
         
-    def onEvent(self):
+    def onEvent(self, sim):
         q = self.quantity
         prevStockLevel = self.shop.quantityInStock
+        print (" Previous Stock Level = ", prevStockLevel, ", q = ", q)
         if (q > prevStockLevel):
-            sim.stat.nmrOfStockOuts = sim.stat.nmrOfStockOuts + 1
-            sim.stat.lostSales = sim.stat.lostSales + (q - prevStockLevel)
+            sim.stat["nmrOfStockOuts"] = sim.stat["nmrOfStockOuts"] + 1
+            sim.stat["lostSales"] = sim.stat["lostSales"] + (q - prevStockLevel)
             
         self.shop.quantityInStock = max(prevStockLevel-q,0)
         
@@ -28,7 +31,8 @@ class DailyDemand(eVENT):
             delay = Delivery.leadTime()
             quantity = self.shop.targetInventory - self.shop.quantityInStock
             receiver = self.shop
-            return Delivery(delay, quantity, receiver)
+            return [Delivery(sim, quantity, receiver, delay=delay)]
+        
         else:
             return []
     
