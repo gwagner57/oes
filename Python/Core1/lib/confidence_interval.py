@@ -6,8 +6,6 @@ from scipy.stats import sem, t
 from scipy import mean
 
 def confint(data, samples = 10000, alpha = 0.95 ):
-	data = [1, 2, 3, 4, 5]
-
 	n = len( data )
 	m = np.mean( data )
 	std_err = sem( data )
@@ -17,8 +15,9 @@ def confint(data, samples = 10000, alpha = 0.95 ):
 	print ( lowerBound )
 	upperBound = m + h
 	print ( upperBound )
+	return lowerBound, upperBound
 
-confint( ( 1, 2, 3, 4, 5 ) , 0.95 ) 
+confint( ( 1, 2, 3, 5, 5 ) , 0.95 ) 
 
 
 
