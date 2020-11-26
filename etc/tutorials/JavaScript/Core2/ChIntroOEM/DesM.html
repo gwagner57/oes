@@ -130,13 +130,15 @@
   static <b>duration</b>() {return rand.uniform( 5, 10);}
 }
 Examination.<b>resourceRoles</b> = {
-  "doctor": {<b>countPoolName</b>:"doctors", card:1}
+  "doctor": {card:1}
 }
 </pre><p>The generic class-level ("static") property
   <i>Examination.plannedActivities</i> is automatically created by the
-  simulator.</p><p>In the Medical-Department-1b <em>process design</em> model
-  we make corresponding simplifications as in the information design model
-  above:</p><ol>
+  simulator. Likewise, the count pool "doctors" is automatically created and
+  assigned to the resource role definition map entry
+  <i>Examination.resourceRoles["doctor"]</i>. </p><p>In the
+  Medical-Department-1b <em>process design</em> model we make corresponding
+  simplifications as in the information design model above:</p><ol>
       <li>Leaving the process owner implicit, we drop the process owner
       rectangle <i>MedicalDepartment</i>.</li>
 
@@ -180,9 +182,10 @@ Examination.<b>resourceRoles</b> = {
       <i>status</i> attribute with the four possible values AVAILABLE, BUSY,
       OUT_OF_ORDER or OUT_OF_DUTY.</li>
 
-      <li>While we keep the <u>resourceRole</u> link with the resource role
-      <i>doctor</i> (with resource cardinality 1), we replace the count pool
-      linked to it with an individual resource pool.</li>
+      <li>While we keep the <u>resourceRole</u> link with the definition of
+      the resource role <i>doctor</i> (with resource cardinality 1), we
+      replace the count pool linked to it with an individual resource
+      pool.</li>
     </ol><p>The resulting information design model is shown in the following
   class diagram:</p><figure><div><img alt="???"
   src="../img/MedDep_CIM1-IDM1c.svg" width="600" /></div></figure><p>On the
@@ -192,8 +195,7 @@ Examination.<b>resourceRoles</b> = {
   type of <i>ResourcePool)</i>, are shown. In OESjs-Core2, this is coded in
   the file <kbd>Examination.js</kbd> in the following way: </p><pre>Examination.<b>resourceRoles</b> = {
   "doctor": {<b>range</b>: Doctor, card:1}
-}
-</pre><p>The Medical-Department-1c <em>process design</em> model is the same
+}</pre><p>The Medical-Department-1c <em>process design</em> model is the same
   as in the Medical-Department-1b process design model
   above:</p><figure><div><img src="../img/MedDep_CPM1-PDM1b.svg"
   width="300" /></div></figure></section></section><section

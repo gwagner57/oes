@@ -6,29 +6,8 @@
     <title>Organizational Positions and Resource Pools</title>
   </head>
 
-  <body><p>An <em>organizational position</em> is defined by a name and a set
-  of organizational role types, which are performer types representing the
-  responsibilities of the position holders. Recall that a performer is a
-  special type of resource object required for performing activities of a
-  certain type. For instance, in a medical department, the organizational
-  position <i>Nurse</i> may be defined by the set of performer types
-  <i>Guide</i> and <i>ExaminationAssistant</i>, where a <i>Guide</i> is
-  required for guiding a patient to an examination room and an
-  <i>ExaminationAssistant</i> is required for assisting a doctor in a medical
-  examination.</p><p>Computationally, an <em>organizational position</em> is
-  an object type that is a subtype of one or more performer types, implying
-  that its instances (position holders) are resources that can be chosen for
-  performing the corresponding activities. </p><p>For instance, the
-  organizational position <i>Nurse</i> is a subtype of the performer type
-  <i>Guide</i> and of the performer type <i>ExaminationAssistant</i>, with the
-  meaning that nurses play both the role of guides and the role of examination
-  assistants.</p><p>In simple cases, an organizational position is defined by
-  just one performer type. In such a case, the organizational position is
-  identified with the performer type</p><p>In an activity-based Discrete Event
-  simulation, each organizational position defines a resource pool (or maybe
-  better: performer pool) that includes all employees holding that
-  position.</p><h4>Resource Pools Assigned to Multiple Activity
-  Types</h4><p>When a resource pool represents an organizational position
-  defined by <i>n</i> performer types, it is shared among all <i>n</i>
-  corresponding activity types.</p></body>
+  <body><h4>Resource Pools Assigned to Multiple Activity Types</h4><p>When a
+  resource pool represents an organizational position charged with playing
+  <i>n</i> performer roles, it is used by all <i>n</i> corresponding activity
+  types.</p></body>
 </html>

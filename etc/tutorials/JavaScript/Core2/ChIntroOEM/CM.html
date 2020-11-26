@@ -46,10 +46,10 @@
     </ul><p>Instead of considering the event types <em>examination starts</em>
   and <em>examination ends</em>, we can consider the activity type
   <em>examinations</em>. Thus, we get the following conceptual information
-  model (expressed as an OEM Class Diagram, which is a special type of UML
-  class diagram):</p><figure id="figServiceDesk0"><div><img alt="???"
-  src="../img/MedDep_CIM1.svg" width="600" /></div></figure><p>From the
-  diagram we can infer that:</p><ul>
+  model (expressed as an <abbr style="Object-Event">OE</abbr> Class Diagram,
+  which is a special type of UML class diagram):</p><figure
+  id="figServiceDesk0"><div><img alt="???" src="../img/MedDep_CIM1.svg"
+  width="600" /></div></figure><p>From the diagram we can infer that:</p><ul>
       <li>For <em>patient arrivals</em> and for <em>examinations</em>, there
       is an association with <em>medical departments</em> providing the
       <em>process owner</em>, such that for any <em>patient arrival</em> event
@@ -107,13 +107,10 @@
           <li>otherwise, the next planned examination by that doctor starts
           immediately.</li>
         </ul></li>
-    </ol><p>Since the resource management logic in this example complies with
-  the standard resource management procedures, we can simplify the model by
-  using a <em>Resource-Dependent Activity Start</em> arrow between the event
-  type circle <em>patient arrivals</em> and the activity type rectangle
-  <em>examinations</em> for expressing the assumption of the standard resource
-  management logic built into OES Core 2, as shown in the following DPMN
-  process diagram: </p><figure><div><img alt="???"
+    </ol><p>We can simplify the model by using a <em>Resource-Dependent
+  Activity Start</em> arrow between the <em>patient arrivals</em> event type
+  circle and the <em>examinations</em> activity type rectangle, as shown in
+  the following DPMN process diagram: </p><figure><div><img alt="???"
   src="../img/MedDep_CPM1a.svg"
   width="300" /></div></figure></section><section
   id="sectExtendedConceptualModel"><h4>An extended conceptual model
@@ -158,14 +155,14 @@
   <em>rooms</em>, <em>nurses</em> and <em>doctors</em>.</p><p>The potentially
   relevant <b>event types</b> are <em>patient arrivals</em> and the activity
   types <em>walks to rooms</em> and <em>examinations</em>.</p><p>Thus, we get
-  the following conceptual information model expressed as an OEM Class
-  Diagram:</p><figure><div><img alt="???" src="../img/MedDep_CIM2.svg"
-  width="600" /></div></figure><p>Notice that in this model, (a) the performer
-  resource role is explicitly marked with «performer»: a <em>nurse</em> is a
-  performer of <em>walks to rooms</em> while a <em>doctor</em> is a performer
-  of <em>examinations</em>, and (b) the stereotypes «resource role» and
-  «resource pool» have been abbreviated by «rr» and «rp». </p><p>From the
-  diagram we can infer that:</p><ul>
+  the following conceptual information model expressed as an <abbr
+  style="Object-Event">OE</abbr> class diagram:</p><figure><div><img alt="???"
+  src="../img/MedDep_CIM2.svg" width="600" /></div></figure><p>Notice that in
+  this model, (a) the performer role is explicitly marked with «performer»: a
+  <em>nurse</em> is a performer of <em>walks to room</em> while a
+  <em>doctor</em> is a performer of <em>examinations</em>, and (b) the
+  stereotypes «resource role» and «resource pool» have been abbreviated by
+  «rr» and «rp». </p><p>From the diagram we can infer that:</p><ul>
       <li>For the event type <em>patient arrivals</em> and for the activity
       types <em>walks to rooms</em> and <em>examinations</em>, there is an
       association with <em>medical departments</em> providing the <em>process
@@ -241,20 +238,18 @@
           another patient and a nurse is available, that nurse starts walking
           the patient to the room.</li>
         </ul></li>
-    </ol><p>Since, again, the resource management logic in this example
-  complies with the standard resource management procedures built into OES
-  Core 2, we can simplify the model by using <em>Resource-Dependent Activity
-  Start</em> arrows resulting in an <i>Activity Network</i> model, as shown in
-  the following DPMN process diagram:</p><figure><div><img alt="???"
-  src="../img/MedDep_CPM2a.svg" width="400" /></div></figure><p>We can exhibit
+    </ol><p>Again, we can simplify the model by using <em>Resource-Dependent
+  Activity Start</em> arrows resulting in an <i>Activity Network</i> model, as
+  shown in the following DPMN process diagram:</p><figure><div><img alt="???"
+  src="../img/MedDep_CPM2a.svg" width="400" /></div></figure><p>We can display
   the two performer roles <em>doctor</em> and <em>nurse</em> with the help of
-  two corresponding <strong>Lanes</strong> shown within the process owner
+  two corresponding swimlanes shown within the process owner
   rectangle:</p><figure><div><img alt="???" src="../img/MedDep_CPM2b.svg"
-  width="300" /></div></figure><p>Notice that the use of Lanes (marking
+  width="300" /></div></figure><p>Notice that the use of swimlanes (marking
   disjoint subrectangles) is a convenient visual syntax for displaying the
   performer roles when the different performers have a non-overlapping set of
   activity types. However, when activities of a certain type are performed
   jointly by more than one performer (e.g., when a doctor and a nurse jointly
   perform an examination), a different visual syntax needs to be
-  introduced..</p></section></body>
+  introduced.</p></section></body>
 </html>
