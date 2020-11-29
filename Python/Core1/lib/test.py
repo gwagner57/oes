@@ -1,19 +1,20 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
 import math
 import random
-import rand as rnd
-import plots as plt
+from oes_distributions import *
+#importlib.import_module("rand")
+from plots import make_plot
 
-seed = rnd.Rand( random.randint( 1,1000 ) )
+seed = Rand( random.randint( 1,1000 ) )
 
 #print(seed.seed)
 
 exponential_value = seed.exponential( 0.5 )
-plt.make_plot( "Exponential", exponential_value )
+make_plot( "Exponential", exponential_value )
 
 
 gamma_value = seed.gamma( 1.0, 2.0 )
-plt.make_plot( "Gamma", gamma_value )
+make_plot( "Gamma", gamma_value )
 
 
 normal_value = seed.normal( 1.5, 0.5 )
