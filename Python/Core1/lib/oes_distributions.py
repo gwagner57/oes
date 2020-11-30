@@ -1,7 +1,18 @@
-#!/usr/bin/env python -W ignore::DeprecationWarning
-import math
-import random
-from random import seed
+"""
+Create random number streams
+
+import numpy as np
+gen1 = np.random.RandomState()
+gen2 = np.random.RandomState()
+gen1.seed(1)
+gen2.seed(2)
+rns1_1 = gen1.rand()
+rns1_2 = gen1.rand()
+rns2_1 = gen2.rand()
+rns2_2 = gen2.rand()
+"""
+
+
 from scipy.stats import expon
 from scipy.stats import gamma
 from scipy.stats import norm
@@ -27,18 +38,10 @@ sns.set( color_codes=True )
 sns.set( rc = { 'figure.figsize':(5,5) } )
 
 class Rand:
-   seed = None
-   def __init__( self, seed_value = None):
-      if(seed_value is not None):
-         self.seed = seed_value
-         print("seed_value: ", self.seed)
-      
-   def exponential( self, lambda1 ):
-      if(self.seed is not None):
-         data_expon = expon.rvs ( scale = 1/lambda1, loc = 0, size = 1000, random_state = self.seed )
-      else:
-         data_expon = expon.rvs ( scale = 1/lambda1, loc = 0, size = 1000 )
-      return data_expon
+   @staticmethod
+   def exponential( event_rate ):
+      return  expon.rvs( scale = 1 / event_rate)
+
 
    def gamma( self, shape, scale ):
       if(self.seed is not None):
@@ -105,5 +108,13 @@ class Rand:
       else:
          pert = sns.kdeplot( pert.rvs( 10000) )
 
+
+if __name__ == "__main__":
+   seed = 1234567  # test seed
+   # RNG initialization with np.random.seed
+   np.random.seed( seed)
+
+   exponential_value = Rand.exponential( 0.5)
+   make_plot("Exponential", exponential_value)
 
 

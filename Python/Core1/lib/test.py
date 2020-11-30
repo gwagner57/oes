@@ -39,13 +39,3 @@ def test(seed):
 	pert_value = rnd.pertdist( 10, 190, 200 )
 	make_plot( "PertDistributiion", pert_value )
 
-
-if __name__ == "__main__":
-    import sys
-    seed = None
-    if(len(sys.argv) == 2):
-    	try:
-    		seed = int(sys.argv[1])
-    	except:
-    		print("An exception occurred")
-    test(seed)
