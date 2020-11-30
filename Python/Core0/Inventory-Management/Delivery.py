@@ -34,3 +34,9 @@ class Delivery(eVENT):
             return 2
         else:
             return 3
+    
+    
+    @staticmethod
+    def recurrence():
+        return 0
+    

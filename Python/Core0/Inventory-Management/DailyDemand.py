@@ -44,9 +44,9 @@ class DailyDemand(eVENT):
     def recurrence():
         return 1
     
-    def createNextEvent(self):
+    def createNextEvent(self, sim):
         occTime = self.occTime + DailyDemand.recurrence()
         quantity = DailyDemand.quantity2()
         shop = self.shop
-        return DailyDemand(occTime, quantity, shop)
+        return DailyDemand(sim, occTime, quantity, shop)
     
