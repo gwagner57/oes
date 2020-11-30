@@ -1,30 +1,20 @@
 """
 Create random number streams
 
-import numpy as np
-gen1 = np.random.RandomState()
-gen2 = np.random.RandomState()
-gen1.seed(1)
-gen2.seed(2)
+from numpy.random import default_rng
+seed1 = 1
+gen1 = default_rng( seed1)
+seed2 = 2
+gen2 = default_rng( seed2)
 rns1_1 = gen1.rand()
 rns1_2 = gen1.rand()
 rns2_1 = gen2.rand()
 rns2_2 = gen2.rand()
 """
 
-
-from scipy.stats import expon
-from scipy.stats import gamma
-from scipy.stats import norm
-from scipy.stats import uniform
-from scipy.stats import triang
-from scipy.stats import pareto
-from scipy.stats import weibull_max
-from scipy.stats import randint
-from scipy.stats import cumfreq
+from numpy.random import default_rng
 from pert import PERT
-from scipy import stats 
-import numpy as np
+
 import matplotlib.pyplot as plt
 import sys
 if not sys.warnoptions:
@@ -38,9 +28,11 @@ sns.set( color_codes=True )
 sns.set( rc = { 'figure.figsize':(5,5) } )
 
 class Rand:
-   @staticmethod
-   def exponential( event_rate ):
-      return  expon.rvs( scale = 1 / event_rate)
+   def __init__( self, seed):
+      self.rng = default_rng( seed)  # RNG initialization
+
+   def exponential(  self, event_rate):
+      return  self.rng.exponential( scale = 1 / event_rate)
 
 
    def gamma( self, shape, scale ):
@@ -111,10 +103,9 @@ class Rand:
 
 if __name__ == "__main__":
    seed = 1234567  # test seed
-   # RNG initialization with np.random.seed
-   np.random.seed( seed)
+   rand = Rand( seed)
+   exponential_value = rand.exponential( 0.5)
 
-   exponential_value = Rand.exponential( 0.5)
    make_plot("Exponential", exponential_value)
 
 
