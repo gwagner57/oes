@@ -146,25 +146,39 @@ oes.ui.showSimpleExpResults = function (exp) {
           // number of activity types
           N = Object.keys( exp.replicStat.actTypes).length,
           actStat = oes.ui.actStat,
-          NAS = Object.keys( actStat).length;  // number of activity statistics
-    var colHeadingsRow="", usrDefStatVarHeads="", actTypeHeads="",
-        perActyStatHeading="", perActyStatHeads = "";
+          actStatWithoutTmout = {...actStat};
+    var colHeadingsRow="", usrDefStatVarHeads="", actTypeHeads="", nmrOfTmoutStat=0,
+        perActyStatHeading="", perActyStatHeadingWithoutTmout="", perActyStatHeads = "",
+        NAS = Object.keys( actStat).length - 1;  // number of activity statistics without tmout
+    // drop tmout entry
+    delete actStatWithoutTmout.tmout;
+    // create heading for activity type with tmout
     for (let actStatShortLabel of Object.keys( actStat)) {
-      perActyStatHeading += `<th title="${actStat[actStatShortLabel].title}">${actStatShortLabel}</th>`;
+      perActyStatHeading +=
+          `<th title="${actStat[actStatShortLabel].title}">${actStatShortLabel}</th>`;
     }
-    for (let i=0; i < N; i++) {
-      perActyStatHeads += perActyStatHeading;
+    // create heading for activity type without tmout
+    for (let actStatShortLabel of Object.keys( actStatWithoutTmout)) {
+      perActyStatHeadingWithoutTmout +=
+          `<th title="${actStat[actStatShortLabel].title}">${actStatShortLabel}</th>`;
+    }
+    for (const actTypeName of Object.keys( exp.replicStat.actTypes)) {
+      const replActStat = exp.replicStat.actTypes[actTypeName];
+      perActyStatHeads += replActStat.waitingTimeouts ?
+          perActyStatHeading : perActyStatHeadingWithoutTmout;
+      if (replActStat.waitingTimeouts) nmrOfTmoutStat++;
     }
     for (const key of Object.keys( exp.replicStat)) {
       const thStartTag = N>0 ? "<th rowspan='2'>" : "<th>";
       usrDefStatVarHeads += key !== "actTypes" ? thStartTag + key +"</th>" : "";
     }
-    actTypeHeads = Object.keys( exp.replicStat.actTypes).reduce( function (prev, curr) {
-      return prev + `<th colspan='${NAS}'>${curr}</th>`;
+    actTypeHeads = Object.keys( exp.replicStat.actTypes).reduce( function (prev, actTypeName) {
+      const n = exp.replicStat.actTypes[actTypeName].waitingTimeouts ? NAS+1 : NAS;
+      return prev + `<th colspan='${n}'>${actTypeName}</th>`;
     },"");
     colHeadingsRow = `<tr><th rowspan='${2 + (N>0?1:0)}'>Replication</th>`;
     colHeadingsRow += M > 0 ? `<th colspan='${M}'>User-Def. Statistics</th>`:"";
-    colHeadingsRow += N > 0 ? `<th colspan='${N*NAS}'>Statistics per activity type</th>`:"";
+    colHeadingsRow += N > 0 ? `<th colspan='${N*NAS+nmrOfTmoutStat}'>Statistics per activity type</th>`:"";
     colHeadingsRow += "</tr>";
     let theadEl = tableEl.createTHead();
     theadEl.innerHTML = colHeadingsRow +
@@ -184,11 +198,14 @@ oes.ui.showSimpleExpResults = function (exp) {
     }
     for (const actTypeName of Object.keys( exp.replicStat.actTypes)) {
       const replActStat = exp.replicStat.actTypes[actTypeName];
-      for (const statVarName of ["enqueuedActivities","startedActivities","completedActivities"]) {
-        rowEl.insertCell().textContent = replActStat[statVarName][i];
+      rowEl.insertCell().textContent = replActStat["enqueuedActivities"][i];
+      if (replActStat.waitingTimeouts) {
+        rowEl.insertCell().textContent = replActStat.waitingTimeouts[i];
       }
+      rowEl.insertCell().textContent = replActStat["startedActivities"][i];
+      rowEl.insertCell().textContent = replActStat["completedActivities"][i];
       for (const statVarName of ["queueLength","waitingTime","cycleTime"]) {
-          const val = replActStat[statVarName].max[i];
+        const val = replActStat[statVarName].max[i];
         rowEl.insertCell().textContent = Number.isInteger(val) ? val : math.round( val, decPl);
       }
       /*****TODO: support also the following statistics *****/
@@ -200,7 +217,7 @@ oes.ui.showSimpleExpResults = function (exp) {
     rowEl = tbodyEl.insertRow();  // create new table row
     rowEl.insertCell().textContent = math.stat.summary[aggr].label;
     for (const varName of Object.keys( exp.summaryStat)) {
-      if (varName !== "actTypes") {  // key is a user-defined statistics variable name
+      if (varName !== "actTypes") {  // varName is a user-defined statistics variable name
         const val = exp.summaryStat[varName][aggr];
         rowEl.insertCell().textContent = math.round( val, decPl);
       }

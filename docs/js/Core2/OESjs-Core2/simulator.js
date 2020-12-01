@@ -262,6 +262,7 @@ sim.runExperiment = async function () {
       varName => !compositeStatVarNames.includes( varName));
 
   async function runSimpleExperiment() {
+    var statVarList=[];
     // initialize replication statistics
     exp.replicStat = Object.create(null);  // empty map
     for (const varName of simpleStatVarNames) {
@@ -269,11 +270,20 @@ sim.runExperiment = async function () {
     }
     /***START Activity extensions BEFORE-runSimpleExperiment ********************/
     exp.replicStat.actTypes = Object.create(null);  // empty map
+    let throughputStatVarList = ["enqueuedActivities","waitingTimeouts","startedActivities","completedActivities"];
+    let throughputStatVarListWithoutTmout = ["enqueuedActivities","startedActivities","completedActivities"];
     for (const actTypeName of Object.keys( sim.stat.actTypes)) {
-      exp.replicStat.actTypes[actTypeName] = {
-        enqueuedActivities:[], startedActivities:[], completedActivities:[],
-        queueLength:{max:[]}, waitingTime:{max:[]}, cycleTime:{max:[]}
-      };
+      if (typeof sim.Classes[actTypeName].waitingTimeout === "function") {
+        exp.replicStat.actTypes[actTypeName] = {
+          enqueuedActivities:[], waitingTimeouts:[], startedActivities:[], completedActivities:[],
+          queueLength:{max:[]}, waitingTime:{max:[]}, cycleTime:{max:[]}
+        };
+      } else {
+        exp.replicStat.actTypes[actTypeName] = {
+          enqueuedActivities:[], startedActivities:[], completedActivities:[],
+          queueLength:{max:[]}, waitingTime:{max:[]}, cycleTime:{max:[]}
+        };
+      }
       //exp.replicStat.actTypes[actTypeName].resUtil = {};
     }
     /***END Activity extensions BEFORE-runSimpleExperiment ********************/
@@ -291,6 +301,9 @@ sim.runExperiment = async function () {
         const replActStat = exp.replicStat.actTypes[actTypeName],
               actStat = sim.stat.actTypes[actTypeName];
         replActStat.enqueuedActivities[k] = actStat.enqueuedActivities;
+        if (typeof sim.Classes[actTypeName].waitingTimeout === "function") {
+          replActStat.waitingTimeouts[k] = actStat.waitingTimeouts;
+        }
         replActStat.startedActivities[k] = actStat.startedActivities;
         replActStat.completedActivities[k] = actStat.completedActivities;
         replActStat.queueLength.max[k] = actStat.queueLength.max;
@@ -328,7 +341,12 @@ sim.runExperiment = async function () {
     for (const actTypeName of Object.keys( exp.replicStat.actTypes)) {
       const replActStat = exp.replicStat.actTypes[actTypeName];
       exp.summaryStat.actTypes[actTypeName] = Object.create(null);  // empty map
-      for (const statVarName of ["enqueuedActivities","startedActivities","completedActivities"]) {
+      if (typeof sim.Classes[actTypeName].waitingTimeout === "function") {
+        statVarList = throughputStatVarList
+      } else {
+        statVarList = throughputStatVarListWithoutTmout
+      }
+      for (const statVarName of statVarList) {
         exp.summaryStat.actTypes[actTypeName][statVarName] = Object.create(null);  // empty map
         for (const aggr of Object.keys( math.stat.summary)) {
           const aggrF = math.stat.summary[aggr].f;

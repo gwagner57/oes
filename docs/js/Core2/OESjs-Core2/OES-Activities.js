@@ -158,11 +158,14 @@ oes.ResourceStatusEL = new eNUMERATION("ResourceStatusEL",
 class rESOURCEpOOL {
   constructor( {name, available, resources}) {
     this.name = name;
-    if (available !== undefined) this.available = available;
+    if (available !== undefined) {  // a count pool
+      this.available = available;
+    } else {  // an individual pool
+      this.busyResources = [];
+      this.availResources = [];
+    }
     //this.resources = resources;
     //this.alternativeResourcePools = [];
-    this.busyResources = [];
-    this.availResources = [];
     this.dependentActivityTypes = [];
     if (Array.isArray( resources)) {
       for (let res of resources) {
@@ -203,7 +206,8 @@ class rESOURCEpOOL {
         }
         return allocatedRes;
       } else {
-        console.error(`The pool ${this.name} does not have enough resources at simulation step ${sim.step}!`);
+        console.error(`The pool ${this.name} does not have enough resources at simulation step ${sim.step}!`,
+            JSON.stringify(this));
       }
     } else this.available -= card;
   }
@@ -469,7 +473,7 @@ oes.initializeActivityStatistics = function () {
           AT = sim.Classes[actTypeName];
       // initialize throughput statistics
       actStat.enqueuedActivities = 0;
-      actStat.waitingTimeouts = 0;
+      if (typeof AT.waitingTimeout === "function") actStat.waitingTimeouts = 0;
       actStat.startedActivities = 0;
       actStat.completedActivities = 0;
       // generic queue length statistics
