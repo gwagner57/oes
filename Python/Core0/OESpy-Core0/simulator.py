@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, simulatorUI
 
 module_path = os.path.abspath('lib/')
 sys.path.insert(1, module_path)
@@ -58,7 +58,8 @@ class Simulator:
         iteration = 0
         while (self.time < self.endTime and not self.FEL.isEmpty()):
             iteration += 1
-            print("\n-------------------- Run Scenario Iteration " + str(iteration) + "--------------------") 
+            print("\n-------------------- Run Scenario Iteration " + str(iteration) + "--------------------")
+            simulatorUI.logSimulationStep(self)
             self.advanceSimulationTime()
             nextEvents = self.FEL.removeNextEvents()
             print (" nextEvents = ", nextEvents)
@@ -67,7 +68,10 @@ class Simulator:
                 print(" Follow Up Events = ", followUpEvents)
                 for f in followUpEvents:
                     self.FEL.add(f)
-            # more code to test if e is an exogenous event
+
+                # check if e is a recurrence
+                if (e.recurrence == 1):
+                    self.FEL.add(e.createNextEvent(self))
         
         if (self.model.computeFinalStatistics(self) != False):
             stat = self.model.computeFinalStatistics(self)
