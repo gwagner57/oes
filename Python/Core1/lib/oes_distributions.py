@@ -1,5 +1,5 @@
 
-# still working need to implement Frequency , gamma , exponential , weibull 
+# still working need to implement Frequency , gamma , exponential  
 
 """
 Create random number streams
@@ -127,6 +127,7 @@ if __name__ == "__main__":
    triangular_value = rand.triangular( 0.5, 1.5, 1.0 , 10000)
    pareto_value = rand.pareto( 2.0 , 10000)
    weibull_value = rand.weibull( 0.5 , 10000)
+   print( weibull_value )
    # frequency_value = rnd.frequency( { "20":1.4, "30":2.6 , "60":3.8, "80":1.9 } )
    # pert_value = rnd.pertdist( 10, 190, 200 )
   
@@ -138,6 +139,7 @@ if __name__ == "__main__":
    # make_plot( "UniformInt", uniformInt_value )
    plots.plot_triangle( "Triangular", triangular_value  )
    plots.plot_pareto( "Pareto", pareto_value , 2.0 ,0 )
-   plots.plot_weibull( "Weibull", weibull_value , 1, 0.5  )
+   plots.plot_weibull( "Weibull", weibull_value )
+   
    # make_plot( "Frequency", frequency_value )
    # make_plot( "PertDistributiion", pert_value )

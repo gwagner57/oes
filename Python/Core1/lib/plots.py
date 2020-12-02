@@ -27,11 +27,11 @@ def plot_pareto( name , data , a , m ) :
 	fit = a*m**a / bins**(a+1)
 	plt.plot( bins, max( count )*fit/max( fit ), linewidth=2, color='r' )
 	plt.show()
-def plot_weibull(name , data ,a, scale , weibull ):
-	count, bins, ignored = plt.hist(data , 100 ,density = True)
-	a = np.arange(1,100.)/50.
-	scale = count.max()/weibull(a, 1., 5.).max()
-	plt.plot(a, weibull(a, 1., 5.)*scale)
+def plot_weibull(name , data  ):
+	count, bins, _= plt.hist(data, density = True)
+	# x = np.arange(1,100.)/50.
+	# scale = count.max()/plot_weibull(a, 1., 5.).max()
+	# plt.plot(x, plot_weibull(x, 1., 5.)*scale)
 	plt.show()
 # def make_plot( name, data ):
 # 	count, bins, ignored = plt.hist(data, 30, density=True)
