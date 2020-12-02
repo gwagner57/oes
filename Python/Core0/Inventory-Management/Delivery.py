@@ -16,12 +16,14 @@ class Delivery(eVENT):
         self.receiver = receiver
         
     def onEvent(self, sim):
-        self.receiver.quantityInStock = self.receiver.quantityInStock + self.quantity
+        self.receiver.quantityInStock += self.quantity
+        print(" Reciever Quantity in Stock: ", self.receiver.quantityInStock)
+        print(" Reciever Recorder Level: ", self.receiver.reorderLevel)
         if (self.receiver.quantityInStock <= self.receiver.reorderLevel):
             delay = Delivery.leadTime()
             quantity = self.receiver.targetInventory - self.receiver.quantityInStock
             receiver = self.receiver
-            return Delivery(delay= delay, quantity= quantity, receiver=receiver)
+            return [Delivery(sim, delay= delay, quantity= quantity, receiver=receiver)]
         else:
             return []
     

@@ -70,7 +70,7 @@ class Simulator:
                     self.FEL.add(f)
 
                 # check if e is a recurrence
-                if (e.recurrence == 1):
+                if (e.recurrence() == 1):
                     self.FEL.add(e.createNextEvent(self))
         
         if (self.model.computeFinalStatistics(self) != False):
