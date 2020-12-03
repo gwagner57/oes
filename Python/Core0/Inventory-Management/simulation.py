@@ -39,7 +39,7 @@ sim.scenario.durationInSimTime = 1000
 #*******************************************************
 def setupInitialState(self):
     tvShop = SingleProductShop(sim, 1,"TV Shop", 80, 50, 100)
-    sim.FEL.add(DailyDemand(sim, 1,125,tvShop))
+    sim.FEL.add(DailyDemand(sim, 1,25,tvShop))
 #*******************************************************
 # Statistics Variables                                 *
 #*******************************************************

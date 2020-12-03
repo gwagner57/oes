@@ -48,5 +48,8 @@ class DailyDemand(eVENT):
         occTime = self.occTime + DailyDemand.recurrence()
         quantity = DailyDemand.quantity2()
         shop = self.shop
+        print(" *Created a Next Daily Demand Event")
+        print(" occTime: ", occTime)
+        print(" quantity: ", quantity)
         return DailyDemand(sim, occTime, quantity, shop)
     
