@@ -73,7 +73,8 @@ sim.initializeSimulator = function () {
         let rn = resRole.range.name;
         pn = rn.charAt(0).toLowerCase() + rn.slice(1) + "s";
         // create only if not yet created
-        sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, range: resRole.range});
+        sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, resourceType: resRole.range});
+        resRole.range.resourcePool = sim.resourcePools[pn];
       } else {  // the resource role is associated with a count pool
         if (resRole.countPoolName) {
           // a count pool has been explicitly assigned to the resource role

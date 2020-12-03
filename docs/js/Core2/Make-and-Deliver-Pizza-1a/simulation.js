@@ -19,7 +19,7 @@ sim.scenario.durationInSimTime = 300;
 // Initial State
 sim.scenario.setupInitialState = function () {
   const ot1 = new OrderTaker({id: 1, name:"ot1", status: oes.ResourceStatusEL.AVAILABLE}),
-      ot2 = new PizzaMaker({id: 2, name:"ot2", status: oes.ResourceStatusEL.AVAILABLE}),
+      ot2 = new OrderTaker({id: 2, name:"ot2", status: oes.ResourceStatusEL.AVAILABLE}),
       pm1 = new PizzaMaker({id: 11, name:"pm1", status: oes.ResourceStatusEL.AVAILABLE}),
       pm2 = new PizzaMaker({id: 12, name:"pm2", status: oes.ResourceStatusEL.AVAILABLE}),
       pm3 = new PizzaMaker({id: 13, name:"pm3", status: oes.ResourceStatusEL.AVAILABLE}),
