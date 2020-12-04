@@ -31,7 +31,7 @@ def plot_normal(name, data, mu, sigma ) :
 	plt.title ( "Normal" )
 	plt.show()
 def plot_triangle( name, data ) :
-	h = plt.hist( data, bins = 20, density = True , rwidth = 3, color ='skyblue' )
+	h = plt.hist(data,  bins = 20, density = True , rwidth = 3, color ='skyblue' )
 	plt.title( "Triangular" )
 	plt.show()
 def plot_uniform( name, data ) :
@@ -55,7 +55,7 @@ def plot_weibull( name , data  ) :
 	# x = np.arange(1,100.)/50.
 	# scale = count.max()/plot_weibull(a, 1., 5.).max()
 	# plt.plot(x, plot_weibull(x, 1., 5.)*scale)
-	plt.title ( "weibull" )
+	# plt.title ( "weibull" )
 	plt.show()
 def plot_pert( name, data ):
 	sns.kdeplot(data.rvs(10000))

@@ -35,65 +35,119 @@ class Rand:
    def __init__( self, seed ):
       self.rng = default_rng( seed )  # RNG initialization
 
-   def exponential( self, event_rate, size ):
-      return  self.rng.exponential( scale = 1 / event_rate, size = 10000  )
+   def exponential( self, event_rate):
+      return  self.rng.exponential( scale = 1 / event_rate)
 
-   def gamma( self, alpha, beta, size ):
-    return self.rng.gamma ( shape = alpha , scale = beta , size = 10000 )
+   def gamma( self, alpha, beta):
+    return self.rng.gamma ( shape = alpha , scale = beta  )
 
-   def normal( self, mean, stdDev, size):
-     return self.rng.normal( loc = mean , scale = stdDev , size = 10000 )
+   def normal( self, mean, stdDev):
+     return self.rng.normal( loc = mean , scale = stdDev )
 
-   def uniform( self, lowerBound , upperBound , size):
-     return self.rng.uniform( low = lowerBound , high = upperBound , size = 10000 )
+   def uniform( self, lowerBound , upperBound ):
+     return self.rng.uniform( low = lowerBound , high = upperBound  )
 
    def uniformInt( self, lowerBound, upperBound ) :
       return self.rng.randint( high = upperBound , low = lowerBound )
 
-   def triangular( self, lowerBound, upperBound, mode , size ):
-      return self.rng.triangular( left = lowerBound, mode = mode, right = upperBound , size = 10000 )
+   def triangular( self, lowerBound, upperBound, mode  ):
+      return self.rng.triangular( left = lowerBound, mode = mode, right = upperBound  )
 
-   def pareto( self, shape , size ):
-      return self.rng.pareto( a = shape , size = 10000)
+   def pareto( self, shape ):
+      return self.rng.pareto( a = shape )
 
-   def weibull( self, shape , size ):
-      return self.rng.weibull( a = shape , size = 10000 )
+   def weibull( self, shape  ):
+      return self.rng.weibull( a = shape )
    
-   def frequency( self, frequencyMap ):
-      arrayOfkeys = []
-      weights = []
-      for key in frequencyMap:
-         arrayOfkeys.append( int( key) )
-         weights.append( frequencyMap[key] )
-      cumcout, lowerlimit, binsize, extrapoints = stats.cumfreq( arrayOfkeys, numbins = 10, weights = weights )
-      return cumcout
+   # def frequency( self, frequencyMap ):
+   #    arrayOfkeys = []
+   #    weights = []
+   #    for key in frequencyMap:
+   #       arrayOfkeys.append( int( key) )
+   #       weights.append( frequencyMap[key] )
+   #    cumcout, lowerlimit, binsize, extrapoints = stats.cumfreq( arrayOfkeys, numbins = 10, weights = weights )
+   #    return cumcout
 
    def pertdist( self, minimum, most_likely, maximum ):
       pert = PERT( minimum, most_likely, maximum )
       return pert
 
+def printDistributions():
+   print( "please, choose distribution:" )
+   print( "-exponential (e): event_rate" )
+   print( "-gamma (g): alpha, beta" )
+   print( "-normal (n): mean, stdDev" )
+   print( "-uniform (u): lowerBound , upperBound " )
+   print( "-triangular (t): lowerBound, upperBound, mode " )
+   print( "-pareto(pa): shape " )
+   print( "-weibull (w): shape" )
+   # print( "-frequency (f):  frequencyMap" )
+   print( "-pertdist (pe): minimum, most_likely, maximum" )
+
+def checkCorrectness( name_list ):
+   distribution_names = {"e": 1, "g": 2, "n": 2, "u": 2, "t": 3, "pa": 1, "w": 1, "f": 4, "pe": 3}
+   if len(name_list) <= 1:
+      return False
+   else:
+      if name_list[0] not in distribution_names:
+         return False
+      else:
+         if distribution_names[name_list[0]] != len(name_list) - 1:
+            return False
+   return True
+
+def check_name_list( name_list ):
+   c = 0
+   for t in name_list:
+      if(c == 0):
+         c = 1
+         continue
+      try:
+         tt = float(t)
+      except:
+         print( "please, enter a proper number" )
+         return False
+   return True
+
 if __name__ == "__main__":
    seed = 1234567  # test seed
    rand = Rand( seed )
-   exponential_value = rand.exponential( 0.5, 10000 )
-   gamma_value = rand.gamma( 1.0, 2.0 , 1000)
-   normal_value = rand.normal( 1.5, 0.5 , 10000)
-   uniform_value = rand.uniform( 0.5, 1.5 , 10000 )
-   # uniformInt_value = rand.uniformInt( 1, 40 )
-   triangular_value = rand.triangular( 0.5, 1.5, 1.0 , 1000 )
-   pareto_value = rand.pareto( 2.0 , 10000 )
-   weibull_value = rand.weibull( 0.5 , 10000 )
-   frequency_value = rand.frequency( { "20":1.4, "30":2.6 , "60":3.8, "80":1.9 } )
-   pert_value = rand.pertdist( 10, 190, 200 )
-  
+   while(True):
+      printDistributions()
+      distribution_name = input()
+      name_list = distribution_name.split( " " )
+      if checkCorrectness( name_list ) and check_name_list( name_list ):
+         if name_list[0] == "e":
+            exponential_value = rand.exponential( float( name_list[1] ) )
+            plots.plot_exponential( "Exponential", exponential_value )
+         elif name_list[0] == "g":
+            gamma_value = rand.gamma( float( name_list[1] ) , float( name_list[2] ))
+            plots.plot_gamma( "Gamma", gamma_value , float( name_list[1] ) , float( name_list[2] ) )
+         elif name_list[0] == "n":
+            normal_value = rand.normal( float( name_list[1] ), float( name_list[2] ) )
+            plots.plot_normal( "Normal" ,normal_value , float( name_list[1] ), float( name_list[2] ) )
+         elif name_list[0] == "u":
+            uniform_value = rand.uniform( float( name_list[1] ), float( name_list[2] ) )
+            plots.plot_uniform( "Uniform", uniform_value )
+         elif name_list[0] == "t":
+            triangular_value = rand.triangular( float( name_list[1] ), float( name_list[2] ) ,float( name_list[3] ) ) 
+            plots.plot_triangle( "Triangular", triangular_value ) 
+         elif name_list[0] == "pa":
+            pareto_value = rand.pareto( float(name_list[1] ) )
+            plots.plot_pareto( "Pareto", pareto_value , float( name_list[1] ) )
+         elif name_list[0] == "w":
+            weibull_value = rand.weibull( float( name_list[1] ) )
+            plots.plot_weibull( "Weibull" , weibull_value )
+         # elif name_list[0] == "f" :
+         #    frequency_value = rand.frequency( float( name_list[1] ) , float( name_list[2] ) , float( name_list[3] ) , float( name_list[4] ) )
+         #    plots.plot_frequency( "frequency", frequency_value )
+         elif name_list[0] == "pe" :
+            pert_value = rand.pertdist( float( name_list[1] ) , float( name_list[2] ) , float( name_list[3] ) )
+            plots.plot_pert( "Pert", pert_value )
+      else:
+         print("please, input correct sequence\n")
 
-   plots.plot_exponential( "Exponential", exponential_value )
-   plots.plot_gamma( "Gamma", gamma_value , 1.0 , 2.0 )
-   plots.plot_normal( "Normal", normal_value , 1.5, 0.5 )
-   plots.plot_uniform( "Uniform", uniform_value )
-   # plots.plot_uniformInt( "UniformInt", uniformInt_value )
-   plots.plot_triangle( "Triangular", triangular_value  )
-   plots.plot_pareto( "Pareto", pareto_value , 2.0 ,0 )
-   plots.plot_weibull( "Weibull", weibull_value  )
-   plots.plot_frequency( "Frequency", frequency_value )
-   plots.plot_pert( "PertDistributiion", pert_value , 10 , 190 , 200 )
+
+   
+   
+   
