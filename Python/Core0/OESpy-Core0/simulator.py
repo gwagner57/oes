@@ -31,41 +31,28 @@ class Simulator:
         self.time = 0
         self.endTime = self.scenario.durationInSimTime or 100000 #must be set it to infinity
         self.idCounter = self.scenario.idCounter or 1000
-        
-        print("-------------------- Initialize Scenario Run --------------------\n", 
-              "Step =", self.step, ", Time =", self.time, ", End Time =", 
-              self.endTime, ", ID Counter =", self.idCounter)
-        
+                
         if (self.scenario.setupInitialState(self) != False):
             self.scenario.setupInitialState(self)
-            print ("\n-------------------- Setup Initial State --------------------\n")
             
         if (self.model.setupStatistics(self) != False):
             stat = self.model.setupStatistics(self)
-            print ("-------------------- Setup Statistics --------------------\n",
-           "Stat = ", stat)
     
     def advanceSimulationTime(self):
         self.nextEvtTime = self.FEL.getNextOccurrenceTime()
         self.step += 1
-        print("\n-------------------- Advance Simulation Time --------------------\n",
-              "Next Event Time = ", self.nextEvtTime, ", Step = ", self.step)
         if(self.nextEvtTime > 0):
             self.time = self.nextEvtTime
-            print(" Time = ", self.time)
     
     def runScenario(self):
         iteration = 0
         while (self.time < self.endTime and not self.FEL.isEmpty()):
             iteration += 1
-            print("\n-------------------- Run Scenario Iteration " + str(iteration) + "--------------------")
             simulatorUI.logSimulationStep(self)
             self.advanceSimulationTime()
             nextEvents = self.FEL.removeNextEvents()
-            print (" nextEvents = ", nextEvents)
             for e in nextEvents:
                 followUpEvents = e.onEvent(self)
-                print(" Follow Up Events = ", followUpEvents)
                 for f in followUpEvents:
                     self.FEL.add(f)
 
@@ -75,8 +62,8 @@ class Simulator:
         
         if (self.model.computeFinalStatistics(self) != False):
             stat = self.model.computeFinalStatistics(self)
-            print ("\n-------------------- Compute Final Statistics --------------------\n",
-                   "Stat = ", stat)
+            print ("\n-------------------- Compute Final Statistics --------------------")
+            print ("Stat:", stat)
             
     def runStandaloneScenario(self):
         self.initializeSimulator()

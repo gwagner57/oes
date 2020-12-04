@@ -15,17 +15,6 @@ sim.model = Model ("discrete", "days", ["SingleProductShop"], ["DailyDemand", "D
 #*******************************************************
 # Dynamic Imports                                      *
 # ******************************************************
-"""
-objectTypeModules = []
-eventTypeModules = []
-
-for file in sim.model.objectTypes:
-    if (file == "SingleProductShop"):
-        SingleProductShop = importlib.import_module(file)
-    
-for file in sim.model.eventTypes:
-    eventTypeModules.append(importlib.import_module(file))
-"""
 from Delivery import Delivery
 from DailyDemand import DailyDemand
 from SingleProductShop import SingleProductShop
@@ -39,6 +28,7 @@ sim.scenario.durationInSimTime = 1000
 #*******************************************************
 def setupInitialState(self):
     tvShop = SingleProductShop(sim, 1,"TV Shop", 80, 50, 100)
+    sim.objects["tvShop"] = tvShop
     sim.FEL.add(DailyDemand(sim, 1,25,tvShop))
 #*******************************************************
 # Statistics Variables                                 *
@@ -59,5 +49,4 @@ sim.model.computeFinalStatistics = computeFinalStatistics
 #********************************************************
 # Running the Standalone Scenario                       *
 #********************************************************
-print("-------------------- Run Standalone Scenario --------------------\n")
 sim.runStandaloneScenario()
