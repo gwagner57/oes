@@ -14,11 +14,10 @@ class Delivery(eVENT):
         self.delay = delay
         self.quantity = quantity
         self.receiver = receiver
+        self.labels = {"quantity":quantity}
         
     def onEvent(self, sim):
         self.receiver.quantityInStock += self.quantity
-        print(" Reciever Quantity in Stock: ", self.receiver.quantityInStock)
-        print(" Reciever Recorder Level: ", self.receiver.reorderLevel)
         if (self.receiver.quantityInStock <= self.receiver.reorderLevel):
             delay = Delivery.leadTime()
             quantity = self.receiver.targetInventory - self.receiver.quantityInStock
