@@ -50,3 +50,6 @@ class DailyDemand(eVENT):
         shop = self.shop
         return DailyDemand(sim, occTime, quantity, shop)
     
+    def __str__(self):
+        return 'Type: Daily Demand, Quantity:'+str(self.quantity)+', Shop: '+ str(self.shop.name)
+    

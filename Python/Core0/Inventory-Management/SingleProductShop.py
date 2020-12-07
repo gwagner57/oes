@@ -12,3 +12,9 @@ class SingleProductShop(oBJECT):
         self.reorderLevel = reorderLevel
         self.targetInventory = targetInventory
         self.labels = {"quantityInStock":quantityInStock}
+        
+    def __str__(self):
+        statment = "Type: Single Product Shop, Name: " + self.name + ", ID:" + str(self.id) + ", Quantity in Stock:" 
+        statment += str(self.quantityInStock) + ",\nRecorder Level: " + str(self.reorderLevel) 
+        statment += ", Target Inventory: " + str(self.targetInventory)
+        return statment

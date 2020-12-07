@@ -36,8 +36,10 @@ class Delivery(eVENT):
         else:
             return 3
     
-    
     @staticmethod
     def recurrence():
         return 0
+    
+    def __str__(self):
+        return 'Type: Delivery, Quantity: '+str(self.quantity)+', Shop : '+ str(self.receiver.name)
     
