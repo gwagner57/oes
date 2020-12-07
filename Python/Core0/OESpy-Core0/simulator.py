@@ -31,10 +31,9 @@ class Simulator:
         self.time = 0
         self.endTime = self.scenario.durationInSimTime or 100000 #must be set it to infinity
         self.idCounter = self.scenario.idCounter or 1000
-                
-        if (self.scenario.setupInitialState(self) != False):
-            self.scenario.setupInitialState(self)
-            
+             
+        self.scenario.setupInitialState(self)
+        
         if (self.model.setupStatistics(self) != False):
             stat = self.model.setupStatistics(self)
     
@@ -62,7 +61,7 @@ class Simulator:
         
         if (self.model.computeFinalStatistics(self) != False):
             stat = self.model.computeFinalStatistics(self)
-            print ("\n-------------------- Compute Final Statistics --------------------")
+            print ("\n-------------------- Compute Final Statistics --------------------------")
             print ("Stat:", stat)
             
     def runStandaloneScenario(self):
