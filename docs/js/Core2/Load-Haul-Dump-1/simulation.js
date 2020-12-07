@@ -16,7 +16,7 @@ sim.model.v.nmrOfLoads = 66;
 /* Do not define a fixed simulation duration since a simulation run ends,
    when the job is done (i.e., when the simulator runs out of future events).
  */
-// Initial State
+sim.scenario.description = "The default scenario has 5 trucks (with IDs 1-5) and one wheel loader (with ID 11).";
 sim.scenario.setupInitialState = function () {
   const t1 = new Truck({id: 1, name:"t1", status: oes.ResourceStatusEL.AVAILABLE}),
       t2 = new Truck({id: 2, name:"t2", status: oes.ResourceStatusEL.AVAILABLE}),
@@ -36,6 +36,8 @@ sim.scenario.setupInitialState = function () {
 sim.scenarios[1] = {
   scenarioNo: 1,
   title: "Scenario with 2 wheel loaders",
+  description: `<p>Based on the default scenario (with 5 trucks and 1 wheel loader), this scenario  
+                 has a second wheel loader. As a consequence, <i>Load</i> activities are performed twice as fast.</p>`,
   setupInitialState: function () {
     const t1 = new Truck({id: 1, name:"t1", status: oes.ResourceStatusEL.AVAILABLE}),
         t2 = new Truck({id: 2, name:"t2", status: oes.ResourceStatusEL.AVAILABLE}),

@@ -24,19 +24,18 @@
   </head>
 
   <body>
-  <div><small>An <em><a href="https://gwagner57.github.io/oes/">Object
-  Event Simulation (OES)</a></em> example model. You can download and inspect
-  its code from the <a
-  href="https://github.com/gwagner57/oes/tree/master/docs/js/Core2">OES GitHub
-  repo</a>.</small></div>
+  <div><small>An <em><a href="https://gwagner57.github.io/oes/">Object Event Simulation (OES)</a></em> example model.
+   You can download and inspect its code from the <a href="https://github.com/gwagner57/oes/tree/master/docs/js/Core2">OES
+   GitHub repo</a>.</small></div>
   <figure class="right"><img alt="Process Design Model" src="img/PDM.svg" width="600" /></figure>
   <h1>Load-Haul-Dump-1 <a href="description.html">Read more...</a></h1>
   <p id="copyright">© 2020 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
    Brandenburg University of Technology, Germany.</p>
   <p>The model is described by the DPMN process diagram to the right.</p>
-  <p>The default scenario has 5 trucks (with IDs 1-5) and one wheel loader (with ID 11).</p>
+  <h2 id="scenarioTitle">Default scenario</h2>
+  <p id="scenarioDescription">The default scenario has 5 trucks (with IDs 1-5) and one wheel loader (with ID 11).</p>
   <form id="run">
-   <div><label>Select scenario: <select name="selScen"></select></label></div>
+   <div><label>Select scenario: <select name="selScen" onchange="onChangeOfScenSelect()"></select></label></div>
    <div><button onclick="run()" type="button">Run</button>
      <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>
    <div><label>Simulation log <input name="log" type="checkbox" /></label></div>

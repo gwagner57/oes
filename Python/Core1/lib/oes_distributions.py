@@ -35,6 +35,7 @@ class Rand:
    def __init__( self, seed ):
       self.rng = default_rng( seed )  # RNG initialization
 
+   # See https://numpy.org/doc/stable/reference/random/generator.html#distributions
    def exponential( self, event_rate, size ):
       return  self.rng.exponential( scale = 1 / event_rate, size = 10000  )
 

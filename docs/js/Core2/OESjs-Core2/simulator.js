@@ -66,7 +66,7 @@ sim.initializeSimulator = function () {
     // Create the resource pools
     for (const resRoleName of Object.keys( AT.resourceRoles)) {
       const resRole = AT.resourceRoles[resRoleName];
-      let pn = "";
+      let pn="", altResTypes=null;
       // set default cardinality
       if (!resRole.card && !resRole.minCard) resRole.card = 1;
       if (resRole.range) {  // the resource role is associated with an individual pool
@@ -74,7 +74,9 @@ sim.initializeSimulator = function () {
         pn = rn.charAt(0).toLowerCase() + rn.slice(1) + "s";
         // create only if not yet created
         sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, resourceType: resRole.range});
+        // assign resource pool to resource type
         resRole.range.resourcePool = sim.resourcePools[pn];
+        altResTypes = sim.resourcePools[pn].resourceType.alternativeResourceTypes;
       } else {  // the resource role is associated with a count pool
         if (resRole.countPoolName) {
           // a count pool has been explicitly assigned to the resource role
@@ -91,14 +93,12 @@ sim.initializeSimulator = function () {
       // assign the (newly created) pool to the resource role
       resRole.resPool = sim.resourcePools[pn];
       // Subscribe activity types to resource pools
-      sim.resourcePools[pn].dependentActivityTypes.push( AT);
-    }
-  }
-  // Assign alternativeResourcePools
-  for (const pn of Object.keys( sim.resourcePools)) {
-    const rp = sim.resourcePools[pn];
-    if (rp.range) {  // an individual pool
-
+      resRole.resPool.dependentActivityTypes.push( AT);
+      if (altResTypes) {  // only individual pools have alternativeResourceTypes
+        for (arT of altResTypes) {
+          resRole.resPool.dependentActivityTypes.push( arT);
+        }
+      }
     }
   }
 }
@@ -220,7 +220,7 @@ sim.runScenario = function (createLog) {
       if (EventClass.successorActivity) {
         const SuccActivityClass = sim.Classes[EventClass.successorActivity];
         // enqueue successor activity
-        SuccActivityClass.plannedActivities.enqueue( new SuccActivityClass());
+        SuccActivityClass.plannedActivities.startOrEnqueue( new SuccActivityClass());
       }
       /**** ACTIVITIES extension END ****/
 

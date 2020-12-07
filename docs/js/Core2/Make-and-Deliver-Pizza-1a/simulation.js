@@ -13,10 +13,8 @@ sim.model.activityTypes = ["TakeOrder","MakePizza","DeliverPizza"];
  Simulation Scenario
  ********************************************************/
 sim.scenario.durationInSimTime = 300;
-//sim.scenario.durationInSimSteps = 1000;
-//sim.scenario.durationInCpuTime = 1000;  // seconds
-
-// Initial State
+sim.scenario.title = "Default scenario.";
+sim.scenario.description = "The default scenario has 2 order takers, 10 pizza makers, 5 ovens, and 20 delivery scooters.";
 sim.scenario.setupInitialState = function () {
   const ot1 = new OrderTaker({id: 1, name:"ot1", status: oes.ResourceStatusEL.AVAILABLE}),
       ot2 = new OrderTaker({id: 2, name:"ot2", status: oes.ResourceStatusEL.AVAILABLE}),
@@ -44,26 +42,42 @@ sim.scenario.setupInitialState = function () {
  ********************************************************/
 sim.scenarios[1] = {
   scenarioNo: 1,
-  title: "Scenario with 2 wheel loaders",
+  title: "Model variant: pizza makers can also take orders",
+  description: `<p>Based on the default scenario (with 2 order takers, 10 pizza makers, 
+                 5 ovens, and 20 delivery scooters), in this model variant the 
+                 pizza makers are used as an <em>alternative resource pool</em> for order taking.
+                 This means that when all order takers are busy and a new order call comes in,
+                 an available pizza maker can take the call.</p>`,
   setupInitialState: function () {
-    const t1 = new PizzaMaker({id: 1, name:"t1", status: oes.ResourceStatusEL.AVAILABLE}),
-        t2 = new PizzaMaker({id: 2, name:"t2", status: oes.ResourceStatusEL.AVAILABLE}),
-        t3 = new PizzaMaker({id: 3, name:"t3", status: oes.ResourceStatusEL.AVAILABLE}),
-        t4 = new PizzaMaker({id: 4, name:"t4", status: oes.ResourceStatusEL.AVAILABLE}),
-        t5 = new PizzaMaker({id: 5, name:"t5", status: oes.ResourceStatusEL.AVAILABLE}),
-        wl1 = new WheelLoader({id: 11, name:"wl1", status: oes.ResourceStatusEL.AVAILABLE});
-        wl2 = new WheelLoader({id: 12, name:"wl2", status: oes.ResourceStatusEL.AVAILABLE});
+    const ot1 = new OrderTaker({id: 1, name:"ot1", status: oes.ResourceStatusEL.AVAILABLE}),
+        ot2 = new OrderTaker({id: 2, name:"ot2", status: oes.ResourceStatusEL.AVAILABLE}),
+        pm1 = new PizzaMaker({id: 11, name:"pm1", status: oes.ResourceStatusEL.AVAILABLE}),
+        pm2 = new PizzaMaker({id: 12, name:"pm2", status: oes.ResourceStatusEL.AVAILABLE}),
+        pm3 = new PizzaMaker({id: 13, name:"pm3", status: oes.ResourceStatusEL.AVAILABLE}),
+        pm4 = new PizzaMaker({id: 14, name:"pm4", status: oes.ResourceStatusEL.AVAILABLE}),
+        pm5 = new PizzaMaker({id: 15, name:"pm5", status: oes.ResourceStatusEL.AVAILABLE}),
+        pm6 = new PizzaMaker({id: 16, name:"pm6", status: oes.ResourceStatusEL.AVAILABLE}),
+        pm7 = new PizzaMaker({id: 17, name:"pm7", status: oes.ResourceStatusEL.AVAILABLE}),
+        pm8 = new PizzaMaker({id: 18, name:"pm8", status: oes.ResourceStatusEL.AVAILABLE}),
+        pm9 = new PizzaMaker({id: 19, name:"pm9", status: oes.ResourceStatusEL.AVAILABLE}),
+        pm10 = new PizzaMaker({id: 20, name:"pm10", status: oes.ResourceStatusEL.AVAILABLE});
     // Initialize the individual resource pools
-    sim.resourcePools["trucks"].availResources.push( t1, t2, t3, t4, t5);
-    sim.resourcePools["wheelLoaders"].availResources.push( wl1, wl2);
+    sim.resourcePools["orderTakers"].availResources.push( ot1, ot2);
+    sim.resourcePools["pizzaMakers"].availResources.push( pm1,pm2,pm3,pm4,pm5,pm6,pm7,pm8,pm9,pm10);
+    // Initialize the count pools
+    sim.resourcePools["ovens"].available = 5;
+    sim.resourcePools["scooters"].available = 20;
     // Schedule initial events
-    sim.FEL.add( new Request({occTime: 1, quantity: 990}));
+    sim.FEL.add( new OrderCall({occTime: 1}));
+    //***** Model Variant ********************************************
+    OrderTaker.alternativeResourceTypes = ["PizzaMaker"];
   }
 };
 /*******************************************************
  Statistics variables
 ********************************************************/
 sim.model.setupStatistics = function () {
+  sim.stat.deliveredPizzas = 0;
 };
 /*******************************************************
  Define an experiment (type)

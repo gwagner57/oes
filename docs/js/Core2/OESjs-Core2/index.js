@@ -5,6 +5,8 @@ const formEl = document.forms["run"],
     storeExpResCheckboxEl = formEl["storeExpRes"],
     selExpEl = formEl["selExp"],
     simLogTableEl = document.getElementById("simLog"),
+    scenarioTitleEl = document.getElementById("scenarioTitle"),
+    scenarioDescriptionEl = document.getElementById("scenarioDescription"),
     simInfoEl = document.getElementById("simInfo"),
     execInfoEl = document.getElementById("execInfo");
 function setupUI() {
@@ -24,6 +26,11 @@ function setupUI() {
     }
     util.fillSelectWithOptionsFromStringList( selExpEl, optionTextItems);
   }
+}
+function onChangeOfScenSelect() {
+  sim.scenario = sim.scenarios[parseInt( selScenEl.value)];
+  scenarioTitleEl.textContent = sim.scenario.title;
+  scenarioDescriptionEl.innerHTML = sim.scenario.description;
 }
 function onChangeOfExpSelect() {
   if (selExpEl.value === "0") {

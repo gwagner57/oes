@@ -2,6 +2,10 @@ class DeliverPizza extends aCTIVITY {
   constructor({id, startTime, duration}={}) {
     super({id, startTime, duration});
   }
+  onActivityEnd() {
+    sim.stat.deliveredPizzas++;
+    return []
+  }
   duration() {
     return rand.triangular(15, 60, 30);
   }
