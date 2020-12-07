@@ -14,6 +14,7 @@ class DailyDemand(eVENT):
     def __init__(self, sim, occTime, quantity, shop):
         super().__init__(sim, occTime)
         self.quantity = quantity
+        self.occTime = occTime
         self.shop = shop
         self.labels = {"quantity":quantity}
         
@@ -51,5 +52,5 @@ class DailyDemand(eVENT):
         return DailyDemand(sim, occTime, quantity, shop)
     
     def __str__(self):
-        return 'Type: Daily Demand, Quantity:'+str(self.quantity)+', Shop: '+ str(self.shop.name)
+        return 'Type: Daily Demand, Occurence Time:' + str(self.occTime)+ ', Quantity:' +str(self.quantity)+', Shop: '+ str(self.shop.name)
     
