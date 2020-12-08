@@ -66,14 +66,17 @@ sim.initializeSimulator = function () {
     // Create the resource pools
     for (const resRoleName of Object.keys( AT.resourceRoles)) {
       const resRole = AT.resourceRoles[resRoleName];
-      let pn = "";
+      let pn="", altResTypes=null;
       // set default cardinality
       if (!resRole.card && !resRole.minCard) resRole.card = 1;
       if (resRole.range) {  // the resource role is associated with an individual pool
         let rn = resRole.range.name;
         pn = rn.charAt(0).toLowerCase() + rn.slice(1) + "s";
         // create only if not yet created
-        sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, range: resRole.range});
+        sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, resourceType: resRole.range});
+        // assign resource pool to resource type
+        resRole.range.resourcePool = sim.resourcePools[pn];
+        altResTypes = sim.resourcePools[pn].resourceType.alternativeResourceTypes;
       } else {  // the resource role is associated with a count pool
         if (resRole.countPoolName) {
           // a count pool has been explicitly assigned to the resource role
@@ -90,14 +93,12 @@ sim.initializeSimulator = function () {
       // assign the (newly created) pool to the resource role
       resRole.resPool = sim.resourcePools[pn];
       // Subscribe activity types to resource pools
-      sim.resourcePools[pn].dependentActivityTypes.push( AT);
-    }
-  }
-  // Assign alternativeResourcePools
-  for (const pn of Object.keys( sim.resourcePools)) {
-    const rp = sim.resourcePools[pn];
-    if (rp.range) {  // an individual pool
-
+      resRole.resPool.dependentActivityTypes.push( AT);
+      if (altResTypes) {  // only individual pools have alternativeResourceTypes
+        for (arT of altResTypes) {
+          resRole.resPool.dependentActivityTypes.push( arT);
+        }
+      }
     }
   }
 }
@@ -219,7 +220,7 @@ sim.runScenario = function (createLog) {
       if (EventClass.successorActivity) {
         const SuccActivityClass = sim.Classes[EventClass.successorActivity];
         // enqueue successor activity
-        SuccActivityClass.plannedActivities.enqueue( new SuccActivityClass());
+        SuccActivityClass.plannedActivities.startOrEnqueue( new SuccActivityClass());
       }
       /**** ACTIVITIES extension END ****/
 
@@ -262,6 +263,7 @@ sim.runExperiment = async function () {
       varName => !compositeStatVarNames.includes( varName));
 
   async function runSimpleExperiment() {
+    var statVarList=[];
     // initialize replication statistics
     exp.replicStat = Object.create(null);  // empty map
     for (const varName of simpleStatVarNames) {
@@ -269,11 +271,20 @@ sim.runExperiment = async function () {
     }
     /***START Activity extensions BEFORE-runSimpleExperiment ********************/
     exp.replicStat.actTypes = Object.create(null);  // empty map
+    let throughputStatVarList = ["enqueuedActivities","waitingTimeouts","startedActivities","completedActivities"];
+    let throughputStatVarListWithoutTmout = ["enqueuedActivities","startedActivities","completedActivities"];
     for (const actTypeName of Object.keys( sim.stat.actTypes)) {
-      exp.replicStat.actTypes[actTypeName] = {
-        enqueuedActivities:[], startedActivities:[], completedActivities:[],
-        queueLength:{max:[]}, waitingTime:{max:[]}, cycleTime:{max:[]}
-      };
+      if (typeof sim.Classes[actTypeName].waitingTimeout === "function") {
+        exp.replicStat.actTypes[actTypeName] = {
+          enqueuedActivities:[], waitingTimeouts:[], startedActivities:[], completedActivities:[],
+          queueLength:{max:[]}, waitingTime:{max:[]}, cycleTime:{max:[]}
+        };
+      } else {
+        exp.replicStat.actTypes[actTypeName] = {
+          enqueuedActivities:[], startedActivities:[], completedActivities:[],
+          queueLength:{max:[]}, waitingTime:{max:[]}, cycleTime:{max:[]}
+        };
+      }
       //exp.replicStat.actTypes[actTypeName].resUtil = {};
     }
     /***END Activity extensions BEFORE-runSimpleExperiment ********************/
@@ -291,6 +302,9 @@ sim.runExperiment = async function () {
         const replActStat = exp.replicStat.actTypes[actTypeName],
               actStat = sim.stat.actTypes[actTypeName];
         replActStat.enqueuedActivities[k] = actStat.enqueuedActivities;
+        if (typeof sim.Classes[actTypeName].waitingTimeout === "function") {
+          replActStat.waitingTimeouts[k] = actStat.waitingTimeouts;
+        }
         replActStat.startedActivities[k] = actStat.startedActivities;
         replActStat.completedActivities[k] = actStat.completedActivities;
         replActStat.queueLength.max[k] = actStat.queueLength.max;
@@ -328,7 +342,12 @@ sim.runExperiment = async function () {
     for (const actTypeName of Object.keys( exp.replicStat.actTypes)) {
       const replActStat = exp.replicStat.actTypes[actTypeName];
       exp.summaryStat.actTypes[actTypeName] = Object.create(null);  // empty map
-      for (const statVarName of ["enqueuedActivities","startedActivities","completedActivities"]) {
+      if (typeof sim.Classes[actTypeName].waitingTimeout === "function") {
+        statVarList = throughputStatVarList
+      } else {
+        statVarList = throughputStatVarListWithoutTmout
+      }
+      for (const statVarName of statVarList) {
         exp.summaryStat.actTypes[actTypeName][statVarName] = Object.create(null);  // empty map
         for (const aggr of Object.keys( math.stat.summary)) {
           const aggrF = math.stat.summary[aggr].f;

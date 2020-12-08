@@ -14,12 +14,13 @@ class DailyDemand(eVENT):
     def __init__(self, sim, occTime, quantity, shop):
         super().__init__(sim, occTime)
         self.quantity = quantity
+        self.occTime = occTime
         self.shop = shop
+        self.labels = {"quantity":quantity}
         
     def onEvent(self, sim):
         q = self.quantity
         prevStockLevel = self.shop.quantityInStock
-        print (" Previous Stock Level = ", prevStockLevel, ", q = ", q)
         if (q > prevStockLevel):
             sim.stat["nmrOfStockOuts"] = sim.stat["nmrOfStockOuts"] + 1
             sim.stat["lostSales"] = sim.stat["lostSales"] + (q - prevStockLevel)
@@ -48,8 +49,8 @@ class DailyDemand(eVENT):
         occTime = self.occTime + DailyDemand.recurrence()
         quantity = DailyDemand.quantity2()
         shop = self.shop
-        print(" *Created a Next Daily Demand Event")
-        print(" occTime: ", occTime)
-        print(" quantity: ", quantity)
         return DailyDemand(sim, occTime, quantity, shop)
+    
+    def __str__(self):
+        return '-> Type: Daily Demand, Occurence Time:' + str(self.occTime)+ ', Quantity:' +str(self.quantity)+', Shop: '+ str(self.shop.name)
     

@@ -64,17 +64,24 @@ class pLANNEDaCTIVITIESqUEUE extends Array {
   constructor() {
     super();
   }
-  static ifAvailAllocReqResAndStartNextActivity( AT) {
-    if (AT.plannedActivities.length === 0) return;
-    let nextActy = AT.plannedActivities[0];
-    // take care of waiting timeouts
-    while (nextActy.waitingTimeout && sim.time > nextActy.waitingTimeout) {
-      // remove nextActy from queue
-      AT.plannedActivities.dequeue();
-      // update statistics
-      sim.stat.actTypes[AT.name].waitingTimeouts += 1;
-      if (AT.plannedActivities.length === 0) return;
-      else nextActy = AT.plannedActivities[0];
+  /*
+   When no activity (acty) is provided, the head of the AT queue is used
+   */
+  static ifAvailAllocReqResAndStartNextActivity( AT, acty) {
+    var nextActy=null;
+    if (acty) nextActy = acty;
+    else {
+      if (AT.plannedActivities.length === 0) return false;
+      nextActy = AT.plannedActivities[0];
+      // take care of waiting timeouts
+      while (nextActy.waitingTimeout && sim.time > nextActy.waitingTimeout) {
+        // remove nextActy from queue
+        AT.plannedActivities.dequeue();
+        // update statistics
+        sim.stat.actTypes[AT.name].waitingTimeouts += 1;
+        if (AT.plannedActivities.length === 0) return false;
+        else nextActy = AT.plannedActivities[0];
+      }
     }
     // Are all required resources available?
     if (Object.keys( AT.resourceRoles)
@@ -82,8 +89,8 @@ class pLANNEDaCTIVITIESqUEUE extends Array {
         .filter( resRoleName => !nextActy[resRoleName])
         .map( resRoleName => AT.resourceRoles[resRoleName])
         .every( resRole => (resRole.resPool.isAvailable( resRole.card||resRole.minCard)))) {
-      // remove next activity from queue
-      AT.plannedActivities.dequeue();
+      // remove nextActy from queue
+      if (!acty) AT.plannedActivities.dequeue();
       // Allocate all required resources
       for (const resRoleName of Object.keys( AT.resourceRoles)) {
         if (!nextActy[resRoleName]) {
@@ -107,29 +114,34 @@ class pLANNEDaCTIVITIESqUEUE extends Array {
       }
       // start next activity with the allocated resources
       sim.FEL.add( new aCTIVITYsTART({plannedActivity: nextActy}));
+      return true;
+    } else {
+      return false;
     }
   }
-  enqueue( acty) {
+  startOrEnqueue( acty) {
     const AT = acty.constructor;
     if (this !== AT.plannedActivities) {
       console.error("Attempt to push an "+ AT.name +" to wrong queue!");
       return;
     }
-    acty.enqueueTime = sim.time;
-    if (AT.waitingTimeout) {
-      acty.waitingTimeout = sim.time + AT.waitingTimeout();
+    // if available, allocate required resources and start next activity
+    const actyStarted = pLANNEDaCTIVITIESqUEUE.ifAvailAllocReqResAndStartNextActivity( AT, acty);
+    if (!actyStarted) {
+      acty.enqueueTime = sim.time;
+      if (typeof AT.waitingTimeout === "function") {
+        acty.waitingTimeout = sim.time + AT.waitingTimeout();
+      }
+      this.push( acty);  // add acty to planned activities queue
+      sim.stat.actTypes[AT.name].enqueuedActivities += 1;
+      // compute generic queue length statistics per activity type
+      if (this.length > sim.stat.actTypes[AT.name].queueLength.max) {
+        sim.stat.actTypes[AT.name].queueLength.max = this.length;
+      }
     }
-    this.push( acty);
-    sim.stat.actTypes[AT.name].enqueuedActivities += 1;
-    // compute generic queue length statistics per activity type
-    if (this.length > sim.stat.actTypes[AT.name].queueLength.max) {
-      sim.stat.actTypes[AT.name].queueLength.max = this.length;
-    }
-    //TODO: compute average queue length statistics
-    // if available, allocate required resources and schedule next activity
-    pLANNEDaCTIVITIESqUEUE.ifAvailAllocReqResAndStartNextActivity( AT);
   }
   dequeue() {
+    //TODO?: compute average queue length statistics
     const acty = this.shift(),
           AT = acty.constructor;
     return acty;
@@ -148,21 +160,47 @@ class aCTIVITYsTATE extends Set {
 oes.ResourceStatusEL = new eNUMERATION("ResourceStatusEL",
     ["available","busy","out of order"]);
 /****************************************************************************
+ A position holder is an instance of a position, which defines a resource pool
+ ****************************************************************************/
+class pOSITIONhOLDER extends oBJECT {
+  constructor({ id, name, status}) {
+    super( id, name);
+    this.status = status;
+  }
+  toString() {
+    if (this.available === undefined) {  // individual pool
+      const availRes = this.availResources.map( r => r.name || r.id);
+      return `av. ${this.name}: ${availRes}`;
+    } else {
+      return `av. ${this.name}: ${this.available}`;
+    }
+  }
+}
+/****************************************************************************
  A resource pool can take one of two forms:
  (1) a count pool abstracts away from individual resources and just maintains
-     an "available" counter of the available resources of some type
- (2) an individual pool is a queue of individual resource objects; if a resource
-     role of an activity type does not specify an individualPoolName, this name
-     is formed from the role's range name (lower-cased and pluralized by appending "s")
+ an "available" counter of the available resources of some type
+ (2) an individual pool is a queue of individual resource objects
+
+ For any performer role (defined in an activity type definition), an individual
+ pool is defined with a (lower-cased and pluralized ) name obtained from the
+ role's range name if it's a position or, otherwise, from the closest position
+ subtyping the role's range
  ****************************************************************************/
 class rESOURCEpOOL {
-  constructor( {name, available, resources}) {
+  constructor( {name, resourceType, available, resources}) {
     this.name = name;
-    if (available !== undefined) this.available = available;
+    if (available !== undefined) {  // a count pool
+      this.available = available;
+    } else if (resourceType) {  // an individual pool
+      this.resourceType = resourceType;
+      this.busyResources = [];
+      this.availResources = [];
+    } else {
+      console.log(`Resource pool ${name} is not well-defined!`)
+    }
     //this.resources = resources;
     //this.alternativeResourcePools = [];
-    this.busyResources = [];
-    this.availResources = [];
     this.dependentActivityTypes = [];
     if (Array.isArray( resources)) {
       for (let res of resources) {
@@ -174,7 +212,13 @@ class rESOURCEpOOL {
   isAvailable( card) {
     if (card === undefined) card = 1;
     if (this.available === undefined) {  // individual pool
-      return this.availResources.length >= card;
+      if (this.availResources.length >= card) return true;
+      // check if there are alternative resources
+      const altResTypes = this.resourceType.alternativeResourceTypes;
+      if (Array.isArray( altResTypes) && altResTypes.length > 0) {
+        const rP = sim.Classes[altResTypes[0]].resourcePool;
+        return rP && rP.isAvailable( card);
+      } else return false;
     } else return this.available >= card;
   }
   nmrAvailable() {
@@ -192,40 +236,55 @@ class rESOURCEpOOL {
     } else this.available = 0;  // count pool
   }
   allocate( card) {
+    var rP=null;
     if (card === undefined) card = 1;
     if (this.availResources) {  // individual pool
       if (this.availResources.length >= card) {
-        // remove the first card resources from availResources
-        let allocatedRes = this.availResources.splice( 0, card);
-        for (const res of allocatedRes) {
-          res.status = oes.ResourceStatusEL.BUSY;
-          this.busyResources.push( res);
-        }
-        return allocatedRes;
+        rP = this;
       } else {
-        console.error(`The pool ${this.name} does not have enough resources at simulation step ${sim.step}!`);
+        const altResTypes = this.resourceType.alternativeResourceTypes;
+        if (Array.isArray( altResTypes) && altResTypes.length > 0) {
+          rP = sim.Classes[altResTypes[0]].resourcePool;
+          if (!rP?.isAvailable( card)) rP = null;
+        }
       }
+      if (!rP) {
+        console.error(`The pool ${this.name} does not have enough resources at simulation step ${sim.step}!`,
+            JSON.stringify(this));
+        return [];
+      }
+      if (rP !== this) {
+        console.log(`Allocate ${this.resourceType.name} from pool ${rP.name}`);
+      }
+      // remove the first card resources from availResources
+      const allocatedRes = rP.availResources.splice( 0, card);
+      for (const res of allocatedRes) {
+        res.status = oes.ResourceStatusEL.BUSY;
+        rP.busyResources.push( res);
+      }
+      return allocatedRes;
     } else this.available -= card;
   }
   release( nmrOrRes) {  // number or resource(s)
     if (nmrOrRes === undefined) nmrOrRes = 1;
     if (typeof nmrOrRes === "number" && Number.isInteger( this.available)) {
       this.available += nmrOrRes;
-    } else if (typeof nmrOrRes === "object" && Array.isArray( this.availResources)) {
+    } else if (typeof nmrOrRes === "object") {  // individual pool
       let resources = nmrOrRes;
       if (!Array.isArray( resources)) resources = [resources];
       for (const res of resources) {
-        const i = this.busyResources.indexOf( res);
+        const rP = res.constructor.resourcePool;  // possibly an alternative resource pool
+        const i = rP.busyResources.indexOf( res);
         if (i === -1) {
-          console.error(`The pool ${this.name} does not contain resource ${res.toString()} 
-at simulation step ${sim.step}!`);
+          console.error(`The pool ${rP.name} does not contain resource ${res.toString()} 
+at simulation step ${sim.step}!`, res.constructor.toString() );
           return;
         } else {
           // remove resource from busyResources list
-          this.busyResources.splice( i, 1);
+          rP.busyResources.splice( i, 1);
           // add resource to availResources list
           res.status = oes.ResourceStatusEL.AVAILABLE;
-          this.availResources.push( res);
+          rP.availResources.push( res);
         }
       }
     } else {
@@ -401,12 +460,12 @@ class aCTIVITYeND extends eVENT {
           delete acty[resRoleName];
         }
       }
-      // are all successor activity resources allocated (included in activity resources)?
+      // are all successor activity resources already allocated (since included in activity resources)?
       if (succActyResRoleNames.every( rn => actyResRoleNames.includes( rn))) {
         // start successor activity
         followupEvents.push( new aCTIVITYsTART({plannedActivity: succActy}));
-      } else {  // enqueue successor activity
-        SuccAT.plannedActivities.enqueue( succActy);
+      } else {  // start or enqueue successor activity
+        SuccAT.plannedActivities.startOrEnqueue( succActy);
       }
     }
     // release all resources of acty
@@ -469,7 +528,7 @@ oes.initializeActivityStatistics = function () {
           AT = sim.Classes[actTypeName];
       // initialize throughput statistics
       actStat.enqueuedActivities = 0;
-      actStat.waitingTimeouts = 0;
+      if (typeof AT.waitingTimeout === "function") actStat.waitingTimeouts = 0;
       actStat.startedActivities = 0;
       actStat.completedActivities = 0;
       // generic queue length statistics

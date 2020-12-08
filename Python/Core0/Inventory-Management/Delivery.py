@@ -14,11 +14,10 @@ class Delivery(eVENT):
         self.delay = delay
         self.quantity = quantity
         self.receiver = receiver
+        self.labels = {"quantity":quantity}
         
     def onEvent(self, sim):
         self.receiver.quantityInStock += self.quantity
-        print(" Reciever Quantity in Stock: ", self.receiver.quantityInStock)
-        print(" Reciever Recorder Level: ", self.receiver.reorderLevel)
         if (self.receiver.quantityInStock <= self.receiver.reorderLevel):
             delay = Delivery.leadTime()
             quantity = self.receiver.targetInventory - self.receiver.quantityInStock
@@ -37,8 +36,10 @@ class Delivery(eVENT):
         else:
             return 3
     
-    
     @staticmethod
     def recurrence():
         return 0
+    
+    def __str__(self):
+        return '-> Type: Delivery, Occurence Time: ' + str(self.occTime) + ', Quantity: ' + str(self.quantity)+ ', Shop : ' + str(self.receiver.name)
     

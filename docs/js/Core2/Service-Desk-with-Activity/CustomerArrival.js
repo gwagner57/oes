@@ -6,7 +6,7 @@ class CustomerArrival extends eVENT {
   onEvent() {
     var followupEvents=[], plannedServices = Service.plannedActivities;
     // Enqueue a new planned service (for the newly arrived customer) at the arrival event's service desk
-    plannedServices.enqueue( new Service());
+    plannedServices.startOrEnqueue( new Service());
     // if the service desk is not busy
     if (this.serviceDesk.status === oes.ResourceStatusEL.AVAILABLE) {
       followupEvents.push( new aCTIVITYsTART({

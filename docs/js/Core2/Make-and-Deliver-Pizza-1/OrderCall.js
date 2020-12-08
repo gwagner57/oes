@@ -10,6 +10,6 @@ class OrderCall extends eVENT {
     return rand.exponential( OrderCall.arrivalRates[hour]);
   }
 }
-// arrival rates per hour (daily operation for 5 hours)
+// arrival rates per minute (for a daily operation for 5 hours)
 OrderCall.arrivalRates = [1/6, 1/0.55, 1/1.5, 1/6, 1/12];
 OrderCall.successorActivity = "TakeOrder";

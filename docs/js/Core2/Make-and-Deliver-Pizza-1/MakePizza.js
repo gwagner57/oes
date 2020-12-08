@@ -3,7 +3,7 @@ class MakePizza extends aCTIVITY {
     super({id, startTime, duration});
   }
   duration() {
-    var dur = 5; //rand.triangular(3, 10, 5);
+    var dur = rand.triangular(3, 10, 5);
     /*
     // when the MakePizza operation is performed by two pizza makers, time is cut in half
     if (Array.isArray( this.pizzaMakers) && this.pizzaMakers.length === 2) dur = dur/2;
