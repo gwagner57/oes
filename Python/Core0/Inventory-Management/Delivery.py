@@ -41,5 +41,5 @@ class Delivery(eVENT):
         return 0
     
     def __str__(self):
-        return 'Type: Delivery, Quantity: '+str(self.quantity)+', Shop : '+ str(self.receiver.name)
+        return '-> Type: Delivery, Occurence Time: ' + str(self.occTime) + ', Quantity: ' + str(self.quantity)+ ', Shop : ' + str(self.receiver.name)
     
