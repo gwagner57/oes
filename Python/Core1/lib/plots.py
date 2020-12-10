@@ -31,17 +31,17 @@ def plot_normal(name, data, mu, sigma ) :
 	plt.title ( "Normal" )
 	plt.show()
 def plot_triangle( name, data ) :
-	h = plt.hist( data, bins = 20, density = True , rwidth = 3, color ='skyblue' )
+	h = plt.hist( data,  bins = 20, density = True , rwidth = 3, color ='skyblue' )
 	plt.title( "Triangular" )
 	plt.show()
 def plot_uniform( name, data ) :
 	count, bins, ignored = plt.hist( data, 15, density = True )
-	plt.plot(bins, np.ones_like( bins ), linewidth = 2, color = 'r')
+	plt.plot( bins, np.ones_like( bins ), linewidth = 2, color = 'r')
 	plt.title( " Uniform" )
 	plt.show()
 def plot_uniformInt( name, data ) :
 	count, bins, ignored = plt.hist( data, 15, density = True )
-	plt.plot(bins, np.ones_like( bins ), linewidth = 2, color = 'r')
+	plt.plot( bins, np.ones_like( bins ), linewidth = 2, color = 'r')
 	plt.title ( "UniformInt" )
 	plt.show()
 def plot_pareto( name , data , a , m ) :
@@ -52,10 +52,6 @@ def plot_pareto( name , data , a , m ) :
 	plt.show()
 def plot_weibull( name , data  ) :
 	count, bins, _= plt.hist( data, 15, density = True )
-	# x = np.arange(1,100.)/50.
-	# scale = count.max()/plot_weibull(a, 1., 5.).max()
-	# plt.plot(x, plot_weibull(x, 1., 5.)*scale)
-	plt.title ( "weibull" )
 	plt.show()
 def plot_pert( name, data ):
 	sns.kdeplot(data.rvs(10000))
@@ -63,20 +59,7 @@ def plot_pert( name, data ):
 	plt.show()
 
 def plot_frequency( name, data ):
-	count, bins, ignored = plt.hist(data, 15, linewidth = 2 ,density = True) 
+	count, bins, ignored = plt.hist(data, 15, linewidth = 1, density = True) 
 	plt.title ( "Frequency" )
 	plt.show()
 
-# def make_plot( name, data ):
-# 	count, bins, ignored = plt.hist(data, 30, density=True)
-# 	plt.plot(bins, data, linewidth=2, color='r')
-# 	plt.title(f"The function is {name}")
-# 	plt.xlabel(name)
-# 	plt.ylabel('Frequency')
-# 	plt.show()
-   # ax = sns.distplot( data,
-   #    kde = True,
-   #    bins = 100,
-   #    color = 'skyblue',
-   #    hist_kws = { "linewidth": 15, 'alpha':1}  )
-   # ax.set( xlabel = name, ylabel = 'Frequency')
