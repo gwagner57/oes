@@ -316,14 +316,14 @@
 			</g>
 			<g id="shape72-106" v:mID="72" v:groupContext="shape">
 				<title>Operations</title>
-				<desc>«rv» duration() : Decimal {Tri(3,4,5)}</desc>
+				<desc>«rv» duration() : Decimal {Tri(3,4,6)}</desc>
 				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
 				<v:textRect cx="60.6717" cy="249.594" width="121.35" height="12.6142"/>
 				<rect x="0" y="243.287" width="121.343" height="12.6142" class="st1"/>
 				<text x="1" y="251.49" class="st2" v:langID="1031"><v:paragraph/><v:tabList/><tspan class="st4">«rv» duration</tspan><tspan
 							class="st4">() : </tspan><tspan class="st4">Decimal </tspan><tspan class="st4">{</tspan><tspan
 							class="st4">Tri</tspan><tspan class="st4">(</tspan><tspan class="st4">3</tspan><tspan class="st4">,</tspan><tspan
-							class="st4">4</tspan><tspan class="st4">,</tspan><tspan class="st4">5</tspan><tspan class="st4">)</tspan><tspan
+							class="st4">4</tspan><tspan class="st4">,</tspan><tspan class="st4">6</tspan><tspan class="st4">)</tspan><tspan
 							class="st4">}</tspan></text>			</g>
 			<g id="shape73-122" v:mID="73" v:groupContext="shape" transform="translate(0,-12.6142)">
 				<title>Attributes</title>
@@ -416,14 +416,14 @@
 			</g>
 			<g id="shape86-146" v:mID="86" v:groupContext="shape">
 				<title>Operations</title>
-				<desc>«rv» duration() : Decimal {Tri(15,60,30)}</desc>
+				<desc>«rv» duration() : Decimal {Tri(10,15,30)}</desc>
 				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
 				<v:textRect cx="66.7539" cy="249.594" width="133.51" height="12.6142"/>
 				<rect x="0" y="243.287" width="133.508" height="12.6142" class="st1"/>
 				<text x="1" y="251.49" class="st2" v:langID="1031"><v:paragraph/><v:tabList/><tspan class="st4">«rv» duration</tspan><tspan
 							class="st4">() : </tspan><tspan class="st4">Decimal </tspan><tspan class="st4">{</tspan><tspan
-							class="st4">Tri</tspan><tspan class="st4">(</tspan><tspan class="st4">15</tspan><tspan class="st4">,</tspan><tspan
-							class="st4">60</tspan><tspan class="st4">,</tspan><tspan class="st4">30</tspan><tspan class="st4">)</tspan><tspan
+							class="st4">Tri</tspan><tspan class="st4">(</tspan><tspan class="st4">10</tspan><tspan class="st4">,</tspan><tspan
+							class="st4">15</tspan><tspan class="st4">,</tspan><tspan class="st4">30</tspan><tspan class="st4">)</tspan><tspan
 							class="st4">}</tspan></text>			</g>
 			<g id="shape87-162" v:mID="87" v:groupContext="shape" transform="translate(0,-12.6142)">
 				<title>Attributes</title>

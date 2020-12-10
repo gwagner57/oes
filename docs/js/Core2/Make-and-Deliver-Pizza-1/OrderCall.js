@@ -11,5 +11,5 @@ class OrderCall extends eVENT {
   }
 }
 // arrival rates per minute (for a daily operation for 5 hours)
-OrderCall.arrivalRates = [1/6, 1/0.55, 1/1.5, 1/6, 1/12];
+OrderCall.arrivalRates = [1/6, 1/0.66, 1/1.5, 1/6, 1/12];
 OrderCall.successorActivity = "TakeOrder";

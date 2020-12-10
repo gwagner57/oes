@@ -199,8 +199,8 @@ oes.ui.showSimpleExpResults = function (exp) {
     for (const actTypeName of Object.keys( exp.replicStat.actTypes)) {
       const replActStat = exp.replicStat.actTypes[actTypeName];
       rowEl.insertCell().textContent = replActStat["enqueuedActivities"][i];
-      if (replActStat.waitingTimeouts) {
-        rowEl.insertCell().textContent = replActStat.waitingTimeouts[i];
+      if (replActStat["waitingTimeouts"]) {
+        rowEl.insertCell().textContent = replActStat["waitingTimeouts"][i];
       }
       rowEl.insertCell().textContent = replActStat["startedActivities"][i];
       rowEl.insertCell().textContent = replActStat["completedActivities"][i];
@@ -224,11 +224,7 @@ oes.ui.showSimpleExpResults = function (exp) {
     }
     for (const actTypeName of Object.keys( exp.summaryStat.actTypes)) {
       const sumActStat = exp.summaryStat.actTypes[actTypeName];
-      for (const statVarName of ["enqueuedActivities","startedActivities","completedActivities"]) {
-        const val = sumActStat[statVarName][aggr];
-        rowEl.insertCell().textContent = math.round( val, decPl);
-      }
-      for (const statVarName of ["queueLength","waitingTime","cycleTime"]) {
+      for (const statVarName of Object.keys( sumActStat)) {
         const val = sumActStat[statVarName][aggr];
         rowEl.insertCell().textContent = math.round( val, decPl);
       }

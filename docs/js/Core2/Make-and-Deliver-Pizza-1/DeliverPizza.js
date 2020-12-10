@@ -7,7 +7,7 @@ class DeliverPizza extends aCTIVITY {
     return []
   }
   duration() {
-    return rand.triangular(15, 60, 30);
+    return rand.triangular(10, 30, 15);
   }
 }
 // A DeliverPizza operation requires at least one wheel loader, but can also be performed by two
