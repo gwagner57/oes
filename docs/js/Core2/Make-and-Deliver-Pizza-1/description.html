@@ -31,300 +31,212 @@
   customers grow impatient and hang up the phone without placing an
   order.</p></section><p>You can inspect the model's <a
   href="https://github.com/gwagner57/oes/tree/master/docs/js/Core2/Make-and-Deliver-Pizza-1a">OESjs
-  code</a> on the OES GitHub repo.</p></div><details
-  open="open"><summary>Conceptual Model</summary><p>A pizza service company
-  has resource pools for order takers, pizza makers, pizza ovens, delivery
-  staff and scooters. While <em>take order</em> activities may be performed by
-  an <em>order taker</em> (or, alternatively by a <em>pizza maker</em>),
+  code</a> on the OES GitHub repo.</p></div><details><summary>Conceptual
+  Model</summary><p>A pizza service company has resource pools for order
+  takers, pizza makers, pizza ovens, delivery staff and scooters. While
+  <em>take order</em> activities are performed by an <em>order taker</em>,
   <em>make pizza</em> activities require both an <em>oven</em> and a <em>pizza
   maker</em>. Finally, <i><em>deliver</em> pizza</i> activities require a
-  delivery staff member and a scooter.</p><details><summary>Conceptual
-  Information Model</summary><p>The potentially relevant object types
-  are:</p><ol>
-      <li>haul service company,</li>
+  delivery staff member and a scooter.</p><details
+  open="open"><summary>Conceptual Information Model</summary><p>The
+  potentially relevant object types are:</p><ol>
+      <li>pizza service company,</li>
 
-      <li>wheel loaders,</li>
+      <li>customers,</li>
 
-      <li>dump trucks.</li>
+      <li>orders,</li>
+
+      <li>pizzas,</li>
+
+      <li>order takers,</li>
+
+      <li>pizza makers,</li>
+
+      <li>pizza ovens</li>
+
+      <li>delivery scooter drivers,</li>
+
+      <li>scooters.</li>
     </ol><p>Potentially relevant types of events and activities are:</p><ol>
-      <li>haul requests coming in from customers,</li>
+      <li>pizza ordering calls coming in from customers,</li>
 
-      <li>going to the loading site (an activity performed by trucks and by
-      wheel loaders),</li>
+      <li>order taking (an activity performed by order takers),</li>
 
-      <li>loading (performed by wheel loaders using trucks as resources),</li>
+      <li>customers hanging up the phone when having to wait for too
+      long,</li>
 
-      <li>hauling (performed by trucks),</li>
+      <li>pizza making (performed by pizza makers using ovens),</li>
 
-      <li>dumping (performed by trucks),</li>
-
-      <li>going back to loading site (performed by trucks),</li>
-
-      <li>going home when the job is done (performed by trucks and by wheel
-      loaders).</li>
-    </ol><p>Both object types and event types, together with their
+      <li>pizza delivery (performed by delivery staff using scooters).</li>
+    </ol><p>Object, event and activity types, together with their
   participation associations, can be visually described in a conceptual
-  information model in the form of a UML class diagram, as shown
-  below.</p><figure><figcaption>A conceptual information model describing
-  object, event and activity types.</figcaption><img alt="???"
-  src="img/CIM.svg" width="500" /></figure><p>Notice that the association end
+  information model in the form of a special kind of UML class diagram, called
+  Object Event (<abbr title="Object-Event">OE</abbr>) class diagram, as shown
+  below.</p><figure><img
+  alt="conceptual information model describing object, event and activity types"
+  src="../img/Pizzeria_CIMa.svg" width="500" /></figure><p>The association end
   annotations «rr» and «rp» denote <em>resource roles</em> and <em>resource
-  pools</em>. A haul service company has resource pools for trucks and wheel
-  loaders. The activity types <em>haul</em>, <em>dump</em> and <em>go back to
-  loading site</em> have a resource role <em>truck</em> for assigning a truck
-  to any activity of one of those types. The activity types <em>go to loading
-  site</em> and <em>go home</em> have either a a resource role <em>truck</em>
-  or a resource role <em>wheel loader</em>, as indicated by the
-  <em>alternative association</em> constraint expressed with a dashed line
-  annotated with <em>{xor}</em>. The activity type <em>load</em> has both
-  resource role <em>truck</em> and a resource role <em>wheel loaders</em> for
-  assigning at least one and at most two wheel loaders to any <em>load</em>
-  activity (as indicated by the multiplicity "1..2" at the «rr» association
-  end at the class <em>wheel
-  loaders</em>).</p></details><details><summary>Conceptual Process
-  Model</summary><p>The involved types of events and activities can be related
-  with each other via <em>resource-dependent activity start arrows</em> and
-  <em>event scheduling arrows</em>, as shown in the following DPMN process
-  diagram:</p><figure><img
-  alt="A DPMN diagram showing a conceptual process model" src="img/CPMa.svg"
-  width="600" /></figure><p>Notice that there are three types of arrows in
-  this DPMN diagram:</p><ol>
-      <li><strong><em>Event Scheduling</em></strong> arrows, like the one
-      between <em>load</em> and <em>haul</em>, have the meaning that the
-      succeeding activity is started as soon as the preceding activity has
-      been completed (there is no need for enqueuing a planned activity, since
-      all resources required by the succeeding activity are provided by the
-      preceding activity). Event Scheduling arrows are not part of BPMN,
-      rather they have been proposed by Schruben (1983) for <a
-      href="https://dl.acm.org/citation.cfm?id=358460" rel="nofollow noopener"
-      target="_blank">Event Graphs</a>.</li>
+  pools</em>. For instance, the activity type <i>make pizza</i> has two
+  resource roles, <i>pizza maker</i>s and <i>oven</i>. A pizza service company
+  has resource pools for order takers, pizza makers, ovens, delivery scooter
+  drivers and scooters. </p><p>Resource roles have resource cardinality
+  constraints. For instance, a <i>make pizza</i> activity requires 2 pizza
+  makers and 1 oven.</p><p>A conceptual <abbr title="Object-Event">OE</abbr>
+  class diagram like the one above, describes resource roles (like
+  <i>oven</i>), resource role types (like <i>ovens</i>) and resource
+  cardinality constraints (like "exactly 1") for all types of activities.
+  </p><p>An organization defines <em>organizational positions</em>, which are
+  filled by human resources. Each organizational position is characterized by
+  a set of human resource roles to be played by position holders. In the Pizza
+  Service organization, there are three positions: order takers, pizza makers
+  and delivery scooter drivers.</p><blockquote
+  class="role-attention"><p>Strictly speaking, <i>order phone calls</i> are
+  immediate (zero duration) events while a <i>take order</i> activity is an
+  event with a non-zero duration. For simplicity, though, we'll often say
+  "events" instead of "immediate events" or "objects, events and activities"
+  instead of "objects, immediate events and
+  activities".</p></blockquote></details><details
+  open="open"><summary>Conceptual Process Model</summary><p>The following BPMN
+  diagram shows a conceptual process model of the Make-and-Deliver-Pizza
+  business process, with three swimlanes for the three performers of the
+  process:</p><figure><img
+  alt="A conceptual process model in the form of a BPMN diagram"
+  src="../img/Pizzeria_CPM_BPMN.svg" width="600" /></figure><p>Notice the BPMN
+  Boundary Timeout Event circle attached to the <i>take order</i> activity
+  representing timeout events that cancel the activity. They are supposed to
+  model the <em>reneging</em> behavior of waiting customers loosing their
+  patience and hanging up the phone without placing an order. However, BPMN
+  does not allow restricting such a timeout mechanism to the waiting phase of
+  a planned activity, that is the time span during which the planned activity
+  has been enqueued, but not yet started. Rather, it applies to the entire
+  cycle time of <i>take order</i> activities, which means that also started
+  activities, where the order taker is already listening to the customer, may
+  be canceled due to reneging.</p><p>While BPMN allows modeling the performers
+  of activities with swimlanes, it does not support modeling other types of
+  resource objects. As a workaround, we have included the resource objects
+  <i>oven</i>s and <i>scooter</i>s in the form of BPMN Data Objects.</p><p>The
+  third, and most severe, issue of the BPMN model is its uniform (semantically
+  overloaded) use of "sequence flow" arrows for sequencing events and
+  activities. While in the case of all three activities, incoming "sequence
+  flow" arrows do not mean that an activity is started, but rather that a new
+  planned activity is enqueued (and only started when all required resources
+  become available), in the case of the event <i>lost order</i>, the incoming
+  "sequence flow" arrow means that a new event is scheduled to occur
+  immediately.</p><p>These three issues of BPMN have been solved in DPMN,
+  where <em>resource-dependent activity start arrows</em> are distinguished
+  from <em>event scheduling arrows</em>, as shown in the following DPMN
+  process diagram:</p><figure><img
+  alt="A conceptual process model in the form of a DPMN diagram"
+  src="../img/Pizzeria_CPM.svg" width="550" /></figure><p>Notice how the
+  timeout event circle (with a clock icon) is attached to the three bars of
+  the resource-dependent activity start arrow representing the queue of
+  planned order taking activities waiting for the availability of an order
+  taker. This implies that the timeout applies to the waiting phase, and not
+  to the order taking activity.</p><p>A conceptual <abbr
+  title="Discrete Event Processing Notation">DPMN</abbr> process diagram does
+  normally not include any element representing a resource pool. Yet, it may
+  display the performer roles of activity types, like <i>order taker</i> and
+  <i>pizza maker </i> in the diagram above. It is assumed that for any
+  organizational position described in the underlying <abbr
+  title="Object-Event">OE</abbr> class model, the organization under
+  consideration has a corresponding resource
+  pool.</p></details></details><details><summary>Simulation
+  Design</summary><p>In our simulation design, we make the following
+  simplifications. We consider only one particular pizza service company,
+  which does not have to be modeled as an explicit object. Also, we abstract
+  away from individual customers, orders and pizzas. And we merge the resource
+  roles <i>delivery scooter driver</i> and <i>scooter</i>, keeping only
+  <i>scooter</i>s as resources of <i>deliver pizza</i> activities.</p><p>We
+  consider a scenario with two order takers, ten pizza makers, five ovens and
+  20 scooters.</p><details open="open"><summary>Information Design
+  Model</summary><p>An information design model, in the form of an <abbr
+  title="Object-Event">OE</abbr> class diagram as shown below, is derived from
+  a conceptual information model by </p><ol>
+      <li>Abstracting away from items that are not design-relevant.</li>
 
-      <li>A <strong><em>Multiple Events Scheduling</em></strong> arrow, like
-      the one between <em>requests</em> and <em>go to loading site</em>, means
-      that one instance of the preceding event type triggers multiple
-      instances of the succeeding event type. In our example model, this means
-      that one <em>request</em> event is followed by multiple <em>go to
-      loading site</em> activities, one for each truck and each wheel loader
-      assigned to the job.</li>
-
-      <li>A <strong><em>Resource-Dependent Activity Start</em></strong> arrow,
-      like the one between <em>go to loading site</em> and <em>load</em>
-      activities, means that as soon as an activity of the preceding activity
-      type has been completed, a new planned activity is added to the queue of
-      planned activities of the succeeding type (and started as soon as all
-      required resources are available).</li>
-    </ol><p>The model shows that when a haul request comes in, the haul
-  service company deploys multiple trucks and wheel loaders to the loading
-  site, each of them performing a <em>go to loading site</em> activity, as
-  indicated by the double arrow between the <i>haul requests</i> event circle
-  and the <em>go to loading site</em> activity rectangle. Each of these
-  activities leads to enqueuing a new planned <em>load</em> activity, as
-  indicated by the <em>resource-dependent activity start arrow</em> from the
-  <em>go to loading site</em> activity shape to the <em>load</em> activity
-  shape. Such an enqueued (planned) activity is going to be dequeued and
-  started as soon as the required resources become available. This means that
-  as soon as a wheel loader is available, the next <em>load</em> activity is
-  going to be started. When a <em>load</em> activity is completed, a
-  <em>haul</em> activity and then a <em>dump</em> activity are going to start
-  immediately, as indicated by the <em>event scheduling arrows</em> between
-  them.</p><p>A more complete model prevents trucks to go back to the loading
-  site and perform a load activity even when the job has been completed during
-  the go back activity (resulting in haul and dump activities with an empty
-  truck). For avoiding this uneconomic behavior, a second decision if the job
-  has been done needs to be taken after the go back activity. In addition, the
-  model has to describe that wheel loaders also go home when their job has
-  been done. This is shown in the following refined model:</p><figure><img
-  alt="???" src="img/CPMb.svg"
-  width="650" /></figure></details></details><details><summary>Simulation
-  Design</summary><p>In our simulation design, we consider only one particular
-  haul service company, which does not have to be modeled as an explicit
-  object. Also, we abstract away from the fact that also wheel loaders have to
-  go to, and return from, the loading site by assuming that they are already
-  at the site when the dump trucks arrive.</p><details><summary>Information
-  Design Model</summary><p>In the information design model, we need to define
-  a <i>status</i> attribute for all resource object types, such as
-  <i>Truck</i> and <i>WheelLoader</i>, and a duration function, typically
-  representing a random variable, for each activity
-  type:</p><figure><figcaption>An information design model defining object,
-  event and activity types.</figcaption><img alt="???" src="img/IDM.svg"
-  width="600" /></figure><p>Notice how functions representing random
-  variables, like the <code>duration</code> function of all activity types,
-  are marked with the keyword (or UML 'stereotype') «rv» standing for "random
-  variable". These random variable functions sample from a probability
-  distribution function (PDF), which is symbolically indicated with
-  expressions like Tri(30,50,40) standing for the triangular PDF with lower
-  and upper bounds 30 and 50, and a median of 40. </p><p>Each activity type is
-  associated with <i>Truck</i> or <i>WheelLoader</i> as their resource
-  role(s), indicated with the association end stereotype «rr» standing for
-  "resource role".</p></details><details><summary>Process Design
-  Model</summary><p>In the process design model, we need to specify the state
-  changes and follow-up events caused by events, including activity start and
-  end events, and the constructor arguments for scheduling follow-up events,
-  using model variables (possibly referencing resource pools), as shown in the
-  following DPMN diagram:</p><figure><figcaption>A computationally complete
-  process design for the Load-Haul-Dump business process.</figcaption><img
-  alt="???" src="img/PDM.svg"
-  width="700" /></figure></details></details><details><summary>Implementation
-  with OESjs</summary><p>The JavaScript-based simulator OESjs implements the
-  Object Event Simulation paradigm, and, consequently, allows a
-  straight-forward coding of OEM class models and DPMN process
-  models.</p><details><summary>Implementing the Information Design
-  Model</summary><p>For implementing the information design model, we have to
-  code all object types, event types and activity types specified in the model
-  in the form of classes.</p><figure class="right"><img alt="???"
-  src="img/Truck_IDM.svg" width="300" /></figure><p>The <code>Truck</code>
-  object class can be coded with OESjs-Core2 in the following way:</p><pre>class <b>Truck</b> extends oBJECT {
-  constructor({ id, name, <b>status</b>}) {
-    super( id, name);  // invoke the oBJECT constructor
-    <b>this.status</b> = status;
-  }
-}
-// a class-level attribute
-Truck.<b>capacity</b> = 15;  // m3</pre><p>All object classes inherit an
-  <code>id</code> attribute and a <code>name</code> attribute from the
-  pre-defined OES foundation class <code>oBJECT</code>. Since trucks are
-  resource objects, we need to define a <code>status</code> property for them.
-  We also define a class-level attribute <code>capacity</code> for modeling
-  their load capacity, assuming that all trucks have the same
-  capacity.</p><p>The <i>WheelLoader</i> object class is coded in the same way
-  as <i>Truck</i>.</p><figure class="right"><img alt="HaulRequest event class"
-  src="img/HaulRequest_IDM.svg" width="180" /></figure><p>The
-  <code>HaulRequest</code> event class can be coded in the following
-  way:</p><pre>class <b>HaulRequest</b> extends eVENT {
-  constructor({ occTime, delay, <b>quantity</b>}) {
-    super({occTime, delay});
-    <b>this.quantity</b> = quantity;
-  }
-  onEvent() {
-    ...
-  }
-}</pre><p>All event classes inherit an <code>occTime</code> attribute and a
-  <code>delay</code> attribute from the pre-defined OES foundation class
-  <code>eVENT</code>. Any event in OES can be created either with a value for
-  the attribute <code>occTime</code> (standing for <em>occurrence time</em>)
-  or with a value for the attribute <code>delay</code>. In the latter case,
-  the event's occurrence time is automatically derived by adding the value of
-  <code>delay</code> to the current simulation time. In addition, the
-  <i>HaulRequest</i> event class has a property <code>quantity</code> for
-  specifying the quantity to be hauled.. </p><p>The <code>onEvent</code>
-  method of the <i>HaulRequest</i> event class is not part of the information
-  design model. Rather, it is implementing an event rule specified in the
-  process design model. Consequently, it will be discussed below.</p><figure
-  class="right"><img alt="GoToLoadingSite activity class"
-  src="img/GoToLoadingSite_IDM.svg" width="400" /></figure><p>The
-  <i>GoToLoadingSite</i> activity class can be coded in the following
-  way:</p><pre>class <b>GoToLoadingSite</b> extends aCTIVITY {
-  constructor({id, startTime, duration}={}) {
-    super({id, startTime, duration});
-  }
-  static <b>duration</b>() {return rand.triangular( 30, 50, 40);}
-}
-GoToLoadingSite.<b>resourceRoles</b> = {
-  "truck": {range: Truck}
-}</pre><p>All activity classes inherit the attributes <code>id</code>,
-  <code>startTime</code> and <code>duration</code> from the pre-defined OES
-  foundation class <code>aCTIVITY</code>. When an activity is created as a JS
-  object during a simulation run, the value of its <code>duration</code>
-  property is obtained by invoking the <code>duration()</code> function
-  defined as a class-level ("static") function for its activity class. These
-  activity duration functions typically implement a random variable by
-  invoking a random variate sampling function, such as
-  <code>rand.triangular(30,50,40)</code>, which samples from the triangular
-  probability distribution function (with min/max=30/50 and
-  mode=40).</p><p>Notice how the resource role association between
-  <i>GoToLoadingSite</i> and <i>Truck</i>, which defines the resource
-  reference property <i>GoToLoadingSite::truck</i>, is coded by a
-  corresponding entry in the map-valued class-level property
-  <code>resourceRoles</code>.</p></details><details
-  open="open"><summary>Implementing the Process Design Model</summary><p>A
-  DPMN process design model can be decomposed into a set of event rule design
-  models, one for each type of event specified in the design model. Starting
-  with the <code>HaulRequest</code> event rule design model, we show how the
-  event rules specified by each of these event rule design models can be coded
-  in the form of an <code>onEvent</code> method.</p><figure><figcaption>A
-  design model for the <code>HaulRequest</code> event rule.</figcaption><img
-  src="img/HaulRequest_RDM.svg" width="300" /></figure><p>In the following
-  <code>HaulRequest</code> event rule method <code>onEvent</code>, all
-  available trucks are allocated to the current haul request, and, after
-  computing the number of loads, for each of the allocated trucks a new
-  <code>GoToLoadingSite</code> activity is started:</p><pre>class <b>HaulRequest</b> extends eVENT {
-  ...
-  <b>onEvent</b>() {
-    const followupEvents=[],
-          allocatedTrucks = sim.resourcePools["trucks"].<b>allocateAll</b>();
-    // assign model variable
-    sim.model.v.<b>nmrOfLoads</b> = Math.ceil( this.quantity / Truck.capacity);
-    for (const t of allocatedTrucks) {
-      const goActy = <b>new GoToLoadingSite</b>();
-      // assign truck as required resource
-      goActy.truck = t;
-      // start GoToLoadingSite activity
-      followupEvents.push( <b>new aCTIVITYsTART</b>({plannedActivity: goActy}));
-    }
-    return followupEvents;
-  }
-}</pre><p>Since activities are composite events, we also have event rules for
-  them. The following <i>GoToLoadingSite</i> event rule is triggered whenever
-  a <i>GoToLoadingSite</i> activity is completed, since the completion of an
-  activity counts as its occurrence event.</p><figure><figcaption>A design
-  model for the <code>GoToLoadingSite</code> event rule.</figcaption><img
-  alt="???" src="img/GoToLoadingSite_RDM.svg" width="250" /></figure><p>This
-  rule states that whenever a <i>GoToLoadingSite</i> activity ends (or is
-  completed), then a new planned <i>Load</i> activity is enqueued, if no wheel
-  loader is available, or, otherwise, a new <i>Load</i> activity is started.
-  In OESjs, it is coded in the following declarative way: </p><pre>GoToLoadingSite.<b>successorActivity</b> = "Load"</pre><p>Such
-  a successor activity assignment allows the simulator to check if the
-  required resources are available and then start the successor activity, or,
-  otherwise, enqueue a new planned successor
-  activity.</p><figure><figcaption>A design model for the <code>Load</code>
-  event rule.</figcaption><img alt="???" src="img/Load_RDM.svg"
-  width="220" /></figure><p>This rule states that whenever a <i>Load</i>
-  activity ends, the model variable <i>nmrOfLoads</i> is decremented by 1, and
-  a <i>Haul</i> activity is immediately started (as a successor activity).
-  Since the <i>Haul</i> activity doesn't require any additional resources,
-  there is no need to enqueue a planned activity and wait for the availability
-  of resources. In OESjs, this rule is coded in the following way:</p><pre>class <b>Load</b> extends aCTIVITY {
-  ...
-  <b>onActivityEnd</b>() {
-    const followupEvents = [];
-    // decrement nmrOfLoads counter
-    sim.model.v.nmrOfLoads--;
-    return followupEvents;
-  }
-  ...
-}
-Load.<b>successorActivity</b> = "Haul";</pre><p>Notice that the state change
-  expressed in the <i>modelVariables</i> object rectangle, the decrementation
-  of <i>nmrOfLoads</i>, is taken care of in the <code>onActivityEnd</code>
-  method of the <code>Load</code> activity class. Instead of explicitly
-  scheduling the start of the succeeding <code>Haul</code> activity in that
-  method, we simply define <code>Haul</code> to be the successor activity of
-  <code>Load</code>.</p><figure><figcaption>A design model for the
-  <code>Haul</code> event rule.</figcaption><img alt="???"
-  src="img/Haul_RDM.svg" width="220" /></figure><p>The <i>Haul</i> event rule
-  states that whenever a <i>Haul</i> activity ends, it is immediately
-  succeeded by a <i>Dump</i> activity. It is coded in the following
-  way:</p><pre>Haul.<b>successorActivity</b> = "Dump";</pre><figure><figcaption>A
-  design model for the <code>Dump</code> event rule.</figcaption><img
-  alt="???" src="img/Dump_RDM.svg" width="330" /></figure><p>The <i>Dump</i>
-  event rule states that when a <i>Dump</i> activity ends and the model
-  variable <i>nmrOfLoads</i> has the value 0, it is immediately succeeded by a
-  <i>GoHome</i> activity, otherwise it is immediately succeeded by a
-  <i>GoBackToLoadingSite</i> activity. The rule is coded by defining the
-  successor activity as a function returning either "GoBackToLoadingSite" or
-  "GoHome" in the following way:</p><pre>Dump.<b>successorActivity</b> = function () {
-  return sim.model.v.nmrOfLoads === 0 ? "GoHome":"GoBackToLoadingSite";
-}</pre><figure><figcaption>A design model for the
-  <code>GoBackToLoadingSite</code> event rule.</figcaption><img alt="???"
-  src="img/GoBackToLoadingSite_RDM.svg" width="350" /></figure><p>The
-  <i>GoBackToLoadingSite</i> event rule states that when a
-  <i>GoBackToLoadingSite</i> activity ends and the model variable
-  <i>nmrOfLoads</i> still has a value greater than 0, a new planned
-  <i>Load</i> activity is enqueued; otherwise a <i>GoHome</i> activity is
-  immediately started. The rule is coded by defining the successor activity of
-  <i>GoBackToLoadingSite</i> as a function returning either "Load" or "GoHome"
-  in the following way:</p><pre>GoBackToLoadingSite.<b>successorActivity</b> = function () {
-  return sim.model.v.nmrOfLoads &gt; 0 ? "Load":"GoHome";
-}</pre></details></details> <p><a href="index.html">Back to
-  simulation</a></p></body>
+      <li>Adding properties,functions and methods to object, event and
+      activity classes. In particular, a <i>status</i> attribute is added to
+      all resource object types, such as <i>OrderTaker</i> and <i>Oven</i>,
+      and a class-level <i>duration</i> function is added to all activity
+      classes.</li>
+    </ol><figure><figcaption>An information design model defining object,
+  event and activity types.</figcaption><img alt="???"
+  src="../img/Pizzeria_IDMa.svg" width="600" /></figure><p>Notice how
+  functions representing random variables, like the <code>duration</code>
+  function of all activity types, are marked with the keyword (or UML
+  'stereotype') «rv» standing for "random variable". These random variable
+  functions sample from a probability distribution function (PDF), which is
+  symbolically indicated with expressions like <i>Tri(30,50,40)</i> standing
+  for the <em>triangular</em> PDF with lower and upper bounds 30 and 50, and a
+  median of 40. </p><p>The activity type <i>TakeOrder</i> is associated with
+  the object type <i>OrderTaker</i> via the implicit resource role
+  <i>orderTaker</i> (with a resource cardinality constraint of "exactly 1"),
+  indicated with the association end stereotype «rr» standing for "resource
+  role". A resource role assigns resource objects to activities.
+  </p><p>Likewise, <i>MakePizza</i> is associated with <i>PizzaMaker</i> and
+  <i>Oven</i> as its resource roles, where the implicit <i>pizzaMakers</i>
+  resource role has a resource cardinality constraint of "exactly 2" and the
+  <i>oven</i> resource role has a resource cardinality constraint of "exactly
+  1".</p><p>An <abbr title="Object-Event">OE</abbr> class design diagram like
+  the one above, defines resource roles (like <i>pizzaMakers</i>), resource
+  role types (like <i>PizzaMaker</i>) and resource cardinality constraints
+  (like "exactly 2") for all types of activities. Normally, in an <abbr
+  title="Object-Event">OE</abbr> simulation there is a one-to-one
+  correspondence between resource role types and resource pools. By
+  convention, a resource pool has the same name as the corresponding resource
+  role type, yet pluralized and starting with a lowercase character. For
+  instance, the name of the resource pool for <i>PizzaMaker</i> is
+  <i>pizzaMakers</i>.</p><p>Notice that <i>OrderCall</i> events are exogenous,
+  having a recurrence function defined case-wise for each of the five hours
+  per day operation of the pizza service company (in the attached invariant
+  box).</p>For implementing the waiting timeout event defined in the process
+  model, the activity type <i>TakeOrder</i> has a class-level
+  <i>waitingTimeout</i> function implementing a random variable with PDF
+  <i>U(3,6)</i>.</details><details open="open"><summary>Process Design
+  Model</summary><p>A process design model, in the form of a DPMN process
+  diagram as shown below, is derived from a conceptual process model by
+  abstracting away from items that are not design-relevant and possibly adding
+  certain computational details. In the case of the Make-and-Deliver-Pizza
+  business process, we can drop the lost orders event since its purpose,
+  obtaining a statistics of lost orders, can be implicitly achieved by the
+  waiting timeout event attached to the queue of planned <i>TakeOrder</i>
+  activities.</p><figure><figcaption>A computationally complete process design
+  for the Make-and-Deliver-Pizza business process.</figcaption><img alt="???"
+  src="../img/Pizzeria_PDM.svg" width="550" /></figure><p>A <abbr
+  title="Discrete Event Processing Notation">DPMN</abbr> process design
+  diagram does not include any element representing a resource pool. Yet, it
+  may display the performer roles of activity types, like <i>OrderTaker</i>
+  and <i>PizzaMaker</i> in the diagram above. It is assumed that for any
+  organizational position described in the underlying <abbr
+  title="Object-Event">OE</abbr> class model, the organization under
+  consideration has a corresponding resource pool. By default , each resource
+  role of an activity type is associated with a resource pool having the same
+  (yet pluralized) name, such that its resources are instances of a
+  corresponding resource role type, which is an organizational position in the
+  case of human resources. </p><p>For instance, for the <i>MakePizza</i>
+  activity a pool <i>ovens</i> is assigned to its resource role <i>oven</i> by
+  default. The members of the pool <i>ovens</i> are instances of the
+  (resource) object type <i>Oven</i>. Likewise, a pool <i>pizzaMakers</i> is
+  assigned to the <i>MakePizza</i> resource role <i>pizzaMaker</i>. The
+  members of this pool are instances of the organizational position
+  <i>PizzaMaker</i>. These default pool assignments are normally not shown in
+  a DPMN diagram, but an <abbr title="Object-Event">OE</abbr> simulator takes
+  care of them.</p></details></details><details><summary>Model Variant: Orders
+  May Also Be Taken by Pizza Makers</summary><p>For decreasing the number of
+  lost orders due to long waiting times, it is advisable to charge pizza
+  makers with taking orders whenever no order taker is available. In resource
+  management terminology, the organizational position <i>pizza maker</i> is
+  redefined by adding the resource role <i>order taker</i> to its portfolio of
+  organizational roles. </p><p>In a conceptual <abbr
+  title="Object-Event">OE</abbr> class diagram, this can be expressed by
+  adding a subtyping arrow from <i>pizza makers</i> to <i>order takers</i>
+  categorized as an <em><b>alternative resource subtyping</b></em> arrow with
+  the stereotype «ar», as shown in the following diagram:</p><figure><img
+  alt="conceptual information model describing object, event and activity types"
+  src="../img/Pizzeria_CIM1b.svg" width="500" /></figure><p>The <abbr
+  title="Object-Event">OE</abbr> class design diagram is extended in the same
+  way, by adding an <em>alternative resource subtyping</em> arrow from
+  <i>PizzaMaker</i> to <i>OrderTaker</i>.</p><p>The DPMN process design model
+  is not affected by this change.</p></details> <p><a href="index.html">Back
+  to simulation</a></p></body>
 </html>
