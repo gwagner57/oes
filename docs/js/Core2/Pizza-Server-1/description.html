@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+    <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+    <title>Pizza-Server Simulation Model Description</title>
+    <meta content="width=device-width, initial-scale = 1.0" name="viewport" />
+    <meta content="en" http-equiv="Content-Language" />
+    <meta content="A simulation about a pizza service company that takes pizza orders and then makes the ordered pizza."
+          name="description" />
+    <link href="../../../css/description.css" rel="stylesheet" />
+  </head>
+
+  <body>
+   <div id="frontMatter">
+    <h1><span>Pizza-Server Model Description</span> <a href="index.html">Back to simulation</a></h1>
+    <p id="copyright">© 2020 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
+  Brandenburg University of Technology, Germany.</p>
+    <figure class="right"><img alt="" src="img/Pizza-Delivery.svg" width="240" />
+     <small>Image by <a href="https://www.flaticon.com/authors/monkik">monkik</a></small></figure>
+    <section id="shortDescription">
+     <p>A pizza service company takes orders for making pizzas.</p>
+    </section>
+    <p>You can inspect the model's
+     <a href="https://github.com/gwagner57/oes/tree/master/docs/js/Core2/Make-and-Deliver-Pizza-1a">OESjs code</a>
+     on the OES GitHub repo.</p>
+   </div>
+   <!--
+   <details><summary>Conceptual Model</summary>
+     <p>T.B.D.</p>
+    <details><summary>Conceptual Information Model</summary>
+      <p>T.B.D.</p>
+    </details>
+    <details><summary>Conceptual Process Model</summary>
+      <p>T.B.D.</p>
+    </details>
+   </details>
+   -->
+   <details><summary>Simulation Design</summary>
+    <p>...</p>
+    <figure><figcaption>An OE class design model defining object, event and activity types.</figcaption>
+     <img src="img/IDM.svg" width="400" />
+    </figure>
+     <p>Notice how
+  functions representing random variables, like the <code>duration</code>
+  function of all activity types, are marked with the keyword (or UML
+  'stereotype') «rv» standing for "random variable". These random variable
+  functions sample from a probability distribution function (PDF), which is
+  symbolically indicated with expressions like <i>U(1,2)</i> standing
+  for the <em>uniform</em> PDF with lower and upper bounds 1 and 2.</p>
+   </details>
+   <details><summary>Process Design Model</summary>
+    <p>A process design model, in the form of a DPMN process
+  diagram as shown below, is derived from a conceptual process model by
+  abstracting away from items that are not design-relevant and possibly adding
+  certain computational details.</p>
+    <figure><figcaption>A DPMN process design model
+  for the Pizza-Server business process.</figcaption>
+     <img src="img/PDM.svg" width="300" />
+    </figure>
+   </details>
+  </details>
+  <p><a href="index.html">Back to simulation</a></p>
+</body>
+</html>
