@@ -44,7 +44,7 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   sim.FEL.clear();
   //sim.ongoingActivities = Object.create( null);  // a map of all ongoing activities accessible by ID
   sim.step = 0;  // simulation loop step counter
-  sim.time = 0;  // 1 time
+  sim.time = 0;  // simulation time
   // Set default values for end time parameters
   if (!sim.scenario.durationInSimTime) sim.scenario.durationInSimTime = Infinity;
   if (!sim.scenario.durationInSimSteps) sim.scenario.durationInSimSteps = Infinity;
@@ -65,7 +65,6 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   if (expParSlots) sim.assignModelParameters( expParSlots);
   // Set up initial state and statistics
   if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
-  //if (Object.keys( oes.EntryNode.instances).length > 0) oes.setupProcNetStatistics();
   if (sim.model.setupStatistics) sim.model.setupStatistics();
 };
 /*******************************************************
@@ -92,17 +91,18 @@ sim.advanceSimulationTime = function () {
  ********************************************************/
 sim.runScenario = function (createLog) {
   const startTime = (new Date()).getTime();
+  function sendLogMsg() {
+    self.postMessage({ step: sim.step, time: sim.time,
+      // convert values() iterator to array
+      objectsStr: [...sim.objects.values()].toString(),
+      eventsStr: sim.FEL.toString()
+    });
+  }
   // Simulation Loop
   while (sim.time < sim.scenario.durationInSimTime &&
       sim.step < sim.scenario.durationInSimSteps &&
       (new Date()).getTime() - startTime < sim.scenario.durationInCpuTime) {
-    if (createLog) {
-      self.postMessage({ step: sim.step, time: sim.time,
-        // convert values() iterator to array
-        objectsStr: [...sim.objects.values()].toString(),
-        eventsStr: sim.FEL.toString()
-      });
-    }
+    if (createLog) sendLogMsg();
     sim.advanceSimulationTime();
     // extract and process next events
     const nextEvents = sim.FEL.removeNextEvents();
@@ -120,11 +120,15 @@ sim.runScenario = function (createLog) {
       // test if e is an exogenous event
       if (EventClass.recurrence) {
         // create and schedule next exogenous event
-        sim.FEL.add( e.createNextEvent());
+        const ne = e.createNextEvent();
+        if (ne) sim.FEL.add( ne);
       }
     }
     // end simulation if no time increment and no more events
-    if (!sim.timeIncrement && sim.FEL.isEmpty()) break;
+    if (!sim.timeIncrement && sim.FEL.isEmpty()) {
+      if (createLog) sendLogMsg();
+      break;
+    }
   }
   if (sim.model.computeFinalStatistics) sim.model.computeFinalStatistics();
 }

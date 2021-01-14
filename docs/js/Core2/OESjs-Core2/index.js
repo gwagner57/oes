@@ -149,7 +149,7 @@ function run() {
   worker.postMessage( data);
   // on incoming messages from worker
   worker.onmessage = function (e) {
-    if (e.data.step) {  // create simulation log entry
+    if (e.data.step !== undefined) {  // create simulation log entry
       simLogTableEl.parentElement.style.display = "block";
       oes.ui.logSimulationStep( simLogTableEl, e.data.step, e.data.time,
           e.data.objectsStr, e.data.eventsStr);
@@ -175,7 +175,7 @@ function run() {
 if (sim.scenarios.length > 0) {
   // Assign scenarioNo = 0 to default scenario
   sim.scenario.scenarioNo ??= 0;
-  sim.scenario.title ??= "Default scenario";
+  sim.scenario.title ??= "Default Scenario";
   // Assign sim.scenarios[0] if not defined
   if (!sim.scenarios[0]) sim.scenarios[0] = sim.scenario;
 } else {

@@ -186,20 +186,21 @@ sim.advanceSimulationTime = function () {
  Run a simulation scenario
  ********************************************************/
 sim.runScenario = function (createLog) {
+  function sendLogMsg() {
+    let objStr = [...sim.objects.values()].toString();
+    if (objStr) objStr += " | ";
+    postMessage({ step: sim.step, time: sim.time,
+      // convert values() iterator to array
+      objectsStr: objStr + Object.values( sim.resourcePools).toString(),
+      eventsStr: sim.FEL.toString()
+    });
+  }
   const startTime = (new Date()).getTime();
   // Simulation Loop
   while (sim.time < sim.scenario.durationInSimTime &&
       sim.step < sim.scenario.durationInSimSteps &&
       (new Date()).getTime() - startTime < sim.scenario.durationInCpuTime) {
-    if (createLog) {
-      let objStr = [...sim.objects.values()].toString();
-      if (objStr) objStr += " | ";
-      postMessage({ step: sim.step, time: sim.time,
-        // convert values() iterator to array
-        objectsStr: objStr + Object.values( sim.resourcePools).toString(),
-        eventsStr: sim.FEL.toString()
-      });
-    }
+    if (createLog) sendLogMsg();
     sim.advanceSimulationTime();
     // extract and process next events
     const nextEvents = sim.FEL.removeNextEvents();
@@ -227,11 +228,15 @@ sim.runScenario = function (createLog) {
       // test if e is an exogenous event
       if (EventClass.recurrence) {
         // create and schedule next exogenous event
-        sim.FEL.add( e.createNextEvent());
+        const ne = e.createNextEvent();
+        if (ne) sim.FEL.add( ne);
       }
     }
     // end simulation if no time increment and no more events
-    if (!sim.timeIncrement && sim.FEL.isEmpty()) break;
+    if (!sim.timeIncrement && sim.FEL.isEmpty()) {
+      if (createLog) sendLogMsg();
+      break;
+    }
   }
   // compute generic statistics (incl. resource utilization)
   sim.computeFinalStatistics();

@@ -14,7 +14,7 @@ sim.model.activityTypes = ["MakePizza"];
  ********************************************************/
 sim.scenario.durationInSimTime = 300;
 sim.scenario.setupInitialState = function () {
-  let ps = new PizzaService({id: 1, name:"ps", status: oes.ResourceStatusEL.AVAILABLE, queueLength: 0});
+  let ps = new PizzaService({id: 1, name:"ps", status: oes.ResourceStatusEL.AVAILABLE});
   // Initialize the resource pool
   sim.resourcePools["pizzaServices"].availResources.push( ps);
   // Schedule initial events
@@ -25,7 +25,6 @@ sim.scenario.setupInitialState = function () {
 ********************************************************/
 sim.model.setupStatistics = function () {
   sim.stat.nmrOfOrders = 0;
-  sim.stat.nmrOfDeliveredPizzas = 0;
 };
 /*******************************************************
  Define an experiment (type)

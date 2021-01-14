@@ -40,7 +40,6 @@
  *  currently participating).
  *
  *  TODO:
- *   - introduce alternative resource pools
  *   - introduce resource allocation priorities defined per activity
  *   - support the two allocation policies: (1) allocate all resources at once, and (2) allocate resources step by step
  *   - ? introduce object type rESOURCE (with status attribute) specializing oBJECT,
@@ -159,23 +158,6 @@ class aCTIVITYsTATE extends Set {
 }
 oes.ResourceStatusEL = new eNUMERATION("ResourceStatusEL",
     ["available","busy","out of order"]);
-/****************************************************************************
- A position holder is an instance of a position, which defines a resource pool
- ****************************************************************************/
-class pOSITIONhOLDER extends oBJECT {
-  constructor({ id, name, status}) {
-    super( id, name);
-    this.status = status;
-  }
-  toString() {
-    if (this.available === undefined) {  // individual pool
-      const availRes = this.availResources.map( r => r.name || r.id);
-      return `av. ${this.name}: ${availRes}`;
-    } else {
-      return `av. ${this.name}: ${this.available}`;
-    }
-  }
-}
 /****************************************************************************
  A resource pool can take one of two forms:
  (1) a count pool abstracts away from individual resources and just maintains

@@ -131,10 +131,6 @@ function run() {
       statisticsTableEl.querySelector("caption").textContent = "Statistics";
     }
   }
-  if (choice < 2) {
-    document.getElementsByTagName("h1")[0].textContent += " with a " +
-        sim.model.p.reviewPolicy + " Review Policy";
-  }
   // Hide UI elements
   formEl.style.display = "none";  // hide selection form
   sim.model.setupStatistics();
@@ -159,7 +155,7 @@ function run() {
   worker.postMessage( data);
   // on incoming messages from worker
   worker.onmessage = function (e) {
-    if (e.data.step) {  // create log entry
+    if (e.data.step !== undefined) {  // create log entry
       simLogTableEl.parentElement.style.display = "block";
       oes.ui.logSimulationStep( simLogTableEl, e.data.step, e.data.time,
           e.data.objectsStr, e.data.eventsStr);

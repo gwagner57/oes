@@ -20,7 +20,7 @@ sim.experimentTypes = [];
 
 oes = {};  // cannot be const, since also defined in simulatorUI.js
 oes.defaults = {
-  nextMomentDeltaT: 2,
+  nextMomentDeltaT: 0.01,
   expostStatDecimalPlaces: 2,
   simLogDecimalPlaces: 2
 };
