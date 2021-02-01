@@ -63,7 +63,7 @@
 				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
 				<v:textRect cx="43.3588" cy="249.594" width="86.72" height="12.6142"/>
 				<rect x="0" y="243.287" width="86.7175" height="12.6142" class="st1"/>
-				<text x="1" y="251.49" class="st2" v:langID="1031"><v:paragraph/><v:tabList/>status : ResourceStatusEL</text>			</g>
+				<text x="1" y="251.49" class="st2" v:langID="1033"><v:paragraph/><v:tabList/>status : ResourceStatusEL</text>			</g>
 			<g id="shape9-11" v:mID="9" v:groupContext="shape" transform="translate(0,-12.6142)">
 				<title>Name</title>
 				<desc>«object type» OrderTaker</desc>
@@ -115,7 +115,7 @@
 				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
 				<v:textRect cx="42.8175" cy="249.594" width="85.64" height="12.6142"/>
 				<rect x="0" y="243.287" width="85.635" height="12.6142" class="st1"/>
-				<text x="1" y="251.49" class="st2" v:langID="1031"><v:paragraph/><v:tabList/>status : ResourceStatusEL</text>			</g>
+				<text x="1" y="251.49" class="st2" v:langID="1033"><v:paragraph/><v:tabList/>status : ResourceStatusEL</text>			</g>
 			<g id="shape18-27" v:mID="18" v:groupContext="shape" transform="translate(0,-12.6142)">
 				<title>Name</title>
 				<desc>«object type» PizzaMaker</desc>
@@ -253,7 +253,7 @@
 				<v:ud v:nameU="UMLVersion" v:val="VT0(2):26"/>
 				<v:ud v:nameU="DX1" v:val="VT0(-8.548247504514E-005):1"/>
 				<v:ud v:nameU="DY1" v:val="VT0(-0.022721828446983):24"/>
-				<v:ud v:nameU="DX3" v:val="VT0(-0.022721828446983):1"/>
+				<v:ud v:nameU="DX3" v:val="VT0(-0.022721828446981):1"/>
 				<v:ud v:nameU="DY3" v:val="VT0(8.548247504736E-005):24"/>
 				<v:ud v:nameU="visDescription" v:val="VT4(Represents an association between two classifiers.)"/>
 				<v:ud v:nameU="visVersion" v:val="VT0(14):26"/>
@@ -479,7 +479,7 @@
 				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
 				<v:textRect cx="42.5197" cy="249.594" width="85.04" height="12.6142"/>
 				<rect x="0" y="243.287" width="85.0394" height="12.6142" class="st1"/>
-				<text x="1" y="251.49" class="st2" v:langID="1031"><v:paragraph/><v:tabList/>status : ResourceStatusEL</text>			</g>
+				<text x="1" y="251.49" class="st2" v:langID="1033"><v:paragraph/><v:tabList/>status : ResourceStatusEL</text>			</g>
 			<g id="shape130-180" v:mID="130" v:groupContext="shape" transform="translate(0,-12.6142)">
 				<title>Name</title>
 				<desc>«object type» Scooter</desc>
@@ -575,7 +575,7 @@
 				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
 				<v:textRect cx="42.5197" cy="249.594" width="85.04" height="12.6142"/>
 				<rect x="0" y="243.287" width="85.0394" height="12.6142" class="st1"/>
-				<text x="1" y="251.49" class="st2" v:langID="1031"><v:paragraph/><v:tabList/>status : ResourceStatusEL</text>			</g>
+				<text x="1" y="251.49" class="st2" v:langID="1033"><v:paragraph/><v:tabList/>status : ResourceStatusEL</text>			</g>
 			<g id="shape27-207" v:mID="27" v:groupContext="shape" transform="translate(0,-12.6142)">
 				<title>Name</title>
 				<desc>«object type» Oven</desc>
@@ -632,7 +632,7 @@
 				<path d="M0 254.32 L-131.1 254.32 L-131.1 243.31" class="st5"/>
 			</g>
 		</g>
-		<g id="group43-224" transform="translate(7.95166,-218.331)" v:mID="43" v:groupContext="group">
+		<g id="group43-224" transform="translate(7.95166,-218.733)" v:mID="43" v:groupContext="group">
 			<v:userDefs>
 				<v:ud v:nameU="UMLShapeType" v:val="VT0(30):26"/>
 				<v:ud v:nameU="UMLObjectGUID" v:val="VT4({6FB62DF6-D371-4C68-BCCD-771562B617D5})"/>
@@ -644,22 +644,21 @@
 				<v:ud v:nameU="visVersion" v:val="VT0(14):26"/>
 			</v:userDefs>
 			<title>Constraint</title>
-			<g id="shape44-225" v:mID="44" v:groupContext="shape" transform="translate(63.7462,-18.4017)">
+			<g id="shape44-225" v:mID="44" v:groupContext="shape" transform="translate(63.7462,-18)">
 				<title>Sheet.44</title>
 				<path d="M0 255.9 L-7.58 287.92" class="st6"/>
 			</g>
 			<g id="shape45-228" v:mID="45" v:groupContext="shape">
 				<title>Name</title>
-				<desc>«invariant» {recurrence rates per minute = [1/6, 1/0.66, 1/1....</desc>
+				<desc>{recurrence rates per minute = [1/6, 1/0.66, 1/1.5, 1/6, 1/12]}</desc>
 				<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-				<v:textRect cx="63.7462" cy="237.499" width="127.5" height="36.8035"/>
-				<path d="M127.49 229.9 L118.49 219.1 L118.49 229.9 L127.49 229.9 ZM0 255.9 L127.49 255.9 L127.49 229.9 L118.49 229.9
-							 L118.49 219.1 L0 219.1 L0 255.9 Z" class="st7"/>
-				<text x="4" y="230.3" class="st2" v:langID="1031"><v:paragraph/><v:tabList/>«invariant»<v:newlineChar/><tspan x="4"
-							dy="1.2em" class="st8">{</tspan>recurrence rates per minute = <v:newlineChar/><tspan x="4" dy="1.2em"
-							class="st8">[</tspan>1/6, 1/0.66, 1/1.5, 1/6, 1/12]}</text>			</g>
+				<v:textRect cx="63.7462" cy="237.901" width="127.5" height="36"/>
+				<path d="M127.49 230.7 L118.49 219.9 L118.49 230.7 L127.49 230.7 ZM0 255.9 L127.49 255.9 L127.49 230.7 L118.49 230.7
+							 L118.49 219.9 L0 219.9 L0 255.9 Z" class="st7"/>
+				<text x="4" y="235.5" class="st2" v:langID="1031"><v:paragraph/><v:tabList/>{recurrence rates per minute = <v:newlineChar/><tspan
+							x="4" dy="1.2em" class="st8">[</tspan>1/6, 1/0.66, 1/1.5, 1/6, 1/12]}</text>			</g>
 		</g>
-		<g id="group144-233" transform="translate(147.737,-203.174)" v:mID="144" v:groupContext="group">
+		<g id="group144-232" transform="translate(147.737,-203.174)" v:mID="144" v:groupContext="group">
 			<v:userDefs>
 				<v:ud v:nameU="UMLVersion" v:val="VT0(2):26"/>
 				<v:ud v:nameU="UMLAutoLockTextEdit" v:val="VT0(1):26"/>
@@ -674,18 +673,21 @@
 				<v:ud v:nameU="visVersion" v:val="VT0(14):26"/>
 			</v:userDefs>
 			<title>Data Type</title>
-			<g id="shape145-234" v:mID="145" v:groupContext="shape">
+			<g id="shape145-233" v:mID="145" v:groupContext="shape">
 				<title>Operations</title>
 			</g>
-			<g id="shape146-236" v:mID="146" v:groupContext="shape">
+			<g id="shape146-235" v:mID="146" v:groupContext="shape">
 				<title>Attributes</title>
 				<desc>AVAILABLE BUSY OUT_OF_ORDER</desc>
 				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
 				<v:textRect cx="39.7772" cy="240.499" width="79.56" height="30.8035"/>
 				<rect x="0" y="225.098" width="79.5544" height="30.8035" class="st1"/>
-				<text x="1" y="233.3" class="st2" v:langID="1031"><v:paragraph/><v:tabList/>AVAILABLE<v:newlineChar/><tspan x="1"
-							dy="1.2em" class="st8">BUSY<v:newlineChar/></tspan><tspan x="1" dy="1.2em" class="st8">OUT</tspan>_OF_ORDER</text>			</g>
-			<g id="shape147-241" v:mID="147" v:groupContext="shape" transform="translate(0,-30.8035)">
+				<text x="1" y="233.3" class="st2" v:langID="1033"><v:paragraph/><v:tabList/>AVAILABLE<v:newlineChar/><tspan x="1"
+							dy="1.2em" class="st8" v:langID="1031">BUSY<v:newlineChar/></tspan><tspan x="1" dy="1.2em" class="st8"
+							v:langID="1031">OUT</tspan><tspan class="st8" v:langID="1031">_</tspan><tspan class="st8"
+							v:langID="1031">OF</tspan><tspan class="st8" v:langID="1031">_</tspan><tspan class="st8"
+							v:langID="1031">ORDER</tspan></text>			</g>
+			<g id="shape147-244" v:mID="147" v:groupContext="shape" transform="translate(0,-30.8035)">
 				<title>Name</title>
 				<desc>«enumeration» OES::ResourceStatusEL</desc>
 				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197"/>
