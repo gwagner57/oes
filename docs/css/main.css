@@ -41,6 +41,13 @@ textarea {
 * {
   box-sizing: border-box;
 }
+/* TO DO 
+@media (prefers-color-scheme: dark) {
+    body {
+		...
+    }
+}
+*/
 
 /*********************************************
  DPMN webpage styles

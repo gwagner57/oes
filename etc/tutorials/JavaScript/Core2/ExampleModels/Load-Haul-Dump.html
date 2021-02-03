@@ -27,7 +27,7 @@
   <em>haul</em>, <em>dump</em> and <em>go home</em> just require a
   <em>truck</em> (or a <em>wheel loader</em>) as a resource, <em>load</em>
   activities require both a <em>truck</em> and a <em>wheel
-  loader</em>.</p><details open="open"><summary>Conceptual Information
+  loader</em>.</p><details><summary>Conceptual Information
   Model</summary><p>The potentially relevant object types are:</p><ol>
       <li>haul service company,</li>
 
@@ -53,9 +53,9 @@
     </ol><p>Both object types and event types, together with their
   participation associations, can be visually described in a conceptual
   information model in the form of a special kind of UML class diagram, called
-  Object Event (<abbr title="Object-Event">OE</abbr>) class diagram, as shown
+  Object Event (<abbr title="Object Event">OE</abbr>) class diagram, as shown
   below.</p><figure><figcaption>A conceptual <abbr
-  title="Object-Event">OE</abbr> class model describing object, event and
+  title="Object Event">OE</abbr> class model describing object, event and
   activity types.</figcaption><img alt="???" src="../img/LoadHaulDump_CIM.svg"
   width="500" /></figure><p>Notice that the association end annotations «rr»
   and «rp» denote <em>resource roles</em> and <em>resource pools</em>. A haul
@@ -167,9 +167,9 @@
   open="open"><summary>Implementation with OESjs</summary><p>The
   JavaScript-based simulator OESjs implements the Object Event Simulation
   paradigm, and, consequently, allows a straight-forward coding of <abbr
-  title="Object-Event">OE</abbr> class models and DPMN process
-  models.</p><details open="open"><summary>Implementing the Information Design
-  Model</summary><p>For implementing the <abbr title="Object-Event">OE</abbr>
+  title="Object Event">OE</abbr> class models and DPMN process
+  models.</p><details><summary>Implementing the Information Design
+  Model</summary><p>For implementing the <abbr title="Object Event">OE</abbr>
   class design model with OESjs, we have to code all object types, event types
   and activity types specified in the model in the form of JavaScript
   classes.</p><figure class="right"><img alt="???"
@@ -237,14 +237,14 @@ GoToLoadingSite.<b>resourceRoles</b> = {
   <i>GoToLoadingSite</i> and <i>Truck</i>, which defines the resource
   reference property <i>GoToLoadingSite::truck</i>, is coded by a
   corresponding entry in the map-valued class-level property
-  <code>resourceRoles</code>.</p></details><details
-  open="open"><summary>Implementing the Process Design Model</summary><p>A
-  DPMN process design model can be decomposed into a set of event rule design
-  models, one for each type of event specified in the design model. Starting
-  with the <code>HaulRequest</code> event rule design model, we show how the
-  event rules specified by each of these event rule design models can be coded
-  in the form of an <code>onEvent</code> method.</p><figure><figcaption>A
-  design model for the <code>HaulRequest</code> event rule.</figcaption><img
+  <code>resourceRoles</code>.</p></details><details><summary>Implementing the
+  Process Design Model</summary><p>A DPMN process design model can be
+  decomposed into a set of event rule design models, one for each type of
+  event specified in the design model. Starting with the
+  <code>HaulRequest</code> event rule design model, we show how the event
+  rules specified by each of these event rule design models can be coded in
+  the form of an <code>onEvent</code> method.</p><figure><figcaption>A design
+  model for the <code>HaulRequest</code> event rule.</figcaption><img
   alt="???" src="../img/LoadHaulDump-HaulRequest_RDM.svg"
   width="300" /></figure><p>In the following <code>HaulRequest</code> event
   rule method <code>onEvent</code>, all available trucks are allocated to the
@@ -330,7 +330,7 @@ Load.<b>successorActivity</b> = "Haul";</pre><p>Notice that the state change
   <i>GoBackToLoadingSite</i> as a function returning either "Load" or "GoHome"
   in the following way:</p><pre>GoBackToLoadingSite.<b>successorActivity</b> = function () {
   return sim.model.v.nmrOfLoads &gt; 0 ? "Load":"GoHome";
-}</pre></details></details><details><summary>Implementation with
+}</pre></details></details><details open="open"><summary>Implementation with
   AnyLogic</summary><p>Since AnyLogic does not support Activity-Based Discrete
   Event Simulation, but only <a
   href="https://sim4edu.com/explain/what-is-process-oriented-simulation.html">Processing
@@ -402,16 +402,17 @@ Load.<b>successorActivity</b> = "Haul";</pre><p>Notice that the state change
   class="role-attention"><p>Unfortunately, PN modeling tools, like AnyLogic,
   do not support the general concept of activities (and Activity Networks),
   but only the special concept of <em>processing activities</em>. A processing
-  activity has a processing object ("entity") as a mandatory participant, in
-  addition to resource objects. While in a PN model, a relevant statistics is
-  the throughput time of processing objects, we do not have this statistics in
-  an Activity Network model like Load-Haul-Dump.</p><p>For instance, in the
-  AnyLogic Load-Haul-Dump model above, trucks are processing objects and the
-  processing activity <i>Load</i> is performed at the processing node
-  <i>Load</i> by a wheel loader that is processing a truck. Consequently, the
-  <i>Load</i>, <i>Haul</i>, <i>Dump</i> and <i>GoBack</i> elements in the
-  AnyLogic process diagram do not represent activities, but rather processing
-  nodes. While processing nodes/activities do have a processing capacity and a
-  location, activities in general don't.
+  activity has a <em>processing object</em> ("entity") as a mandatory
+  participant, in addition to resource objects. While in a PN model,
+  processing nodes do have a location and a <em>processing capacity</em> (the
+  number of processing objects that can be processed in parallel), the nodes
+  of an Activity Network (like the Load-Haul-Dump model), representing pure
+  activities, in general do neither have a processing capacity nor a
+  location.</p><p>For instance, in the AnyLogic Load-Haul-Dump model above,
+  trucks are processing objects and the processing activity <i>Load</i> is
+  performed at the processing node <i>Load</i> by a wheel loader that is
+  processing a truck. Consequently, the <i>Load</i>, <i>Haul</i>, <i>Dump</i>
+  and <i>GoBack</i> elements in the AnyLogic process diagram do not represent
+  activities, but rather processing nodes.
   </p></blockquote></details></details></body>
 </html>
