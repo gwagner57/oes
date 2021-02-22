@@ -407,15 +407,10 @@ ServiceDesk.<b>labels</b> = {"queueLength":"qLen"};  // for the log</pre><p>Noti
     super( occTime);
     this.<b>serviceDesk</b> = serviceDesk;
   }
-  onEvent() {
+  <b>onEvent</b>() {
     ...
   }
-  createNextEvent() {
-    ...
-  }
-  static recurrence() {
-    ...
-  }
+  ...
 }</pre><p>The definition of the <i>CustomerArrival</i> event type includes a
   reference property <i>serviceDesk</i>, which is used for referencing the
   service desk object at which a customer arrival event occurs. In OESjs,
@@ -430,7 +425,7 @@ ServiceDesk.<b>labels</b> = {"queueLength":"qLen"};  // for the log</pre><p>Noti
   a <em>recurrence</em> function,<a class="role-index-term">recurrence</a>
   which provides the time in-between two events (often in the form of a random
   variable). The recurrence function is defined as a class-level ("static")
-  method:</p><pre>class CustomerArrival extends eVENT {
+  method:</p><pre>class <b>CustomerArrival</b> extends eVENT {
   ...
   static <b>recurrence</b>() {
     return math.getUniformRandomInteger( 1, 6);
@@ -443,7 +438,7 @@ ServiceDesk.<b>labels</b> = {"queueLength":"qLen"};  // for the log</pre><p>Noti
   be defined for assigning event properties and returning the next event of
   that type, which is scheduled by invoking the <i>recurrence</i> function for
   setting its <i>ocurrenceTime</i> and by copying all participant references
-  (such as the <i>serviceDesk</i> reference). </p><pre>class CustomerArrival extends eVENT {
+  (such as the <i>serviceDesk</i> reference). </p><pre>class <b>CustomerArrival</b> extends eVENT {
   ...
   <b>createNextEvent</b>() {
     return new CustomerArrival({
@@ -451,6 +446,7 @@ ServiceDesk.<b>labels</b> = {"queueLength":"qLen"};  // for the log</pre><p>Noti
       serviceDesk: this.serviceDesk
     });
   }
+  static <b>recurrence</b>() {...}
 }</pre><p>The second event type of the <i>Service-Desk-1</i> model,
   <i>Departure</i>, is an example of a type of <i>caused</i> events:</p><pre>class <b>CustomerDeparture</b> extends eVENT {
   constructor({ occTime, serviceDesk}) {
@@ -460,16 +456,18 @@ ServiceDesk.<b>labels</b> = {"queueLength":"qLen"};  // for the log</pre><p>Noti
   onEvent() {
     ...
   }
-}</pre></section><section><h4>2.2.4. Event Rules</h4><p>An event rule<a
-  class="role-index-term">event rule</a> for an event type defines what
-  happens when an event of that type occurs, by specifying the caused state
-  changes and follow-up events. In OESjs, event rules are coded as
-  <code>onEvent</code> methods of the class that implements the event type.
-  These methods return a set of events (more precisely, a set of JS objects
-  representing events).</p><p>Notice that in the DES literature, event rule
-  methods are called <i>event routines</i><a class="role-index-term">event
-  routine</a>.</p><p>For instance, in the <code>CustomerArrival</code> class,
-  the following event rule method is defined:</p><pre>class <b>CustomerArrival</b> extends eVENT {
+}</pre><p>A caused event type does neither define a <i>recurrence</i> function
+  nor a <i>createNextEvent</i> method.</p></section><section><h4>2.2.4. Event
+  Rules</h4><p>An event rule<a class="role-index-term">event rule</a> for an
+  event type defines what happens when an event of that type occurs, by
+  specifying the caused state changes and follow-up events. In OESjs, event
+  rules are coded as <code>onEvent</code> methods of the class that implements
+  the event type. These methods return a set of events (more precisely, a set
+  of JS objects representing events).</p><p>Notice that in the DES literature,
+  event rule methods are called <i>event routines</i><a
+  class="role-index-term">event routine</a>.</p><p>For instance, in the
+  <code>CustomerArrival</code> class, the following event rule method is
+  defined:</p><pre>class <b>CustomerArrival</b> extends eVENT {
   ...
   <b>onEvent</b>() {
     var followupEvents=[];

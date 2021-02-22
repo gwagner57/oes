@@ -31,11 +31,11 @@ sim.scenarios[1] = {
   idCounter: 11,
   setupInitialState: function () {
     // Create initial objects
-    var ws = new WorkStation({id: 1, name:"ws", status: oes.ResourceStatusEL.AVAILABLE});
+    var ws1 = new WorkStation({id: 1, name:"ws", status: oes.ResourceStatusEL.AVAILABLE});
     // Initialize the resource pool
-    sim.resourcePools["workStations"].availResources.push( ws);
+    sim.resourcePools["workStations"].availResources.push( ws1);
     // Schedule initial events
-    sim.FEL.add( new PartArrival({occTime: 1, workStation: ws}));
+    sim.FEL.add( new PartArrival({occTime: 1, workStation: ws1}));
     // defining the end of simulation
     PartArrival.maxNmrOfEvents = 3;
   }

@@ -144,7 +144,9 @@ figure.right {
 
     <section href="ChActivityBasedModeling/Alternative-resource-pools.html"/>
 
-    <section href="ChActivityBasedModeling/Resource-allocation-priorities.html"/>
+    <section href="ChActivityBasedModeling/Task-priorities.html"/>
+
+    <section href="ChActivityBasedModeling/Task-preemption.html"/>
   </chapter>
 
   <appendix>
@@ -152,9 +154,13 @@ figure.right {
       <title>Further Example Models</title>
     </head>
 
-    <section href="ExampleModels/Make-and-Deliver-Pizza.html"/>
+    <section href="ExampleModels/Make-and-Deliver-Pizza.html">
+      <section href="ExampleModels/Make-and-Deliver-Pizza-OESjs.html"/>
+    </section>
 
-    <section href="ExampleModels/Load-Haul-Dump.html"/>
+    <section href="ExampleModels/Load-Haul-Dump.html">
+      <section href="ExampleModels/Load-Haul-Dump-OESjs.html"/>
+    </section>
   </appendix>
 
   <appendix href="architecture.html"/>
