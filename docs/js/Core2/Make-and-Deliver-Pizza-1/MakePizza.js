@@ -2,17 +2,9 @@ class MakePizza extends aCTIVITY {
   constructor({id, startTime, duration}={}) {
     super({id, startTime, duration});
   }
-  duration() {
-    var dur = rand.triangular(3,6,4);
-    /*
-    // when the MakePizza operation is performed by two pizza makers, time is cut in half
-    if (Array.isArray( this.pizzaMakers) && this.pizzaMakers.length === 2) dur = dur/2;
-    */
-    return dur;
-  }
+  duration() {return rand.triangular(3,6,4);}
 }
 MakePizza.resourceRoles = {
-  //"pizzaMaker": {range: PizzaMaker, minCard:1, maxCard:2},
   "pizzaMakers": {range: PizzaMaker, card: 2},
   "oven": {card: 1}
 }

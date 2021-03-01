@@ -61,8 +61,8 @@ sim.initializeSimulator = function () {
   for (const actTypeName of sim.model.activityTypes) {
     const AT = sim.Classes[actTypeName];
     AT.resourceRoles ??= Object.create(null);
-    // Create the plannedActivities queues
-    AT.plannedActivities = new pLANNEDaCTIVITIESqUEUE();
+    // Create the tasks queues
+    AT.tasks = new tASKqUEUE();
     // Create the resource pools
     for (const resRoleName of Object.keys( AT.resourceRoles)) {
       const resRole = AT.resourceRoles[resRoleName];
@@ -142,8 +142,8 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   /***START Activity extensions AFTER-setupInitialState ********************/
   oes.initializeActivityStatistics();
   for (const actTypeName of sim.model.activityTypes) {
-    // Reset/clear the plannedActivities queues
-    sim.Classes[actTypeName].plannedActivities.length = 0;
+    // Reset/clear the tasks queues
+    sim.Classes[actTypeName].tasks.length = 0;
   }
   // Initialize resource pools
   for (const poolName of Object.keys( sim.resourcePools)) {
@@ -221,7 +221,7 @@ sim.runScenario = function (createLog) {
       if (EventClass.successorActivity) {
         const SuccActivityClass = sim.Classes[EventClass.successorActivity];
         // enqueue successor activity
-        SuccActivityClass.plannedActivities.startOrEnqueue( new SuccActivityClass());
+        SuccActivityClass.tasks.startOrEnqueue( new SuccActivityClass());
       }
       /**** ACTIVITIES extension END ****/
 

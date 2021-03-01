@@ -30,22 +30,21 @@
  *  The objects that participate in an ongoing activity as resources are in a
  *  certain activity state (e.g., "service-performing").
  *
- *  A pre-defined event type aCTIVITYsTART is used for creating activity start
+ *  A pre-defined event type aCTIVITYsTART is used for scheduling activity start
  *  events with a constructor parameter "plannedActivity" (of type AT), dequeued from
- *  AT.plannedActivities. It is an option to assign a duration at activity start time
+ *  AT.tasks. It is an option to assign a duration at activity start time
  *  by providing a duration argument to the activity start event constructor.
- *  The value of the activityState property of all involved
- *  resource objects is updated by adding the activity type name (the activityState
- *  is a set of the type names of those activities, in which the object is
- *  currently participating).
+ *  The value of the activityState property of all involved resource objects
+ *  is updated by adding the activity type name (the activityState is a set of all
+ *  type names of those activities, in which the object is currently participating).
  *
  *  TODO:
- *   - introduce resource allocation priorities defined per activity
+ *   - Use all altResTypes, not just altResTypes[0] in rESOURCEpOOL::allocate(...)
+ *   - Introduce task priorities defined per activity type as a number between 0 and 100.
+ *   - introduce task preemption
  *   - support the two allocation policies: (1) allocate all resources at once, and (2) allocate resources step by step
- *   - ? introduce object type rESOURCE (with status attribute) specializing oBJECT,
- *     such that a resource type is defined by specializing rESOURCE
  *   - an optional processOwner (= institutional agent); if there is only one (= no collaboration), it may be left implicit
- *     if there is are two or more processOwners, can an activity type be included in more than one process container (= Pool)?
+ *     if there are two or more processOwners, can an activity type be included in more than one process container (= Pool)?
  *     if yes, it may have different performers (and other resource pools) in different process containers
  */
 // An abstract class
@@ -58,8 +57,8 @@ class aCTIVITY extends eVENT {
     if (enqueueTime) this.enqueueTime = enqueueTime;
   }
 }
-// Define a datatype class for queues of planned activities
-class pLANNEDaCTIVITIESqUEUE extends Array {
+// Define a datatype class for queues of tasks (= planned activities)
+class tASKqUEUE extends Array {
   constructor() {
     super();
   }
@@ -70,16 +69,16 @@ class pLANNEDaCTIVITIESqUEUE extends Array {
     var nextActy=null;
     if (acty) nextActy = acty;
     else {
-      if (AT.plannedActivities.length === 0) return false;
-      nextActy = AT.plannedActivities[0];
+      if (AT.tasks.length === 0) return false;
+      nextActy = AT.tasks[0];
       // take care of waiting timeouts
       while (nextActy.waitingTimeout && sim.time > nextActy.waitingTimeout) {
         // remove nextActy from queue
-        AT.plannedActivities.dequeue();
-        // update statistics
-        sim.stat.actTypes[AT.name].waitingTimeouts += 1;
-        if (AT.plannedActivities.length === 0) return false;
-        else nextActy = AT.plannedActivities[0];
+        AT.tasks.dequeue();
+        // increment the waitingTimeouts statistic
+        sim.stat.actTypes[AT.name].waitingTimeouts++;
+        if (AT.tasks.length === 0) return false;
+        else nextActy = AT.tasks[0];
       }
     }
     // Are all required resources available?
@@ -89,7 +88,7 @@ class pLANNEDaCTIVITIESqUEUE extends Array {
         .map( resRoleName => AT.resourceRoles[resRoleName])
         .every( resRole => (resRole.resPool.isAvailable( resRole.card||resRole.minCard)))) {
       // remove nextActy from queue
-      if (!acty) AT.plannedActivities.dequeue();
+      if (!acty) AT.tasks.dequeue();
       // Allocate all required resources
       for (const resRoleName of Object.keys( AT.resourceRoles)) {
         if (!nextActy[resRoleName]) {
@@ -120,18 +119,18 @@ class pLANNEDaCTIVITIESqUEUE extends Array {
   }
   startOrEnqueue( acty) {
     const AT = acty.constructor;
-    if (this !== AT.plannedActivities) {
+    if (this !== AT.tasks) {
       console.error("Attempt to push an "+ AT.name +" to wrong queue!");
       return;
     }
     // if available, allocate required resources and start next activity
-    const actyStarted = pLANNEDaCTIVITIESqUEUE.ifAvailAllocReqResAndStartNextActivity( AT, acty);
+    const actyStarted = tASKqUEUE.ifAvailAllocReqResAndStartNextActivity( AT, acty);
     if (!actyStarted) {
       acty.enqueueTime = sim.time;
       if (typeof AT.waitingTimeout === "function") {
         acty.waitingTimeout = sim.time + AT.waitingTimeout();
       }
-      this.push( acty);  // add acty to planned activities queue
+      this.push( acty);  // add acty to task queue
       sim.stat.actTypes[AT.name].enqueuedActivities += 1;
       // compute generic queue length statistics per activity type
       if (this.length > sim.stat.actTypes[AT.name].queueLength.max) {
@@ -226,6 +225,7 @@ class rESOURCEpOOL {
       } else {
         const altResTypes = this.resourceType.alternativeResourceTypes;
         if (Array.isArray( altResTypes) && altResTypes.length > 0) {
+          //TODO: use all altResTypes, not just altResTypes[0]
           rP = sim.Classes[altResTypes[0]].resourcePool;
           if (!rP?.isAvailable( card)) rP = null;
         }
@@ -274,9 +274,9 @@ at simulation step ${sim.step}!`, res.constructor.toString() );
 at simulation step ${sim.step}!`);
       return;
     }
-    // try starting enqueued planned activities depending on this type of resource
+    // try starting enqueued tasks depending on this type of resource
     for (const AT of this.dependentActivityTypes) {
-      pLANNEDaCTIVITIESqUEUE.ifAvailAllocReqResAndStartNextActivity( AT);
+      tASKqUEUE.ifAvailAllocReqResAndStartNextActivity( AT);
     }
   }
   clear() {
@@ -447,7 +447,7 @@ class aCTIVITYeND extends eVENT {
         // start successor activity
         followupEvents.push( new aCTIVITYsTART({plannedActivity: succActy}));
       } else {  // start or enqueue successor activity
-        SuccAT.plannedActivities.startOrEnqueue( succActy);
+        SuccAT.tasks.startOrEnqueue( succActy);
       }
     }
     // release all resources of acty
@@ -462,9 +462,9 @@ class aCTIVITYeND extends eVENT {
       }
     }
     // if there are still planned activities of type AT
-    if (AT.plannedActivities.length > 0) {
+    if (AT.tasks.length > 0) {
       // if available, allocate required resources and schedule next activity
-      pLANNEDaCTIVITIESqUEUE.ifAvailAllocReqResAndStartNextActivity( AT);
+      tASKqUEUE.ifAvailAllocReqResAndStartNextActivity( AT);
     }
     return followupEvents;
   }

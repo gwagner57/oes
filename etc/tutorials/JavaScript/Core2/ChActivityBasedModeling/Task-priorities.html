@@ -6,5 +6,24 @@
     <title>Task Priorities</title>
   </head>
 
-  <body><p>T.B.D.</p></body>
+  <body><p>Whenever an activity of type A1 ends and there is still another A1
+  task in the queue, the activity's resources would be re-used for the next A1
+  task unless there is another task (say, of type A2) with higher priority
+  waiting for one of the resources (r1). In that case, r1 is allocated to that
+  task, and all other resources are allocated to the next A1 task, which still
+  has to wait for r1 becoming available again.</p><p>For example, in a pizza
+  service, where incoming orders can be taken by pizza makers, and
+  <i>TakeOrder</i> tasks have a higher priority than <i>MakePizza</i> tasks,
+  when a <i>MakePizza</i> activity performed by a pizza maker in an oven ends
+  while there is still another <i>MakePizza</i> task in the queue and there is
+  also a <i>TakeOrder</i> task in the queue, the pizza maker is allocated to
+  the <i>TakeOrder</i> task and the oven is allocated to the next
+  <i>MakePizza</i> task, which has to wait for a pizza maker becoming
+  available.</p><p><b>Algorithmically</b>: Whenever an activity a1 of type A1
+  ends, collect all pairs &lt;r, t&gt; such that r is a resource used by a1
+  and t is the next task of an activity type A from the dependent activity
+  types DAT of pool(r) with the highest priority among all DAT with task
+  priorities higher than A1. For all these pairs &lt;r, t&gt;, allocate r to
+  t. Allocate the remaining resources of a1 to the next A1 task, if there is
+  any, otherwise release them. </p><p></p></body>
 </html>
