@@ -1,9 +1,9 @@
 package de.oes.core0.tests;
 
 import java.util.List;
+
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
@@ -60,7 +60,7 @@ public class TestInventoryManager {
 		scenario.setDurationInSimTime(1000l);
 		Consumer<Simulator> setupInitialState = s -> {
 			SingleProductShop tvShop = new SingleProductShop(1, "TV Shop", s, 80, 50, 100);
-			s.setObjects(Map.of("tvShop", tvShop));
+//			s.setObjects(Map.of("tvShop", tvShop)); //TODO used for?
 			s.getFEL().add(new DailyDemand(s, 1l, 25, tvShop));
 		};
 		scenario.setSetupInitialState(setupInitialState);
@@ -74,7 +74,8 @@ public class TestInventoryManager {
 		//mocks
 
 		//test
-		sim.runStandaloneScenario();
+//		sim.runStandaloneScenario();
+		sim.runSimpleExperiment(sim.getExperimentType());
 		//check
 		sim.getModel().getComputeFinalStatisctics().accept(sim);
 		
