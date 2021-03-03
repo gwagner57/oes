@@ -40,6 +40,7 @@
  *
  *  TODO:
  *   - Use all altResTypes, not just altResTypes[0] in rESOURCEpOOL::allocate(...)
+ *   - Support built-in WaitingTimeout events related to the Activity::onWaitingTimeout() function
  *   - Introduce task priorities defined per activity type as a number between 0 and 100.
  *   - introduce task preemption
  *   - support the two allocation policies: (1) allocate all resources at once, and (2) allocate resources step by step
