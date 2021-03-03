@@ -151,7 +151,7 @@ public class ServiceDesk2Test {
 		scenario.setDurationInSimTime(1000l);
 		Consumer<Simulator> setupInitialState = s -> {
 			ServiceDesk sd = new ServiceDesk(1, "serviceDesk", sim);
-			s.getModel().getV().put("queueLength", new AtomicInteger(0));
+			s.getModel().getV().put("queueLength", Integer.valueOf(0));
 			s.getFEL().add(new CustomerArrival(s, 1l, null, sd));
 		};
 		scenario.setSetupInitialState(setupInitialState);

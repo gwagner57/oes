@@ -17,7 +17,7 @@ p.description {
 
 	<main>
 		<h1>Service Desk Simulation</h1>
-		<p th:text="${expInfo}"></p>
+		<p>Statistics</p>
 		<table>
 			<thead>
 				<tr>
@@ -26,11 +26,7 @@ p.description {
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="entry : ${stat.getExperiments()}">
-					<td th:text="${entry.key}"></td>
-					<td th:text="${entry.value}"></td>
-				</tr>
-				<tr th:each="entry : ${stat.getSumStat()}">
+				<tr th:each="entry : ${stat.entrySet()}">
 					<td th:text="${entry.key}"></td>
 					<td th:text="${entry.value}"></td>
 				</tr>
