@@ -52,7 +52,7 @@ public class DailyDemand extends ExogenousEvent {
 	public DailyDemand createNextEvent() {
 		return new DailyDemand(
 				this.getSim(), 
-				this.getOccTime() +  this.reccurence(), 
+				this.getOccTime().longValue() +  this.reccurence(), 
 				DailyDemand.quantity(), 
 				this.shop);
 	}
