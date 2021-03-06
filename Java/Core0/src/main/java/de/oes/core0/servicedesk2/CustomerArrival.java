@@ -40,7 +40,7 @@ public class CustomerArrival extends ExogenousEvent {
 		// if the service desk is not busy, start service and schedule departure
 		if(queueLength == 1) {
 			followupEvents.add(new CustomerDeparture(sim, null, 
-					(long) ServiceDesk.serviceDuration(), //FIXME 
+					ServiceDesk.serviceDuration(), //FIXME 
 					serviceDesk)); 
 		}
 		return followupEvents;

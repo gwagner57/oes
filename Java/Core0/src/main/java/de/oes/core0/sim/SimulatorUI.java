@@ -10,7 +10,7 @@ public class SimulatorUI {
 	    System.out.println("-> Step:" + sim.getStep() + " Time:" + sim.getTime() + " End Time:" + sim.getEndTime());
 	    
 	    System.out.println("\nObject Information *****************************************************");
-	    System.out.println (sim.getObjects().get("tvShop"));
+	    System.out.println (sim.getObjects());
 	    
 	    System.out.println("\nEvent Information ******************************************************");
 	    for(eVENT e : sim.getFEL().getEvents()) {

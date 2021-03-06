@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Customer extends oBJECT{
-	private Long arrivalTime;
+	private Number arrivalTime;
 	
 	public Customer(String name, Simulator sim, Long arrivalTime) {
 		super(name, sim);

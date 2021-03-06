@@ -16,6 +16,7 @@ public abstract class oBJECT {
 		this.id = id;
 		this.name = name;
 		this.sim = sim;
+		this.sim.getObjects().put(this.id, this);
 	}
 	
 	public oBJECT(String name, Simulator sim) {
@@ -23,5 +24,6 @@ public abstract class oBJECT {
 		this.name = name;
 		this.sim = sim;
 		this.id = sim.getScenario().getIdCounter() + 1;
+		this.sim.getObjects().put(this.id, this);
 	}
 }

@@ -1,5 +1,6 @@
 package de.oes.core0.lib;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -13,7 +14,11 @@ import lombok.Setter;
 @Setter
 public class EventList {
 	
-	private static final Comparator<eVENT> SORT_BY_NEAREST_OCCTIME = Comparator.comparing(eVENT::getOccTime);
+	private static final Comparator<eVENT> SORT_BY_NEAREST_OCCTIME = Comparator.comparing(eVENT::getOccTime, (n1, n2) -> {
+		BigDecimal b1 = new BigDecimal(n1.doubleValue());
+	    BigDecimal b2 = new BigDecimal(n2.doubleValue());
+		return b1.compareTo(b2);
+	});
 	private List<eVENT> events = new ArrayList<eVENT>();
 	
 	public EventList(List<eVENT> events) {
@@ -32,11 +37,11 @@ public class EventList {
 		}
 	}
 	
-	public Long getNextOccurrenceTime() {
+	public Double getNextOccurrenceTime() {
 		if (!this.isEmpty()) {
-			return this.events.get(0).getOccTime();
+			return this.events.get(0).getOccTime().doubleValue();
 		}
-		return 0l;
+		return Double.valueOf(0);
 	}
 	
 	public eVENT getNextEvent() {
@@ -59,7 +64,7 @@ public class EventList {
 		if (this.isEmpty()) {
 			return nextEvents;
 		}
-		Long nextTime = this.events.get(0).getOccTime();
+		Number nextTime = this.events.get(0).getOccTime();
 		while(this.events.size() > 0 && this.events.get(0).getOccTime() == nextTime) {
 			nextEvents.add(this.events.remove(0));
 		}

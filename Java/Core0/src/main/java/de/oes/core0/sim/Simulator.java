@@ -21,7 +21,7 @@ import lombok.Setter;
 public class Simulator {
 
 	private Integer step = 0;
-	private Long time = 0l;
+	private Double time = Double.valueOf(0);
 	private Long endTime = 0l;
 	private Integer idCounter = 1000;
 	private Long nextMomentDeltaT = 1l;
@@ -29,13 +29,13 @@ public class Simulator {
 	private ExperimentType experimentType;
 	private Scenario scenario = new Scenario();
 	private EventList FEL = new EventList();
-	private Map<String, oBJECT> objects = new HashMap<String, oBJECT>();
+	private Map<Integer, oBJECT> objects = new HashMap<Integer, oBJECT>();
 	private Map<String, Number> stat = new HashMap<String, Number>();
-	private Long nextEvtTime = 0l;
+	private Double nextEvtTime = Double.valueOf(0);
 	
 	public void incrementStat(String name, Number inc) {
 		Number num = this.stat.get(name);
-		this.stat.replace(name, num, num.intValue() + inc.intValue());
+		this.stat.replace(name, num, num.doubleValue() + inc.doubleValue());
 	}
 	
 	public void updateStatValue(String name, Number newNumber) {
@@ -66,7 +66,7 @@ public class Simulator {
 		this.objects.clear();
 		this.FEL.clear();
 		this.step = 0; // simulation loop step counter
-		this.time = 0l; // simulation time
+		this.time = Double.valueOf(0); // simulation time
 		// set default endTime
 		this.endTime = this.scenario.getDurationInSimTime() != null? this.scenario.getDurationInSimTime() : Long.MAX_VALUE;
 		// get ID counter from simulation scenario, or set to default value

@@ -12,17 +12,17 @@ import lombok.Setter;
 public abstract class eVENT {
 	
 	private Simulator sim;
-	private Long occTime;
-	private Long delay;
+	private Number occTime;
+	private Number delay;
 	
-	public eVENT(Simulator sim, Long occTime, Long delay) {
+	public eVENT(Simulator sim, Number occTime, Number delay) {
 		super();
 		this.sim = sim;
 		
 		if(!Objects.isNull(occTime)) {
 			this.occTime = occTime;
 		} else if(!Objects.isNull(delay)) {
-			this.occTime = sim.getTime() + delay;
+			this.occTime = sim.getTime().doubleValue() + delay.doubleValue();
 		}
 	}
 	
