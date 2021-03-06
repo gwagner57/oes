@@ -15,9 +15,9 @@
   with the number of incoming calls, and then customers grow impatient and
   hang up the phone without placing an order.</p><p>For getting a quick
   impression, you can <a
-  href="https://gwagner57.github.io/oes/js/Core2/Load-Haul-Dump-1/">run this
-  model</a> from the OES GitHub website, or inspect its <a
-  href="https://github.com/gwagner57/oes/tree/master/docs/js/Core2/Load-Haul-Dump-1">OESjs
+  href="https://gwagner57.github.io/oes/js/Core2/Make-and-Deliver-Pizza-1/">run
+  this model</a> from the OES GitHub website, or inspect its <a
+  href="https://github.com/gwagner57/oes/tree/master/docs/js/Core2/Make-and-Deliver-Pizza-1">OESjs
   code</a>. </p><p>Since there is a high number of lost orders due to long
   waiting times in the first model, assigning different responsibilities to
   organizational roles for allowing a more flexible use of human resources is
@@ -26,14 +26,15 @@
   based on the chapter "Example Model 3: Pizzeria operation" in the book <a
   href="https://www.anylogic.com/resources/books/the-art-of-process-centric-modeling-with-anylogic/">The
   Art of Process-Centric Modeling with AnyLogic</a> by Arash
-  Mahdavi.</p></blockquote><details><summary>Conceptual Model</summary><p>A
-  pizza service company has resource pools for order takers, pizza makers,
-  pizza ovens, delivery staff and scooters. While <em>take order</em>
-  activities are performed by an <em>order taker</em>, <em>make pizza</em>
-  activities require both an <em>oven</em> and a <em>pizza maker</em>.
-  Finally, <i><em>deliver</em> pizza</i> activities require a delivery staff
-  member and a scooter.</p><details><summary>Conceptual Information
-  Model</summary><p>The potentially relevant object types are:</p><ol>
+  Mahdavi.</p></blockquote><details open="open"><summary>Conceptual
+  Model</summary><p>A pizza service company has resource pools for order
+  takers, pizza makers, pizza ovens, delivery staff and scooters. While
+  <em>take order</em> activities are performed by an <em>order taker</em>,
+  <em>make pizza</em> activities require both an <em>oven</em> and a <em>pizza
+  maker</em>. Finally, <i><em>deliver</em> pizza</i> activities require a
+  delivery staff member and a scooter.</p><details
+  open="open"><summary>Conceptual Information Model</summary><p>The
+  potentially relevant object types are:</p><ol>
       <li>pizza service company,</li>
 
       <li>customers,</li>
@@ -68,7 +69,7 @@
   Object Event (<abbr title="Object Event">OE</abbr>) class diagram, as shown
   below.</p><figure><img
   alt="conceptual information model describing object, event and activity types"
-  src="../img/Pizzeria_CIMa.svg" width="500" /></figure><p>The association end
+  src="../img/Pizzeria_CIMa.svg" width="450" /></figure><p>The association end
   annotations «rr» and «rp» denote <em>resource roles</em> and <em>resource
   pools</em>. For instance, the activity type <i>make pizza</i> has two
   resource roles, <i>pizza maker</i>s and <i>oven</i>. A pizza service company
@@ -89,12 +90,13 @@
   event with a non-zero duration. For simplicity, though, we'll often say
   "events" instead of "immediate events" or "objects, events and activities"
   instead of "objects, immediate events and
-  activities".</p></blockquote></details><details><summary>Conceptual Process
-  Model</summary><p>The following BPMN diagram shows a conceptual process
-  model of the Make-and-Deliver-Pizza business process, with three swimlanes
-  for the three performers of the process:</p><figure><img
+  activities".</p></blockquote></details><details
+  open="open"><summary>Conceptual Process Model</summary><p>The following BPMN
+  diagram shows a conceptual process model of the Make-and-Deliver-Pizza
+  business process, with three swimlanes for the three performers of the
+  process:</p><figure><img
   alt="A conceptual process model in the form of a BPMN diagram"
-  src="../img/Pizzeria_CPM_BPMN.svg" width="600" /></figure><p>Notice the BPMN
+  src="../img/Pizzeria_CPM_BPMN.svg" width="500" /></figure><p>Notice the BPMN
   Boundary Timeout Event circle attached to the <i>take order</i> activity
   representing timeout events that cancel the activity. They are supposed to
   model the <em>reneging</em> behavior of waiting customers loosing their
@@ -120,7 +122,7 @@
   from <em>event scheduling arrows</em>, as shown in the following DPMN
   process diagram:</p><figure><img
   alt="A conceptual process model in the form of a DPMN diagram"
-  src="../img/Pizzeria_CPM.svg" width="550" /></figure><p>Notice how the
+  src="../img/Pizzeria_CPM.svg" width="500" /></figure><p>Notice how the
   timeout event circle (with a clock icon) is attached to the three bars of
   the resource-dependent activity start arrow representing the queue of
   planned order taking activities waiting for the availability of an order
@@ -152,29 +154,29 @@
       all resource object types, such as <i>OrderTaker</i> and <i>Oven</i>,
       and a class-level <i>duration</i> function is added to all activity
       classes.</li>
-    </ol><figure><img alt="???" src="../img/Pizzeria_IDMa.svg"
-  width="600" /><figcaption>An information design model defining object, event
-  and activity types.</figcaption></figure><p>Notice how functions
-  representing random variables, like the <code>duration</code> function of
-  all activity types, are marked with the keyword (or UML 'stereotype') «rv»
-  standing for "random variable". These random variable functions sample from
-  a probability distribution function (PDF), which is symbolically indicated
-  with expressions like <i>Tri(30,40,50)</i> standing for the
-  <em>triangular</em> PDF with lower and upper bounds 30 and 50 and a median
-  of 40, or <i>DU(1,4)</i> standing for the discrete uniform PDF with lower
-  and upper bounds 3 and 6.</p><p>In the case of the event type
-  <i>OrderCall</i>, the random variable function recurrence samples from an
-  exponential PDF with five different event rates given for the five
-  consecutive hours during which the pizza service operates.</p><p>The
-  activity type <i>TakeOrder</i> is associated with the object type
-  <i>OrderTaker</i> via the implicit resource role <i>orderTaker</i> (with a
-  resource cardinality constraint of "exactly 1"), indicated with the
-  association end stereotype «rr» standing for "resource role". A resource
-  role assigns resource objects to activities. </p><p>Likewise,
-  <i>MakePizza</i> is associated with <i>PizzaMaker</i> and <i>Oven</i> via
-  the (implicitly named) resource roles <i>pizzaMakers</i>, having a resource
-  cardinality constraint of "exactly 2", and <i>oven</i>, having a resource
-  cardinality constraint of "exactly 1".</p><p>An <abbr
+    </ol><figure id="figMakeAndDeliverPizzaIDM"><img alt="???"
+  src="../img/Pizzeria_IDMa.svg" width="500" /><figcaption>An information
+  design model defining object, event and activity
+  types.</figcaption></figure><p>Notice how functions representing random
+  variables, like the <code>duration</code> function of all activity types,
+  are marked with the keyword (or UML 'stereotype') «rv» standing for "random
+  variable". These random variable functions sample from a probability
+  distribution function (PDF), which is symbolically indicated with
+  expressions like <i>Tri(30,40,50)</i> standing for the <em>triangular</em>
+  PDF with lower and upper bounds 30 and 50 and a median of 40, or
+  <i>DU(1,4)</i> standing for the discrete uniform PDF with lower and upper
+  bounds 3 and 6.</p><p>In the case of the event type <i>OrderCall</i>, the
+  random variable function recurrence samples from an exponential PDF with
+  five different event rates given for the five consecutive hours during which
+  the pizza service operates.</p><p>The activity type <i>TakeOrder</i> is
+  associated with the object type <i>OrderTaker</i> via the implicit resource
+  role <i>orderTaker</i> (with a resource cardinality constraint of "exactly
+  1"), indicated with the association end stereotype «rr» standing for
+  "resource role". A resource role assigns resource objects to activities.
+  </p><p>Likewise, <i>MakePizza</i> is associated with <i>PizzaMaker</i> and
+  <i>Oven</i> via the (implicitly named) resource roles <i>pizzaMakers</i>,
+  having a resource cardinality constraint of "exactly 2", and <i>oven</i>,
+  having a resource cardinality constraint of "exactly 1".</p><p>An <abbr
   title="Object Event">OE</abbr> class design diagram like the one above,
   defines resource roles (like <i>pizzaMakers</i>), resource role types (like
   <i>PizzaMaker</i>) and resource cardinality constraints (like "exactly 2")
@@ -196,61 +198,90 @@
   abstracting away from items that are not design-relevant and possibly adding
   certain computational details. </p><p>A <abbr
   title="Discrete Event Process Modeling Notation">DPMN</abbr> process design
-  model essentially defines the admissible sequences of events and activities
+  model (like the one shown in <a href="#figMakeAndDeliverPizzaPDM1"></a>)
+  essentially defines the admissible sequences of events and activities
   together with their dependencies and effects on objects, while its
-  underlying <abbr title="Object Event">OE</abbr> class design model defines
-  the types of objects, events and activities, together with the participation
-  of objects in events and activities, including the resource roles of
-  activities, as well as resource cardinality constraints, parallel
-  participation constraints, alternative resources, and task priorities.
-  </p><figure><img src="../img/Pizzeria_PDM.svg" width="500" /><figcaption>A
-  process design for the Make-and-Deliver-Pizza business
-  process.</figcaption></figure><p>It is an option, though, to enrich a <abbr
-  title="Discrete Event Process Modeling Notation">DPMN</abbr> process design
-  model by displaying more computational details, especially the recurrence of
-  exogenous events, the duration of activities and the most important resource
-  management features defined in the underlying <abbr
+  underlying <abbr title="Object Event">OE</abbr> class design model (like the
+  one shown in <a href="#figMakeAndDeliverPizzaIDM"></a>) defines the types of
+  objects, events and activities, together with the participation of objects
+  in events and activities, including the resource roles of activities, as
+  well as resource cardinality constraints, parallel participation
+  constraints, alternative resources, and task priorities. </p><figure
+  id="figMakeAndDeliverPizzaPDM1"><img src="../img/Pizzeria_PDM.svg"
+  width="450" /><figcaption>A process design for the Make-and-Deliver-Pizza
+  business process</figcaption></figure><p>It is an option, though, to enrich
+  a <abbr title="Discrete Event Process Modeling Notation">DPMN</abbr> process
+  design model by displaying more computational details, especially the
+  recurrence of exogenous events, the duration of activities and the most
+  important resource management features defined in the underlying <abbr
   title="Object Event">OE</abbr> class design model, such as resource roles
   (in particular, performer roles can be displayed in the form of
-  <em>Lanes</em>), resource cardinality constraints, alternative resources,
-  and task priorities. </p><figure><img src="../img/Pizzeria_PDM2.svg"
-  width="650" /><figcaption>A process design model enriched by resource
-  management features.</figcaption></figure><p> does not include any element
-  representing a resource pool. Yet, it may display the performer roles of
-  activity types, like <i>OrderTaker</i> and <i>PizzaMaker</i> in the diagram
-  above. It is assumed that for any organizational position described in the
-  underlying <abbr title="Object Event">OE</abbr> class model, the
-  organization under consideration has a corresponding resource pool. By
-  default , each resource role of an activity type is associated with a
-  resource pool having the same (yet pluralized) name, such that its resources
-  are instances of a corresponding resource role type, which is an
-  organizational position in the case of human resources. </p><p>For instance,
-  for the <i>MakePizza</i> activity a pool <i>ovens</i> is assigned to its
-  resource role <i>oven</i> by default. The members of the pool <i>ovens</i>
-  are instances of the (resource) object type <i>Oven</i>. Likewise, a pool
-  <i>pizzaMakers</i> is assigned to the <i>MakePizza</i> resource role
-  <i>pizzaMaker</i>. The members of this pool are instances of the
-  organizational position <i>PizzaMaker</i>. These default pool assignments
-  are normally not shown in a DPMN diagram, but an <abbr
+  <em>Lanes</em>) and resource cardinality constraints. The following model
+  shows an enriched version of <a
+  href="#figMakeAndDeliverPizzaPDM1"></a>:</p><figure
+  id="figMakeAndDeliverPizzaPDM2"><img src="../img/Pizzeria_PDM2.svg"
+  width="550" /><figcaption>An enriched process design
+  model</figcaption></figure><p>Such an enriched <abbr
+  title="Discrete Event Process Modeling Notation">DPMN</abbr> process design
+  model includes all computational details needed for an implementation
+  without a separate explicit <abbr title="Object Event">OE</abbr> class
+  design model. In fact, such a process model implicitly defines a
+  corresponding class model. For instance, the enriched <abbr
+  title="Discrete Event Process Modeling Notation">DPMN</abbr> model of <a
+  href="#figMakeAndDeliverPizzaPDM2"></a> implicitly defines the <abbr
+  title="Object Event">OE</abbr> class model of <a
+  href="#figMakeAndDeliverPizzaIDM"></a> above.</p><p>The notation for
+  defining performer roles in <em>Lanes</em> consists of a performer role name
+  (such as <i>pizzaMakers</i>) and and an object type name (such as
+  <i>PizzaMaker</i>) denoting its range, separated by a colon. When the
+  performer role name is appended by a multiplicity expression in brackets, as
+  in <i>pizzaMakers[2]</i>, this denotes a resource cardinality constraint
+  (stating that exactly 2 pizzaMakers are required). When only a performer
+  type prefixed with a colon (such as <i>:OrderTaker</i>) is provided, this
+  means that the implicit performer role name is obtained by lowercasing the
+  performer type name (as in <i>orderTaker:OrderTaker</i>).</p>The notation
+  for defining a non-performer resource role, such as <i>oven:Oven</i>,
+  consists of a named object rectangle, such as the <i>:Oven</i> rectangle in
+  <a href="#figMakeAndDeliverPizzaPDM2"></a>, attached to an activity
+  rectangle by means of a connection line with a small filled square
+  representing a resource link, such as the line between the <i>MakePizza</i>
+  activity rectangle and the <i>:Oven</i> object rectangle in <a
+  href="#figMakeAndDeliverPizzaPDM2"></a>.<p>Notice that the model of <a
+  href="#figMakeAndDeliverPizzaPDM2"></a> does not include any element
+  representing a resource pool. It is assumed that for any organizational
+  position described in the underlying <abbr title="Object Event">OE</abbr>
+  class model, the organization under consideration has a corresponding
+  resource pool. By default , each resource role of an activity type is
+  associated with a resource pool having the same (yet pluralized) name, such
+  that its resources are instances of a corresponding resource role type,
+  which is an organizational position in the case of human resources.
+  </p><p>For instance, for the <i>MakePizza</i> activity a pool <i>ovens</i>
+  is assigned to its resource role <i>oven</i> by default. The members of the
+  pool <i>ovens</i> are instances of the (resource) object type <i>Oven</i>.
+  Likewise, a pool <i>pizzaMakers</i> is assigned to the <i>MakePizza</i>
+  resource role <i>pizzaMaker</i>. The members of this pool are instances of
+  the organizational position <i>PizzaMaker</i>. These default pool
+  assignments are normally not shown in a DPMN diagram, but an <abbr
   title="Object Event">OE</abbr> simulator takes care of them.</p>Combined
-  with an underlying <abbr title="Object Event">OE</abbr> class design model,
+  with its underlying <abbr title="Object Event">OE</abbr> class design model,
   a <abbr title="Discrete Event Process Modeling Notation">DPMN</abbr> process
   design model provides a computationally complete specification of a
-  simulation model.</details></details><details><summary>Model Variant: Orders
-  May Also Be Taken by Pizza Makers</summary><p>For decreasing the number of
-  lost orders due to long waiting times, it is advisable to charge pizza
-  makers with taking orders whenever no order taker is available. In resource
-  management terminology, the organizational position <i>pizza maker</i> is
-  redefined by adding the resource role <i>order taker</i> to its portfolio of
-  organizational roles. </p><p>In a conceptual <abbr
+  simulation model.</details></details><details open="open"><summary>Model
+  Variant: Orders May Also Be Taken by Pizza Makers</summary><p>For decreasing
+  the number of lost orders due to long waiting times, it is advisable to
+  charge pizza makers with taking orders whenever no order taker is available.
+  In resource management terminology, the organizational position <i>pizza
+  maker</i> is redefined by adding the performer role <i>order taker</i> to
+  its portfolio of organizational roles. </p><p>In a conceptual <abbr
   title="Object Event">OE</abbr> class diagram, this can be expressed by
   adding a subtyping arrow from <i>pizza makers</i> to <i>order takers</i>
   categorized as an <em><b>alternative resource subtyping</b></em> arrow with
   the stereotype «ar», as shown in the following diagram:</p><figure><img
   alt="conceptual information model describing object, event and activity types"
-  src="../img/Pizzeria_CIM1b.svg" width="500" /></figure><p>The <abbr
-  title="Object Event">OE</abbr> class design diagram is extended in the same
-  way, by adding an <em>alternative resource subtyping</em> arrow from
-  <i>PizzaMaker</i> to <i>OrderTaker</i>.</p><p>The DPMN process design model
-  is not affected by this change.</p></details></body>
+  src="../img/Pizzeria-AlternativeResourceSubtyping_IDM.svg"
+  width="450" /></figure><p>The <abbr title="Object Event">OE</abbr> class
+  design diagram is extended in the same way, by adding an <em>alternative
+  resource subtyping</em> arrow from <i>PizzaMaker</i> to
+  <i>OrderTaker</i>.</p><p>The DPMN process design model is not affected by
+  this change.</p></details></body>
 </html>
