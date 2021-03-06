@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Implementation with OESjs</title>
+  </head>
+
+  <body><p>The JavaScript-based simulator OESjs-Core2 implements the
+  <em>Object Event Simulation (OES)</em> paradigm, and, consequently, allows a
+  straight-forward coding of <abbr title="Object Event">OE</abbr> class models
+  and <abbr title="Discrete Event Process Modeling Notation">DPMN</abbr>
+  process models.</p><details open="open"><summary><h4>Implementing the
+  Information Design Model</h4></summary><p>For implementing the <abbr
+  title="Object Event">OE</abbr> class design model with OESjs-Core2, we have
+  to code all object types, event types and activity types specified in the
+  model in the form of JavaScript classes extending the respective OESjs
+  framework classes oBJECT, eVENT and aCTIVITY. We start with the object type
+  <i>OrderTaker</i> shown in the following diagram:</p><figure
+  class="right"><img alt="???" src="../img/Pizzeria-OrderTaker_IDM.svg"
+  width="150" /></figure><p>The <code>OrderTaker</code> object class can be
+  coded in the following way:</p><pre>class <b>OrderTaker</b> extends oBJECT {
+  constructor({ id, name, status}) {
+    super( id, name);
+    this.status = status;
+  }
+}</pre><p>All object classes inherit an <code>id</code> attribute and a
+  <code>name</code> attribute from the pre-defined <abbr
+  title="Object Event Simulation">OES</abbr> foundation class
+  <code>oBJECT</code>. Since order takers are resource objects, we need to
+  define a <code>status</code> property having the pre-defined enumeration
+  data type <code>ResourceStatusEL</code> as its range. </p><p>The other
+  object classes (<i>PizzaMaker</i>, <i>Oven</i> and <i>Scooter</i>) are coded
+  in the same way.</p><p>We next show how to code the event type
+  <i>OrderCall</i> depicted in the following diagram:</p><figure
+  class="right"><img alt="???" src="../img/Pizzeria-OrderCall_IDM.svg"
+  width="220" /></figure><p>The <code>OrderCall</code> event class is coded in
+  the following way:</p><pre>class <b>OrderCall</b> extends eVENT {
+  constructor({ occTime, delay}) {
+    super({occTime, delay});
+  }
+  <b>createNextEvent</b>() {
+    return new OrderCall({delay: OrderCall.recurrence()});
+  }
+  static <b>recurrence</b>() {
+    var hour = Math.floor(sim.time / 60);
+    return rand.exponential( OrderCall.arrivalRates[hour]);
+  }
+}
+// arrival rates per minute (for a daily operation for 5 hours)
+OrderCall.<b>arrivalRates</b> = [1/6, 1/0.66, 1/1.5, 1/6, 1/12];</pre><p>All
+  event classes inherit an <code>occTime</code> attribute and a
+  <code>delay</code> attribute from the pre-defined <abbr
+  title="Object Event Simulation">OES</abbr> foundation class
+  <code>eVENT</code>. Any event in <abbr
+  title="Object Event Simulation">OES</abbr> can be created either with a
+  value for the attribute <code>occTime</code> (standing for <em>occurrence
+  time</em>) or with a value for the attribute <code>delay</code>. In the
+  latter case, the event's occurrence time is automatically derived by adding
+  the value of <code>delay</code> to the current simulation time.
+  </p><p>Notice how the time-varying recurrence rates (representing order
+  arrival rates) are implemented in the <code>recurrence</code> function: by
+  first computing the current hour, which is then used as an index for
+  accessing the corresponding element of the
+  <code>OrderCall.arrivalRates</code> array.</p><p>Finally, we show how to
+  code the activity type <i>TakeOrder</i> depicted in the following
+  diagram:</p><figure class="right"><img alt="???"
+  src="../img/Pizzeria-TakeOrder_IDM.svg" width="400" /></figure><p>The
+  <i>TakeOrder</i> activity class is coded in the following way:</p><pre>class <b>TakeOrder</b> extends aCTIVITY {
+  constructor({id, startTime, duration}={}) {
+    super({id, startTime, duration});
+  }
+  static <b>duration</b>() {
+    return rand.uniform( 1, 4);
+  }
+  static <b>waitingTimeout</b>() {
+    return rand.uniformInt( 3, 6);
+  }
+}
+TakeOrder.<b>resourceRoles</b> = {
+  "orderTaker": {range: OrderTaker}
+}</pre><p>All activity classes inherit the attributes <code>id</code>,
+  <code>startTime</code> and <code>duration</code> from the pre-defined <abbr
+  title="Object Event Simulation">OES</abbr> foundation class
+  <code>aCTIVITY</code>. When an activity is created as a JS object during a
+  simulation run, the value of its <code>duration</code> property is obtained
+  by invoking the <code>duration()</code> function defined as a class-level
+  ("static") function for its activity class. These activity duration
+  functions typically implement a random variable by invoking a random variate
+  sampling function, such as <code>rand.triangular(30,50,40)</code>, which
+  samples from the triangular probability distribution function (with
+  min/max=30/50 and mode=40).</p><p>Notice how the resource role association
+  between <i>TakeOrder</i> and <i>OrderTaker</i>, which defines the resource
+  reference property <i>TakeOrder::orderTaker</i>, is coded by a corresponding
+  entry in the map-valued class-level property
+  <code>resourceRoles</code>.</p></details><details
+  open="open"><summary><h4>Implementing the Process Design
+  Model</h4></summary><p>The following process design model specifies six
+  types of events: order call events, take order waiting timeouts, lost order
+  events, take order activities, make pizza activities, and deliver pizza
+  activities:</p><figure><img alt="???" src="../img/Pizzeria_PDM.svg"
+  width="450" /></figure><p>A DPMN process design model can be decomposed into
+  a set of event rule design models, one for each type of event specified in
+  the design model. Since the <code>LostOrder</code> event and the
+  <code>DeliverPizza</code> activity do not have any effects, we only need
+  four event rules. </p><h5>1 The <code>OrderCall</code> event
+  rule</h5><p>Starting with the following <code>OrderCall</code> event rule
+  design model, we show how the event rules specified by each of these event
+  rule design models can be coded.</p><figure><img alt="???"
+  src="../img/Pizzeria-OrderCall_RDM.svg" width="200" /></figure><p>The
+  <code>OrderCall</code> event rule does not define any state changes of
+  affected objects, but only the resource-dependent scheduling of a
+  <code>TakeOrder</code> activity, which is coded with the following OESjs
+  statement: </p><pre>OrderCall.<b>successorActivity</b> = "TakeOrder";</pre><h5>2
+  The <code>TakeOrder</code> Waiting Timeout event rule</h5><figure><img
+  alt="???" src="../img/Pizzeria-TakeOrder-WaitingTimeOut_RDM.svg"
+  width="100" /></figure><p>The <code>TakeOrder</code> Waiting Timeout event
+  rule only schedules the immediate occurrence of a <code>LostOrder</code>
+  event, which is coded with the following OESjs event routine within the
+  <code>TakeOrder</code> activity class:</p><pre><b>onWaitingTimeout</b>() {
+  var followupEvents=[];
+  followupEvents.push( new LostOrder());
+  return followupEvents;
+}</pre><h5>3 The <code>TakeOrder</code> event rule</h5><p>Since activities are
+  composite events, we also have event rules for them. These rules are
+  triggered when an activity completes, that is, by the corresponding activity
+  end events.</p><figure><img alt="???"
+  src="../img/Pizzeria-TakeOrder_RDM.svg" width="230" /></figure><p>The
+  <code>TakeOrder</code> event rule only takes care of the resource-dependent
+  scheduling of a <code>MakePizza</code> activity, which is coded with the
+  following OESjs statement:</p><pre>TakeOrder.<b>successorActivity</b> = "MakePizza";</pre><h5>4
+  The <code>MakePizza</code> event rule</h5><figure><img alt="???"
+  src="../img/Pizzeria-MakePizza_RDM.svg" width="230" /></figure><p>The
+  <code>MakePizza</code> event rule only takes care of the resource-dependent
+  scheduling of a <code>DeliverPizza</code> activity, which is coded with the
+  following OESjs statement:</p><pre>MakePizza.<b>successorActivity</b> = "DeliverPizza";</pre></details></body>
+</html>

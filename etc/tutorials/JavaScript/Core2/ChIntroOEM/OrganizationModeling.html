@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Organization Modeling Concepts </title>
+  </head>
+
+  <body><p>The activities of business processes are performed by human
+  resources holding certain <em>organizational positions</em> and certain
+  playing certain organizational roles within an organization or
+  organizational unit. It should, therefore, not come as a surprise that
+  <em>Activity-Based Discrete Event Simulation (ADES)</em> modeling requires
+  to consider a number of organization modeling concepts. In particular, the
+  concept of <em>resource roles</em> and the related concept of
+  <em>organizational roles</em> are paramount to ADES modeling.</p><p>As
+  already shown in the previous sections, many resource management concepts,
+  such as <em>resource roles</em> and <em>resource pools</em>, can be captured
+  in information modeling in the form of categorized ("stereotyped") UML class
+  modeling elements (such as «rr» and «rp») leading to an extension of UML
+  Class Diagrams, called <abbr style="Object-Event">OE</abbr> Class Diagrams.
+  We show how further organization modeling concepts can be captured in this
+  way, </p><h4>Refining Object Types to Resource Types</h4><p>For all «object
+  type» classes of an <abbr style="Object-Event">OE</abbr> class model that
+  are the range of a resource role, their «object type» category can be
+  replaced with a «resource type» category, as in the following
+  example:</p><h4>Refining Resource Roles to Performer Roles</h4><p>For each
+  activity type, at least one of its resource roles is a performer role, so an
+  <abbr style="Object-Event">OE</abbr> class model can be refined by replacing
+  their <i>resource role</i> designation «rr» with the <i>performer role</i>
+  designation «pr», as in the following example:</p><h4>Refining Resource
+  Types to Performer Types</h4><p>Whenever a «resource type» class of an <abbr
+  style="Object-Event">OE</abbr> class model is the range of a performer role,
+  their «resource type» category can be replaced with a «performer type»
+  category, as in the following example:</p><h4>Refining Performer Types to
+  Organizational Positions</h4><p>An <em>organizational position</em> is
+  defined by a name and a set of performer types representing the
+  responsibilities of the position holders. Recall that a performer is a
+  special type of resource object required for performing an activity. For
+  instance, in a medical department, the organizational position <i>Nurse</i>
+  may be defined by the set of performer types <i>Guide</i> and
+  <i>ExaminationAssistant</i>, where a <i>Guide</i> is required for guiding a
+  patient to an examination room and an <i>ExaminationAssistant</i> is
+  required for assisting a doctor in a medical
+  examination.</p><p>Computationally, an <em>organizational position</em> is
+  an object type that is a subtype of one or more performer types, implying
+  that its instances (position holders) are resources that can be chosen for
+  performing the corresponding activities.</p><p>For instance, the
+  organizational position <i>Nurse</i> is a subtype of the performer type
+  <i>Guide</i> and of the performer type <i>ExaminationAssistant</i>, with the
+  meaning that nurses play both the role of guides and the role of examination
+  assistants.</p><p>In simple cases, an organizational position is defined by
+  just one performer type. In such a case, the organizational position is
+  identified with the performer type</p><p>In Activity-Based Discrete Event
+  Simulation, each organizational position defines a resource pool (or maybe
+  better: performer pool) that includes all employees holding that
+  position.</p><p>leading to the following refined version of the medical
+  department model discussed in the previous sections:</p><figure><div><img
+  alt="???" src="../img/MedDep_CIM2b.svg" width="500" /></div></figure></body>
+</html>

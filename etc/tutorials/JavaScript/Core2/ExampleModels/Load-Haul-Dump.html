@@ -21,13 +21,13 @@
   operation" in the book <a
   href="https://www.anylogic.com/resources/books/the-art-of-process-centric-modeling-with-anylogic/">The
   Art of Process-Centric Modeling with AnyLogic</a> by Arash
-  Mahdavi.</p></blockquote><details><summary>Conceptual Model</summary><p>A
-  haul service company has resource pools for dump trucks and wheel loaders.
-  While the activities <em>go (back) to loading site</em>, <em>haul</em>,
-  <em>dump</em> and <em>go home</em> just require a <em>truck</em> (or a
-  <em>wheel loader</em>) as a resource, <em>load</em> activities require both
-  a <em>truck</em> and a <em>wheel
-  loader</em>.</p><details><summary>Conceptual Information
+  Mahdavi.</p></blockquote><details open="open"><summary>Conceptual
+  Model</summary><p>A haul service company has resource pools for dump trucks
+  and wheel loaders. While the activities <em>go (back) to loading site</em>,
+  <em>haul</em>, <em>dump</em> and <em>go home</em> just require a
+  <em>truck</em> (or a <em>wheel loader</em>) as a resource, <em>load</em>
+  activities require both a <em>truck</em> and a <em>wheel
+  loader</em>.</p><details open="open"><summary>Conceptual Information
   Model</summary><p>The potentially relevant object types are:</p><ol>
       <li>haul service company,</li>
 
@@ -57,7 +57,7 @@
   below.</p><figure><figcaption>A conceptual <abbr
   title="Object Event">OE</abbr> class model describing object, event and
   activity types.</figcaption><img alt="???" src="../img/LoadHaulDump_CIM.svg"
-  width="500" /></figure><p>Notice that the association end annotations «rr»
+  width="450" /></figure><p>Notice that the association end annotations «rr»
   and «rp» denote <em>resource roles</em> and <em>resource pools</em>. A haul
   service company has resource pools for trucks and wheel loaders. The
   activity types <em>haul</em>, <em>dump</em> and <em>go back to loading
@@ -70,12 +70,11 @@
   resource role <em>truck</em> and a resource role <em>wheel loaders</em> for
   assigning at least one and at most two wheel loaders to any <em>load</em>
   activity (as indicated by the multiplicity "1..2" at the «rr» association
-  end at the class <em>wheel
-  loaders</em>).</p></details><details><summary>Conceptual Process
-  Model</summary><p>The involved types of events and activities can be related
-  with each other via <em>resource-dependent activity start arrows</em> and
-  <em>event scheduling arrows</em>, as shown in the following DPMN process
-  diagram:</p><figure><img
+  end at the class <em>wheel loaders</em>).</p></details><details
+  open="open"><summary>Conceptual Process Model</summary><p>The involved types
+  of events and activities can be related with each other via
+  <em>resource-dependent activity start arrows</em> and <em>event scheduling
+  arrows</em>, as shown in the following DPMN process diagram:</p><figure><img
   alt="A DPMN diagram showing a conceptual process model"
   src="../img/LoadHaulDump_CPMa.svg" width="600" /></figure><p>Notice that
   there are three types of arrows in this DPMN diagram:</p><ol>
@@ -123,23 +122,23 @@
   truck). For avoiding this uneconomic behavior, a second decision if the job
   has been done needs to be taken after the go back activity. In addition, the
   model has to describe that wheel loaders also go home when their job has
-  been done. This is shown in the following refined
-  model:</p><figure><figcaption>A refined conceptual process
-  model.</figcaption><img alt="???" src="../img/LoadHaulDump_CPMb.svg"
-  width="650" /></figure></details></details><details><summary>Simulation
-  Design</summary><p>In our simulation design, we consider only one particular
-  haul service company, which does not have to be modeled as an explicit
-  object. Also, we abstract away from the fact that also wheel loaders have to
-  go to, and return from, the loading site by assuming that they are already
-  at the site when the dump trucks arrive.</p><details><summary>Information
-  Design Model</summary> <p>In the information design model, we need to define
-  a <i>status</i> attribute for all resource object types, such as
-  <i>Truck</i> and <i>WheelLoader</i>, and a duration function, typically
-  representing a random variable, for each activity
-  type:</p><figure><figcaption>An information design model defining object,
-  event and activity types.</figcaption><img alt="???"
-  src="../img/LoadHaulDump_IDM.svg" width="600" /></figure><p>Notice how
-  functions representing random variables, like the <code>duration</code>
+  been done. This is shown in the following refined model:</p><figure><img
+  alt="???" src="../img/LoadHaulDump_CPMb.svg" width="650" /><figcaption>A
+  refined conceptual process
+  model.</figcaption></figure></details></details><details
+  open="open"><summary>Simulation Design</summary><p>In our simulation design,
+  we consider only one particular haul service company, which does not have to
+  be modeled as an explicit object. Also, we abstract away from the fact that
+  also wheel loaders have to go to, and return from, the loading site by
+  assuming that they are already at the site when the dump trucks
+  arrive.</p><details open="open"><summary>Information Design Model</summary>
+  <p>In the information design model, we need to define a <i>status</i>
+  attribute for all resource object types, such as <i>Truck</i> and
+  <i>WheelLoader</i>, and a duration function, typically representing a random
+  variable, for each activity type:</p><figure><figcaption>An information
+  design model defining object, event and activity types.</figcaption><img
+  alt="???" src="../img/LoadHaulDump_IDM.svg" width="500" /></figure><p>Notice
+  how functions representing random variables, like the <code>duration</code>
   function of all activity types, are marked with the keyword (or UML
   'stereotype') «rv» standing for "random variable". These random variable
   functions sample from a probability distribution function (PDF), which is

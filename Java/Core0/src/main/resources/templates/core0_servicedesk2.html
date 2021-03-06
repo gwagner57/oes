@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>OES Core Simulation Examples</title>
+<meta name="viewport" content="width=device-width, initial-scale = 1.0" />
+<meta name="description"
+	content="Simulation examples for OES Core simulators" />
+<style>
+p.description {
+	font-size: smaller;
+}
+</style>
+</head>
+<body>
+
+	<main>
+		<h1>Service Desk Simulation</h1>
+		<p th:text="${expInfo}"></p>
+		<table>
+			<thead>
+				<tr>
+					<th>Key</th>
+					<th>Value</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="entry : ${stat.getExperiments()}">
+					<td th:text="${entry.key}"></td>
+					<td th:text="${entry.value}"></td>
+				</tr>
+				<tr th:each="entry : ${stat.getSumStat()}">
+					<td th:text="${entry.key}"></td>
+					<td th:text="${entry.value}"></td>
+				</tr>
+			</tbody>
+		</table>
+		<p id="execInfo"></p>
+	</main>
+	<footer>
+		<p>
+			© 2021 G. Wagner (<a
+				href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>),
+			Brandenburg University of Technology, Germany
+		</p>
+	</footer>
+</body>
+</html>

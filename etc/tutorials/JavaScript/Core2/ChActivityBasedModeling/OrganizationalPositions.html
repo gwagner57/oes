@@ -6,8 +6,29 @@
     <title>Organizational Positions and Resource Pools</title>
   </head>
 
-  <body><h4>Resource Pools Assigned to Multiple Activity Types</h4><p>When a
-  resource pool represents an organizational position charged with playing
-  <i>n</i> performer roles, it is used by all <i>n</i> corresponding activity
-  types.</p></body>
+  <body><p>Since a business process happens in the context of an organization
+  (as its owner), it is natural to consider the concept of organizational
+  positions. </p><p>Any <em>performer role</em> of an activity type has a
+  <em>performer type</em> as its range. For instance, in the following <abbr
+  title="Object Event">OE</abbr> class design model, the (implicitly named)
+  performer role <i>orderTaker</i> of the activity type <i>TakeOrder</i> has
+  the performer type <i>OrderTaker</i> as its range. Likewise the object type
+  <i>PizzaMaker</i> is a performer type.</p><p>Each performer type corresponds
+  to an organizational position. For instance, in the following <abbr
+  title="Object Event">OE</abbr> class model, both <i>OrderTaker</i> and
+  <i>PizzaMaker</i> are organizational positions, for which an organization
+  hires a number of human resources, forming corresponding resource pools
+  (called <i>orderTakers</i> and <i>pizzaMakers</i>). These resource pools
+  correspond to the direct populations of the two organizational
+  positions.</p><figure><img
+  alt="conceptual information model describing object, event and activity types"
+  src="../img/Pizzeria-AlternativeResourceSubtyping_IDM.svg"
+  width="450" /></figure><p>An organizational position may subsume more than
+  one performer role. In the model above, the organizational position
+  <i>PizzaMaker</i> is an alternative resource subtype of the organizational
+  position <i>OrderTaker</i>, as indicated by the generalization arrow of
+  category </p><h4>Resource Pools Assigned to Multiple Activity
+  Types</h4><p>When a resource pool represents an organizational position
+  charged with playing <i>n</i> performer roles, it is used by all <i>n</i>
+  corresponding activity types.</p></body>
 </html>

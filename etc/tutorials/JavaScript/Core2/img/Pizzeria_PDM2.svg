@@ -134,12 +134,12 @@
 			</g>
 			<g id="shape7-15" v:mID="7" v:groupContext="shape">
 				<title>Transitions</title>
-				<desc>duration=U(1,4) wtmout=DU(3,6)</desc>
+				<desc>wtmout=DU(3,6) duration=U(1,4)</desc>
 				<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
 				<v:textRect cx="32.3494" cy="136.744" width="64.7" height="27.2035"/>
 				<rect x="0" y="123.142" width="64.6988" height="27.2035" class="st5"/>
-				<text x="4" y="134.34" class="st2" v:langID="1031"><v:paragraph/><v:tabList/>duration=U(1,4)<v:newlineChar/><tspan
-							x="4" dy="1.2em" class="st6">wtmout</tspan>=DU(3,6)</text>			</g>
+				<text x="4" y="134.34" class="st2" v:langID="1031"><v:paragraph/><v:tabList/>wtmout=DU(3,6)<v:newlineChar/><tspan
+							x="4" dy="1.2em" class="st6">duration</tspan>=U(1,4)</text>			</g>
 			<g id="shape8-19" v:mID="8" v:groupContext="shape" transform="translate(5.34941,-27.2035)">
 				<title>Name</title>
 				<desc>:TakeOrder</desc>
