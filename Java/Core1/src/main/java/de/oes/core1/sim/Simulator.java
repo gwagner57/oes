@@ -215,11 +215,11 @@ public class Simulator {
 	}
 	
 	
-	public void runExperiment(boolean debug) {
+	public ExperimentsStatisticsDTO runExperiment(boolean debug) {
 		eXPERIMENTtYPE exp = this.getExperimentType();
 		if (exp.getSeeds() != null && exp.getSeeds().length < exp.getNmrOfReplications()) {
 		    System.err.println("Not enough seeds defined for" + exp.getNmrOfReplications() + "replications");
-		    return;
+		    return null;
 		}
 		this.initializeSimulator();
 		if (exp.isStoreExpResults()) {
@@ -230,8 +230,8 @@ public class Simulator {
 					new Date());
 			eXPERIMENTrUNDao.merge(expRun);
 		}
-		if(exp.getParameterDefs() != null) runParVarExperiment(exp, debug);
-		else runSimpleExperiment(exp, debug);
+		if(exp.getParameterDefs() != null) return runParVarExperiment(exp, debug);
+		else return runSimpleExperiment(exp, debug);
 	}
 	
 	/*******************************************************
@@ -273,8 +273,6 @@ public class Simulator {
 						 this.stat));
 		     }
 		}
-		
-		
 	    
 		// define exp.summaryStat to be a map for the summary statistics
 		HashMap<String, Map<String, Number>> sumStat = new HashMap <String, Map<String, Number>>();
@@ -294,8 +292,10 @@ public class Simulator {
 		return dto;
 	}
 	
-	public void runParVarExperiment(eXPERIMENTtYPE exp, boolean debug) {
+	public ExperimentsStatisticsDTO runParVarExperiment(eXPERIMENTtYPE exp, boolean debug) {
+		ExperimentsStatisticsDTO dto = new ExperimentsStatisticsDTO();
 		final int N = exp.getParameterDefs().size();
+		Map <Number, Map<String, Number>> experimenStats = new HashMap<Number, Map<String, Number>>();
 		Map<String, Number> expParSlots = new HashMap<String, Number>();
 		Set<Set<Number>> valueSets = new HashSet<Set<Number>>();
 		// create a list of value sets, one set for each parameter
@@ -368,7 +368,25 @@ public class Simulator {
 				n = n.doubleValue() / exp.getNmrOfReplications();
 				exp.getScenarios().get(i).getStat().replace(varName, n);
 			}
+			experimenStats.put(i, new HashMap<String, Number>(this.getStat()));
 		}
+		
+		// define exp.summaryStat to be a map for the summary statistics
+		HashMap<String, Map<String, Number>> sumStat = new HashMap <String, Map<String, Number>>();
+		for (Entry<String, Number[]> var : exp.getReplicStat().entrySet()) {
+			System.out.println("-----------------" + var.getKey() + "-----------------");
+			Map <String, Number> mathStats = new HashMap<String, Number>();
+			for (Entry<String, Function<Number[], Number>> stat : MathLib.summary.entrySet()) {
+				Number calculatedStatValue = stat.getValue().apply(var.getValue());
+				mathStats.put(stat.getKey(), calculatedStatValue);
+				System.out.println(stat.getKey() + " : " + calculatedStatValue);
+			}
+			sumStat.put(var.getKey(), mathStats); // Exmpl: "queueLength" -> { {"Min":0}, {"Max":100}, {...} }
+		}
+		
+		dto.setSumStat(sumStat);
+		dto.setExperiments(experimenStats);
+		return dto;
 	}
 	
 	static class oes {

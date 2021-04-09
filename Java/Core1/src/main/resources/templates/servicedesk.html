@@ -18,7 +18,7 @@ p.description {
 	<main>
 		<h1>Service Desk Simulation</h1>
 		<p th:text="${expInfo}"></p>
-		<table>
+		<table th:if="${type} == 1">
 			<thead>
 				<tr>
 					<th>Key</th>
@@ -36,7 +36,20 @@ p.description {
 				</tr>
 			</tbody>
 		</table>
-		<p id="execInfo"></p>
+		<table th:if="${type} == 0"> 
+			<thead>
+				<tr>
+					<th>Key</th>
+					<th>Value</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="entry : ${stat.entrySet()}">
+					<td th:text="${entry.key}"></td>
+					<td th:text="${entry.value}"></td>
+				</tr>
+			</tbody>
+		</table>
 	</main>
 	<footer>
 		<p>

@@ -1,17 +1,18 @@
 package de.oes.core1;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import de.oes.core1.endpoint.activity.RunServiceDeskSimulation;
+import de.oes.core1.endpoint.ui.SimulationSettingsDTO;
 import de.oes.core1.lib.MathLib;
 import de.oes.core1.servicedesk.Customer;
 import de.oes.core1.servicedesk.CustomerArrival;
@@ -29,6 +30,68 @@ public class ServiceDeskTest {
 	
 	@Autowired
 	private  AutowireCapableBeanFactory autowireCapableBeanFactory;
+	
+	@Autowired
+	private RunServiceDeskSimulation sim;
+	
+	@Test
+	public void testSuccess() throws Exception {
+		SimulationSettingsDTO dto = new SimulationSettingsDTO();
+		dto.setInit(0);
+		dto.setType(1);
+		dto.setSimulationLog(true);
+		org.springframework.ui.Model m = new org.springframework.ui.Model() {
+			
+			@Override
+			public org.springframework.ui.Model mergeAttributes(Map<String, ?> attributes) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public Object getAttribute(String attributeName) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public boolean containsAttribute(String attributeName) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public Map<String, Object> asMap() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public org.springframework.ui.Model addAttribute(String attributeName, Object attributeValue) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public org.springframework.ui.Model addAttribute(Object attributeValue) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public org.springframework.ui.Model addAllAttributes(Map<String, ?> attributes) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public org.springframework.ui.Model addAllAttributes(Collection<?> attributeValues) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		};
+		sim.run(dto, m);
+	}
 	
 	@Test
 	public void testSuccessExperiment() throws Exception {
@@ -120,7 +183,7 @@ public class ServiceDeskTest {
 		"Simple Experiment with 10 replications, each running for "  + scenario.getDurationInSimTime() + " " + model.getTimeUnit(),
 		10, // nmrOfReplications
 		null, // parameterDef
-		Arrays.array(123, 234, 345, 456, 567, 678, 789, 890, 901, 1012) // seeds
+		new Integer[] {123, 234, 345, 456, 567, 678, 789, 890, 901, 1012} // seeds
 		);
 		expType.setStoreExpResults(true);
 		
@@ -139,6 +202,5 @@ public class ServiceDeskTest {
 		//experiment
 		autowireCapableBeanFactory.autowireBean(sim);
 		sim.runExperiment(true);
-		
 	}
 }
