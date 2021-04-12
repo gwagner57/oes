@@ -168,6 +168,7 @@ public class Simulator {
 	 */
 	public void runScenario(boolean debug) {
 		final long startTime = new Date().getTime();
+		SimulatorUI.clearLogs();
 		// Simulation Loop
 		while (this.time < this.scenario.getDurationInSimTime() &&
 				this.step < this.scenario.getDurationInSimSteps() &&
@@ -189,7 +190,8 @@ public class Simulator {
 		      // test if e is an exogenous event
 		      if (e instanceof ExogenousEvent) {
 		        // create and schedule next exogenous events
-		        this.FEL.add(((ExogenousEvent)e).createNextEvent());
+		        eVENT ne = ((ExogenousEvent) e).createNextEvent();
+		        if(ne != null) this.FEL.add(ne);
 		      }
 		    }
 		    if (this.timeIncrement == null && this.FEL.isEmpty()) {

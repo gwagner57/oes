@@ -23,7 +23,7 @@ public abstract class oBJECT {
 		super();
 		this.name = name;
 		this.sim = sim;
-		this.id = sim.getScenario().getIdCounter() + 1;
-		this.sim.getObjects().put(this.id, this);
+		this.id = sim.getScenario().incrementIdCounter();
+		this.sim.getObjects().put(this.id, this); // TODO: different types
 	}
 }

@@ -2,7 +2,6 @@ package de.oes.core1.sim;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import lombok.Getter;
@@ -23,4 +22,9 @@ public class Scenario {
 	private Map<String,Number> stat;
 	private Consumer<Simulator> setupInitialState;
 	private String title;
+	
+	public Integer incrementIdCounter() {
+		this.idCounter++;
+		return idCounter;
+	}
 }

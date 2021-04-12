@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+import de.oes.core1.lib.MathLib;
 import de.oes.core1.sim.Simulator;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,9 +25,9 @@ public abstract class eVENT {
 		if(!Objects.isNull(occTime)) {
 			this.occTime = occTime;
 		} else if(!Objects.isNull(delay)) {
-			this.occTime = sim.getTime().doubleValue() + delay.doubleValue();
+			this.occTime = MathLib.round(sim.getTime().doubleValue() + delay.doubleValue());
 		} else {
-			this.occTime = sim.getTime() + sim.getNextMomentDeltaT();
+			this.occTime =  MathLib.round(sim.getTime() + sim.getNextMomentDeltaT());
 		}
 	}
 	

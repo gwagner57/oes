@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.oes.core1.foundations.ExogenousEvent;
 import de.oes.core1.foundations.eVENT;
+import de.oes.core1.lib.MathLib;
 import de.oes.core1.lib.Rand;
 import de.oes.core1.sim.Simulator;
 import lombok.Getter;
@@ -13,19 +14,19 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PartArrival extends ExogenousEvent{
+public class PartArrival extends ExogenousEvent {
 	private WorkStation workStation;
 	private static int counter = 1;
 	private static Long maxNmrOfEvents;
 	
-	public PartArrival(Simulator sim, Long occTime, Long delay, WorkStation workStation) {
+	public PartArrival(Simulator sim, Number occTime, Number delay, WorkStation workStation) {
 		super(sim, occTime, delay);
 		this.workStation = workStation;
 	}
 
 	@Override
-	public Long reccurence() {
-		return Rand.exponential(1.0/6.0).longValue();
+	public Double reccurence() {
+		return MathLib.round(Rand.exponential(1.0/6.0).doubleValue());
 	}
 
 	@Override
@@ -35,7 +36,7 @@ public class PartArrival extends ExogenousEvent{
 			return null;
 		} else {
 			PartArrival.counter++;
-			Long reccurence = this.reccurence();
+			Double reccurence = this.reccurence();
 			return new PartArrival(this.getSim(), null, reccurence, workStation);
 		}
 	}
@@ -49,7 +50,7 @@ public class PartArrival extends ExogenousEvent{
 		ws.incrementBufferLength();
 		// update statistics
 		sim.incrementStat("arrivedParts", 1);
-		if (ws.getInputBufferLength().longValue() > sim.getStat().get("arrivedParts").longValue()) {
+		if (ws.getInputBufferLength().longValue() > sim.getStat().get("maxQueueLength").longValue()) {
 		      sim.updateStatValue("maxQueueLength", ws.getInputBufferLength());
 	    }
 		if(ws.getStatus().equals("AVAILABLE")) {

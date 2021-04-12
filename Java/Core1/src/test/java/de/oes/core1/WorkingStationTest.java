@@ -1,13 +1,18 @@
 package de.oes.core1;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import de.oes.core1.endpoint.activity.RunWorkstationSimulation;
+import de.oes.core1.endpoint.ui.SimulationSettingsDTO;
 import de.oes.core1.sim.Model;
 import de.oes.core1.sim.Scenario;
 import de.oes.core1.sim.Simulator;
@@ -22,6 +27,85 @@ import de.oes.core1.workstation.WorkStation;
 @SpringBootTest
 public class WorkingStationTest {
 
+	@Autowired
+	private RunWorkstationSimulation workDesk;
+	
+	/**
+	* <pre>
+	* Description:
+	* 
+	* Prepare:
+	* 
+	* Mocks:
+	* 
+	* Test:
+	* 
+	* Check:
+	* 
+	* </pre>
+	* @throws Exception
+	*/
+	@Test
+	public void testSuccess() throws Exception {
+
+		//prepare
+
+		//mocks
+		SimulationSettingsDTO dto = SimulationSettingsDTO.builder().init(0).type(0).simulationLog(false).build();
+		org.springframework.ui.Model m = new org.springframework.ui.Model() {
+			
+			@Override
+			public org.springframework.ui.Model mergeAttributes(Map<String, ?> attributes) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public Object getAttribute(String attributeName) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public boolean containsAttribute(String attributeName) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public Map<String, Object> asMap() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public org.springframework.ui.Model addAttribute(String attributeName, Object attributeValue) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public org.springframework.ui.Model addAttribute(Object attributeValue) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public org.springframework.ui.Model addAllAttributes(Map<String, ?> attributes) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public org.springframework.ui.Model addAllAttributes(Collection<?> attributeValues) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		};
+		//test
+		workDesk.run(dto, m);
+
+	}
 	@Test
 	public void testSuccessExperiment() throws Exception {
 		//prepare

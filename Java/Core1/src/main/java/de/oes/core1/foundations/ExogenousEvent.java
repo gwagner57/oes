@@ -8,11 +8,11 @@ public abstract class ExogenousEvent extends eVENT {
 		super(sim);
 	}
 	
-	public ExogenousEvent(Simulator sim, Long occTime, Long delay) {
+	public ExogenousEvent(Simulator sim, Number occTime, Number delay) {
 		super(sim, occTime, delay);
 	}
 
-	public abstract Long reccurence();
+	public abstract Number reccurence();
 	
 	public abstract  eVENT createNextEvent();
 

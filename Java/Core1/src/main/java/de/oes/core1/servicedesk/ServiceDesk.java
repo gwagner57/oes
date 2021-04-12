@@ -3,6 +3,9 @@ package de.oes.core1.servicedesk;
 import java.util.LinkedList;
 
 import java.util.Queue;
+import java.util.stream.Collectors;
+
+import org.apache.tomcat.util.buf.StringUtils;
 
 import de.oes.core1.foundations.oBJECT;
 import de.oes.core1.lib.MathLib;
@@ -27,5 +30,17 @@ public class ServiceDesk extends oBJECT{
 	
 	public void pushCustomer(Customer c) {
 		this.waitingCustomers.add(c);
+	}
+	
+	@Override
+	public String toString() {
+		return "ServiceDesk-" + this.getId() + "{ queue: [" + 
+				StringUtils.join( // represent list of customers as comma separated list (string)
+						waitingCustomers. // list of all waiting customers
+						stream().
+						map(Customer::getId). //get only ID for representation
+						map(Object::toString). // Integer -> String
+						collect(Collectors.toList()), ',') // comma separated list
+				+ "]}";
 	}
 }

@@ -20,6 +20,7 @@ import de.oes.core1.servicedesk.ServiceDesk;
 import de.oes.core1.sim.Model;
 import de.oes.core1.sim.Scenario;
 import de.oes.core1.sim.Simulator;
+import de.oes.core1.sim.SimulatorUI;
 import de.oes.core1.sim.Time;
 import de.oes.core1.sim.TimeUnit;
 import de.oes.core1.sim.eXPERIMENTtYPE;
@@ -49,6 +50,7 @@ public class RunServiceDeskSimulation {
 		if(dto.getType() == 0) { // (0) Standalone scenario
 			runStandaloneScenario(sim, dto.isSimulationLog());
 			m.addAttribute("stat", sim.getStat());
+			if(dto.isSimulationLog()) m.addAttribute("logs", SimulatorUI.getLogs());
 		} else { // (1) Simple Experiment with 10 replications, each running for 1000 min.
 			eXPERIMENTtYPE expType = defineExperimentType(model, scenario);
 			ExperimentsStatisticsDTO resutlDTO = runExperiment(sim, expType, dto.isSimulationLog());

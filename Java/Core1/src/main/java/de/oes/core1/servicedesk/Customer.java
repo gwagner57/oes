@@ -15,4 +15,8 @@ public class Customer extends oBJECT{
 		this.arrivalTime = arrivalTime;
 	}
 
+	@Override
+	public String toString() {
+		return "Customer-" + this.getId() + "{ arrT: " + this.arrivalTime + "}";
+	}
 }

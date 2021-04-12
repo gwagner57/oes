@@ -28,7 +28,7 @@ public class CustomerArrival extends ExogenousEvent {
 		Simulator sim = this.getSim();
 		this.customer = new Customer(null, sim, this.getOccTime().longValue());
 		// push new customer to the queue
-		this.getServiceDesk().pushCustomer(this.customer);
+		this.serviceDesk.pushCustomer(this.customer);
 		// update statistics
 		sim.incrementStat("arrivedCustomers", 1);
 		
