@@ -16,14 +16,14 @@ sim.scenario.durationInSimTime = 300;
 sim.scenario.title = "Default scenario.";
 sim.scenario.description = "The default scenario has 2 order takers, 10 pizza makers, 5 ovens, and 20 delivery scooters.";
 sim.scenario.setupInitialState = function () {
-  const ot1 = new OrderTaker({id: 1, name:"ot1", status: oes.ResourceStatusEL.AVAILABLE}),
-      ot2 = new OrderTaker({id: 2, name:"ot2", status: oes.ResourceStatusEL.AVAILABLE}),
-      pm1 = new PizzaMaker({id: 11, name:"pm1", status: oes.ResourceStatusEL.AVAILABLE}),
-      pm2 = new PizzaMaker({id: 12, name:"pm2", status: oes.ResourceStatusEL.AVAILABLE}),
-      pm3 = new PizzaMaker({id: 13, name:"pm3", status: oes.ResourceStatusEL.AVAILABLE}),
-      pm4 = new PizzaMaker({id: 14, name:"pm4", status: oes.ResourceStatusEL.AVAILABLE}),
-      pm5 = new PizzaMaker({id: 15, name:"pm5", status: oes.ResourceStatusEL.AVAILABLE}),
-      pm6 = new PizzaMaker({id: 16, name:"pm6", status: oes.ResourceStatusEL.AVAILABLE});
+  const ot1 = new OrderTaker({id: 1, name:"ot1", status: rESOURCEsTATUS.AVAILABLE}),
+      ot2 = new OrderTaker({id: 2, name:"ot2", status: rESOURCEsTATUS.AVAILABLE}),
+      pm1 = new PizzaMaker({id: 11, name:"pm1", status: rESOURCEsTATUS.AVAILABLE}),
+      pm2 = new PizzaMaker({id: 12, name:"pm2", status: rESOURCEsTATUS.AVAILABLE}),
+      pm3 = new PizzaMaker({id: 13, name:"pm3", status: rESOURCEsTATUS.AVAILABLE}),
+      pm4 = new PizzaMaker({id: 14, name:"pm4", status: rESOURCEsTATUS.AVAILABLE}),
+      pm5 = new PizzaMaker({id: 15, name:"pm5", status: rESOURCEsTATUS.AVAILABLE}),
+      pm6 = new PizzaMaker({id: 16, name:"pm6", status: rESOURCEsTATUS.AVAILABLE});
   // Initialize the individual resource pools
   sim.resourcePools["orderTakers"].availResources.push( ot1, ot2);
   sim.resourcePools["pizzaMakers"].availResources.push( pm1,pm2,pm3,pm4,pm5,pm6);
@@ -45,14 +45,14 @@ sim.scenarios[1] = {
                  This means that when all order takers are busy and a new order call comes in,
                  an available pizza maker can take the call.</p>`,
   setupInitialState: function () {
-    const ot1 = new OrderTaker({id: 1, name:"ot1", status: oes.ResourceStatusEL.AVAILABLE}),
-        ot2 = new OrderTaker({id: 2, name:"ot2", status: oes.ResourceStatusEL.AVAILABLE}),
-        pm1 = new PizzaMaker({id: 11, name:"pm1", status: oes.ResourceStatusEL.AVAILABLE}),
-        pm2 = new PizzaMaker({id: 12, name:"pm2", status: oes.ResourceStatusEL.AVAILABLE}),
-        pm3 = new PizzaMaker({id: 13, name:"pm3", status: oes.ResourceStatusEL.AVAILABLE}),
-        pm4 = new PizzaMaker({id: 14, name:"pm4", status: oes.ResourceStatusEL.AVAILABLE}),
-        pm5 = new PizzaMaker({id: 15, name:"pm5", status: oes.ResourceStatusEL.AVAILABLE}),
-        pm6 = new PizzaMaker({id: 16, name:"pm6", status: oes.ResourceStatusEL.AVAILABLE});
+    const ot1 = new OrderTaker({id: 1, name:"ot1", status: rESOURCEsTATUS.AVAILABLE}),
+        ot2 = new OrderTaker({id: 2, name:"ot2", status: rESOURCEsTATUS.AVAILABLE}),
+        pm1 = new PizzaMaker({id: 11, name:"pm1", status: rESOURCEsTATUS.AVAILABLE}),
+        pm2 = new PizzaMaker({id: 12, name:"pm2", status: rESOURCEsTATUS.AVAILABLE}),
+        pm3 = new PizzaMaker({id: 13, name:"pm3", status: rESOURCEsTATUS.AVAILABLE}),
+        pm4 = new PizzaMaker({id: 14, name:"pm4", status: rESOURCEsTATUS.AVAILABLE}),
+        pm5 = new PizzaMaker({id: 15, name:"pm5", status: rESOURCEsTATUS.AVAILABLE}),
+        pm6 = new PizzaMaker({id: 16, name:"pm6", status: rESOURCEsTATUS.AVAILABLE});
     // Initialize the individual resource pools
     sim.resourcePools["orderTakers"].availResources.push( ot1, ot2);
     sim.resourcePools["pizzaMakers"].availResources.push( pm1,pm2,pm3,pm4,pm5,pm6);

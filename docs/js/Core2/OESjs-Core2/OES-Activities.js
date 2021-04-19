@@ -163,14 +163,21 @@ class aCTIVITYsTATE extends Set {
     return arr.toString();
   }
 }
-oes.ResourceStatusEL = new eNUMERATION("ResourceStatusEL",
-    ["available","busy","out of order"]);
+
+/****************************************************************************
+ "out of order": defective/broken.
+ "out of duty":  applies to human/performer resources only
+ "blocked":      applies to processing stations only, which may be blocked
+                 because the input buffer of their successor station is full.
+ ****************************************************************************/
+const rESOURCEsTATUS = new eNUMERATION("ResourceStatusEL",
+    ["available","busy","out of order","out of duty","blocked"]);
+
 /****************************************************************************
  A resource pool can take one of two forms:
- (1) a count pool abstracts away from individual resources and just maintains
- an "available" counter of the available resources of some type
- (2) an individual pool is a collection of individual resource objects
-
+   (1) a count pool abstracts away from individual resources and just maintains
+       an "available" counter of the available resources of some type
+   (2) an individual pool is a collection of individual resource objects
  For any performer role (defined in an activity type definition), an individual
  pool is defined with a (lower-cased and pluralized) name obtained from the
  role's range name if it's a position or, otherwise, from the closest position
@@ -191,8 +198,8 @@ class rESOURCEpOOL {
     this.dependentActivityTypes = [];
     if (Array.isArray( resources)) {
       for (let res of resources) {
-        if (res.status === oes.ResourceStatusEL.AVAILABLE) this.availResources.push( res);
-        else if (res.status === oes.ResourceStatusEL.BUSY) this.busyResources.push( res);
+        if (res.status === rESOURCEsTATUS.AVAILABLE) this.availResources.push( res);
+        else if (res.status === rESOURCEsTATUS.BUSY) this.busyResources.push( res);
       }
     }
   }
@@ -215,7 +222,7 @@ class rESOURCEpOOL {
     if (this.availResources) {  // individual pool
       let allocatedRes = [...this.availResources];
       for (const res of this.availResources) {
-        res.status = oes.ResourceStatusEL.BUSY;
+        res.status = rESOURCEsTATUS.BUSY;
         this.busyResources.push( res);
       }
       this.availResources.length = 0;
@@ -247,7 +254,7 @@ class rESOURCEpOOL {
       // remove the first card resources from availResources
       const allocatedRes = rP.availResources.splice( 0, card);
       for (const res of allocatedRes) {
-        res.status = oes.ResourceStatusEL.BUSY;
+        res.status = rESOURCEsTATUS.BUSY;
         rP.busyResources.push( res);
       }
       return allocatedRes;
@@ -271,7 +278,7 @@ at simulation step ${sim.step}!`, res.constructor.toString() );
           // remove resource from busyResources list
           rP.busyResources.splice( i, 1);
           // add resource to availResources list
-          res.status = oes.ResourceStatusEL.AVAILABLE;
+          res.status = rESOURCEsTATUS.AVAILABLE;
           rP.availResources.push( res);
         }
       }

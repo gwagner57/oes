@@ -669,7 +669,8 @@ var service1Duration = stream1.exponential( 0.5);
 var service2Duration = stream2.exponential( 1.5);</pre><blockquote
   class="role-warning"><p>Avoid using JavaScript's built-in
   <code>Math.random</code> in simulation code. Always use
-  <code>rand.uniform</code>, or one of the other probability distribution
+  <code>rand.uniform</code>, or one of the other sampling
   functions from the <kbd>rand.js</kbd> library described above, for
-  generating random numbers.</p></blockquote></section></body>
+  generating random numbers.</p><p>Otherwise, using a random seed does not 
+  guarantee reproducible simulation runs!</p></blockquote></section></body>
 </html>

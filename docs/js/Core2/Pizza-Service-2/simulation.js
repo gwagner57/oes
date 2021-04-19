@@ -14,7 +14,7 @@ sim.model.activityTypes = ["MakePizza"];
  ********************************************************/
 sim.scenario.durationInSimTime = 300;
 sim.scenario.setupInitialState = function () {
-  let ps = new PizzaService({id: 1, name:"ps", status: oes.ResourceStatusEL.AVAILABLE});
+  let ps = new PizzaService({id: 1, name:"ps", status: rESOURCEsTATUS.AVAILABLE});
   // Initialize the resource pool
   sim.resourcePools["pizzaServices"].availResources.push( ps);
   // Schedule initial events

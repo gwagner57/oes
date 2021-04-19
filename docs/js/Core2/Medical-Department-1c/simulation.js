@@ -16,9 +16,9 @@ sim.scenario.durationInSimTime = 1000;
 sim.scenario.idCounter = 11;  // start value of auto IDs
 // Initial State
 sim.scenario.setupInitialState = function () {
-  const d1 = new Doctor({id: 1, name:"d1", status: oes.ResourceStatusEL.AVAILABLE}),
-      d2 = new Doctor({id: 2, name:"d2", status: oes.ResourceStatusEL.AVAILABLE}),
-      d3 = new Doctor({id: 3, name:"d3", status: oes.ResourceStatusEL.AVAILABLE});
+  const d1 = new Doctor({id: 1, name:"d1", status: rESOURCEsTATUS.AVAILABLE}),
+      d2 = new Doctor({id: 2, name:"d2", status: rESOURCEsTATUS.AVAILABLE}),
+      d3 = new Doctor({id: 3, name:"d3", status: rESOURCEsTATUS.AVAILABLE});
   // Initialize the individual resource pool "doctors"
   sim.resourcePools["doctors"].clear();
   sim.resourcePools["doctors"].availResources.push( d1, d2, d3);

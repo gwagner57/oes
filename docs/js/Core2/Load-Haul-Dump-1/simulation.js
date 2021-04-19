@@ -18,12 +18,12 @@ sim.model.v.nmrOfLoads = 66;
  */
 sim.scenario.description = "The default scenario has 5 trucks (with IDs 1-5) and one wheel loader (with ID 11).";
 sim.scenario.setupInitialState = function () {
-  const t1 = new Truck({id: 1, name:"t1", status: oes.ResourceStatusEL.AVAILABLE}),
-      t2 = new Truck({id: 2, name:"t2", status: oes.ResourceStatusEL.AVAILABLE}),
-      t3 = new Truck({id: 3, name:"t3", status: oes.ResourceStatusEL.AVAILABLE}),
-      t4 = new Truck({id: 4, name:"t4", status: oes.ResourceStatusEL.AVAILABLE}),
-      t5 = new Truck({id: 5, name:"t5", status: oes.ResourceStatusEL.AVAILABLE}),
-      wl1 = new WheelLoader({id: 11, name:"wl1", status: oes.ResourceStatusEL.AVAILABLE});
+  const t1 = new Truck({id: 1, name:"t1", status: rESOURCEsTATUS.AVAILABLE}),
+      t2 = new Truck({id: 2, name:"t2", status: rESOURCEsTATUS.AVAILABLE}),
+      t3 = new Truck({id: 3, name:"t3", status: rESOURCEsTATUS.AVAILABLE}),
+      t4 = new Truck({id: 4, name:"t4", status: rESOURCEsTATUS.AVAILABLE}),
+      t5 = new Truck({id: 5, name:"t5", status: rESOURCEsTATUS.AVAILABLE}),
+      wl1 = new WheelLoader({id: 11, name:"wl1", status: rESOURCEsTATUS.AVAILABLE});
   // Initialize the individual resource pools
   sim.resourcePools["trucks"].availResources.push( t1, t2, t3, t4, t5);
   sim.resourcePools["wheelLoaders"].availResources.push( wl1);
@@ -39,13 +39,13 @@ sim.scenarios[1] = {
   description: `<p>Based on the default scenario (with 5 trucks and 1 wheel loader), this scenario  
                  has a second wheel loader. As a consequence, <i>Load</i> activities are performed twice as fast.</p>`,
   setupInitialState: function () {
-    const t1 = new Truck({id: 1, name:"t1", status: oes.ResourceStatusEL.AVAILABLE}),
-        t2 = new Truck({id: 2, name:"t2", status: oes.ResourceStatusEL.AVAILABLE}),
-        t3 = new Truck({id: 3, name:"t3", status: oes.ResourceStatusEL.AVAILABLE}),
-        t4 = new Truck({id: 4, name:"t4", status: oes.ResourceStatusEL.AVAILABLE}),
-        t5 = new Truck({id: 5, name:"t5", status: oes.ResourceStatusEL.AVAILABLE}),
-        wl1 = new WheelLoader({id: 11, name:"wl1", status: oes.ResourceStatusEL.AVAILABLE});
-        wl2 = new WheelLoader({id: 12, name:"wl2", status: oes.ResourceStatusEL.AVAILABLE});
+    const t1 = new Truck({id: 1, name:"t1", status: rESOURCEsTATUS.AVAILABLE}),
+        t2 = new Truck({id: 2, name:"t2", status: rESOURCEsTATUS.AVAILABLE}),
+        t3 = new Truck({id: 3, name:"t3", status: rESOURCEsTATUS.AVAILABLE}),
+        t4 = new Truck({id: 4, name:"t4", status: rESOURCEsTATUS.AVAILABLE}),
+        t5 = new Truck({id: 5, name:"t5", status: rESOURCEsTATUS.AVAILABLE}),
+        wl1 = new WheelLoader({id: 11, name:"wl1", status: rESOURCEsTATUS.AVAILABLE});
+        wl2 = new WheelLoader({id: 12, name:"wl2", status: rESOURCEsTATUS.AVAILABLE});
     // Initialize the individual resource pools
     sim.resourcePools["trucks"].availResources.push( t1, t2, t3, t4, t5);
     sim.resourcePools["wheelLoaders"].availResources.push( wl1, wl2);
