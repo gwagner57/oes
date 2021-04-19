@@ -57,7 +57,7 @@ Examination.<b>resourceRoles</b> = {
     "doctor": {<b>countPoolName</b>:"doctors", card:1}
 }</pre><p>The process resulting from <i>NewCase</i> events followed by
   <i>Examination</i> activities is modeled with a <em>Resource-Dependent
-  Activity Start</em> arrow: </p><figure style="display:flex"><div><img
+  Activity Scheduling</em> arrow: </p><figure style="display:flex"><div><img
   alt="process design model 1b" src="../img/MedDep_CPM1-PDM1b.svg"
   width="300" /></div></figure><p>In OESjs-Core2, this simple process model is
   coded with one line of code in the file <kbd>NewCase.js</kbd>:</p><pre>NewCase.<b>successorActivity</b> = "Examination";</pre></section><section><h4>2.2.2.
@@ -95,13 +95,22 @@ Examination.<b>resourceRoles</b> = {
   conceptual process model discussed in <a
   href="../ChIntroOEM/CM.html#sectExtendedConceptualModel"></a>:</p><figure><div><img
   src="../img/MedDep_CPM2-PDM1b.svg" width="400" /></div></figure><p>This
-  process design model with its two <em>Resource-Dependent Activity Start</em>
-  arrows is implemented with just two statements on top of the classes
-  <i>NewCase</i> and <i>WalkToRoom</i>:</p><pre>// Enqueue a new planned walk
+  process design model with its two <em>Resource-Dependent Activity
+  Scheduling</em> arrows is implemented with just two statements on top of the
+  classes <i>NewCase</i> and <i>WalkToRoom</i>:</p><pre>// Enqueue a new planned walk
 NewCase.successorActivity = "WalkToRoom";
 // Enqueue a new planned examination
 WalkToRoom.successorActivity = "Examination";</pre><p>You can <a
   href="https://gwagner57.github.io/oes/js/Core2/Medical-Department-2a/index.html"
   target="_top">run this Medical-Department-2a model</a> from the project's
-  GitHub website.</p></section></body>
+  GitHub website.</p></section><section><h4>Activities with Default
+  Durations</h4><p>When an activity type is defined without defining a
+  class-level <i>duration</i> function, the exponential PDF is used as a
+  built-in default random variable for setting the durations of activities of
+  that type according to the following settings:</p><pre>aCTIVITY.defaultMean = 1;
+aCTIVITY.defaultDuration = function () {
+  return rand.exponential( 1/aCTIVITY.defaultMean)
+};</pre><p>It is possible to overwrite these defaults, both the
+  <i>defaultMean</i> and the <i>defaultDuration</i> function, in a
+  <kbd>simulation.js</kbd> file. </p></section></body>
 </html>

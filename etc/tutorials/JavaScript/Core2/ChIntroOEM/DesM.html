@@ -113,7 +113,7 @@
   the event type <i>NewCase</i> and the activity type <i>Examination</i>, as
   shown on the left-hand side of the following class
   diagram.</p><figure><div><img alt="???" src="../img/MedDep_CIM1-IDM1b.svg"
-  width="650" /></div></figure><p>On the right-hand side bottom of this
+  width="550" /></div></figure><p>On the right-hand side bottom of this
   diagram, the resource role <i>doctor</i> and its count pool <i>doctors</i>,
   instantiating the <em>OES Core 2</em> library classes <i>ResourceRole</i>
   and <i>CountPool</i> (as a special type of <i>ResourcePool)</i>, are shown.
@@ -132,13 +132,13 @@
 Examination.<b>resourceRoles</b> = {
   "doctor": {card:1}
 }
-</pre><p>The generic class-level ("static") property
-  <i>Examination.plannedActivities</i> is automatically created by the
-  simulator. Likewise, the count pool "doctors" is automatically created and
-  assigned to the resource role definition map entry
-  <i>Examination.resourceRoles["doctor"]</i>. </p><p>In the
-  Medical-Department-1b <em>process design</em> model we make corresponding
-  simplifications as in the information design model above:</p><ol>
+</pre><p>The generic class-level ("static") property <i>Examination.tasks</i>
+  is automatically created by the simulator. Likewise, the count pool
+  "doctors" is automatically created and assigned to the resource role
+  definition map entry <i>Examination.resourceRoles["doctor"]</i>. </p><p>In
+  the Medical-Department-1b <em>process design</em> model we make
+  corresponding simplifications as in the information design model
+  above:</p><ol>
       <li>Leaving the process owner implicit, we drop the process owner
       rectangle <i>MedicalDepartment</i>.</li>
 
@@ -169,7 +169,7 @@ Examination.<b>resourceRoles</b> = {
   following way:</p><pre>NewCase.<b>successorActivity</b> = "Examination";</pre><p>The
   simulator interprets this <i>successorActivity</i> assignment when creating
   follow-up events for <i>NewCase</i> events by enqueuing a planned
-  examination activity in the following way </p><pre>Examination.<b>plannedActivities</b>.<b>enqueue</b>( new Examination())</pre></section><section><h5>The
+  examination activity in the following way </p><pre>Examination.<b>tasks</b>.<b>enqueue</b>( new Examination())</pre></section><section><h5>The
   Medical-Department-1c design model</h5><p>In the <a
   href="https://gwagner57.github.io/oes/js/Core2/Medical-Department-1c/index.html">Medical-Department-1c</a>
   design model, the resource pool <i>doctors</i> is modeled as an individual
@@ -188,7 +188,7 @@ Examination.<b>resourceRoles</b> = {
       pool.</li>
     </ol><p>The resulting information design model is shown in the following
   class diagram:</p><figure><div><img alt="???"
-  src="../img/MedDep_CIM1-IDM1c.svg" width="600" /></div></figure><p>On the
+  src="../img/MedDep_CIM1-IDM1c.svg" width="500" /></div></figure><p>On the
   right-hand side bottom of this diagram, the resource role <i>doctor</i> and
   its individual pool <i>doctors</i>, instantiating the <em>OES Core 2</em>
   library classes <i>ResourceRole</i> and <i>IndividualPool</i> (as a special
@@ -201,7 +201,7 @@ Examination.<b>resourceRoles</b> = {
   width="300" /></div></figure></section></section><section
   id="sectDesignModel4ExtCM"><h4>1.2.2. A design model based on the extended
   conceptual model</h4><p>In the <a
-  href="https://gwagner57.github.io/oes/js/Core2/Medical-Department-2/index.html">Medical-Department-2</a>
+  href="https://gwagner57.github.io/oes/js/Core2/Medical-Department-2a/index.html">Medical-Department-2a</a>
   design model, we model two activity types: <i>WalkToRoom</i> activities
   involve a <i>room</i> and are performed by a <i>nurse</i>, while
   <i>Examination</i> activities involve a <i>room</i> and are performed by a
@@ -210,13 +210,12 @@ Examination.<b>resourceRoles</b> = {
   which is used by both <i>WalkToRoom</i> and <i>Examination</i> activities,
   is modeled as a count pool. </p><p>The resulting information design model is
   shown in the following class diagram:</p><figure><div><img alt="???"
-  src="../img/MedDep_CIM2-IDM1.svg" width="750" /></div></figure><p>Notice
-  that the generic class-level ("static") properties
-  <i>WalkToRoom.plannedActivities</i> and <i>Examination.plannedActivities</i>
-  don't have to be defined when coding the two activity types since they are
-  automatically created by the simulator.</p>In the process design model,
-  again, we leave the process owner implicit, not showing a container
-  rectangle for <i>MedicalDepartment:</i><figure><div><img
+  src="../img/MedDep_CIM2-IDM1.svg" width="700" /></div></figure><p>Notice
+  that the generic class-level ("static") properties <i>WalkToRoom.tasks</i>
+  and <i>Examination.tasks</i> don't have to be defined when coding the two
+  activity types since they are automatically created by the simulator.</p>In
+  the process design model, again, we leave the process owner implicit, not
+  showing a container rectangle for <i>MedicalDepartment:</i><figure><div><img
   src="../img/MedDep_CPM2-PDM1a.svg" width="400" /></div></figure><p>However,
   it is an option to show the performer roles with the help of corresponding
   Lanes: </p><figure><div><img src="../img/MedDep_CPM2-PDM1b.svg"
@@ -224,6 +223,6 @@ Examination.<b>resourceRoles</b> = {
   <em>Resource-Dependent Activity Start</em> arrows between <i>NewCase</i> and
   <i>WalkToRoom</i>, as well as between <i>WalkToRoom</i> and
   <i>Examination</i> are coded as</p><pre>NewCase.<b>successorActivity</b> = "WalkToRoom";</pre><p>in
-  <kbd>NewCase.js</kbd>, and as </p><pre>WalkToRoom.<b>successorActivity</b> = "Examination";</pre><p>in
+  the file <kbd>NewCase.js</kbd>, and as </p><pre>WalkToRoom.<b>successorActivity</b> = "Examination";</pre><p>in
   <kbd>WalkToRoom.js</kbd>.</p></section></body>
 </html>
