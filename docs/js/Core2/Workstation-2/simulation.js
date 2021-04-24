@@ -15,7 +15,7 @@ sim.scenario.idCounter = 11;  // start value of auto IDs
 // Initial State
 sim.scenario.setupInitialState = function () {
   // Create initial objects
-  var ws = new WorkStation({id: 1, name:"ws", status: oes.ResourceStatusEL.AVAILABLE});
+  var ws = new WorkStation({id: 1, name:"ws", status: rESOURCEsTATUS.AVAILABLE});
   // Initialize the resource pool
   sim.resourcePools["workStations"].availResources.push( ws);
   // Schedule initial events
@@ -31,7 +31,7 @@ sim.scenarios[1] = {
   idCounter: 11,
   setupInitialState: function () {
     // Create initial objects
-    var ws1 = new WorkStation({id: 1, name:"ws", status: oes.ResourceStatusEL.AVAILABLE});
+    var ws1 = new WorkStation({id: 1, name:"ws", status: rESOURCEsTATUS.AVAILABLE});
     // Initialize the resource pool
     sim.resourcePools["workStations"].availResources.push( ws1);
     // Schedule initial events

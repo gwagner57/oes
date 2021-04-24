@@ -93,11 +93,11 @@
   applying the rule.</p><ol>
       <li><p>When a new patient arrives:</p><ul>
           <li>if a doctor is available, then she is allocated to the
-          examination of that patient; otherwise, a new planned examination is
-          queued up;</li>
+          examination of that patient; otherwise, a new examination task
+          (involving the newly arrived patient) is enqueued;</li>
 
-          <li>if a doctor has been allocated, then start an examination of the
-          patient.</li>
+          <li>if a doctor has been allocated, then the examination of the
+          newly arrived patient is starts.</li>
         </ul></li>
 
       <li><p>When an examination is completed by a doctor:</p><ul>
@@ -108,9 +108,9 @@
           immediately.</li>
         </ul></li>
     </ol><p>We can simplify the model by using a <em>Resource-Dependent
-  Activity Start</em> arrow between the <em>patient arrivals</em> event type
-  circle and the <em>examinations</em> activity type rectangle, as shown in
-  the following DPMN process diagram: </p><figure><div><img alt="???"
+  Activity Scheduling</em> arrow between the <em>patient arrivals</em> event
+  type circle and the <em>examinations</em> activity type rectangle, as shown
+  in the following DPMN process diagram: </p><figure><div><img alt="???"
   src="../img/MedDep_CPM1a.svg"
   width="300" /></div></figure></section><section
   id="sectExtendedConceptualModel"><h4>An extended conceptual model
@@ -239,17 +239,18 @@
           the patient to the room.</li>
         </ul></li>
     </ol><p>Again, we can simplify the model by using <em>Resource-Dependent
-  Activity Start</em> arrows resulting in an <i>Activity Network</i> model, as
-  shown in the following DPMN process diagram:</p><figure><div><img alt="???"
-  src="../img/MedDep_CPM2a.svg" width="400" /></div></figure><p>We can display
-  the two performer roles <em>doctor</em> and <em>nurse</em> with the help of
-  two corresponding swimlanes shown within the process owner
+  Activity Scheduling</em> arrows resulting in an <i>Activity Network</i>
+  model, as shown in the following DPMN process diagram:</p><figure><div><img
+  alt="???" src="../img/MedDep_CPM2a.svg" width="400" /></div></figure><p>We
+  can display the two performer roles <em>doctor</em> and <em>nurse</em> with
+  the help of two corresponding swimlanes shown within the process
   rectangle:</p><figure><div><img alt="???" src="../img/MedDep_CPM2b.svg"
-  width="300" /></div></figure><p>Notice that the use of swimlanes (marking
-  disjoint subrectangles) is a convenient visual syntax for displaying the
-  performer roles when the different performers have a non-overlapping set of
-  activity types. However, when activities of a certain type are performed
-  jointly by more than one performer (e.g., when a doctor and a nurse jointly
-  perform an examination), a different visual syntax needs to be
-  introduced.</p></section></body>
+  width="320" /></div></figure><blockquote class="role-attention"><p>Notice
+  that the use of swimlanes (marking disjoint subrectangles) is a convenient
+  visual syntax for displaying the performer roles when the different
+  performers have a non-overlapping set of activity types. However, when
+  activities of a certain type are performed jointly by more than one
+  performer (e.g., when a doctor and a nurse jointly perform an examination),
+  a different visual syntax needs to be
+  introduced.</p></blockquote></section></body>
 </html>

@@ -14,21 +14,22 @@
   patient to an examination room.</p><p>The general conceptual pattern is that
   for certain types of activities <i>A</i> (like <i>GuideToRoom</i>), a
   resource role <i>r</i> (like <i>guide</i>) may be played not only by
-  instances of its direct resource role type <i>R</i> (like <i>Guide</i>), but
-  also by instances of an alternative resource role type <i>R'</i> (like
+  instances of its direct resource type <i>R</i> (like <i>Guide</i>), but also
+  by instances of an alternative resource type <i>R'</i> (like
   <i>ExaminationAssistant</i>) or an organizational position <i>P</i> (like
   <i>Nurse</i>), if they are a subtypes of <i>R</i> (<i>Guide</i>).</p><p>When
-  the resource role type <i>R</i> is not abstract, then its instances are the
-  preferred <i>r</i> resources of activities of type <i>A</i>, and its
-  (possibly preference-rank-annotated) subtypes specify types of alternative
-  resources.</p><h4>Preferred and Alternative Resource Pools</h4><p>While
-  resource roles are defined in an Object-Event (OE) class design model,
-  organizational positions and resource pools are defined, and assigned to
-  resource roles, in an OE organization design model, which is based on the
-  resource role types defined in the OE class design model. </p><p>By default,
-  for any non-abstract resource role type <i>R</i> and for any organizational
-  position <i>P</i> assigned as the range of a resource role <i>r</i>, a
-  simulator can create a resource pool with the same (yet pluralized) name,
-  holding objects instantiating <i>R</i> or <i>P</i>, and assign it to
-  <i>r</i> as the preferred resource pool. </p></body>
+  the resource type <i>R</i> is not abstract, then its instances are the
+  preferred resources of activities of type <i>A</i>, and its (possibly
+  preference-rank-annotated) «ar» subtypes specify types of alternative
+  resources.</p><h4>Preferred and Alternative Resource Pools</h4><p>Resource
+  roles, resource types, organizational positions and resource pools are
+  defined in an <abbr style="Object-Event">OE</abbr> class design model. Each
+  resource role has a resource type or an organizational position as its range
+  and an assigned resource pool . </p><p>By default, for any non-abstract
+  resource type <i>R</i> and for any organizational position <i>P</i> assigned
+  as the range of a resource role <i>r</i>, an <abbr
+  style="Object-Event">OE</abbr> simulator can create a resource pool with the
+  same (yet pluralized) name, pooling objects instantiating <i>R</i> or
+  <i>P</i>, and assign it to <i>r</i> as the preferred resource pool.
+  </p></body>
 </html>

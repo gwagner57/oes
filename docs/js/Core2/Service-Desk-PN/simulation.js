@@ -1,50 +1,45 @@
 /*******************************************************
  Simulation Model
 ********************************************************/
-sim.model.name = "Medical-Department-2b";
+sim.model.name = "Service-Desk-with-Activity";
 sim.model.time = "continuous";
-sim.model.timeUnit = "min";
-sim.model.objectTypes = ["Nurse", "Doctor"];
-sim.model.eventTypes = ["NewCase"];
-sim.model.activityTypes = ["WalkToRoom", "Examination"];
+sim.model.timeUnit = "min";  // minutes
+sim.model.objectTypes = ["ServiceDesk"];
+sim.model.eventTypes = ["CustomerArrival"];
+sim.model.activityTypes = ["Service"];
 /*******************************************************
  Simulation Scenario
  ********************************************************/
+sim.scenario.title = "Basic scenario with one service desk";
 sim.scenario.durationInSimTime = 1000;
 //sim.scenario.durationInSimSteps = 1000;
 //sim.scenario.durationInCpuTime = 1000;  // seconds
 sim.scenario.idCounter = 11;  // start value of auto IDs
 // Initial State
 sim.scenario.setupInitialState = function () {
-  const d1 = new Doctor({id: 1, name:"d1", status: rESOURCEsTATUS.AVAILABLE}),
-      d2 = new Doctor({id: 2, name:"d2", status: rESOURCEsTATUS.AVAILABLE}),
-      d3 = new Doctor({id: 3, name:"d3", status: rESOURCEsTATUS.AVAILABLE}),
-      n1 = new Nurse({id: 11, name:"n1", status: rESOURCEsTATUS.AVAILABLE}),
-      n2 = new Nurse({id: 12, name:"n2", status: rESOURCEsTATUS.AVAILABLE}),
-      n3 = new Nurse({id: 13, name:"n3", status: rESOURCEsTATUS.AVAILABLE}),
-      n4 = new Nurse({id: 14, name:"n4", status: rESOURCEsTATUS.AVAILABLE}),
-      n5 = new Nurse({id: 15, name:"n5", status: rESOURCEsTATUS.AVAILABLE}),
-      n6 = new Nurse({id: 16, name:"n6", status: rESOURCEsTATUS.AVAILABLE}),
-      n7 = new Nurse({id: 17, name:"n7", status: rESOURCEsTATUS.AVAILABLE});
-  // Initialize the individual resource pools
-  sim.resourcePools["doctors"].availResources.push( d1, d2, d3);
-  sim.resourcePools["nurses"].availResources.push( n1, n2, n3, n4, n5, n6, n7);
-  // Initialize the count pools
-  sim.resourcePools["rooms"].available = 4;
+  // Create initial objects
+  const sd1 = new ServiceDesk({id: 1, name:"sd1", status: rESOURCEsTATUS.AVAILABLE});
+  // Initialize the individual resource pool "serviceDesks"
+  sim.resourcePools["serviceDesks"].clear();
+  sim.resourcePools["serviceDesks"].availResources.push( sd1);
   // Schedule initial events
-  sim.FEL.add( new NewCase({occTime: 1}));
+  sim.FEL.add( new CustomerArrival({occTime: 1, serviceDesk: sd1}));
 }
 /*******************************************************
  Alternative Scenarios
  ********************************************************/
-/*
 sim.scenarios[1] = {
   scenarioNo: 1,
-  title: "Scenario with 5 rooms",
+  title: "Scenario with two service desks",
   setupInitialState: function () {
+    // Create initial objects
+    const sd1 = new ServiceDesk({id: 1, name:"sd1", status: rESOURCEsTATUS.AVAILABLE}),
+          sd2 = new ServiceDesk({id: 2, name:"sd2", status: rESOURCEsTATUS.AVAILABLE});
+    // Schedule initial events
+    sim.FEL.add( new CustomerArrival({occTime: 1, serviceDesk: sd1}));
+    sim.FEL.add( new CustomerArrival({occTime: 2, serviceDesk: sd2}));
   }
 };
-*/
 /*******************************************************
  Statistics variables
 ********************************************************/

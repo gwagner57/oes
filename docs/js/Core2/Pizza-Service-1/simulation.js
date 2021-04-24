@@ -16,7 +16,7 @@ sim.scenario.durationInSimTime = 300;
 //sim.scenario.title = "Default scenario.";
 //sim.scenario.description = "";
 sim.scenario.setupInitialState = function () {
-  //const ps = new PizzaService({id: 1, name:"ps", status: oes.ResourceStatusEL.AVAILABLE});
+  //const ps = new PizzaService({id: 1, name:"ps", status: rESOURCEsTATUS.AVAILABLE});
   const ps = new PizzaService({id: 1, name: "ps", queueLength: 0, busy: false});
   // Schedule initial events
   sim.FEL.add( new Order({occTime: 1, pizzaService: ps}));

@@ -15,11 +15,11 @@ sim.scenario.durationInSimTime = 1000;
 //sim.scenario.durationInCpuTime = 1000;  // seconds
 // Initial State
 sim.scenario.setupInitialState = function () {
-  const d1 = new Doctor({id: 1, name:"d1", status: oes.ResourceStatusEL.AVAILABLE}),
-      d2 = new Doctor({id: 2, name:"d2", status: oes.ResourceStatusEL.AVAILABLE}),
-      d3 = new Doctor({id: 3, name:"d3", status: oes.ResourceStatusEL.AVAILABLE}),
-      n1 = new Nurse({id: 11, name:"n1", status: oes.ResourceStatusEL.AVAILABLE}),
-      n2 = new Nurse({id: 12, name:"n2", status: oes.ResourceStatusEL.AVAILABLE});
+  const d1 = new Doctor({id: 1, name:"d1", status: rESOURCEsTATUS.AVAILABLE}),
+      d2 = new Doctor({id: 2, name:"d2", status: rESOURCEsTATUS.AVAILABLE}),
+      d3 = new Doctor({id: 3, name:"d3", status: rESOURCEsTATUS.AVAILABLE}),
+      n1 = new Nurse({id: 11, name:"n1", status: rESOURCEsTATUS.AVAILABLE}),
+      n2 = new Nurse({id: 12, name:"n2", status: rESOURCEsTATUS.AVAILABLE});
   // Initialize the individual resource pools
   sim.resourcePools["doctors"].availResources.push( d1, d2, d3);
   sim.resourcePools["nurses"].availResources.push( n1, n2);
@@ -35,11 +35,11 @@ sim.scenarios[1] = {
   scenarioNo: 1,
   title: "Scenario with 4 rooms",
   setupInitialState: function () {
-    const d1 = new Doctor({id: 1, name:"d1", status: oes.ResourceStatusEL.AVAILABLE}),
-        d2 = new Doctor({id: 2, name:"d2", status: oes.ResourceStatusEL.AVAILABLE}),
-        d3 = new Doctor({id: 3, name:"d3", status: oes.ResourceStatusEL.AVAILABLE}),
-        n1 = new Nurse({id: 11, name:"n1", status: oes.ResourceStatusEL.AVAILABLE}),
-        n2 = new Nurse({id: 12, name:"n2", status: oes.ResourceStatusEL.AVAILABLE});
+    const d1 = new Doctor({id: 1, name:"d1", status: rESOURCEsTATUS.AVAILABLE}),
+        d2 = new Doctor({id: 2, name:"d2", status: rESOURCEsTATUS.AVAILABLE}),
+        d3 = new Doctor({id: 3, name:"d3", status: rESOURCEsTATUS.AVAILABLE}),
+        n1 = new Nurse({id: 11, name:"n1", status: rESOURCEsTATUS.AVAILABLE}),
+        n2 = new Nurse({id: 12, name:"n2", status: rESOURCEsTATUS.AVAILABLE});
     // Initialize the individual resource pools
     sim.resourcePools["doctors"].availResources.push( d1, d2, d3);
     sim.resourcePools["nurses"].availResources.push( n1, n2);
