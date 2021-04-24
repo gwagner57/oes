@@ -16,7 +16,7 @@ public class CustomerArrival extends ExogenousEvent {
 	private ServiceDesk serviceDesk;
 	private Customer customer;
 	
-	public CustomerArrival(Simulator sim, Long occTime, Long delay, ServiceDesk serviceDesk) {
+	public CustomerArrival(Simulator sim, Number occTime, Number delay, ServiceDesk serviceDesk) {
 		super(sim, occTime, delay);
 		this.serviceDesk = serviceDesk;
 		this.customer = null; // is assigned on occurrence
@@ -46,8 +46,8 @@ public class CustomerArrival extends ExogenousEvent {
 	}
 
 	@Override
-	public Long reccurence() {
-		return (long) MathLib.getUniformRandomInteger(1, 6);
+	public Double reccurence() {
+		return MathLib.round(MathLib.getUniformRandomNumber(1.0, 6.0));
 	}
 
 	@Override

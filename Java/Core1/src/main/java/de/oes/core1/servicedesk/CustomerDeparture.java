@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.oes.core1.foundations.eVENT;
+import de.oes.core1.lib.MathLib;
 import de.oes.core1.sim.Simulator;
 
 public class CustomerDeparture extends eVENT{
@@ -23,7 +24,8 @@ public class CustomerDeparture extends eVENT{
 		// remove/pop customer from FIFO queue
 		Customer departingCustomer = this.serviceDesk.getWaitingCustomers().remove();
 		// add the time the customer has spent in the system
-		sim.incrementStat("cumulativeTimeInSystem", this.getOccTime().doubleValue() - departingCustomer.getArrivalTime().doubleValue());
+		sim.incrementStat("cumulativeTimeInSystem", 
+				MathLib.round(this.getOccTime().doubleValue() - departingCustomer.getArrivalTime().doubleValue()));
 		// remove customer from map of simulation objects
 		sim.getObjects().remove(departingCustomer.getId());
 		// update statistics
