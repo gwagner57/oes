@@ -48,14 +48,14 @@ public class eXPERIMENTsCENARIOrUN {
 	
 	@ElementCollection(targetClass=String.class)
 	@MapKeyColumn(name="parameterValueCombination")
-	private List<Number> parameterValueCombination;
+	private List<Object> parameterValueCombination;
 	
 	@Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
 	private Map<String, Number> outputStatistics;
 	
 	public eXPERIMENTsCENARIOrUN(long id, eXPERIMENTrUN experimentRun, 
-			Long experimentScenarioNo, List<Number> parameterValueCombination,
+			Long experimentScenarioNo, List<Object> parameterValueCombination,
 			Map<String, Number> outputStatistics) {
 		super();
 		this.id = id;

@@ -11,12 +11,12 @@ import lombok.Setter;
 public class eXPERIMENTpARAMdEF {
 
 	private String name;
-	private Set<Number> values;
+	private Set<Object> values;
 	private Integer startValue;
 	private Integer endValue;
 	private int stepSize = 1;
 	
-	public eXPERIMENTpARAMdEF(String name, Set <Number> values, Integer startValue, Integer endValue, Integer stepSize) {
+	public eXPERIMENTpARAMdEF(String name, Set <Object> values, Integer startValue, Integer endValue, Integer stepSize) {
 		super();
 		this.name = name;
 		if(values != null) this.values = values;

@@ -2,6 +2,7 @@ package de.oes.core1.sim;
 
 import java.util.ArrayList;
 
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,10 +12,12 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.Map.Entry;
 import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.random.Well19937c;
 import org.springframework.beans.factory.annotation.Autowired;
+
 
 import de.oes.core1.dao.eXPERIMENTrUNDao;
 import de.oes.core1.dao.eXPERIMENTsCENARIOrUNDao;
@@ -50,6 +53,7 @@ public class Simulator {
 	private Model model;
 	private Double timeIncrement;
 	private eXPERIMENTtYPE experimentType;
+	private List<eXPERIMENTtYPE> experimentTypes = new ArrayList<eXPERIMENTtYPE>();
 	private Scenario scenario = new Scenario();
 	private List<Scenario> scenarios = new ArrayList<Scenario>();
 	private EventList FEL = new EventList();
@@ -101,8 +105,8 @@ public class Simulator {
 	/*******************************************************************
 	 * Assign model parameters with experiment parameter values ********
 	 *******************************************************************/
-	public void assignModelParameters(Map<String, Number> expParSlots) {
-		Map<String, Number> p = this.model.getP();
+	public void assignModelParameters(Map<String, Object> expParSlots) {
+		Map<String, Object> p = this.model.getP();
 		for (String key : p.keySet()) {
 			p.put(key, expParSlots.get(key));
 		}
@@ -113,7 +117,7 @@ public class Simulator {
 	 * Initialize a (standalone or experiment scenario) simulation run *
 	 ******************************************************************
 	 */
-	public void initializeScenarioRun(Integer seed, Map<String, Number> expParSlots) {
+	public void initializeScenarioRun(Integer seed, Map<String, Object> expParSlots) {
 		// clear initial state data structures
 		this.objects.clear();
 		this.FEL.clear();
@@ -219,10 +223,6 @@ public class Simulator {
 	
 	public ExperimentsStatisticsDTO runExperiment(boolean debug) {
 		eXPERIMENTtYPE exp = this.getExperimentType();
-		if (exp.getSeeds() != null && exp.getSeeds().length < exp.getNmrOfReplications()) {
-		    System.err.println("Not enough seeds defined for" + exp.getNmrOfReplications() + "replications");
-		    return null;
-		}
 		this.initializeSimulator();
 		if (exp.isStoreExpResults()) {
 			expRun = new eXPERIMENTrUN(
@@ -232,7 +232,7 @@ public class Simulator {
 					new Date());
 			eXPERIMENTrUNDao.merge(expRun);
 		}
-		if(exp.getParameterDefs() != null) return runParVarExperiment(exp, debug);
+		if(exp.getParameterDefs() != null) return runParVarExperiment(exp, debug); 
 		else return runSimpleExperiment(exp, debug);
 	}
 	
@@ -271,7 +271,7 @@ public class Simulator {
 				 eXPERIMENTsCENARIOrUNDao.merge( new eXPERIMENTsCENARIOrUN(
 						 expRun.getId() + k + 1,
 						 expRun,
-						 null, null, //FIXME
+						 null, null,
 						 this.stat));
 		     }
 		}
@@ -298,33 +298,36 @@ public class Simulator {
 		ExperimentsStatisticsDTO dto = new ExperimentsStatisticsDTO();
 		final int N = exp.getParameterDefs().size();
 		Map <Number, Map<String, Number>> experimenStats = new HashMap<Number, Map<String, Number>>();
-		Map<String, Number> expParSlots = new HashMap<String, Number>();
-		Set<Set<Number>> valueSets = new HashSet<Set<Number>>();
+		Map<String, Object> expParSlots = new HashMap<String, Object>();
+		List<List<Object>> valueSets = new ArrayList<List<Object>>();
 		// create a list of value sets, one set for each parameter
 		for(int i = 0; i < N; i++) {
 			eXPERIMENTpARAMdEF expPar = exp.getParameterDefs().get(i);
 			if(expPar.getValues() == null) {
 				// create value set
-				expPar.setValues(new HashSet<Number>());
+				expPar.setValues(new HashSet<Object>());
 				int increm = expPar.getStepSize() == 0? 1 : expPar.getStepSize();
 				for(int x = expPar.getStartValue(); x <= expPar.getEndValue(); x += increm) {
 					expPar.getValues().add(x);
 				}
 			}
-			valueSets.add(expPar.getValues());
+			valueSets.add(expPar.getValues().stream().collect(Collectors.toList()));
 		}
-		ArrayList<Set<Object>> cp = new ArrayList<Set<Object>>(MathLib.cartesianProduct(valueSets));
+		
+		List<List<Object>> cp = MathLib.cartesianProduct(valueSets);
 		final int M = cp.size(); // size of cartesian product
+		System.out.println(valueSets);
+		System.out.println(cp);
+		System.out.println(M);
 		 // set up statistics variables
 		this.model.getSetupStatistics().accept(this);
 		 // loop over all combinations of experiment parameter values
 		for(int i = 0; i < M; i++) {
-			List<Number> valueCombination = cp.get(i).stream().map(obj -> {
-				Integer a = (Integer) obj;
-				return a;
+			List<Object> valueCombination = cp.get(i).stream().map(obj -> {
+				return obj;
 			}).collect(Collectors.toList());
 			 // initialize the scenario record
-			exp.getScenarios().set(i, new Scenario());
+			exp.getScenarios().add(i, new Scenario());
 			exp.getScenarios().get(i).setParameterValues(valueCombination);
 			// initialize experiment scenario statistics
 			for(String varName : this.stat.keySet()) {
@@ -334,11 +337,13 @@ public class Simulator {
 			for(int j = 0; j < N; j++) {
 				expParSlots.put(exp.getParameterDefs().get(j).getName(), valueCombination.get(j));
 			}
+			
 			if (exp.isStoreExpResults()) {
 				 eXPERIMENTsCENARIOrUNDao.create( new eXPERIMENTsCENARIOrUN(
 						 expRun.getId() + i + 1,
 						 expRun,
-						 Long.valueOf(i), exp.getScenarios().get(i).getParameterValues(), 
+						 Long.valueOf(i), 
+						 exp.getScenarios().get(i).getParameterValues(), 
 						 null));
 		     }
 			 // run experiment scenario replications
@@ -350,6 +355,13 @@ public class Simulator {
 				}
 				this.runScenario(debug);
 				
+				// add up replication statistics from sim.stat to sim.experimentType.scenarios[i].stat
+				for(String varName : this.stat.keySet()) {
+					Number n = exp.getScenarios().get(i).getStat().get(varName);
+					n = this.stat.get(varName).doubleValue() + n.doubleValue();
+					exp.getScenarios().get(i).getStat().replace(varName, n);
+				}
+				
 				if (exp.isStoreExpResults()) {
 					 eXPERIMENTsCENARIOrUNDao.create( new eXPERIMENTsCENARIOrUN(
 							 expRun.getId() + M + i * exp.getNmrOfReplications() + k + 1,
@@ -358,19 +370,26 @@ public class Simulator {
 							 this.stat));
 			     }
 			}
-			// add up replication statistics from sim.stat to sim.experimentType.scenarios[i].stat
-			for(String varName : this.stat.keySet()) {
-				Number n = exp.getScenarios().get(i).getStat().get(varName);
-				n = this.stat.get(varName).doubleValue() + n.doubleValue();
-				exp.getScenarios().get(i).getStat().replace(varName, n);
-			}
 			
+			 // compute averages
 			for(String varName : this.stat.keySet()) {
 				Number n = exp.getScenarios().get(i).getStat().get(varName);
 				n = n.doubleValue() / exp.getNmrOfReplications();
-				exp.getScenarios().get(i).getStat().replace(varName, n);
+				exp.getScenarios().get(i).getStat().replace(varName, MathLib.round(n.doubleValue()));
 			}
+			
+			
+			System.out.println("expScenNo:" + i);
+			System.out.println("expScenParamValues:" + exp.getScenarios().get(i).getParameterValues());
+			System.out.println("expScenParamValues:" + exp.getScenarios().get(i).getStat());
+			
+			
 			experimenStats.put(i, new HashMap<String, Number>(this.getStat()));
+		}
+		
+		if (exp.getSeeds() != null && exp.getSeeds().length < exp.getNmrOfReplications()) {
+		    System.err.println("Not enough seeds defined for" + exp.getNmrOfReplications() + "replications");
+		    return null;
 		}
 		
 		// define exp.summaryStat to be a map for the summary statistics

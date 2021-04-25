@@ -26,6 +26,7 @@ public class eXPERIMENTtYPE {
 		this.title = title;
 		this.parameterDefs = parameterDefs;
 		this.nmrOfReplications = nmrOfReplications;
+		if(seeds == null) seeds = new Integer[] {};
 		this.seeds = Arrays.copyOf(seeds, nmrOfReplications);
 		this.scenarios = new ArrayList<Scenario>();
 	}

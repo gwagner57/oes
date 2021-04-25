@@ -23,7 +23,7 @@ public class Model {
 	private List<Class<? extends oBJECT>> objectTypes;
 	private List<Class<? extends eVENT>> eventTypes;
 	private Map<String, Number> v = new HashMap<String, Number>();
-	private Map<String, Number> p = new HashMap<String, Number>();
+	private Map<String, Object> p = new HashMap<String, Object>();
 	private Map<Object, Supplier<Integer>> f = new HashMap<Object, Supplier<Integer>>();
 	private Consumer<Simulator> setupStatistics;
 	private Consumer<Simulator> computeFinalStatisctics;

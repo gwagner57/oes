@@ -1,7 +1,9 @@
 package de.oes.core1.sim;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import lombok.Getter;
@@ -18,8 +20,8 @@ public class Scenario {
 	private Simulator simulator;
 	private Long scenarioNo;
 	private Integer randomSeed;
-	private List<Number> parameterValues;
-	private Map<String,Number> stat;
+	private List<Object> parameterValues;
+	private Map<String,Number> stat = new HashMap<String,Number>();
 	private Consumer<Simulator> setupInitialState;
 	private String title;
 	
