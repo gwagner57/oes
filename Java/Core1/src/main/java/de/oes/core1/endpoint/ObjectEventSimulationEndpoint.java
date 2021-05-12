@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import de.oes.core1.endpoint.activity.RunInventoryManagmentSimulation;
 import de.oes.core1.endpoint.activity.RunServiceDeskSimulation;
 import de.oes.core1.endpoint.activity.RunWorkstationSimulation;
 import de.oes.core1.endpoint.ui.SimulationSettingsDTO;
@@ -19,6 +20,9 @@ public class ObjectEventSimulationEndpoint {
 	
 	@Autowired
 	private RunWorkstationSimulation workDesk;
+	
+	@Autowired
+	private RunInventoryManagmentSimulation inventoryManagment;
 	
 	@RequestMapping("/")
 	public String index() {
@@ -53,8 +57,17 @@ public class ObjectEventSimulationEndpoint {
         return "workstation";
 	}
 	
-	@RequestMapping("/core1/workstation/settings")
-	public String runWorkstation() {
-	    return "index";
+	@GetMapping("/core1/inventorymanagment")
+	public String setupInventorymanagment(Model m) {
+		m.addAttribute("scenario", new SimulationSettingsDTO());
+	    return "inventorymanagment-settings";
+	}
+	
+	@PostMapping("/core1/inventorymanagment")
+    public String runInventorymanagment(SimulationSettingsDTO dto, Model model) {
+		model.addAttribute("init", dto.getInit());
+		model.addAttribute("hasLogs", dto.isSimulationLog());
+		inventoryManagment.run(dto, model);
+        return "inventorymanagment";
 	}
 }

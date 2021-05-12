@@ -9,10 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.Map.Entry;
 import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.random.Well19937c;
@@ -322,6 +320,7 @@ public class Simulator {
 		 // set up statistics variables
 		this.model.getSetupStatistics().accept(this);
 		 // loop over all combinations of experiment parameter values
+		List<List<Object>> parValues = new ArrayList<List<Object>>();
 		for(int i = 0; i < M; i++) {
 			List<Object> valueCombination = cp.get(i).stream().map(obj -> {
 				return obj;
@@ -346,6 +345,7 @@ public class Simulator {
 						 exp.getScenarios().get(i).getParameterValues(), 
 						 null));
 		     }
+			
 			 // run experiment scenario replications
 			for(int k = 0; k < exp.getNmrOfReplications(); k++) {
 				if(exp.getSeeds() != null && exp.getSeeds().length > 0) {
@@ -381,8 +381,8 @@ public class Simulator {
 			
 			System.out.println("expScenNo:" + i);
 			System.out.println("expScenParamValues:" + exp.getScenarios().get(i).getParameterValues());
-			System.out.println("expScenParamValues:" + exp.getScenarios().get(i).getStat());
-			
+			System.out.println("stat:" + exp.getScenarios().get(i).getStat());
+			parValues.add(exp.getScenarios().get(i).getParameterValues());
 			
 			experimenStats.put(i, new HashMap<String, Number>(this.getStat()));
 		}
@@ -407,6 +407,7 @@ public class Simulator {
 		
 		dto.setSumStat(sumStat);
 		dto.setExperiments(experimenStats);
+		dto.setParamVal(parValues);
 		return dto;
 	}
 	
