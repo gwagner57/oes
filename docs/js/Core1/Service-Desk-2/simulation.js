@@ -50,9 +50,7 @@ sim.model.computeFinalStatistics = function () {
   sim.stat.meanTimeInSystem =
       sim.stat.cumulativeTimeInSystem / sim.stat.departedCustomers;
 };
-/*******************************************************
- Define an experiment (type)
-********************************************************/
+
 sim.experimentTypes[0] = {
   id: 0,
   title: `Simple Experiment with 10 replications, each running for ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}.`,

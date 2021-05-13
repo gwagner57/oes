@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>OES Core Simulation Examples</title>
+<meta name="viewport" content="width=device-width, initial-scale = 1.0" />
+<meta name="description"
+	content="Simulation examples for OES Core simulators" />
+<style>
+p.description {
+	font-size: smaller;
+}
+</style>
+</head>
+<body>
+
+	<main>
+		<h1>Simulation Examples</h1>
+		<h2>OESjs Core 1</h2>
+		<p class="description">The OESjs Core 1 simulator implements an architecture for Object Event Simulation (OES), 
+		extending the OESjs Core 0 simulator by adding fixed-increment time progression, 
+		a seedable random number generator, a set of sampling functions from various probability distributions (uniform, triangular, normal, exponential, etc.), 
+		multiple scenarios per model, multiple experiment types per model, model parameters, parameter variation experiments, 
+		as well as persistent storage and export of experiment results.</p>
+		<nav>
+			<ul>
+				<li><a href="/core1/servicedesk">Service-Desk-2:</a> a model with two event types (CustomerArrival and CustomerDeparture) and two object types (ServiceDesk and Customer). The waiting line is explicitly represented as a queue of individual customer objects.</li>
+				<li><a href="/core1/workstation">Workstation-1:</a> a model with three event types (PartArrival, ProcessingStart and ProcessingEnd) and one object type (WorkStation).</li>
+				<li><a href="/core1/inventorymanagment">Inventory-Management:</a>  a model with two event types (DailyDemand and Delivery) and one object type (SingleProductShop).</li>
+			</ul>
+		</nav>
+	</main>
+	<footer>
+		<p>
+			© 2021 G. Wagner (<a
+				href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>),
+			Brandenburg University of Technology, Germany
+		</p>
+	</footer>
+</body>
+</html>

@@ -146,7 +146,7 @@ sim.runStandaloneScenario = function (createLog) {
  ********************************************************/
 sim.runExperiment = async function () {
   var exp = sim.experimentType, expRun={};
-  async function runSimpleExperiment() {
+  async function runSimpleExperiment() { 
     if (sim.model.setupStatistics) sim.model.setupStatistics();
     // initialize replication statistics record
     exp.replicStat = Object.create(null);  // empty map
