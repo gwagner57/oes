@@ -1,4 +1,4 @@
-package de.oes.core2.foundations;
+package de.oes.core2.activities;
 
 import java.util.HashSet;
 import java.util.Set;

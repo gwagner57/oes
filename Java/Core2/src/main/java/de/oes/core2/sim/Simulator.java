@@ -1,5 +1,6 @@
 package de.oes.core2.sim;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 
@@ -17,7 +18,12 @@ import java.util.stream.Collectors;
 import org.apache.commons.math3.random.Well19937c;
 import org.springframework.beans.factory.annotation.Autowired;
 
-
+import de.oes.core2.activities.SuccAT;
+import de.oes.core2.activities.aCTIVITY;
+import de.oes.core2.activities.rESOURCE;
+import de.oes.core2.activities.rESOURCEpOOL;
+import de.oes.core2.activities.rESOURCErOLE;
+import de.oes.core2.activities.tASKqUEUE;
 import de.oes.core2.dao.eXPERIMENTrUNDao;
 import de.oes.core2.dao.eXPERIMENTsCENARIOrUNDao;
 import de.oes.core2.endpoint.ui.ExperimentsStatisticsDTO;
@@ -26,10 +32,10 @@ import de.oes.core2.entity.eXPERIMENTsCENARIOrUN;
 import de.oes.core2.foundations.ExogenousEvent;
 import de.oes.core2.foundations.eVENT;
 import de.oes.core2.foundations.oBJECT;
-import de.oes.core2.foundations.rESOURCEpOOL;
 import de.oes.core2.lib.EventList;
 import de.oes.core2.lib.MathLib;
 import de.oes.core2.lib.Rand;
+import de.oes.core2.processingnetworks.aRRIVAL;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -58,17 +64,19 @@ public class Simulator {
 	private List<Scenario> scenarios = new ArrayList<Scenario>();
 	private EventList FEL = new EventList();
 	private Map<Integer, oBJECT> objects = new HashMap<Integer, oBJECT>();
+	private Map<Integer, eVENT> ongoingActivities;
 	private SimulationStat stat = new SimulationStat();
 	private Double nextEvtTime = Double.valueOf(0);
+	private Map<String, Object> classes;
 	
 	public void incrementStat(String name, Number inc) {
-		Number num = this.stat.get(name);
-		this.stat.replace(name, num, num.doubleValue() + inc.doubleValue());
+		Number num = this.stat.getSimpleStat().get(name);
+		this.stat.getSimpleStat().replace(name, num, num.doubleValue() + inc.doubleValue());
 	}
 	
 	public void updateStatValue(String name, Number newNumber) {
-		Number num = this.stat.get(name);
-		this.stat.replace(name, num, newNumber);
+		Number num = this.stat.getSimpleStat().get(name);
+		this.stat.getSimpleStat().replace(name, num, newNumber);
 	}
 	
 	/*
@@ -80,25 +88,111 @@ public class Simulator {
 		if(this.model.getNextMomentDeltaT() != null) {
 			this.setNextMomentDeltaT(this.model.getNextMomentDeltaT());
 		}
-		if(this.model.getTime() == Time.DISCR) {
-			this.nextMomentDeltaT = 1.0;
-		} else {
-			this.nextMomentDeltaT = oes.nextMomentDeltaT;
+		else {
+				if(this.model.getTime() == Time.DISCR) {
+				this.nextMomentDeltaT = 1.0; 
+			} else {
+				this.nextMomentDeltaT = oes.nextMomentDeltaT;
+			}
 		}
-		
+		// Set timeIncrement for fixed-increment time progression
 		if(this.model.getTimeIncrement() != null) {
 			this.setTimeIncrement(this.model.getTimeIncrement());
 		} else {
 			if (this.model.isOnEachTimeStep()) {
-				this.setTimeIncrement(Double.valueOf(1));
+				this.setTimeIncrement(Double.valueOf(1)); // default
 			}
 		}
 		
-		if(this.scenario.getScenarioNo() == null) {
-			this.scenario.setScenarioNo(0l);
+		// Make sure these lists are defined
+		if(this.model.getObjectTypes() == null) this.model.setObjectTypes(new ArrayList<Class<? extends oBJECT>>());
+		if(this.model.getEventTypes() == null) this.model.setEventTypes(new ArrayList<Class<? extends eVENT>>());
+		
+		// a Map of all objects (accessible by ID)
+		this.objects = new HashMap<Integer,oBJECT>();
+		// The Future Events List
+		this.setFEL(new EventList());
+		// a map for statistics variables
+		this.setStat(new SimulationStat());
+		// a className->Class map
+		this.classes = new HashMap<String, Object>();
+		// Make object classes accessible via their object type name
+		for (Class<? extends oBJECT> objType : this.model.getObjectTypes()) {
+			String objTypeName = objType.getName();
+			this.classes.put(objTypeName, objType);
 		}
-		if(this.scenario.getTitle() == null) {
-			this.scenario.setTitle("Default scenario");
+		// Make event classes accessible via their event type name
+		for (Class<? extends eVENT> evtType : this.model.getEventTypes()) {
+			String evtTypeName = evtType.getName();
+			this.classes.put(evtTypeName, evtType);
+		}
+		// Assign scenarioNo = 0 to default scenario
+		if(this.scenario.getScenarioNo() == null) this.scenario.setScenarioNo(0l);
+		if(this.scenario.getTitle() == null) this.scenario.setTitle("Default scenario");
+		/*** Activity extensions **********************************************/
+		if(this.model.getActivityTypes() == null) this.model.setActivityTypes(new HashSet<String>());
+		// Make activity classes accessible via their activity type name
+		for (String actTypeName : this.model.getActivityTypes()) {
+			try {
+				this.classes.put(actTypeName,  Class.forName(actTypeName));
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		this.setupActivityStatistics();
+		// a map for resource pools if there are no explicit process owners
+		this.setResourcepools(new HashMap<String, rESOURCEpOOL>());
+		// Initializations per activity type
+		for (String actTypeName : this.model.getActivityTypes()) {
+			/*
+			 * const AT = sim.Classes[actTypeName];
+    			AT.resourceRoles ??= Object.create(null);
+			 */
+			Object AT = this.classes.get(actTypeName);
+			aCTIVITY a = (aCTIVITY) AT;
+			
+			a.setResourceRoles(new HashMap<String, rESOURCErOLE>());
+			// Create the tasks queues
+			a.setTasks(new tASKqUEUE(this, null));
+			// Create the resource pools
+			for (String resRoleName : a.getResourceRoles().keySet()) {
+				rESOURCErOLE resRole = a.getResourceRoles().get(resRoleName);			
+				String pn = "";
+				// set default cardinality
+				if(resRole.getCard() == null && resRole.getMinCard() == null) resRole.setCard(1);
+				List<Class<? extends rESOURCE>> altResTypes = null;
+				if(resRole.getRange() != null) {
+					String rn = resRole.getRange().getName();
+					pn = Character.toLowerCase(rn.charAt(0)) + rn.substring(1) + "s";
+					// create only if not yet created
+					if(this.resourcepools.get(pn) == null) this.resourcepools.put(pn, new rESOURCEpOOL(this, null, resRole.getRange(), null, null));
+					// assign resource pool to resource type
+					resRole.getRange().setResourcePool(this.getResourcepools().get(pn));
+					altResTypes = this.getResourcepools().get(pn).getResourceType().getAlternativeResourceTypes();				
+				} else { // the resource role is associated with a count pool
+					if(resRole.getCountPoolName() != null) {
+						// a count pool has been explicitly assigned to the resource role
+						pn = resRole.getCountPoolName();
+					} else {
+						// create default name for implicit count pool
+						pn = resRoleName + (resRole.getCard() == null || resRole.getCard()==1? "s": "");
+						// assign count pool to the resource role
+						resRole.setCountPoolName(pn);				
+					}
+				}
+				// create count pool only if not yet created
+				if(this.resourcepools.get(pn) == null) this.resourcepools.put(pn, new rESOURCEpOOL(this, pn, null, 0, null));
+				// assign the (newly created) pool to the resource role
+				resRole.setResPool(this.getResourcepools().get(pn));
+				// Subscribe activity types to resource pools
+				resRole.getResPool().getDependentActivityTypes().add(AT.getClass());
+				if(altResTypes != null) {
+					for (Class<? extends rESOURCE> arT : altResTypes) {
+						resRole.getResPool().getDependentActivityTypes().add(arT);
+					}
+				}
+			}
 		}
 	}
 	
@@ -111,7 +205,6 @@ public class Simulator {
 			p.put(key, expParSlots.get(key));
 		}
 	}
-	
 	/*
 	 ******************************************************************
 	 * Initialize a (standalone or experiment scenario) simulation run *
@@ -142,24 +235,53 @@ public class Simulator {
 		
 		// Assign model parameters with experiment parameter values
 		if(!Objects.isNull(expParSlots)) this.assignModelParameters(expParSlots);
+		// reset model-specific statistics
+		if (this.model.getSetupStatistics() != null) this.model.getSetupStatistics().accept(this);
+		/***START Activity extensions BEFORE-setupInitialState ********************/
+		// Initialize resource pools
+		for (String poolName : this.resourcepools.keySet()) {
+			this.resourcepools.get(poolName).clear();
+		}
+		
 		// set up initial state
 		if (this.scenario.getSetupInitialState() != null) this.scenario.getSetupInitialState().accept(this);
-		if (this.model.getSetupStatistics() != null) this.model.getSetupStatistics().accept(this);
+		/***START Activity extensions AFTER-setupInitialState ****
+		  ****************/
+		this.initializeActivityStatistics();
+		for (String actTypeName : this.model.getActivityTypes()) {
+			// Reset/clear the tasks queues
+			aCTIVITY AT = (aCTIVITY) this.classes.get(actTypeName);
+			AT.getTasks().clear();
+		}
+		// Initialize resource pools
+		for (String poolName : this.resourcepools.keySet()) {
+			Integer nmrOfAvailRes = this.resourcepools.get(poolName).getAvailable();
+			if(nmrOfAvailRes != null) { // a count pool
+				// the size of a count pool is the number of initially available resources
+				// sim.resourcePools[poolName].size = nmrOfAvailRes; // TODO
+			}
+		}
+		/***END Activity extensions AFTER-setupInitialState *********************/
 	}
 	
+	
+	/*******************************************************
+	 Advance Simulation Time
+	 ********************************************************/
 	public void advanceSimulationTime() {
 		this.nextEvtTime = this.getFEL().getNextOccurrenceTime(); // 0 if there is no next event
 		// increment the step counter
 		this.step++;
 		
 		 // advance simulation time
-		if(this.timeIncrement != null) {
+		if(this.timeIncrement != null) { // fixed-increment time progression
+			// fixed-increment time progression simulations may also have events
 			if(this.nextEvtTime > this.time && this.nextEvtTime < this.time + this.timeIncrement) { 
 				this.time = this.nextEvtTime;
 			} else {
-				this.time += this.timeIncrement; // valueOf ??
+				this.time += this.timeIncrement;
 			}
-		} else if (this.nextEvtTime > 0) {
+		} else if (this.nextEvtTime > 0) { // next-event time progression
 			this.time = this.nextEvtTime;
 		}
 		
@@ -191,6 +313,17 @@ public class Simulator {
 		      for (eVENT f : followUpEvents) {
 		        this.FEL.add(f);
 		      }
+		      
+		      /**** ACTIVITIES extension START ****/
+		      // if event class with successorActivity
+		      if(e instanceof SuccAT) {
+		    	  //TODO
+//		    	  const SuccActivityClass = sim.Classes[EventClass.successorActivity];
+//		          // enqueue successor activity
+//		          SuccActivityClass.tasks.startOrEnqueue( new SuccActivityClass());
+		      }
+		      /**** ACTIVITIES extension END ****/
+		      
 		      // test if e is an exogenous event
 		      if (e instanceof ExogenousEvent) {
 		        // create and schedule next exogenous events
@@ -202,6 +335,7 @@ public class Simulator {
 		        break;
 	      }
 		}
+		
 		if(this.model.getComputeFinalStatisctics() != null) this.model.getComputeFinalStatisctics().accept(this);
 	}
 	
@@ -420,10 +554,12 @@ public class Simulator {
 	public void setupActivityStatistics() {
 		if(this.model.getActivityTypes() != null && this.model.getActivityTypes().size() > 0) {
 			for (String actTypeName : this.model.getActivityTypes()) {
-				this.stat.put(actTypeName + ".queueLength", 0);
-				this.stat.put(actTypeName + ".resUtil", 0);
-				this.stat.put(actTypeName + ".waitingTime", 0);
-				this.stat.put(actTypeName + ".cycleTime", 0);
+				ActivityStat actStat = new ActivityStat();
+				actStat.setQueueLength(GenericStat.builder().value(0).build());
+				actStat.setWaitingTime(GenericStat.builder().value(0).build());
+				actStat.setCycleTime(GenericStat.builder().value(0).build());
+				actStat.setResUtil(new HashMap<String, Number>());
+				this.stat.getActTypes().put(actTypeName, actStat);
 			}
 		}
 	}
@@ -436,7 +572,25 @@ public class Simulator {
 //			sim.stat.includeTimeouts = sim.model.activityTypes.some(
 //			        actTypeName => typeof sim.Classes[actTypeName].waitingTimeout === "function");
 			for (String actTypeName : this.model.getActivityTypes()) {
-				
+				ActivityStat actStat = this.stat.getActTypes().get(actTypeName);
+				aCTIVITY AT = this.classes.get(actTypeName);
+				Map<String, Number> resUtilPerAT = actStat.getResUtil();
+				actStat.setEnqueuedActivities(0);
+				actStat.setStartedActivities(0);
+				actStat.setCompletedActivities(0);
+				actStat.setQueueLength(GenericStat.builder().max(0).build());
+				actStat.setWaitingTime(GenericStat.builder().max(0).build());
+				actStat.setCycleTime(GenericStat.builder().max(0).build());
+				for (String resRoleName : AT.getResourceRoles().keySet()) {
+					rESOURCErOLE resRole = AT.getResourceRoles().get(resRoleName);
+					if(resRole.getRange() != null) {
+						for (rESOURCE resObj : resRole.getResPool().getAvailResources()) {
+							resUtilPerAT.put(resObj.getId().toString(), 0);
+						}
+					} else {
+						resUtilPerAT.put(resRole.getCountPoolName(), 0);
+					}
+				}
 			}
 		}
 	}
@@ -446,5 +600,49 @@ public class Simulator {
 		protected final static int expostStatDecimalPlaces = 2;
 		protected final static int simLogDecimalPlaces = 2;
 		
+	}
+
+	public void scheduleEvent(eVENT evemt) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void checkProcNetConstraints(Object... params) {
+		//TODO
+//		 var errMsgs=[], msg="", evts=[];
+//		  // PNC1: nmrOfArrObjects = nmrOfObjectsAtProcNodes + nmrOfObjectsAtExitNodes + nmrOfDepObjects
+//		  var nmrOfArrObjects = Object.keys( oes.EntryNode.instances).reduce( function (res, nodeObjIdStr) {
+//		    return res + sim.objects[nodeObjIdStr].nmrOfArrivedObjects
+//		  }, 0);
+//		  var nmrOfObjectsAtProcNodes = Object.keys( oes.ProcessingNode.instances).reduce( function (res, nodeObjIdStr) {
+//		    return res + sim.objects[nodeObjIdStr].inputBuffer.length
+//		  }, 0);
+//		  var nmrOfObjectsAtExitNodes = Object.keys( oes.ExitNode.instances).reduce( function (res, nodeObjIdStr) {
+//		    return res + sim.objects[nodeObjIdStr].inputBuffer.length
+//		  }, 0);
+//		  var nmrOfDepObjects = Object.keys( oes.ExitNode.instances).reduce( function (res, nodeObjIdStr) {
+//		    return res + sim.objects[nodeObjIdStr].nmrOfDepartedObjects
+//		  }, 0);
+//		  if (nmrOfArrObjects !== nmrOfObjectsAtProcNodes + nmrOfObjectsAtExitNodes + nmrOfDepObjects) {
+//		    msg = "The object preservation constraint is violated at step "+ sim.step +
+//		        (params && params.add ? params.add : "") +
+//		        " (nmrOfArrObjects: "+ nmrOfArrObjects +
+//		        ", nmrOfObjectsInSystem: "+ String(nmrOfObjectsAtProcNodes+nmrOfObjectsAtExitNodes) +
+//		        ", nmrOfDepObjects: "+ nmrOfDepObjects +")";
+//		    if (params && params.log) console.log( msg);
+//		    else errMsgs.push( msg);
+//		  }
+//		  // PNC2: if a proc. node has a proc. end event, its input queue must be non-empty
+//		  evts = sim.FEL.getEventsOfType("pROCESSINGaCTIVITYeND");
+//		  evts.forEach( function (procEndEvt) {
+//		    var pN = procEndEvt.processingNode, inpQ = pN.inputBuffer;
+//		    if (inpQ.length === 0 || !inpQ[0]) {
+//		      msg = "At step "+ sim.step +" "+ (params && params.add ? params.add : "") +
+//		          ", the proc. node "+ (pN.name||pN.id) +" has an empty input queue.";
+//		      if (params && params.log) console.log( msg);
+//		      else errMsgs.push( msg);
+//		    }
+//		  });
+//		  return errMsgs;
 	}
 }

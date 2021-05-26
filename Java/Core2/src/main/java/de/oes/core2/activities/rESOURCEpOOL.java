@@ -1,4 +1,4 @@
-package de.oes.core2.foundations;
+package de.oes.core2.activities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,16 +24,16 @@ public class rESOURCEpOOL {
 	 ****************************************************************************/
 	
 	private String name;
-	private rESOURCErOLE resourceType;
+	private rANGE resourceType;
 	private Integer available;
 	private List<rESOURCE> resources;
 	private List<rESOURCE> busyResources;
 	private List<rESOURCE> availResources;
-	private List<aCTIVITY> dependentActivityTypes;
+	private List<Class<? extends Object>> dependentActivityTypes;
 	private Simulator sim;
 	
 
-	public rESOURCEpOOL(Simulator sim, String name, rESOURCErOLE resourceType, Integer available, List<rESOURCE> resources) {
+	public rESOURCEpOOL(Simulator sim, String name, rANGE resourceType, Integer available, List<rESOURCE> resources) {
 		super();
 		this.name = name;
 		this.sim = sim;
@@ -46,7 +46,7 @@ public class rESOURCEpOOL {
 		} else {
 			System.err.println("Resource pool " + name + " is not well-defined!");
 		}
-		this.dependentActivityTypes = new ArrayList<aCTIVITY>();
+		this.dependentActivityTypes = new ArrayList<Class<? extends Object>>();
 		if(resources != null && !resources.isEmpty()) {
 			for (rESOURCE res : resources) {
 				if(res.getStatus() == rESOURCEsTATUS.AVAILABLE) this.availResources.add(res);
@@ -143,9 +143,9 @@ public class rESOURCEpOOL {
 				return;
 			}
 			// try starting enqueued tasks depending on this type of resource
-			for(aCTIVITY AT : this.dependentActivityTypes) {
-				tASKqUEUE.ifAvailAllocReqResAndStartNextActivity(AT, null);
-			}
+//			for(aCTIVITY AT : this.dependentActivityTypes) {
+//				tASKqUEUE.ifAvailAllocReqResAndStartNextActivity(AT, null); TODO
+//			}
 		}
 	}
 	

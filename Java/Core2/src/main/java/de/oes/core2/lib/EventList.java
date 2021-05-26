@@ -1,11 +1,12 @@
 package de.oes.core2.lib;
 
 import java.math.BigDecimal;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import de.oes.core1.foundations.eVENT;
+import de.oes.core2.foundations.eVENT;
 import lombok.Getter;
 import lombok.Setter;
 

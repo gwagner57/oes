@@ -1,10 +1,11 @@
-package de.oes.core2.foundations;
+package de.oes.core2.activities;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import de.oes.core2.foundations.eVENT;
 import de.oes.core2.lib.Rand;
 import de.oes.core2.sim.Simulator;
 import lombok.Getter;

@@ -1,10 +1,11 @@
-package de.oes.core2.foundations;
+package de.oes.core2.activities;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.oes.core2.foundations.eVENT;
 import de.oes.core2.sim.GenericStat;
 import de.oes.core2.sim.Simulator;
 import lombok.Getter;
@@ -15,9 +16,13 @@ import lombok.Setter;
 public class aCTIVITYeND extends eVENT {
 	private aCTIVITY activity;
 	
-	public aCTIVITYeND(Simulator sim, Number occTime, Number delay, Number startTime, Number duration, de.oes.core2.foundations.aCTIVITY activity) {
+	public aCTIVITYeND(Simulator sim, Number occTime, Number delay, Number startTime, Number duration, de.oes.core2.activities.aCTIVITY activity) {
 		super(sim, occTime, delay, startTime, duration);
 		this.activity = activity;
+	}
+	
+	public aCTIVITYeND(Simulator sim) {
+		super(sim);
 	}
 
 	@Override

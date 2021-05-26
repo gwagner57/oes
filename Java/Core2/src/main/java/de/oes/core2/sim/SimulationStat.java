@@ -9,4 +9,5 @@ import lombok.Setter;
 @Setter
 public class SimulationStat {
 	private Map <String, ActivityStat> actTypes;
+	private Map <String, Number> simpleStat;
 }

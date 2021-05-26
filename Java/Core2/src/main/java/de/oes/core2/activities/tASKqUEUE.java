@@ -1,7 +1,8 @@
-package de.oes.core2.foundations;
+package de.oes.core2.activities;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
 
@@ -14,7 +15,7 @@ import lombok.Setter;
 @Setter
 public class tASKqUEUE {
 	private Integer capacity;
-	private static Simulator sim;
+	private Simulator sim;
 	private ArrayList<aCTIVITY> queue = new ArrayList<aCTIVITY>();
 
 	public tASKqUEUE(Simulator sim, Integer capacity) {
@@ -49,15 +50,35 @@ public class tASKqUEUE {
 				// test only for resources not yet assigned
 				filter(resRoleName -> nextActy.getResourceRoles().containsKey(resRoleName)).
 				map(resRoleName -> AT.getResourceRoles().get(resRoleName)).
-				forEach(resRole -> resRole.getResPool().isAvailable(resRole.getCard() ? resRole.getCard() : resRole.getMinCard())) {
-			
+				allMatch(resRole -> resRole.getResPool().isAvailable(resRole.getCard() != null ? resRole.getCard() : resRole.getMinCard()))) 
+		{
+			// remove nextActy from queue
+			if(acty == null) AT.getTasks().dequeue();
+			// Allocate all required resources
+			for (String resRoleName : AT.getResourceRoles().keySet()) {
+				rESOURCErOLE resRole = AT.getResourceRoles().get(resRoleName);
+				// allocate the required/maximal quantity of resources from the pool
+				Integer resQuantity=0;
+				if(resRole.getCard() != null) resQuantity = resRole.getCard();
+				else if(resRole.getMaxCard() != null) {
+					resQuantity = Math.min(resRole.getMaxCard(), resRole.getResPool().getAvailable());
+				}
+				List<rESOURCE> allocatedRes = resRole.getResPool().allocate(resQuantity);
+				if(allocatedRes != null && !allocatedRes.isEmpty()) { // individual resource pool
+					// create an activity property slot for this resource role
+					if(allocatedRes.size() == 1) {
+						nextActy.put(List.of(allocatedRes.get(0)), resRoleName);
+					} else {
+						nextActy.put(allocatedRes, resRoleName);
+					}
+				}
+			}
+			// start next activity with the allocated resources
+			sim.getFEL().add(new aCTIVITYsTART(sim, null, null, nextActy));
+			return true;
+		} else {
+			return false;
 		}
-//		        // test only for resources not yet assigned
-//		        .filter( resRoleName => !nextActy[resRoleName])
-//		        .map( resRoleName => AT.resourceRoles[resRoleName])
-//		        .every( resRole => (resRole.resPool.isAvailable( resRole.card||resRole.minCard)))
-//		        ) {
-			
 	}
 	
 	public void startOrEnqueue(aCTIVITY activity) {
@@ -68,6 +89,10 @@ public class tASKqUEUE {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public void clear() {
+		this.queue.clear();
+	}
 
 	public int length() {
 		return this.queue.size();
@@ -76,4 +101,6 @@ public class tASKqUEUE {
 	public aCTIVITY get(int index) {
 		 return this.queue.get(index);
 	}
+	
+	
 }

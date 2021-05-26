@@ -87,7 +87,9 @@ sim.initializeSimulator = function () {
           // assign count pool to the resource role
           resRole.countPoolName = pn;
         }
-        // create count pool only if not yet created
+        // create count pool only if not yet created/*******************************************************
+ * Compute the final statistics
+        ********************************************************/
         sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, available:0});
       }
       // assign the (newly created) pool to the resource role
@@ -139,7 +141,8 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   /***END Activity extensions BEFORE-setupInitialState *********************/
   // Set up initial state
   if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
-  /***START Activity extensions AFTER-setupInitialState ********************/
+  /***START Activity extensions AFTER-setupInitialState ****
+  ****************/
   oes.initializeActivityStatistics();
   for (const actTypeName of sim.model.activityTypes) {
     // Reset/clear the tasks queues

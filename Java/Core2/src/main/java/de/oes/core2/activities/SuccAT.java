@@ -1,7 +1,8 @@
-package de.oes.core2.foundations;
+package de.oes.core2.activities;
 
 import java.util.List;
 
+import de.oes.core2.foundations.eVENT;
 import de.oes.core2.sim.Simulator;
 
 public class SuccAT extends aCTIVITY {

@@ -1,11 +1,12 @@
-package de.oes.core2.foundations;
+package de.oes.core2.activities;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.oes.core2.foundations.eVENT;
 import de.oes.core2.sim.Simulator;
 
-public class aCTIVITYsTART extends eVENT{
+public class aCTIVITYsTART extends eVENT {
 
 	private aCTIVITY plannedActivity;
 	
@@ -23,22 +24,27 @@ public class aCTIVITYsTART extends eVENT{
 	@Override
 	public List<eVENT> onEvent() {
 		List<eVENT> followupEvents = new ArrayList<eVENT>();
-		aCTIVITY AT = this.plannedActivity;
-		aCTIVITY acty = AT; //FIXME
+		aCTIVITY acty = this.plannedActivity; 
+		Class<? extends aCTIVITY> AT = acty.getClass();
 		 // create slots for constructing new activity
-		AT.setStartTime(this.getOccTime());
-		if(AT.getDuration() != null) {
-			//TODO
-//			if (typeof acty.duration === "function") acty.duration = acty.duration();
-//		    else acty.duration = acty.duration;
-		} 
+		acty.setStartTime(this.getOccTime());
+		
+	//	TODO
+//		if (acty.duration) {
+//		      if (typeof acty.duration === "function") acty.duration = acty.duration();
+//		      else acty.duration = acty.duration;
+//		    } else if (AT.duration) {
+//		      if (typeof AT.duration === "function") acty.duration = AT.duration();
+//		      else acty.duration = AT.duration;
+//		    }
+//		
 	    // update statistics
 		Integer startedActivities = this.getSim().getStat().getActTypes().get(AT.getName()).getStartedActivities();
 		startedActivities = Integer.valueOf(startedActivities.intValue() + 1);
 		// Set activity state for all involved resource objects
-		for (String resRoleName : AT.getResourceRoles().keySet()) {
-			if(AT.getResourceRoles().get(resRoleName).getRange() != null) {  // an individual pool
-				List<rESOURCE> resObjects = AT.get(resRoleName);
+		for (String resRoleName : acty.getResourceRoles().keySet()) { //TODO AT
+			if(acty.getResourceRoles().get(resRoleName).getRange() != null) {  // an individual pool
+				List<rESOURCE> resObjects = acty.get(resRoleName);
 				for (rESOURCE resObj : resObjects) {
 					if(resObj.getActivityState() == null) resObj.setActivityState(new aCTIVITYsTATE());
 					resObj.getActivityState().add(AT.getName());
