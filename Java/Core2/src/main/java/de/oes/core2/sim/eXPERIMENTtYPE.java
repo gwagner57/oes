@@ -18,7 +18,7 @@ public class eXPERIMENTtYPE {
 	private List<Scenario> scenarios;
 	private boolean storeExpResults;
 	private Integer[] seeds;
-	private Map<String, Number[]> replicStat = new HashMap<String, Number[]>();
+	private ReplicationStat replicStat;
 	private List<eXPERIMENTpARAMdEF> parameterDefs;
 	
 	public eXPERIMENTtYPE(Model model,String title, Integer nmrOfReplications, List<eXPERIMENTpARAMdEF> parameterDefs, Integer[] seeds) {

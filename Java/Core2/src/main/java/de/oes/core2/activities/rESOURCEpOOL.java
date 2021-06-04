@@ -1,7 +1,6 @@
 package de.oes.core2.activities;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 

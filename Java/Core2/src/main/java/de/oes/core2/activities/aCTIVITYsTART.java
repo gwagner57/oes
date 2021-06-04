@@ -30,7 +30,7 @@ public class aCTIVITYsTART extends eVENT {
 		acty.setStartTime(this.getOccTime());
 		
 	//	TODO
-//		if (acty.duration) {
+//		if (acty.getDuration() != null) {
 //		      if (typeof acty.duration === "function") acty.duration = acty.duration();
 //		      else acty.duration = acty.duration;
 //		    } else if (AT.duration) {
@@ -53,7 +53,7 @@ public class aCTIVITYsTART extends eVENT {
 		}
 		// if there is an onActivityStart procedure, execute it
 		if(acty.onActivityStart != null) {
-			followupEvents.addAll(acty.onActivityStart);
+			followupEvents.addAll(acty.onActivityStart.get());
 		}
 		// Schedule an activity end event if the duration is known
 		if(acty.getDuration() != null) {

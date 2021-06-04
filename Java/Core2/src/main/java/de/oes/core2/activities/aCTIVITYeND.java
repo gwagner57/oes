@@ -42,7 +42,7 @@ public class aCTIVITYeND extends eVENT {
 		Map<String, Number> resUtilPerAT = sim.getStat().getActTypes().get(AT.getName()).getResUtil();
 		
 		if(acty.onActivityStart != null) {
-			followupEvents.addAll(acty.onActivityStart);
+			followupEvents.addAll(acty.onActivityStart.get());
 		}
 		
 		// set duration if there was no pre-set duration

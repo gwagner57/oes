@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import de.oes.core2.foundations.eVENT;
 import de.oes.core2.lib.Rand;
@@ -16,13 +17,14 @@ import lombok.Setter;
 public abstract class aCTIVITY extends eVENT{
 	// startTime=0 indicates to the eVENT constructor that this is an aCTIVITY
 	private long id;
-	private String name;
+	private static String name;
 	private Number enqueueTime;
 	private Map<String, List<rESOURCE>> resources;
-	private Map<String, rESOURCErOLE> resourceRoles;
+	public static Map<String, rESOURCErOLE> resourceRoles;
 	private Number waitingTimeout;
-	private tASKqUEUE tasks;
-	public List<eVENT> onActivityStart;
+	private static tASKqUEUE tasks;
+	public Supplier<List<eVENT>> onActivityStart;
+	public Supplier<List<eVENT>> onActivityEnd;
 	private Consumer<String> successorActivity;
 	
 	// define the exponential PDF as the default duration random variable
@@ -33,6 +35,7 @@ public abstract class aCTIVITY extends eVENT{
 	
 	public aCTIVITY(Simulator sim, Number id, Number occTime, Number startTime, Number duration, Number enqueueTime) {
 		super(sim, occTime, null, startTime, duration);
+		if(Objects.isNull(startTime)) startTime = 0;
 		if(Objects.nonNull(id)) this.id = id.longValue();
 		else this.id = sim.getIdCounter().longValue() + 1;
 		if(Objects.nonNull(enqueueTime)) this.enqueueTime = enqueueTime;

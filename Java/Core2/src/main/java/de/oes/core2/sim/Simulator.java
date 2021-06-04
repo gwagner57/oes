@@ -1,10 +1,6 @@
 package de.oes.core2.sim;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-
-
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,10 +10,8 @@ import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
 import org.apache.commons.math3.random.Well19937c;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import de.oes.core2.activities.SuccAT;
 import de.oes.core2.activities.aCTIVITY;
 import de.oes.core2.activities.rESOURCE;
@@ -32,10 +26,10 @@ import de.oes.core2.entity.eXPERIMENTsCENARIOrUN;
 import de.oes.core2.foundations.ExogenousEvent;
 import de.oes.core2.foundations.eVENT;
 import de.oes.core2.foundations.oBJECT;
+import de.oes.core2.lib.ClassUtil;
 import de.oes.core2.lib.EventList;
 import de.oes.core2.lib.MathLib;
 import de.oes.core2.lib.Rand;
-import de.oes.core2.processingnetworks.aRRIVAL;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -67,7 +61,9 @@ public class Simulator {
 	private Map<Integer, eVENT> ongoingActivities;
 	private SimulationStat stat = new SimulationStat();
 	private Double nextEvtTime = Double.valueOf(0);
-	private Map<String, Object> classes;
+	private Map<String, Class<?>> classes;
+
+	private Object object;
 	
 	public void incrementStat(String name, Number inc) {
 		Number num = this.stat.getSimpleStat().get(name);
@@ -115,7 +111,7 @@ public class Simulator {
 		// a map for statistics variables
 		this.setStat(new SimulationStat());
 		// a className->Class map
-		this.classes = new HashMap<String, Object>();
+		this.classes = new HashMap<String, Class<?>>();
 		// Make object classes accessible via their object type name
 		for (Class<? extends oBJECT> objType : this.model.getObjectTypes()) {
 			String objTypeName = objType.getName();
@@ -133,11 +129,7 @@ public class Simulator {
 		if(this.model.getActivityTypes() == null) this.model.setActivityTypes(new HashSet<String>());
 		// Make activity classes accessible via their activity type name
 		for (String actTypeName : this.model.getActivityTypes()) {
-			try {
-				this.classes.put(actTypeName,  Class.forName(actTypeName));
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
+				this.classes.put(actTypeName,  ClassUtil.getActivityClass(actTypeName));
 		}
 		
 		this.setupActivityStatistics();
@@ -145,16 +137,13 @@ public class Simulator {
 		this.setResourcepools(new HashMap<String, rESOURCEpOOL>());
 		// Initializations per activity type
 		for (String actTypeName : this.model.getActivityTypes()) {
-			/*
-			 * const AT = sim.Classes[actTypeName];
-    			AT.resourceRoles ??= Object.create(null);
-			 */
-			Object AT = this.classes.get(actTypeName);
-			aCTIVITY a = (aCTIVITY) AT;
+			Class<? extends aCTIVITY> AT = (Class<? extends aCTIVITY>) this.classes.get(actTypeName);
 			
-			a.setResourceRoles(new HashMap<String, rESOURCErOLE>());
-			// Create the tasks queues
-			a.setTasks(new tASKqUEUE(this, null));
+			if(AT.getDeclaredField("resourceRoles").get(null) == null) {
+				AT.getDeclaredField("resourceRoles").set(null, new HashMap<String, rESOURCErOLE>());
+			}
+			
+			AT.getDeclaredField("resourceRoles").set(null, new tASKqUEUE(null));
 			// Create the resource pools
 			for (String resRoleName : a.getResourceRoles().keySet()) {
 				rESOURCErOLE resRole = a.getResourceRoles().get(resRoleName);			
@@ -354,8 +343,13 @@ public class Simulator {
 		  this.runScenario(debug);
 	}
 	
-	
+	/*******************************************************
+	 Run an Experiment 
+	 ********************************************************/
 	public ExperimentsStatisticsDTO runExperiment(boolean debug) {
+		// set up user-defined statistics variables
+		if(this.model.getSetupStatistics() != null)this.model.getSetupStatistics().accept(this);
+		
 		eXPERIMENTtYPE exp = this.getExperimentType();
 		this.initializeSimulator();
 		if (exp.isStoreExpResults()) {
@@ -377,11 +371,32 @@ public class Simulator {
 	public ExperimentsStatisticsDTO runSimpleExperiment(eXPERIMENTtYPE exp, boolean debug) {
 		ExperimentsStatisticsDTO dto = new ExperimentsStatisticsDTO();
 		Map <Number, Map<String, Number>> experimenStats = new HashMap<Number, Map<String, Number>>();
-		 // initialize replication statistics record
-		if(this.getModel().getSetupStatistics() != null) this.getModel().getSetupStatistics().accept(this);
-		for (String varName : this.stat.keySet()) {
-			exp.getReplicStat().put(varName, new Number[exp.getNmrOfReplications()]); // an array per statistics variable
+		for (String varName : this.stat.getSimpleStat().keySet()) {
+			exp.getReplicStat().getSimpleStat().put(varName, new Number[exp.getNmrOfReplications()]); // an array per statistics variable
 		}
+		 /***START Activity extensions BEFORE-runSimpleExperiment ********************/
+		exp.getReplicStat().setActTypes(new HashMap<String,ReplicationActivityStat>());
+//	    TODO: Not needed?
+//		let throughputStatVarList = ["enqueuedActivities","waitingTimeouts","startedActivities","completedActivities"];
+//	    let throughputStatVarListWithoutTmout = ["enqueuedActivities","startedActivities","completedActivities"];
+	    for (String actTypeName : this.stat.getActTypes().keySet()) {
+	    	ReplicationActivityStat replStat = new ReplicationActivityStat();
+	    	Integer k = exp.getNmrOfReplications();
+	    	if(this.stat.getActTypes().get(actTypeName).getWaitingTime() != null) {
+	    		replStat.setWaitingTimeouts(new Integer[k]);
+	    	}
+	    	
+			replStat.setEnqueuedActivities(new Integer[k]);
+	    	replStat.setStartedActivities(new Integer[k]);
+	    	replStat.setCompletedActivities(new Integer[k]);
+	    	replStat.setQueueLength(new ReplicationGenericStat(new Integer[k]));
+	    	replStat.setWaitingTime(new ReplicationGenericStat(new Integer[k]));
+	    	replStat.setCycleTime(new ReplicationGenericStat(new Integer[k]));
+	        exp.getReplicStat().getActTypes().put(actTypeName, replStat);
+//	      exp.replicStat.actTypes[actTypeName].resUtil = {};
+	    }
+		   /***END Activity extensions BEFORE-runSimpleExperiment ********************/
+		
 		// run experiment scenario replications
 		for(int k = 0; k < exp.getNmrOfReplications(); k++) {
 			if(exp.getSeeds() != null) {
@@ -391,28 +406,42 @@ public class Simulator {
 			}
 			this.runScenario(debug);
 			// store replication statistics
-			for (Entry<String, Number[]> e : exp.getReplicStat().entrySet()) {
+			for (Entry<String, Number[]> e : exp.getReplicStat().getSimpleStat().entrySet()) {
 				Number[] value = e.getValue();
-				value[k] = this.getStat().get(e.getKey());
+				value[k] = this.getStat().getSimpleStat().get(e.getKey());
 				e.setValue(value);
 			}
+			/***START Activity extensions AFTER-runSimpleExperimentScenario ********************/
+			for (String actTypeName : exp.getReplicStat().getActTypes().keySet()) {
+				ReplicationActivityStat replActStat = exp.getReplicStat().getActTypes().get(actTypeName);
+				ActivityStat actStat = this.stat.getActTypes().get(actTypeName);
+				replActStat.getEnqueuedActivities()[k] = actStat.getEnqueuedActivities();
+				if(this.stat.getActTypes().get(actTypeName).getWaitingTime() != null) {
+					replActStat.getWaitingTimeouts()[k] = actStat.getWaitingTimeouts();
+		    	}
+				
+				
+			}
+		    /***END Activity extensions AFTER-runSimpleExperimentScenario ********************/
+			
+			
 			System.out.println("<------ Experiment #" + k + " -------->");
-			for (Entry<String, Number> es : this.getStat().entrySet()) {
+			for (Entry<String, Number> es : this.getStat().getSimpleStat().entrySet()) {
 				System.out.println(es.getKey() + " : " + es.getValue());
 			}
-			experimenStats.put(k, new HashMap<String, Number>(this.getStat()));
+			experimenStats.put(k, new HashMap<String, Number>(this.getStat().getSimpleStat()));
 			if (exp.isStoreExpResults()) {
 				 eXPERIMENTsCENARIOrUNDao.merge( new eXPERIMENTsCENARIOrUN(
 						 expRun.getId() + k + 1,
 						 expRun,
 						 null, null,
-						 this.stat));
+						 this.stat.getSimpleStat()));
 		     }
 		}
 	    
 		// define exp.summaryStat to be a map for the summary statistics
 		HashMap<String, Map<String, Number>> sumStat = new HashMap <String, Map<String, Number>>();
-		for (Entry<String, Number[]> var : exp.getReplicStat().entrySet()) {
+		for (Entry<String, Number[]> var : exp.getReplicStat().getSimpleStat().entrySet()) {
 			System.out.println("-----------------" + var.getKey() + "-----------------");
 			Map <String, Number> mathStats = new HashMap<String, Number>();
 			for (Entry<String, Function<Number[], Number>> stat : MathLib.summary.entrySet()) {
@@ -465,7 +494,7 @@ public class Simulator {
 			exp.getScenarios().add(i, new Scenario());
 			exp.getScenarios().get(i).setParameterValues(valueCombination);
 			// initialize experiment scenario statistics
-			for(String varName : this.stat.keySet()) {
+			for(String varName : this.stat.getSimpleStat().keySet()) {
 				exp.getScenarios().get(i).getStat().put(varName, 0);
 			}
 			 // create experiment parameter slots for assigning corresponding model variables
@@ -492,9 +521,9 @@ public class Simulator {
 				this.runScenario(debug);
 				
 				// add up replication statistics from sim.stat to sim.experimentType.scenarios[i].stat
-				for(String varName : this.stat.keySet()) {
+				for(String varName : this.stat.getSimpleStat().keySet()) {
 					Number n = exp.getScenarios().get(i).getStat().get(varName);
-					n = this.stat.get(varName).doubleValue() + n.doubleValue();
+					n = this.stat.getSimpleStat().get(varName).doubleValue() + n.doubleValue();
 					exp.getScenarios().get(i).getStat().replace(varName, n);
 				}
 				
@@ -503,12 +532,12 @@ public class Simulator {
 							 expRun.getId() + M + i * exp.getNmrOfReplications() + k + 1,
 							 expRun,
 							 Long.valueOf(i), null, 
-							 this.stat));
+							 this.stat.getSimpleStat()));
 			     }
 			}
 			
 			 // compute averages
-			for(String varName : this.stat.keySet()) {
+			for(String varName : this.stat.getSimpleStat().keySet()) {
 				Number n = exp.getScenarios().get(i).getStat().get(varName);
 				n = n.doubleValue() / exp.getNmrOfReplications();
 				exp.getScenarios().get(i).getStat().replace(varName, MathLib.round(n.doubleValue()));
@@ -520,7 +549,7 @@ public class Simulator {
 			System.out.println("stat:" + exp.getScenarios().get(i).getStat());
 			parValues.add(exp.getScenarios().get(i).getParameterValues());
 			
-			experimenStats.put(i, new HashMap<String, Number>(this.getStat()));
+			experimenStats.put(i, new HashMap<String, Number>(this.getStat().getSimpleStat()));
 		}
 		
 		if (exp.getSeeds() != null && exp.getSeeds().length < exp.getNmrOfReplications()) {
@@ -530,7 +559,7 @@ public class Simulator {
 		
 		// define exp.summaryStat to be a map for the summary statistics
 		HashMap<String, Map<String, Number>> sumStat = new HashMap <String, Map<String, Number>>();
-		for (Entry<String, Number[]> var : exp.getReplicStat().entrySet()) {
+		for (Entry<String, Number[]> var : exp.getReplicStat().getSimpleStat().entrySet()) {
 			System.out.println("-----------------" + var.getKey() + "-----------------");
 			Map <String, Number> mathStats = new HashMap<String, Number>();
 			for (Entry<String, Function<Number[], Number>> stat : MathLib.summary.entrySet()) {
@@ -602,9 +631,8 @@ public class Simulator {
 		
 	}
 
-	public void scheduleEvent(eVENT evemt) {
-		// TODO Auto-generated method stub
-		
+	public void scheduleEvent(eVENT event) {
+		this.FEL.add(event);
 	}
 	
 	public void checkProcNetConstraints(Object... params) {

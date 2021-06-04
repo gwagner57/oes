@@ -15,10 +15,10 @@ import lombok.Setter;
 @Setter
 public class tASKqUEUE {
 	private Integer capacity;
-	private Simulator sim;
+	private static Simulator sim;
 	private ArrayList<aCTIVITY> queue = new ArrayList<aCTIVITY>();
 
-	public tASKqUEUE(Simulator sim, Integer capacity) {
+	public tASKqUEUE(Integer capacity) {
 		super();
 		 // "capacity" is only used for Processing Nodes in PNs
 		this.capacity = capacity;
@@ -44,11 +44,12 @@ public class tASKqUEUE {
 			}
 		}
 		// Are all required resources available?
+		final aCTIVITY act = nextActy;
 		if(
 				AT.getResourceRoles().keySet().
 				stream().
 				// test only for resources not yet assigned
-				filter(resRoleName -> nextActy.getResourceRoles().containsKey(resRoleName)).
+				filter(resRoleName -> act.getResourceRoles().containsKey(resRoleName)).
 				map(resRoleName -> AT.getResourceRoles().get(resRoleName)).
 				allMatch(resRole -> resRole.getResPool().isAvailable(resRole.getCard() != null ? resRole.getCard() : resRole.getMinCard()))) 
 		{
@@ -81,21 +82,45 @@ public class tASKqUEUE {
 		}
 	}
 	
-	public void startOrEnqueue(aCTIVITY activity) {
+	public void startOrEnqueue(aCTIVITY acty) {
 		
+		aCTIVITY AT = acty;//TODO
+		
+		if(!this.equals(acty.getTasks())) {
+			System.err.println("Attempt to push an "+ acty.getName() +" to wrong queue!");
+			return;
+		}
+		
+		boolean actyStarted = tASKqUEUE.ifAvailAllocReqResAndStartNextActivity(AT, acty);
+		if(!actyStarted) {
+			acty.setEnqueueTime(sim.getTime());
+			if(AT.getWaitingTimeout() != null) acty.setWaitingTimeout(sim.getTime().doubleValue() + AT.getWaitingTimeout().doubleValue());
+			this.push(acty); // add acty to task queue
+			Integer enqueuedActivities = sim.getStat().getActTypes().get(AT.getName()).getEnqueuedActivities();
+			enqueuedActivities = enqueuedActivities + 1;
+			// compute generic queue length statistics per activity type
+			if(this.length() > sim.getStat().getActTypes().get(AT.getName()).getQueueLength().getMax().intValue()) {
+				sim.getStat().getActTypes().get(AT.getName()).getQueueLength().setMax(this.length());
+			}
+		}
 	}
 	
-	public void dequeue() {
-		// TODO Auto-generated method stub
-		
+	public aCTIVITY dequeue() {
+		//TODO?: compute average queue length statistics
+		aCTIVITY acty = this.queue.remove(0);
+		return acty;
 	}
-	
+
 	public void clear() {
 		this.queue.clear();
 	}
 
 	public int length() {
 		return this.queue.size();
+	}
+	
+	public void push(aCTIVITY act) {
+		 this.queue.add(act);
 	}
 	
 	public aCTIVITY get(int index) {

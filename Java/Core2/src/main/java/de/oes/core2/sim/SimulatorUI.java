@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import de.oes..dto.LogEntryDTO;
-import de.oes..foundations.eVENT;
+import de.oes.core2.dto.LogEntryDTO;
+import de.oes.core2.foundations.eVENT;
 
 public class SimulatorUI {
 
