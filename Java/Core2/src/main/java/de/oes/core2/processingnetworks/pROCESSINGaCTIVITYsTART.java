@@ -37,9 +37,9 @@ public class pROCESSINGaCTIVITYsTART extends aCTIVITYsTART {
 	}
 
 	public void onConstructionAfterAssigningProperties() {
+		if(resourceRoles == null) this.resourceRoles = new HashMap<String, rESOURCErOLE>();
+		// make sure that processing node is a resource
 		//TODO
-//		if(resourceRoles != null) this.resourceRoles = new HashMap<String, rESOURCErOLE>();
-//		// make sure that processing node is a resource
 //		this.resourceRoles.put("processingNode", this.processingNode);
 	}
 	

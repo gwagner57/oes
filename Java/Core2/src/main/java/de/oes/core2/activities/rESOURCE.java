@@ -9,12 +9,14 @@ import lombok.Setter;
 @Setter
 public class rESOURCE extends oBJECT{
 
+	private rESOURCEsTATUS status;
+	private aCTIVITYsTATE activityState;
+	private rESOURCEpOOL resourcePool;
+	
 	public rESOURCE(Integer id, String name, Simulator sim, rESOURCEpOOL resourcePool, rESOURCEsTATUS status) {
 		super(id, name, sim);
 		this.resourcePool = resourcePool;
 		this.status = status;
 	}
-	private rESOURCEsTATUS status;
-	private aCTIVITYsTATE activityState;
-	private rESOURCEpOOL resourcePool;
+	
 }

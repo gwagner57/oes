@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import de.oes.core2.foundations.eVENT;
 import de.oes.core2.sim.GenericStat;
@@ -24,33 +25,38 @@ public class aCTIVITYeND extends eVENT {
 	public aCTIVITYeND(Simulator sim) {
 		super(sim);
 	}
-
+	
+	
+	
 	@Override
 	public List<eVENT> onEvent() {
 		List<eVENT> followupEvents = new ArrayList<eVENT>();
 		Simulator sim = this.getSim();
-		aCTIVITY AT = this.activity;
-		aCTIVITY acty = AT; //FIXME
+		aCTIVITY acty = this.activity; 
+		aCTIVITY AT = acty; // the activity's type/class
 		GenericStat waitingTimeStat = sim.getStat().
 									getActTypes().
-									get(AT.getName()).
+									get(AT.getClass().getSimpleName()).
 									getWaitingTime();
 		GenericStat cycleTimeStat = sim.getStat().
 										getActTypes().
-										get(AT.getName()).
+										get(AT.getClass().getSimpleName()).
 										getCycleTime();
-		Map<String, Number> resUtilPerAT = sim.getStat().getActTypes().get(AT.getName()).getResUtil();
+		Map<String, Number> resUtilPerAT = sim.getStat().getActTypes().get(AT.getClass().getSimpleName()).getResUtil();
 		
-		if(acty.onActivityStart != null) {
-			followupEvents.addAll(acty.onActivityStart.get());
+		// if there is an onActivityEnd procedure, execute it
+		if(acty.onActivityEnd != null) {
+			followupEvents.addAll(acty.onActivityEnd.get());
 		}
+		acty.setOccTime(this.getOccTime());
 		
 		// set duration if there was no pre-set duration
 		if(acty.getDuration() == null) {
 			acty.setDuration(acty.getOccTime().doubleValue() - acty.getStartTime().doubleValue());
 		}
 		
-		sim.incrementStat(AT.getName() + ".completedActivities", 1);
+		Integer completedActivities = sim.getStat().getActTypes().get(AT.getClass().getSimpleName()).getCompletedActivities();
+		 sim.getStat().getActTypes().get(AT.getClass().getSimpleName()).setCompletedActivities(completedActivities + 1);
 		Double waitingTime = acty.getEnqueueTime() != null ? acty.getStartTime().doubleValue() - acty.getEnqueueTime().doubleValue() : 0;
 		
 		//waitingTimeStat.total += waitingTime;
@@ -64,20 +70,19 @@ public class aCTIVITYeND extends eVENT {
 			if(resRole.getRange() != null) {
 				List<rESOURCE> resObjects = acty.get(resRoleName);
 				for (rESOURCE resObj : resObjects) {
-					resUtilPerAT.put(resObj.getId().toString(), acty.getDuration());
+					Number ru = resUtilPerAT.get(resObj.getId().toString());
+					resUtilPerAT.put(resObj.getId().toString(), ru.doubleValue() + acty.getDuration().doubleValue());
 					 // update the activity state of resource objects
 					resObj.getActivityState().delete(AT.getName());
 				}
 			} else { // per count pool
-				resUtilPerAT.put(resRole.getCountPoolName(), acty.getDuration());
+				resUtilPerAT.put(resRole.getCountPoolName(), resUtilPerAT.get(resRole.getCountPoolName()).doubleValue() + acty.getDuration().doubleValue());
 			}
 		}
 		// enqueue or schedule a successor activity according to the process model
 		if(AT.getSuccessorActivity() != null) { // a string or a function returning a string
-//			 const SuccAT = typeof AT.successorActivity === "function" ?
-//                     sim.Classes[AT.successorActivity()] : sim.Classes[AT.successorActivity],
-			aCTIVITY succActy = null; //TODO
-			aCTIVITY SuccAT = succActy; //TODO
+			aCTIVITY SuccAT = this.getSim().getAClasses().get(AT.getSuccessorActivity());
+			aCTIVITY succActy = SuccAT; //TODO
 			
 			Set<String> succActyResRoleNames = SuccAT.getResourceRoles().keySet();
 			Set<String> actyResRoleNames = AT.getResourceRoles().keySet();
@@ -115,6 +120,17 @@ public class aCTIVITYeND extends eVENT {
 		}
 		
 		return followupEvents;
+	}
+
+	@Override
+	public String getSuccessorActivity() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toString() {
+		return this.activity.getClass().getSimpleName() + "End@" + this.getOccTime();
 	}
 
 }

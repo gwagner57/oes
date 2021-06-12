@@ -1,16 +1,20 @@
 package de.oes.core2.foundations;
 
 import java.util.Comparator;
+
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import de.oes.core2.lib.MathLib;
 import de.oes.core2.sim.Simulator;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public abstract class eVENT {
 	
 	private Simulator sim;
@@ -48,6 +52,7 @@ public abstract class eVENT {
 	}
 	
 	public abstract List<eVENT> onEvent();
+	public abstract String getSuccessorActivity();
 	
 	@Override
 	public String toString() {

@@ -1,10 +1,10 @@
-package de.oes.core2.pizzaservice1;
+package de.oes.core2.pizzaservice2;
 
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.function.Consumer;
 
-import de.oes.core2.activities.SuccAT;
 import de.oes.core2.activities.aCTIVITYsTART;
 import de.oes.core2.foundations.ExogenousEvent;
 import de.oes.core2.foundations.eVENT;
@@ -28,19 +28,7 @@ public class Order extends ExogenousEvent {
 	public List<eVENT> onEvent() {
 		List<eVENT> followupEvents = new ArrayList<eVENT>();
 		Simulator sim = this.getSim();
-		// increment queue length
-		this.pizzaService.setQueueLength(this.pizzaService.getQueueLength() + 1);
-		// update statistics
-		
 		sim.incrementStat("nmrOfOrders", 1);
-		if(this.pizzaService.getQueueLength() > sim.getStat().getSimpleStat().get("maxQueueLength").intValue()) {
-			sim.updateStatValue("maxQueueLength", this.pizzaService.getQueueLength());
-		}
-		// if the service desk is not busy
-		if(!this.pizzaService.isBusy()) {
-			MakePizza makePizzaActy = new MakePizza(this.getSim(), null, null, MakePizza.duration(), this.pizzaService);
-			followupEvents.add(new aCTIVITYsTART(this.getSim(), null, null, makePizzaActy));
-		}
 		return followupEvents;
 	}
 
@@ -56,8 +44,6 @@ public class Order extends ExogenousEvent {
 
 	@Override
 	public String getSuccessorActivity() {
-		// TODO Auto-generated method stub
-		return null;
+		return "MakePizza";
 	}
-
 }

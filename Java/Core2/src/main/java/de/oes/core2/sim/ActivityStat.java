@@ -17,4 +17,19 @@ public class ActivityStat {
 	private GenericStat waitingTime;
 	private GenericStat cycleTime;
 	private GenericStat queueLength;
+	
+	@Override
+	public String toString() {
+		return "ActivityStat :[\n" +
+				"enqueuedActivities " + this.enqueuedActivities + "\n" +
+				"startedActivities " + this.startedActivities + "\n" +
+				"completedActivities " + this.completedActivities + "\n" +
+				"waitingTimeouts " + this.waitingTimeouts + "\n" +
+				"waitingTime " + this.waitingTime.getMax() + "\n" +
+				"cycleTime " + this.cycleTime.getMax() + "\n" +
+				"queueLength " + this.queueLength.getMax() + "\n" +
+				"resUtil " + this.resUtil; // TODO: devide by sim.time
+	}
+	
+	
 }

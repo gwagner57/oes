@@ -18,10 +18,11 @@ public class tASKqUEUE {
 	private static Simulator sim;
 	private ArrayList<aCTIVITY> queue = new ArrayList<aCTIVITY>();
 
-	public tASKqUEUE(Integer capacity) {
+	public tASKqUEUE(Integer capacity, Simulator sim) {
 		super();
 		 // "capacity" is only used for Processing Nodes in PNs
 		this.capacity = capacity;
+		tASKqUEUE.sim = sim;
 	}
 	
 	  /*
@@ -38,7 +39,7 @@ public class tASKqUEUE {
 				// remove nextActy from queue
 				AT.getTasks().dequeue();
 				// increment the waitingTimeouts statistic
-				sim.incrementStat(AT.getName() + ".waitingTimeouts", 1);
+				sim.getStat().getActTypes().get(AT.getClass().getSimpleName()).setWaitingTimeouts(sim.getStat().getActTypes().get(AT.getClass().getSimpleName()).getWaitingTimeouts() + 1);
 				if(AT.getTasks().length() == 0) return false;
 				else nextActy = AT.getTasks().get(0);
 			}
@@ -96,11 +97,11 @@ public class tASKqUEUE {
 			acty.setEnqueueTime(sim.getTime());
 			if(AT.getWaitingTimeout() != null) acty.setWaitingTimeout(sim.getTime().doubleValue() + AT.getWaitingTimeout().doubleValue());
 			this.push(acty); // add acty to task queue
-			Integer enqueuedActivities = sim.getStat().getActTypes().get(AT.getName()).getEnqueuedActivities();
-			enqueuedActivities = enqueuedActivities + 1;
+			Integer enqueuedActivities = sim.getStat().getActTypes().get(AT.getClass().getSimpleName()).getEnqueuedActivities();
+			sim.getStat().getActTypes().get(AT.getClass().getSimpleName()).setEnqueuedActivities(enqueuedActivities + 1);
 			// compute generic queue length statistics per activity type
-			if(this.length() > sim.getStat().getActTypes().get(AT.getName()).getQueueLength().getMax().intValue()) {
-				sim.getStat().getActTypes().get(AT.getName()).getQueueLength().setMax(this.length());
+			if(this.length() > sim.getStat().getActTypes().get(AT.getClass().getSimpleName()).getQueueLength().getMax().intValue()) {
+				sim.getStat().getActTypes().get(AT.getClass().getSimpleName()).getQueueLength().setMax(this.length());
 			}
 		}
 	}

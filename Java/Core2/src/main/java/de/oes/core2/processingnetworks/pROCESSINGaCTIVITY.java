@@ -1,9 +1,7 @@
 package de.oes.core2.processingnetworks;
 
-import java.util.List;
 
 import de.oes.core2.activities.aCTIVITY;
-import de.oes.core2.foundations.eVENT;
 import de.oes.core2.lib.Rand;
 import de.oes.core2.sim.Simulator;
 import lombok.Getter;
@@ -18,7 +16,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class pROCESSINGaCTIVITY extends aCTIVITY {
+public abstract class pROCESSINGaCTIVITY extends aCTIVITY {
 
 	private Object processingNode;
 	
@@ -31,11 +29,5 @@ public class pROCESSINGaCTIVITY extends aCTIVITY {
 	// define the exponential PDF as the default duration random variable
 	public static Double defaultMean = 1.0;
 	public static Double defaultDuration = Rand.exponential(1.0 / pROCESSINGaCTIVITY.defaultMean).doubleValue();
-	
-	@Override
-	public List<eVENT> onEvent() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

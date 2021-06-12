@@ -12,7 +12,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.commons.math3.random.Well19937c;
 import org.springframework.beans.factory.annotation.Autowired;
-import de.oes.core2.activities.SuccAT;
 import de.oes.core2.activities.aCTIVITY;
 import de.oes.core2.activities.rESOURCE;
 import de.oes.core2.activities.rESOURCEpOOL;
@@ -26,7 +25,6 @@ import de.oes.core2.entity.eXPERIMENTsCENARIOrUN;
 import de.oes.core2.foundations.ExogenousEvent;
 import de.oes.core2.foundations.eVENT;
 import de.oes.core2.foundations.oBJECT;
-import de.oes.core2.lib.ClassUtil;
 import de.oes.core2.lib.EventList;
 import de.oes.core2.lib.MathLib;
 import de.oes.core2.lib.Rand;
@@ -61,9 +59,8 @@ public class Simulator {
 	private Map<Integer, eVENT> ongoingActivities;
 	private SimulationStat stat = new SimulationStat();
 	private Double nextEvtTime = Double.valueOf(0);
-	private Map<String, Class<?>> classes;
-
-	private Object object;
+	private Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
+	private Map<String, aCTIVITY> aClasses = new HashMap<String, aCTIVITY>(); // to access static fields using class instances
 	
 	public void incrementStat(String name, Number inc) {
 		Number num = this.stat.getSimpleStat().get(name);
@@ -129,7 +126,7 @@ public class Simulator {
 		if(this.model.getActivityTypes() == null) this.model.setActivityTypes(new HashSet<String>());
 		// Make activity classes accessible via their activity type name
 		for (String actTypeName : this.model.getActivityTypes()) {
-				this.classes.put(actTypeName,  ClassUtil.getActivityClass(actTypeName));
+				this.classes.put(actTypeName, aClasses.get(actTypeName).getClass());
 		}
 		
 		this.setupActivityStatistics();
@@ -137,16 +134,15 @@ public class Simulator {
 		this.setResourcepools(new HashMap<String, rESOURCEpOOL>());
 		// Initializations per activity type
 		for (String actTypeName : this.model.getActivityTypes()) {
-			Class<? extends aCTIVITY> AT = (Class<? extends aCTIVITY>) this.classes.get(actTypeName);
+			aCTIVITY AT = this.aClasses.get(actTypeName);
 			
-			if(AT.getDeclaredField("resourceRoles").get(null) == null) {
-				AT.getDeclaredField("resourceRoles").set(null, new HashMap<String, rESOURCErOLE>());
-			}
+			if(AT.getResourceRoles() == null) AT.setResourceRoles(new HashMap<String, rESOURCErOLE>());
 			
-			AT.getDeclaredField("resourceRoles").set(null, new tASKqUEUE(null));
+			// Create the tasks queues
+			AT.setTasks(new tASKqUEUE(null, this));
 			// Create the resource pools
-			for (String resRoleName : a.getResourceRoles().keySet()) {
-				rESOURCErOLE resRole = a.getResourceRoles().get(resRoleName);			
+			for (String resRoleName : AT.getResourceRoles().keySet()) {
+				rESOURCErOLE resRole = AT.getResourceRoles().get(resRoleName);			
 				String pn = "";
 				// set default cardinality
 				if(resRole.getCard() == null && resRole.getMinCard() == null) resRole.setCard(1);
@@ -175,10 +171,11 @@ public class Simulator {
 				// assign the (newly created) pool to the resource role
 				resRole.setResPool(this.getResourcepools().get(pn));
 				// Subscribe activity types to resource pools
-				resRole.getResPool().getDependentActivityTypes().add(AT.getClass());
+				resRole.getResPool().getDependentActivityTypes().add(AT);
 				if(altResTypes != null) {
 					for (Class<? extends rESOURCE> arT : altResTypes) {
-						resRole.getResPool().getDependentActivityTypes().add(arT);
+						//TODO
+						//resRole.getResPool().getDependentActivityTypes().add(arT);
 					}
 				}
 			}
@@ -239,7 +236,7 @@ public class Simulator {
 		this.initializeActivityStatistics();
 		for (String actTypeName : this.model.getActivityTypes()) {
 			// Reset/clear the tasks queues
-			aCTIVITY AT = (aCTIVITY) this.classes.get(actTypeName);
+			aCTIVITY AT = this.aClasses.get(actTypeName);
 			AT.getTasks().clear();
 		}
 		// Initialize resource pools
@@ -247,7 +244,7 @@ public class Simulator {
 			Integer nmrOfAvailRes = this.resourcepools.get(poolName).getAvailable();
 			if(nmrOfAvailRes != null) { // a count pool
 				// the size of a count pool is the number of initially available resources
-				// sim.resourcePools[poolName].size = nmrOfAvailRes; // TODO
+				this.resourcepools.get(poolName).setSize(nmrOfAvailRes);
 			}
 		}
 		/***END Activity extensions AFTER-setupInitialState *********************/
@@ -305,11 +302,10 @@ public class Simulator {
 		      
 		      /**** ACTIVITIES extension START ****/
 		      // if event class with successorActivity
-		      if(e instanceof SuccAT) {
-		    	  //TODO
-//		    	  const SuccActivityClass = sim.Classes[EventClass.successorActivity];
-//		          // enqueue successor activity
-//		          SuccActivityClass.tasks.startOrEnqueue( new SuccActivityClass());
+		      if(e.getSuccessorActivity() != null) {
+		    	  aCTIVITY SuccActivityClass = this.aClasses.get(e.getSuccessorActivity());
+		          // enqueue successor activity
+		    	  SuccActivityClass.getTasks().startOrEnqueue(SuccActivityClass);
 		      }
 		      /**** ACTIVITIES extension END ****/
 		      
@@ -598,17 +594,19 @@ public class Simulator {
 	 ********************************************************/
 	public void initializeActivityStatistics() {
 		if(this.model.getActivityTypes() != null && this.model.getActivityTypes().size() > 0) {
-//			sim.stat.includeTimeouts = sim.model.activityTypes.some(
-//			        actTypeName => typeof sim.Classes[actTypeName].waitingTimeout === "function");
+			// TODO
+			//			sim.stat.includeTimeouts = sim.model.activityTypes.some(
+			//        actTypeName => typeof sim.Classes[actTypeName].waitingTimeout === "function");
 			for (String actTypeName : this.model.getActivityTypes()) {
 				ActivityStat actStat = this.stat.getActTypes().get(actTypeName);
-				aCTIVITY AT = this.classes.get(actTypeName);
+				aCTIVITY AT = this.aClasses.get(actTypeName);
 				Map<String, Number> resUtilPerAT = actStat.getResUtil();
 				actStat.setEnqueuedActivities(0);
 				actStat.setStartedActivities(0);
 				actStat.setCompletedActivities(0);
 				actStat.setQueueLength(GenericStat.builder().max(0).build());
 				actStat.setWaitingTime(GenericStat.builder().max(0).build());
+				actStat.setWaitingTimeouts(0);
 				actStat.setCycleTime(GenericStat.builder().max(0).build());
 				for (String resRoleName : AT.getResourceRoles().keySet()) {
 					rESOURCErOLE resRole = AT.getResourceRoles().get(resRoleName);

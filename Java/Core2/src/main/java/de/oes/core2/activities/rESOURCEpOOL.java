@@ -25,10 +25,11 @@ public class rESOURCEpOOL {
 	private String name;
 	private rANGE resourceType;
 	private Integer available;
+	private Integer size;
 	private List<rESOURCE> resources;
-	private List<rESOURCE> busyResources;
-	private List<rESOURCE> availResources;
-	private List<Class<? extends Object>> dependentActivityTypes;
+	private List<rESOURCE> busyResources = new ArrayList<rESOURCE>();
+	private List<rESOURCE> availResources = new ArrayList<rESOURCE>();
+	private List<aCTIVITY> dependentActivityTypes;
 	private Simulator sim;
 	
 
@@ -38,18 +39,21 @@ public class rESOURCEpOOL {
 		this.sim = sim;
 		if(Objects.nonNull(available)) {
 			this.available = available;
-		} else if (Objects.nonNull(resourceType)) {
+		} 
+		if (Objects.nonNull(resourceType)) {
 			this.resourceType = resourceType;
 			this.busyResources = new ArrayList<rESOURCE>(); 
 			this.availResources = new ArrayList<rESOURCE>(); 
 		} else {
 			System.err.println("Resource pool " + name + " is not well-defined!");
 		}
-		this.dependentActivityTypes = new ArrayList<Class<? extends Object>>();
+		this.dependentActivityTypes = new ArrayList<aCTIVITY>();
 		if(resources != null && !resources.isEmpty()) {
 			for (rESOURCE res : resources) {
-				if(res.getStatus() == rESOURCEsTATUS.AVAILABLE) this.availResources.add(res);
-				if(res.getStatus() == rESOURCEsTATUS.BUSY) this.busyResources.add(res);
+				if(res.getStatus() == rESOURCEsTATUS.AVAILABLE) 
+					this.availResources.add(res);
+				if(res.getStatus() == rESOURCEsTATUS.BUSY) 
+					this.busyResources.add(res);
 			}
 		}
 	}
@@ -61,7 +65,9 @@ public class rESOURCEpOOL {
 			// check if there are alternative resources
 			List<Class<? extends rESOURCE>> altResTypes = this.resourceType.getAlternativeResourceTypes();
 			if(altResTypes != null && altResTypes.size() > 0) {
-//TODO			const rP = sim.Classes[altResTypes[0]].resourcePool;
+				//TODO get resource pool
+				sim.getAClasses().get(altResTypes.get(0).getSimpleName());
+				
 				rESOURCEpOOL rP = null;
 		        return rP != null && rP.isAvailable(card);
 			} else return false;
@@ -81,7 +87,7 @@ public class rESOURCEpOOL {
 			}
 			this.availResources = new ArrayList<rESOURCE>();
 			return allocatedRes;
-		} else available = 0;
+		} else this.available = 0;
 		return availResources;
 	}
 	
@@ -112,18 +118,23 @@ public class rESOURCEpOOL {
 		}
 		
 		// remove the first card resources from availResources
-		List<rESOURCE> allocatedRes = rp.getAvailResources().subList(0, card);
+		List<rESOURCE> ar = rp.getAvailResources();
+		List<rESOURCE> allocatedRes = new ArrayList<rESOURCE>();
 		for (int i = 0; i < card; i++) {
-			rp.getAvailResources().remove(0);
+			allocatedRes.add(ar.remove(i));
 		}
-	
+		rp.setAvailResources(ar);
+
+		this.available = this.available - card; //TODO: custom, check it
+		
 		for (rESOURCE res : allocatedRes) {
 			res.setStatus(rESOURCEsTATUS.BUSY);
 			rp.getBusyResources().add(res);
 		}
 		return allocatedRes;
-	} else this.available -= card;
-	
+	} else {
+		this.available = this.available - card;
+	}
 		return new ArrayList<rESOURCE>();
 	}
 
@@ -131,6 +142,10 @@ public class rESOURCEpOOL {
 	public void release(Integer nmrOfRes) { // number or resource(s)
 		if(nmrOfRes == null) nmrOfRes = 1;
 		this.available += nmrOfRes;
+		// try starting enqueued tasks depending on this type of resource
+		for(aCTIVITY AT : this.dependentActivityTypes) {
+			tASKqUEUE.ifAvailAllocReqResAndStartNextActivity(AT, null);
+		}
 	}
 	
 	public void release(List<rESOURCE> resources) { // number or resource(s)
@@ -140,11 +155,23 @@ public class rESOURCEpOOL {
 			if(i == -1) {
 				System.err.println("The pool " + rP.name + "does not contain resource " + res.toString() + " at simulation step " + sim.getStep());
 				return;
+			} else {
+				 // remove resource from busyResources list
+				List<rESOURCE> br = rP.getBusyResources();
+				for (int j = i; j < 1; j++) {
+					br.remove(j);
+				}
+				rP.setBusyResources(br);
+				// add resource to availResources list
+				res.setStatus(rESOURCEsTATUS.AVAILABLE);
+				rP.getAvailResources().add(res);
+				
+				this.available += resources.size(); //TODO: custom, check it
 			}
-			// try starting enqueued tasks depending on this type of resource
-//			for(aCTIVITY AT : this.dependentActivityTypes) {
-//				tASKqUEUE.ifAvailAllocReqResAndStartNextActivity(AT, null); TODO
-//			}
+		}
+		// try starting enqueued tasks depending on this type of resource
+		for(aCTIVITY AT : this.dependentActivityTypes) {
+			tASKqUEUE.ifAvailAllocReqResAndStartNextActivity(AT, null);
 		}
 	}
 	

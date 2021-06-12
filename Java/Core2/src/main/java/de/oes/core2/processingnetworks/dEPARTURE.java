@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.oes.core2.foundations.eVENT;
-import de.oes.core2.foundations.oBJECT;
 import de.oes.core2.sim.Simulator;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +11,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class dEPARTURE extends eVENT {
+public abstract class dEPARTURE extends eVENT {
 
 	private ExitNode exitNode;
 	

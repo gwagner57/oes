@@ -1,13 +1,13 @@
-package de.oes.core2.pizzaservice1;
+package de.oes.core2.pizzaservice2;
 
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 import de.oes.core2.activities.aCTIVITY;
-import de.oes.core2.activities.aCTIVITYsTART;
+import de.oes.core2.activities.rANGE;
 import de.oes.core2.activities.rESOURCE;
 import de.oes.core2.activities.rESOURCErOLE;
 import de.oes.core2.activities.tASKqUEUE;
@@ -31,32 +31,13 @@ public class MakePizza extends aCTIVITY {
 	public MakePizza(Simulator sim, Number id, Number startTime, Number duration, PizzaService pizzaService) {
 		super(sim, id, null, startTime, duration, null);
 		this.pizzaService = pizzaService;
-		this.onActivityStart = this::onActivityStart;
-		this.onActivityEnd= this::onActivityEnd;
 		this.durationFunc = MakePizza::duration;
-	}
-	
-	private List<eVENT> onActivityStart() {
-		List<eVENT> followupEvents = new ArrayList<eVENT>();
-		this.pizzaService.setBusy(true);
-		return followupEvents;
-	}
-	
-	private List<eVENT> onActivityEnd() {
-		List<eVENT> followupEvents = new ArrayList<eVENT>();
-		// decrement queue length
-		this.pizzaService.setQueueLength(this.pizzaService.getQueueLength() - 1);
-		// update statistics
-		this.getSim().incrementStat("nmrOfDeliveredPizzas", 1);
-		// if there are still waiting orders
-		if(this.pizzaService.getQueueLength() > 0) {
-			// start next MakePizza activity
-			MakePizza makePizzaActy = new MakePizza(this.getSim(), null, null, MakePizza.duration(), this.pizzaService);
-			followupEvents.add(new aCTIVITYsTART(this.getSim(), null, null, makePizzaActy));
-		} else {
-			this.pizzaService.setBusy(false);
-		}
-		return followupEvents;
+		rESOURCErOLE rr = new rESOURCErOLE();
+		rr.setCard(1);
+		rANGE range = new rANGE();
+		range.setName("PizzaService");
+		rr.setRange(range);
+		MakePizza.resRoles.put("pizzaService", rr);
 	}
 	
 	public static Number duration() {

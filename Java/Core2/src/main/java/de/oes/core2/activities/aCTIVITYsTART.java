@@ -2,8 +2,10 @@ package de.oes.core2.activities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import de.oes.core2.foundations.eVENT;
+import de.oes.core2.lib.MathLib;
 import de.oes.core2.sim.Simulator;
 
 public class aCTIVITYsTART extends eVENT {
@@ -17,30 +19,31 @@ public class aCTIVITYsTART extends eVENT {
 
 	@Override
 	public String toString() {
-		//TODO
-		return "activityStart@" + this.getOccTime();
+		return this.plannedActivity.getClass().getSimpleName() + "Start@" + this.getOccTime();
 	}
 	
 	@Override
 	public List<eVENT> onEvent() {
 		List<eVENT> followupEvents = new ArrayList<eVENT>();
 		aCTIVITY acty = this.plannedActivity; 
-		Class<? extends aCTIVITY> AT = acty.getClass();
+		String simpleName = acty.getClass().getSimpleName();
+		aCTIVITY AT = this.getSim().getAClasses().get(simpleName);
 		 // create slots for constructing new activity
 		acty.setStartTime(this.getOccTime());
 		
-	//	TODO
-//		if (acty.getDuration() != null) {
-//		      if (typeof acty.duration === "function") acty.duration = acty.duration();
-//		      else acty.duration = acty.duration;
-//		    } else if (AT.duration) {
-//		      if (typeof AT.duration === "function") acty.duration = AT.duration();
-//		      else acty.duration = AT.duration;
-//		    }
-//		
+		if (acty.getDurationFunc() != null) {
+		     acty.setDuration(acty.getDurationFunc().get());;
+		} 
 	    // update statistics
-		Integer startedActivities = this.getSim().getStat().getActTypes().get(AT.getName()).getStartedActivities();
-		startedActivities = Integer.valueOf(startedActivities.intValue() + 1);
+		Integer startedActivities = this.
+				getSim().
+				getStat().
+				getActTypes().
+				get(simpleName).
+				getStartedActivities();
+		this.getSim().getStat().getActTypes().get(simpleName).
+		setStartedActivities(
+		Integer.valueOf(startedActivities.intValue() + 1));
 		// Set activity state for all involved resource objects
 		for (String resRoleName : acty.getResourceRoles().keySet()) { //TODO AT
 			if(acty.getResourceRoles().get(resRoleName).getRange() != null) {  // an individual pool
@@ -57,9 +60,15 @@ public class aCTIVITYsTART extends eVENT {
 		}
 		// Schedule an activity end event if the duration is known
 		if(acty.getDuration() != null) {
-			followupEvents.add(new aCTIVITYeND(this.getSim(), this.getOccTime().doubleValue() + acty.getDuration().doubleValue(), null, null, null, acty));
+			followupEvents.add(new aCTIVITYeND(this.getSim(), MathLib.round(this.getOccTime().doubleValue()  + acty.getDuration().doubleValue()), null, null, null, acty));
 		}
 		return followupEvents;
+	}
+
+	@Override
+	public String getSuccessorActivity() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

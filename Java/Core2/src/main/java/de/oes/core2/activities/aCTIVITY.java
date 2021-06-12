@@ -3,29 +3,28 @@ package de.oes.core2.activities;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import de.oes.core2.foundations.eVENT;
 import de.oes.core2.lib.Rand;
 import de.oes.core2.sim.Simulator;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-public abstract class aCTIVITY extends eVENT{
+@NoArgsConstructor
+public abstract class aCTIVITY extends eVENT {
 	// startTime=0 indicates to the eVENT constructor that this is an aCTIVITY
 	private long id;
-	private static String name;
+	private String name;
 	private Number enqueueTime;
-	private Map<String, List<rESOURCE>> resources;
-	public static Map<String, rESOURCErOLE> resourceRoles;
 	private Number waitingTimeout;
-	private static tASKqUEUE tasks;
-	public Supplier<List<eVENT>> onActivityStart;
-	public Supplier<List<eVENT>> onActivityEnd;
-	private Consumer<String> successorActivity;
+	protected Supplier<List<eVENT>> onActivityStart;
+	protected Supplier<List<eVENT>> onActivityEnd;
+	protected Supplier<Number> durationFunc;
+	
 	
 	// define the exponential PDF as the default duration random variable
 	public static final double defaultMean = 1.0;
@@ -41,15 +40,14 @@ public abstract class aCTIVITY extends eVENT{
 		if(Objects.nonNull(enqueueTime)) this.enqueueTime = enqueueTime;
 	}
 	
-	public List<rESOURCE> get(String resRoleName) {
-		return this.resources.get(resRoleName);
-	}
-	
-	public void put(List<rESOURCE> rESOURCEs, String resRoleName) {
-		this.resources.put(resRoleName, rESOURCEs);
-	}
-	
-	public void delete(String resRoleName) {
-		this.resources.remove(resRoleName);
-	}
+	public abstract tASKqUEUE getTasks();
+	public abstract void setTasks(tASKqUEUE t);
+	public abstract Map<String, List<rESOURCE>> getResources();
+	public abstract void setResources(Map<String, List<rESOURCE>> res);
+	public abstract Map<String, rESOURCErOLE> getResourceRoles();
+	public abstract void setResourceRoles(Map<String, rESOURCErOLE> resRoles);
+	public abstract List<rESOURCE> get(String resRoleName);
+	public abstract void put(List<rESOURCE> rESOURCEs, String resRoleName);
+	public abstract void delete(String resRoleName);
+	public abstract String getSuccessorActivity();
 }

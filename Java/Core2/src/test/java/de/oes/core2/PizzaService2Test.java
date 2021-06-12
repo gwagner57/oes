@@ -1,8 +1,9 @@
 package de.oes.core2;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
@@ -10,18 +11,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import de.oes.core2.sim.Simulator;
-import de.oes.core2.sim.Scenario;
-import de.oes.core2.sim.eXPERIMENTtYPE;
-import de.oes.core2.pizzaservice1.Order;
-import de.oes.core2.pizzaservice1.PizzaService;
+import de.oes.core2.activities.rANGE;
+import de.oes.core2.activities.rESOURCE;
+import de.oes.core2.activities.rESOURCEpOOL;
+import de.oes.core2.activities.rESOURCEsTATUS;
+import de.oes.core2.pizzaservice2.MakePizza;
+import de.oes.core2.pizzaservice2.Order;
+import de.oes.core2.pizzaservice2.PizzaService;
+import de.oes.core2.sim.ActivityStat;
 import de.oes.core2.sim.Model;
+import de.oes.core2.sim.Scenario;
+import de.oes.core2.sim.Simulator;
 import de.oes.core2.sim.Time;
 import de.oes.core2.sim.TimeUnit;
-
+import de.oes.core2.sim.eXPERIMENTtYPE;
 
 @SpringBootTest
-public class PizzaService1_test {
+public class PizzaService2Test {
 
 	@Autowired
 	private  AutowireCapableBeanFactory autowireCapableBeanFactory;
@@ -29,7 +35,7 @@ public class PizzaService1_test {
 	@Test
 	public void testSuccess() throws Exception {
 		Model model = new Model();
-		model.setName("Pizza-Server-1");
+		model.setName("Pizza-Server-2");
 		model.setTime(Time.CONT);
 		model.setTimeUnit(TimeUnit.min);
 		
@@ -40,15 +46,27 @@ public class PizzaService1_test {
 		 Simulation Scenario
 		 ********************************************************/
 		Simulator sim = new Simulator();
+		MakePizza mp = new MakePizza(sim,0,0,0,null);
+		sim.getAClasses().put("MakePizza", mp);
 		Scenario scenario = new Scenario();
 		scenario.setDurationInSimTime(300l);
 		// Initial State
 		Consumer<Simulator> setupInitialState = s -> {
 			 // Create initial objects
-			 //const ps = new PizzaService({id: 1, name:"ps", status: rESOURCEsTATUS.AVAILABLE});
-			PizzaService ps = new PizzaService(1, "ps", sim, 0, false);
+			PizzaService ps = new PizzaService(1, "ps", sim, rESOURCEsTATUS.AVAILABLE);
+			// Initialize the resource pool
+		
+			rANGE range = new rANGE();
+			range.setAlternativeResourceTypes(new ArrayList<Class<? extends rESOURCE>>());
+			rESOURCEpOOL rp = new rESOURCEpOOL(s, "pizzaServices", range, 1, List.of(ps));
+			s.getResourcepools().put("pizzaServices", rp);
 			// Schedule initial events
 			s.getFEL().add(new Order(s, 1l, null, ps));
+			
+			//TODO: check it
+			
+			ps.setResourcePool(rp);
+			mp.getResourceRoles().get("pizzaService").setResPool(rp);
 		};
 		scenario.setSetupInitialState(setupInitialState);
 		/*******************************************************
@@ -56,8 +74,6 @@ public class PizzaService1_test {
 		********************************************************/
 		Consumer<Simulator> setupStatistics = s -> {
 			 s.getStat().getSimpleStat().put("nmrOfOrders", Integer.valueOf(0));
-			 s.getStat().getSimpleStat().put("nmrOfDeliveredPizzas", Integer.valueOf(0));
-			 s.getStat().getSimpleStat().put("maxQueueLength", Double.valueOf(0));
 		};
 		model.setSetupStatistics(setupStatistics);
 		/*******************************************************
@@ -82,6 +98,8 @@ public class PizzaService1_test {
 		for (Entry<String, Number> e : sim.getStat().getSimpleStat().entrySet()) {
 			System.out.println(e.getKey() + " : " + e.getValue());
 		}
+		for (Entry<String, ActivityStat> e : sim.getStat().getActTypes().entrySet()) {
+			System.out.println(e.getKey() + " : " + e.getValue());
+		}
 	}
-	
 }

@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Consumer;
 
 import de.oes.core2.activities.rESOURCErOLE;
 import de.oes.core2.activities.rESOURCEsTATUS;
@@ -80,5 +81,13 @@ public class aRRIVAL extends eVENT{
 		   sim.scheduleEvent(new aRRIVAL(sim, occT, null, null, null, this.entryNode));
 		}
 		return followupEvents;
+	}
+
+
+
+	@Override
+	public String getSuccessorActivity() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
