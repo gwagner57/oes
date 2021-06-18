@@ -1,6 +1,5 @@
 package de.oes.core2;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import de.oes.core2.activities.rANGE;
-import de.oes.core2.activities.rESOURCE;
 import de.oes.core2.activities.rESOURCEpOOL;
 import de.oes.core2.activities.rESOURCEsTATUS;
 import de.oes.core2.pizzaservice2.MakePizza;
@@ -57,7 +55,6 @@ public class PizzaService2Test {
 			// Initialize the resource pool
 		
 			rANGE range = new rANGE();
-			range.setAlternativeResourceTypes(new ArrayList<Class<? extends rESOURCE>>());
 			rESOURCEpOOL rp = new rESOURCEpOOL(s, "pizzaServices", range, 1, List.of(ps));
 			s.getResourcepools().put("pizzaServices", rp);
 			// Schedule initial events
@@ -93,7 +90,7 @@ public class PizzaService2Test {
 		sim.setScenario(scenario);
 		//test
 		autowireCapableBeanFactory.autowireBean(sim);
-		sim.runStandaloneScenario(true);
+		sim.runExperiment(true);
 		System.out.println("FINAL STAT");
 		for (Entry<String, Number> e : sim.getStat().getSimpleStat().entrySet()) {
 			System.out.println(e.getKey() + " : " + e.getValue());

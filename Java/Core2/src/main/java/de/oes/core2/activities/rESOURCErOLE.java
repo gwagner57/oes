@@ -1,6 +1,5 @@
 package de.oes.core2.activities;
 
-import java.util.List;
 import java.util.Map;
 
 import lombok.Getter;
@@ -16,6 +15,6 @@ public class rESOURCErOLE {
 	private rANGE range;
 	private String countPoolName;
 	private rESOURCEpOOL resPool;
-	private List<Class<? extends rESOURCE>> alternativeResourceTypes;
+	private rESOURCEpOOL alternativeResourceTypes;
 	private Map<String, Boolean> activityState;
 }

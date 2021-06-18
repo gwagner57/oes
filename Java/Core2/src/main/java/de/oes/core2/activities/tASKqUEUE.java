@@ -95,7 +95,7 @@ public class tASKqUEUE {
 		boolean actyStarted = tASKqUEUE.ifAvailAllocReqResAndStartNextActivity(AT, acty);
 		if(!actyStarted) {
 			acty.setEnqueueTime(sim.getTime());
-			if(AT.getWaitingTimeout() != null) acty.setWaitingTimeout(sim.getTime().doubleValue() + AT.getWaitingTimeout().doubleValue());
+			if(AT.getWaitingTimeoutFunc() != null) acty.setWaitingTimeout(sim.getTime().doubleValue() + AT.getWaitingTimeoutFunc().get().doubleValue());
 			this.push(acty); // add acty to task queue
 			Integer enqueuedActivities = sim.getStat().getActTypes().get(AT.getClass().getSimpleName()).getEnqueuedActivities();
 			sim.getStat().getActTypes().get(AT.getClass().getSimpleName()).setEnqueuedActivities(enqueuedActivities + 1);

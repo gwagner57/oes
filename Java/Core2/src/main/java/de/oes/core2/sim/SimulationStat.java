@@ -11,4 +11,5 @@ import lombok.Setter;
 public class SimulationStat {
 	private Map <String, ActivityStat> actTypes = new HashMap<String, ActivityStat>();
 	private Map <String, Number> simpleStat = new HashMap<String, Number>();
+	private boolean includeTimeouts;
 }

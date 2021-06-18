@@ -20,10 +20,12 @@ public abstract class aCTIVITY extends eVENT {
 	private long id;
 	private String name;
 	private Number enqueueTime;
-	private Number waitingTimeout;
+	protected Number waitingTimeout;
 	protected Supplier<List<eVENT>> onActivityStart;
 	protected Supplier<List<eVENT>> onActivityEnd;
+	protected Supplier<List<eVENT>> onWaitingTimeout;
 	protected Supplier<Number> durationFunc;
+	protected Supplier<Number> waitingTimeoutFunc;
 	
 	
 	// define the exponential PDF as the default duration random variable

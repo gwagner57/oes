@@ -146,7 +146,7 @@ public class Simulator {
 				String pn = "";
 				// set default cardinality
 				if(resRole.getCard() == null && resRole.getMinCard() == null) resRole.setCard(1);
-				List<Class<? extends rESOURCE>> altResTypes = null;
+				rESOURCEpOOL altResTypes = null;
 				if(resRole.getRange() != null) {
 					String rn = resRole.getRange().getName();
 					pn = Character.toLowerCase(rn.charAt(0)) + rn.substring(1) + "s";
@@ -173,10 +173,8 @@ public class Simulator {
 				// Subscribe activity types to resource pools
 				resRole.getResPool().getDependentActivityTypes().add(AT);
 				if(altResTypes != null) {
-					for (Class<? extends rESOURCE> arT : altResTypes) {
 						//TODO
 						//resRole.getResPool().getDependentActivityTypes().add(arT);
-					}
 				}
 			}
 		}
@@ -367,6 +365,8 @@ public class Simulator {
 	public ExperimentsStatisticsDTO runSimpleExperiment(eXPERIMENTtYPE exp, boolean debug) {
 		ExperimentsStatisticsDTO dto = new ExperimentsStatisticsDTO();
 		Map <Number, Map<String, Number>> experimenStats = new HashMap<Number, Map<String, Number>>();
+		// initialize replication statistics
+		exp.setReplicStat(new ReplicationStat());
 		for (String varName : this.stat.getSimpleStat().keySet()) {
 			exp.getReplicStat().getSimpleStat().put(varName, new Number[exp.getNmrOfReplications()]); // an array per statistics variable
 		}
@@ -594,9 +594,7 @@ public class Simulator {
 	 ********************************************************/
 	public void initializeActivityStatistics() {
 		if(this.model.getActivityTypes() != null && this.model.getActivityTypes().size() > 0) {
-			// TODO
-			//			sim.stat.includeTimeouts = sim.model.activityTypes.some(
-			//        actTypeName => typeof sim.Classes[actTypeName].waitingTimeout === "function");
+			this.stat.setIncludeTimeouts(this.getAClasses().values().stream().anyMatch(a -> a.getWaitingTimeoutFunc() != null));
 			for (String actTypeName : this.model.getActivityTypes()) {
 				ActivityStat actStat = this.stat.getActTypes().get(actTypeName);
 				aCTIVITY AT = this.aClasses.get(actTypeName);

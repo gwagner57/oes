@@ -1,7 +1,5 @@
 package de.oes.core2.activities;
 
-import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,5 +8,5 @@ import lombok.Setter;
 public class rANGE {
 	private String name;
 	private rESOURCEpOOL resourcePool;
-	private List<Class<? extends rESOURCE>> alternativeResourceTypes;
+	private rESOURCEpOOL alternativeResourceTypes;
 }

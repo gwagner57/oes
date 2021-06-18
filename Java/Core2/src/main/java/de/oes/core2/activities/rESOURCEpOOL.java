@@ -63,13 +63,11 @@ public class rESOURCEpOOL {
 		if(this.available == null) { // individual pool
 			if(this.availResources.size() >= card) return true;
 			// check if there are alternative resources
-			List<Class<? extends rESOURCE>> altResTypes = this.resourceType.getAlternativeResourceTypes();
-			if(altResTypes != null && altResTypes.size() > 0) {
-				//TODO get resource pool
-				sim.getAClasses().get(altResTypes.get(0).getSimpleName());
+			rESOURCEpOOL altResTypes = this.resourceType.getAlternativeResourceTypes();
+			if(altResTypes != null) {
 				
-				rESOURCEpOOL rP = null;
-		        return rP != null && rP.isAvailable(card);
+				rESOURCEpOOL rP = altResTypes;
+		        return rP.isAvailable(card);
 			} else return false;
 		} else return this.available >= card;
 	}
@@ -96,15 +94,14 @@ public class rESOURCEpOOL {
 		
 		if(card == null) card = 1;
 		
-		if(this.availResources != null) {
+		if(this.availResources != null && !this.availResources.isEmpty()) {
 			if(this.availResources.size() >= card) {
 				rp = this;
 			} else {
-				List<Class<? extends rESOURCE>> altResTypes = this.resourceType.getAlternativeResourceTypes();
-				if(altResTypes != null && !altResTypes.isEmpty()) {
+				rESOURCEpOOL altResTypes = this.resourceType.getAlternativeResourceTypes();
+				if(altResTypes != null) {
 					 //TODO: use all altResTypes, not just altResTypes[0]
-//	TODO			rP = sim.Classes[altResTypes[0]].resourcePool;
-					if(rp != null && !rp.isAvailable(card)) rp = null;
+					rp = altResTypes;
 				}
 			}
 		
