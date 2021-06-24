@@ -52,4 +52,5 @@ public abstract class aCTIVITY extends eVENT {
 	public abstract void put(List<rESOURCE> rESOURCEs, String resRoleName);
 	public abstract void delete(String resRoleName);
 	public abstract String getSuccessorActivity();
+	public abstract aCTIVITY newInstance();
 }

@@ -95,4 +95,10 @@ public class DeliverPizza extends aCTIVITY{
 		return new ArrayList<eVENT>();
 	}
 
+	@Override
+	public aCTIVITY newInstance() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

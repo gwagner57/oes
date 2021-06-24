@@ -104,5 +104,11 @@ public class TakeOrder extends aCTIVITY {
 	public static Number waitingTimeout() {
 		return Rand.uniformInt(3, 6);
 	}
+
+	@Override
+	public aCTIVITY newInstance() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

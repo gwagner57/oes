@@ -19,7 +19,14 @@ public class aCTIVITYsTART extends eVENT {
 
 	@Override
 	public String toString() {
-		return this.plannedActivity.getClass().getSimpleName() + "Start@" + this.getOccTime();
+		String res = "{";
+		for (List<rESOURCE> e : this.plannedActivity.getResources().values()) {
+			for (rESOURCE rESOURCE : e) {
+				res += rESOURCE.getName() + " ";
+			}
+		}
+		res += "}";
+		return this.plannedActivity.getClass().getSimpleName() + "Start" + res + "@" + this.getOccTime();
 	}
 	
 	@Override
@@ -32,7 +39,7 @@ public class aCTIVITYsTART extends eVENT {
 		acty.setStartTime(this.getOccTime());
 		
 		if (acty.getDurationFunc() != null) {
-		     acty.setDuration(acty.getDurationFunc().get());;
+		     acty.setDuration(acty.getDurationFunc().get());
 		} 
 	    // update statistics
 		Integer startedActivities = this.

@@ -100,4 +100,10 @@ public class MakePizza extends aCTIVITY {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public aCTIVITY newInstance() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

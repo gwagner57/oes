@@ -17,6 +17,7 @@ public class Scenario {
 	private Long durationInSimSteps;
 	private Long durationInCpuTime;
 	private Model model;
+	private String description;
 	private Simulator simulator;
 	private Long scenarioNo;
 	private Integer randomSeed;

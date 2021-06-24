@@ -50,7 +50,6 @@ public class MakePizza extends aCTIVITY {
 
 	@Override
 	public List<eVENT> onEvent() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -102,5 +101,11 @@ public class MakePizza extends aCTIVITY {
 	@Override
 	public String getSuccessorActivity() {
 		return "DeliverPizza";
+	}
+
+	@Override
+	public aCTIVITY newInstance() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

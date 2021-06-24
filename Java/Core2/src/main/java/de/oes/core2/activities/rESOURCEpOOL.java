@@ -118,11 +118,11 @@ public class rESOURCEpOOL {
 		List<rESOURCE> ar = rp.getAvailResources();
 		List<rESOURCE> allocatedRes = new ArrayList<rESOURCE>();
 		for (int i = 0; i < card; i++) {
-			allocatedRes.add(ar.remove(i));
+			allocatedRes.add(ar.remove(0));
 		}
 		rp.setAvailResources(ar);
 
-		this.available = this.available - card; //TODO: custom, check it
+		this.available = this.available - card; 
 		
 		for (rESOURCE res : allocatedRes) {
 			res.setStatus(rESOURCEsTATUS.BUSY);
@@ -163,7 +163,7 @@ public class rESOURCEpOOL {
 				res.setStatus(rESOURCEsTATUS.AVAILABLE);
 				rP.getAvailResources().add(res);
 				
-				this.available += resources.size(); //TODO: custom, check it
+				this.available += 1;
 			}
 		}
 		// try starting enqueued tasks depending on this type of resource

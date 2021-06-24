@@ -1,10 +1,10 @@
 package de.oes.core2.activities;
 
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import de.oes.core2.foundations.eVENT;
 import de.oes.core2.sim.GenericStat;
@@ -82,7 +82,7 @@ public class aCTIVITYeND extends eVENT {
 		// enqueue or schedule a successor activity according to the process model
 		if(AT.getSuccessorActivity() != null) { // a string or a function returning a string
 			aCTIVITY SuccAT = this.getSim().getAClasses().get(AT.getSuccessorActivity());
-			aCTIVITY succActy = SuccAT; //TODO
+			aCTIVITY succActy = SuccAT.newInstance();
 			
 			Set<String> succActyResRoleNames = SuccAT.getResourceRoles().keySet();
 			Set<String> actyResRoleNames = AT.getResourceRoles().keySet();
@@ -94,6 +94,22 @@ public class aCTIVITYeND extends eVENT {
 					  acty.delete(resRoleName);
 			        }
 			}
+			
+			
+			// TODO : it was outside the "if" condition, 
+			// but then not all resources are released at the right moment
+			// release all (remaining) resources of acty
+			for (String resRoleName : AT.getResourceRoles().keySet()) {
+				rESOURCErOLE resRole = AT.getResourceRoles().get(resRoleName);
+				if(resRole.getCountPoolName() != null) {
+					 // release the used number of count pool resources
+					resRole.getResPool().release(resRole.getCard());
+				} else {
+					// release the used individual resource if it has not been transferred to succActy
+					if(acty.get(resRoleName) != null) resRole.getResPool().release(acty.get(resRoleName));
+				}
+			}
+			
 			// are all successor activity resources already allocated (since included in activity resources)?
 			if(succActyResRoleNames.stream().allMatch(rn -> actyResRoleNames.contains(rn))) {
 				 // start successor activity
@@ -102,17 +118,7 @@ public class aCTIVITYeND extends eVENT {
 				SuccAT.getTasks().startOrEnqueue(succActy);
 			}
 		}
-		// release all (remaining) resources of acty
-		for (String resRoleName : AT.getResourceRoles().keySet()) {
-			rESOURCErOLE resRole = AT.getResourceRoles().get(resRoleName);
-			if(resRole.getCountPoolName() != null) {
-				 // release the used number of count pool resources
-				resRole.getResPool().release(resRole.getCard());
-			} else {
-				// release the used individual resource if it has not been transferred to succActy
-				if(acty.get(resRoleName) != null) resRole.getResPool().release(acty.get(resRoleName));
-			}
-		}
+		
 		// if there are still planned activities of type AT
 		if(AT.getTasks().length() > 0) {
 			// if available, allocate required resources and schedule next activity
@@ -124,13 +130,19 @@ public class aCTIVITYeND extends eVENT {
 
 	@Override
 	public String getSuccessorActivity() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String toString() {
-		return this.activity.getClass().getSimpleName() + "End@" + this.getOccTime();
+		String res = "{";
+		for (List<rESOURCE> e : this.activity.getResources().values()) {
+			for (rESOURCE rESOURCE : e) {
+				res += rESOURCE.getName() + " ";
+			}
+		}
+		res += "}";
+		return this.activity.getClass().getSimpleName() + "End" + res + "@" + this.getOccTime();
 	}
 
 }
