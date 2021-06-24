@@ -15,12 +15,12 @@ import lombok.Setter;
 public class MedicalDepartment extends oBJECT{
 
 	private Integer nmrOfAvailDoctors;
-	private List<aCTIVITY> plannedExaminations;
+	private List<Examination> plannedExaminations;
 	
 	public MedicalDepartment(Integer id, String name, Simulator sim, Integer nmrOfAvailDoctors) {
 		super(id, name, sim);
 		this.nmrOfAvailDoctors = nmrOfAvailDoctors;
-		this.plannedExaminations = new ArrayList<aCTIVITY>();
+		this.plannedExaminations = new ArrayList<Examination>();
 	}
 	
 	public boolean isDoctorAvailable() {
