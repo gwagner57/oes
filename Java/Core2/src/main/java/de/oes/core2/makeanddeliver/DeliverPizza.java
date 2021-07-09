@@ -16,7 +16,7 @@ import de.oes.core2.sim.Simulator;
 public class DeliverPizza extends aCTIVITY{
 
 	private static tASKqUEUE tasks;
-	public static Map<String, List<rESOURCE>> resources = new HashMap <String, List<rESOURCE>>();
+	public Map<String, List<rESOURCE>> resources = new HashMap <String, List<rESOURCE>>();
 	public static Map<String, rESOURCErOLE> resRoles = new HashMap<String, rESOURCErOLE>();
 	
 	public DeliverPizza(Simulator sim, Number id, Number startTime, Number duration) {
@@ -45,12 +45,12 @@ public class DeliverPizza extends aCTIVITY{
 
 	@Override
 	public Map<String, List<rESOURCE>> getResources() {
-		return DeliverPizza.resources;
+		return this.resources;
 	}
 
 	@Override
 	public void setResources(Map<String, List<rESOURCE>> res) {
-		DeliverPizza.resources = res;
+		this.resources = res;
 	}
 
 	@Override
@@ -65,28 +65,26 @@ public class DeliverPizza extends aCTIVITY{
 
 	@Override
 	public List<rESOURCE> get(String resRoleName) {
-		return DeliverPizza.resources.get(resRoleName);
+		return this.resources.get(resRoleName);
 	}
 
 	@Override
 	public void put(List<rESOURCE> rESOURCEs, String resRoleName) {
-		DeliverPizza.resources.put(resRoleName, rESOURCEs);
+		this.resources.put(resRoleName, rESOURCEs);
 	}
 
 	@Override
 	public void delete(String resRoleName) {
-		DeliverPizza.resources.remove(resRoleName);
+		this.resources.remove(resRoleName);
 	}
 
 	@Override
 	public String getSuccessorActivity() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<eVENT> onEvent() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -97,8 +95,13 @@ public class DeliverPizza extends aCTIVITY{
 
 	@Override
 	public aCTIVITY newInstance() {
-		// TODO Auto-generated method stub
-		return null;
+		return new DeliverPizza(this.getSim());
+	}
+
+	public DeliverPizza(Simulator sim) {
+		super(sim, null, null, null, null, null);
+		this.durationFunc = DeliverPizza::duration;
+		this.onActivityEnd= this::onActivityEnd;
 	}
 
 }

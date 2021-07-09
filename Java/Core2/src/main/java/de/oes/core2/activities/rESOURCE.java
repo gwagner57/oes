@@ -18,5 +18,10 @@ public class rESOURCE extends oBJECT{
 		this.resourcePool = resourcePool;
 		this.status = status;
 	}
+
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + "-" + this.getId() + "{ st:" + this.getStatus() +", act:" + this.getActivityState() +"}";
+	}
 	
 }

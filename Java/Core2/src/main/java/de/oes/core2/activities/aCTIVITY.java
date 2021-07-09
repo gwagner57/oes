@@ -42,6 +42,8 @@ public abstract class aCTIVITY extends eVENT {
 		if(Objects.nonNull(enqueueTime)) this.enqueueTime = enqueueTime;
 	}
 	
+	
+	
 	public abstract tASKqUEUE getTasks();
 	public abstract void setTasks(tASKqUEUE t);
 	public abstract Map<String, List<rESOURCE>> getResources();

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>OES Core Simulation Examples</title>
+<meta name="viewport" content="width=device-width, initial-scale = 1.0" />
+<meta name="description"
+	content="Simulation examples for OES Core simulators" />
+<style>
+p.description {
+	font-size: smaller;
+}
+</style>
+</head>
+<body>
+
+	<main>
+		<h1>Simulation Examples</h1>
+		<h2>OESjs Core 2</h2>
+		<p class="description">The OESjs Core 2 simulator implements an architecture for Object Event Simulation (OES) that extends the OESjs Core 1 simulator by adding support for activities, which may be resource-constrained.</p>
+		<nav>
+			<ul>
+				<li><a href="/core2/pizzaservice1">Pizza-Service-1</a></li>
+				<li><a href="/core2/pizzaservice2">Pizza-Service-2</a></li>
+				<li><a href="/core2/makeanddeliver">Make-and-Deliver</a></li>
+				<li><a href="/core2/loadhauldump">Load-Haul-Dump</a></li>
+				
+				<li><a href="/core2/medical-department-1a">Medical-department-1a</a>: 
+			<p> This example explicitly models the resource management of doctors with the help of a counter variable for available doctors in the form of an attribute nmrOfAvailableDoctors, 
+			and the operations isDoctorAvailable(), allocateDoctor() and releaseDoctor(), in the MedicalDepartment class. </p> </li>
+			
+			<li><a href="/core2/medical-department-1b">Medical-department-1b</a>: 
+			<p> This model is essentially the same as Medical-Department-1a, except that it uses the generic resource management logic that is built into OES Core 2. 
+			The resource pool doctors is modeled as a count pool, which abstracts away from individual resources and only counts them. </p> </li>
+			
+			<li><a href="/core2/medical-department-1c">Medical-department-1c</a>: 
+			<p> In this model, the resource pool doctors is modeled as an individual resource pool instead of a count pool. 
+			This allows making the model more realistic, for instance, by assigning an individual work schedule to each doctor defining her availability. </p> </li>
+			
+				<li><a href="/core2/medical-department-2a">Medical-department-2a</a>: 
+			<p> This model includes two activity types: WalkToRoom activities involve a room and are performed by a nurse, 
+			while Examination activities involve a room and are performed by a doctor. 
+			The resource pools nurses and doctors are modeled as individual resource pools, while the resource pool rooms, 
+			which is used by both WalkToRoom and Examination activities, is modeled as a count pool. </p> </li>
+			
+			<li><a href="/core2/medical-department-2b">Medical-department-2b</a>: 
+			<p> This model is the same as Medical-Department-2a, except that Examination activities require a room, two nurses and a doctor. </p> </li>
+			</ul>
+		</nav>
+	</main>
+	<footer>
+		<p>
+			© 2021 G. Wagner (<a
+				href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>),
+			Brandenburg University of Technology, Germany
+		</p>
+	</footer>
+</body>
+</html>

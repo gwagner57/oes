@@ -57,7 +57,7 @@ public class aCTIVITYsTART extends eVENT {
 				List<rESOURCE> resObjects = acty.get(resRoleName);
 				for (rESOURCE resObj : resObjects) {
 					if(resObj.getActivityState() == null) resObj.setActivityState(new aCTIVITYsTATE());
-					resObj.getActivityState().add(AT.getName());
+					resObj.getActivityState().add(AT.getClass().getSimpleName() + "-" + AT.getId());
 				}
 			}
 		}

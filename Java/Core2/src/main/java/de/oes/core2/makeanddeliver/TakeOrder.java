@@ -18,7 +18,7 @@ public class TakeOrder extends aCTIVITY {
 	
 	private static tASKqUEUE tasks;
 	private static final List<String> PERFORMER = List.of("orderTaker");
-	public static Map<String, List<rESOURCE>> resources = new HashMap <String, List<rESOURCE>>();
+	public Map<String, List<rESOURCE>> resources = new HashMap <String, List<rESOURCE>>();
 	public static Map<String, rESOURCErOLE> resRoles = new HashMap<String, rESOURCErOLE>();
 	
 	
@@ -33,6 +33,14 @@ public class TakeOrder extends aCTIVITY {
 		range.setName("OrderTaker");
 		rr.setRange(range);
 		TakeOrder.resRoles.put("orderTaker", rr);
+		this.resources.put("orderTakers", new ArrayList<rESOURCE>());
+	}
+
+	public TakeOrder(Simulator sim) {
+		super(sim, null, null, null, null, null);
+		this.onWaitingTimeout = this::onWaitingTimeout;
+		this.durationFunc = TakeOrder::duration;
+		this.waitingTimeoutFunc = TakeOrder::waitingTimeout;
 	}
 
 	@Override
@@ -47,12 +55,12 @@ public class TakeOrder extends aCTIVITY {
 
 	@Override
 	public Map<String, List<rESOURCE>> getResources() {
-		return TakeOrder.resources;
+		return this.resources;
 	}
 
 	@Override
 	public void setResources(Map<String, List<rESOURCE>> res) {
-		TakeOrder.resources = res;
+		this.resources = res;
 	}
 
 	@Override
@@ -67,17 +75,17 @@ public class TakeOrder extends aCTIVITY {
 
 	@Override
 	public List<rESOURCE> get(String resRoleName) {
-		return TakeOrder.resources.get(resRoleName);
+		return this.resources.get(resRoleName);
 	}
 
 	@Override
 	public void put(List<rESOURCE> rESOURCEs, String resRoleName) {
-		TakeOrder.resources.put(resRoleName, rESOURCEs);
+		this.resources.put(resRoleName, rESOURCEs);
 	}
 
 	@Override
 	public void delete(String resRoleName) {
-		TakeOrder.resources.remove(resRoleName);
+		this.resources.remove(resRoleName);
 	}
 
 	@Override
@@ -87,7 +95,6 @@ public class TakeOrder extends aCTIVITY {
 
 	@Override
 	public List<eVENT> onEvent() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
@@ -107,8 +114,7 @@ public class TakeOrder extends aCTIVITY {
 
 	@Override
 	public aCTIVITY newInstance() {
-		// TODO Auto-generated method stub
-		return null;
+		return new TakeOrder(this.getSim());
 	}
 	
 }

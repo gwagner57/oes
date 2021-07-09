@@ -1,10 +1,9 @@
-package de.oes.core2.pizzaservice2;
+package de.oes.core2.medicaldepartament_2a;
 
-
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import de.oes.core2.activities.aCTIVITY;
 import de.oes.core2.activities.rANGE;
@@ -14,50 +13,50 @@ import de.oes.core2.activities.tASKqUEUE;
 import de.oes.core2.foundations.eVENT;
 import de.oes.core2.lib.Rand;
 import de.oes.core2.sim.Simulator;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
-@NoArgsConstructor
-public class MakePizza extends aCTIVITY {
-	
-	private PizzaService pizzaService;
+public class WalkToRoom extends aCTIVITY {
+
 	private static tASKqUEUE tasks;
-	private Map<String, List<rESOURCE>> resources = new HashMap <String, List<rESOURCE>>();
-	private static Map<String, rESOURCErOLE> resRoles = new HashMap<String, rESOURCErOLE>();
+	public Map<String, List<rESOURCE>> resources = new HashMap <String, List<rESOURCE>>();
+	public static Map<String, rESOURCErOLE> resRoles = new HashMap<String, rESOURCErOLE>();
 	
-	public MakePizza(Simulator sim, Number id, Number startTime, Number duration, PizzaService pizzaService) {
+	public WalkToRoom(Simulator sim, Number id, Number startTime, Number duration) {
 		super(sim, id, null, startTime, duration, null);
-		this.pizzaService = pizzaService;
-		this.durationFunc = MakePizza::duration;
+		this.durationFunc = this::duration;
+		
+		this.resources.put("nurse", new ArrayList<rESOURCE>());
+		
 		rESOURCErOLE rr = new rESOURCErOLE();
-		rr.setCard(1);
 		rANGE range = new rANGE();
-		range.setName("PizzaService");
+		range.setName("Nurse");
 		rr.setRange(range);
-		MakePizza.resRoles.put("pizzaService", rr);
+		WalkToRoom.resRoles.put("nurse", rr);
+		
+		
+		rESOURCErOLE rr2 = new rESOURCErOLE();
+		rr2.setCard(1);
+		rr2.setCountPoolName("rooms");
+		WalkToRoom.resRoles.put("room", rr2);
+		
+	}
+
+	public WalkToRoom(Simulator sim) {
+		super(sim, null, null, null, null, null);
+		this.durationFunc = this::duration;
+	}
+
+	private Number duration() {
+		return Rand.uniform(0.5, 2.5);
 	}
 	
-	public static Number duration() {
-		return Rand.uniform(1, 3);
-	}
-
-	@Override
-	public List<eVENT> onEvent() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public tASKqUEUE getTasks() {
-		return MakePizza.tasks;
+		return WalkToRoom.tasks;
 	}
 
 	@Override
 	public void setTasks(tASKqUEUE t) {
-		MakePizza.tasks = t;
+		WalkToRoom.tasks = t;
 	}
 
 	@Override
@@ -72,12 +71,12 @@ public class MakePizza extends aCTIVITY {
 
 	@Override
 	public Map<String, rESOURCErOLE> getResourceRoles() {
-		return MakePizza.resRoles;
+		return WalkToRoom.resRoles;
 	}
 
 	@Override
 	public void setResourceRoles(Map<String, rESOURCErOLE> resRoles) {
-		 MakePizza.resRoles = resRoles;
+		WalkToRoom.resRoles = resRoles;
 	}
 
 	@Override
@@ -97,16 +96,17 @@ public class MakePizza extends aCTIVITY {
 
 	@Override
 	public String getSuccessorActivity() {
-		return null;
+		return "Examination";
 	}
 
 	@Override
 	public aCTIVITY newInstance() {
-		return new MakePizza(this.getSim());
+		return new WalkToRoom(this.getSim());
 	}
 
-	public MakePizza(Simulator sim) {
-		super(sim, null, null, null, null, null);
-		this.durationFunc = MakePizza::duration;
+	@Override
+	public List<eVENT> onEvent() {
+		return null;
 	}
+
 }

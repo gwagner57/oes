@@ -1,7 +1,5 @@
 package de.oes.core2;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -17,7 +15,6 @@ import de.oes.core2.makeanddeliver.OrderTaker;
 import de.oes.core2.makeanddeliver.PizzaMaker;
 import de.oes.core2.makeanddeliver.TakeOrder;
 import de.oes.core2.activities.rANGE;
-import de.oes.core2.activities.rESOURCE;
 import de.oes.core2.activities.rESOURCEpOOL;
 import de.oes.core2.activities.rESOURCEsTATUS;
 import de.oes.core2.makeanddeliver.DeliverPizza;
@@ -38,6 +35,7 @@ public class MakeAndDeliverTest {
 	
 	@Test
 	public void testSuccess() throws Exception {
+		//FIXME: add newInstance()
 		Model model = new Model();
 		model.setName("Make-and-Deliver-Pizza-1");
 		model.setTime(Time.CONT);

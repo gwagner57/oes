@@ -15,7 +15,7 @@ public class OrderCall extends ExogenousEvent {
 	}
 	
 	// arrival rates per minute (for a daily operation for 5 hours)
-	public static final List<Double> arrivalRates = List.of(1.0/6, 1.5, 1/1.5, 1/6.0, 1/12.0);
+	public static final List<Double> arrivalRates = List.of(1.0/6.0, 1.5, 1.0/1.5, 1.0/6.0, 1.0/12.0);
 	
 	@Override
 	public String getSuccessorActivity() {
@@ -27,7 +27,7 @@ public class OrderCall extends ExogenousEvent {
 		int hour = (int) Math.floor(this.getSim().getTime() / 60.0);
 		if(hour == 5) {
 			//FIXME
-			return Rand.exponential(OrderCall.arrivalRates.get(1));
+			return Rand.exponential(OrderCall.arrivalRates.get(0));
 		}
 		return Rand.exponential(OrderCall.arrivalRates.get(hour));
 	}

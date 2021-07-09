@@ -19,4 +19,10 @@ public class aCTIVITYsTATE {
 	public void delete(String name) {
 		this.set.remove(name);
 	}
+
+	@Override
+	public String toString() {
+		return "[set=" + set + "]";
+	}
+	
 }

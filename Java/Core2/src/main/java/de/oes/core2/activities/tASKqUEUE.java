@@ -65,11 +65,20 @@ public class tASKqUEUE {
 				else if(resRole.getMaxCard() != null) {
 					resQuantity = Math.min(resRole.getMaxCard(), resRole.getResPool().getAvailable());
 				}
+				
+				// ***** Custom implementation in Java
+				// Checks if some resources are already allocated for a next activity
+				if(nextActy.get(resRoleName) != null && nextActy.get(resRoleName).size() > 0) {
+					resQuantity -= nextActy.get(resRoleName).size(); // allocate the rest
+				}
+				// ***** 
+				
+				
 				List<rESOURCE> allocatedRes = resRole.getResPool().allocate(resQuantity);
 				if(allocatedRes != null && !allocatedRes.isEmpty()) { // individual resource pool
 					// create an activity property slot for this resource role
 					if(allocatedRes.size() == 1) {
-						nextActy.put(List.of(allocatedRes.get(0)), resRoleName);
+						nextActy.put(allocatedRes.subList(0, 1), resRoleName);
 					} else {
 						nextActy.put(allocatedRes, resRoleName);
 					}

@@ -303,7 +303,7 @@ public class Simulator {
 		      if(e.getSuccessorActivity() != null) {
 		    	  aCTIVITY SuccActivityClass = this.aClasses.get(e.getSuccessorActivity());
 		          // enqueue successor activity
-		    	  SuccActivityClass.getTasks().startOrEnqueue(SuccActivityClass);
+		    	  SuccActivityClass.getTasks().startOrEnqueue(SuccActivityClass.newInstance());
 		      }
 		      /**** ACTIVITIES extension END ****/
 		      
@@ -385,9 +385,9 @@ public class Simulator {
 			replStat.setEnqueuedActivities(new Integer[k]);
 	    	replStat.setStartedActivities(new Integer[k]);
 	    	replStat.setCompletedActivities(new Integer[k]);
-	    	replStat.setQueueLength(new ReplicationGenericStat(new Integer[k]));
-	    	replStat.setWaitingTime(new ReplicationGenericStat(new Integer[k]));
-	    	replStat.setCycleTime(new ReplicationGenericStat(new Integer[k]));
+	    	replStat.setQueueLength(new GenericStat[k]);
+	    	replStat.setWaitingTime(new GenericStat[k]);
+	    	replStat.setCycleTime(new GenericStat[k]);
 	        exp.getReplicStat().getActTypes().put(actTypeName, replStat);
 //	      exp.replicStat.actTypes[actTypeName].resUtil = {};
 	    }
@@ -415,7 +415,11 @@ public class Simulator {
 				if(this.stat.getActTypes().get(actTypeName).getWaitingTime() != null) {
 					replActStat.getWaitingTimeouts()[k] = actStat.getWaitingTimeouts();
 		    	}
-				
+				replActStat.getStartedActivities()[k] = actStat.getStartedActivities();
+				replActStat.getCompletedActivities()[k] = actStat.getCompletedActivities();
+				replActStat.getQueueLength()[k] = actStat.getQueueLength();
+				replActStat.getWaitingTime()[k] = actStat.getWaitingTime();
+				replActStat.getCycleTime()[k] = actStat.getCycleTime();
 				
 			}
 		    /***END Activity extensions AFTER-runSimpleExperimentScenario ********************/

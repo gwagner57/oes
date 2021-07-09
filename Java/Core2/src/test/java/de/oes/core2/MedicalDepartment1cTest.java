@@ -1,8 +1,9 @@
 package de.oes.core2;
 
 import java.util.List;
-import java.util.Map.Entry;
+
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
@@ -10,19 +11,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import de.oes.core2.sim.Simulator;
-import de.oes.core2.sim.Scenario;
-import de.oes.core2.sim.eXPERIMENTtYPE;
-import de.oes.core2.pizzaservice1.MakePizza;
-import de.oes.core2.pizzaservice1.Order;
-import de.oes.core2.pizzaservice1.PizzaService;
+import de.oes.core2.activities.rANGE;
+import de.oes.core2.activities.rESOURCEpOOL;
+import de.oes.core2.activities.rESOURCEsTATUS;
+import de.oes.core2.medicaldepartament_1c.Examination;
+import de.oes.core2.medicaldepartament_1c.NewCase;
+import de.oes.core2.medicaldepartament_1c.Doctor;
 import de.oes.core2.sim.ActivityStat;
 import de.oes.core2.sim.Model;
+import de.oes.core2.sim.Scenario;
+import de.oes.core2.sim.Simulator;
 import de.oes.core2.sim.Time;
 import de.oes.core2.sim.TimeUnit;
+import de.oes.core2.sim.eXPERIMENTtYPE;
 
 @SpringBootTest
-public class PizzaService1Test {
+public class MedicalDepartment1cTest {
 
 	@Autowired
 	private  AutowireCapableBeanFactory autowireCapableBeanFactory;
@@ -30,36 +34,43 @@ public class PizzaService1Test {
 	@Test
 	public void testSuccess() throws Exception {
 		Model model = new Model();
-		model.setName("Pizza-Server-1");
+		model.setName("Medical-Department-1c");
 		model.setTime(Time.CONT);
 		model.setTimeUnit(TimeUnit.min);
 		
-		model.setObjectTypes(List.of(PizzaService.class));
-		model.setEventTypes(List.of(Order.class));
-		model.setActivityTypes(Set.of("MakePizza"));
+		model.setEventTypes(List.of(NewCase.class));
+		model.setActivityTypes(Set.of("Examination"));
 		/*******************************************************
 		 Simulation Scenario
 		 ********************************************************/
 		Simulator sim = new Simulator();
-		sim.getAClasses().put("MakePizza", new MakePizza(sim,0,0,0,null));
+		sim.getAClasses().put("Examination", new Examination(sim,0,0,0));
 		Scenario scenario = new Scenario();
-		scenario.setDurationInSimTime(300l);
+		scenario.setIdCounter(11); // start value of auto IDs
+		scenario.setTitle("Basic scenario with one medical department");
+		scenario.setDurationInSimTime(1000l);
 		// Initial State
 		Consumer<Simulator> setupInitialState = s -> {
-			 // Create initial objects
-			 //const ps = new PizzaService({id: 1, name:"ps", status: rESOURCEsTATUS.AVAILABLE});
-			PizzaService ps = new PizzaService(1, "ps", sim, 0, false);
+			Doctor d1 = new Doctor(1, "d1", s, null, rESOURCEsTATUS.AVAILABLE);
+			Doctor d2 = new Doctor(2, "d2", s, null, rESOURCEsTATUS.AVAILABLE);
+			Doctor d3 = new Doctor(3, "d3", s, null, rESOURCEsTATUS.AVAILABLE);
+			
+			// Create initial objects
+			rANGE range = new rANGE();
+			rESOURCEpOOL rp = new rESOURCEpOOL(s, "doctors", range, 3, List.of(d1,d2,d3));
+			d1.setResourcePool(rp);
+			d2.setResourcePool(rp);
+			d3.setResourcePool(rp);
 			// Schedule initial events
-			s.getFEL().add(new Order(s, 1l, null, ps));
+			s.getResourcepools().put("doctors", rp);
+			Examination.resRoles.get("doctor").setResPool(rp);
+			s.getFEL().add(new NewCase(s, 1l, null, null, null));
 		};
 		scenario.setSetupInitialState(setupInitialState);
 		/*******************************************************
 		 Statistics variables
 		********************************************************/
 		Consumer<Simulator> setupStatistics = s -> {
-			 s.getStat().getSimpleStat().put("nmrOfOrders", Integer.valueOf(0));
-			 s.getStat().getSimpleStat().put("nmrOfDeliveredPizzas", Integer.valueOf(0));
-			 s.getStat().getSimpleStat().put("maxQueueLength", Double.valueOf(0));
 		};
 		model.setSetupStatistics(setupStatistics);
 		/*******************************************************
@@ -79,14 +90,13 @@ public class PizzaService1Test {
 		sim.setScenario(scenario);
 		//test
 		autowireCapableBeanFactory.autowireBean(sim);
-		sim.runExperiment(false);
-//		System.out.println("FINAL STAT");
-//		for (Entry<String, Number> e : sim.getStat().getSimpleStat().entrySet()) {
-//			System.out.println(e.getKey() + " : " + e.getValue());
-//		}
-//		for (Entry<String, ActivityStat> e : sim.getStat().getActTypes().entrySet()) {
-//			System.out.println(e.getKey() + " : " + e.getValue());
-//		}
+		sim.runStandaloneScenario(true);
+		System.out.println("FINAL STAT");
+		for (Entry<String, Number> e : sim.getStat().getSimpleStat().entrySet()) {
+			System.out.println(e.getKey() + " : " + e.getValue());
+		}
+		for (Entry<String, ActivityStat> e : sim.getStat().getActTypes().entrySet()) {
+			System.out.println(e.getKey() + " : " + e.getValue());
+		}
 	}
-	
 }

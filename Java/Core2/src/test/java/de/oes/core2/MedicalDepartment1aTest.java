@@ -22,7 +22,7 @@ import de.oes.core2.sim.TimeUnit;
 import de.oes.core2.sim.eXPERIMENTtYPE;
 
 @SpringBootTest
-public class MedicalDepartament1aTest {
+public class MedicalDepartment1aTest {
 
 	@Autowired
 	private  AutowireCapableBeanFactory autowireCapableBeanFactory;

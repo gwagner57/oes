@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>OES Core 2 Simulation Examples</title>
+<meta name="viewport" content="width=device-width, initial-scale = 1.0" />
+<meta name="description"
+	content="Simulation examples for OES Core simulators" />
+<style>
+p.description {
+	font-size: smaller;
+}
+</style>
+</head>
+<body>
+
+	<main>
+		<h1>Medical-Department-1a Simulation</h1>
+		<p>Instead of using the built-in resource management (implied by using the successorActivity property implementing Rescource-Dependent Activity Start arrows),
+		 the resource management of doctors is explicitly modeled. The process owner, a medical department, 
+		 is modeled explicitly with a queue-valued property plannedExaminations and a counter attribute nmrOfAvailDoctors for representing the count pool 
+		 information of how many doctors are available. </p>
+
+	<p>In Medical-Department-1b, the same model is implemented with the built-in resource management by setting
+	 a successor activity with NewCase.successorActivity = "Examination". </p>
+
+
+		</p>
+		<form method="post" th:object="${scenario}">
+			<p>
+				<button class="btn btn-primary" type="submit">Submit form</button>
+				<select th:field="*{type}" onChange="document.getElementById('log').style.display = (this.selectedIndex === 0) ? 'block' : 'none';">
+				    <option th:value="0" th:text="'(0) Standalone scenario'"></option>
+				    <option th:value="1" th:text="'(1) Simple Experiment with 10 replications, each running for 1000 min.'"></option>
+				</select>
+			</p>
+		<div id="log">
+			<p>
+			Simulation log
+				<input type="checkbox" name="logs" th:field="*{simulationLog}" value="true" />
+			</p>
+		</div>
+		
+		</form>
+	</main>
+	<footer>
+		<p>
+			© 2021 G. Wagner (<a
+				href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>),
+			Brandenburg University of Technology, Germany
+		</p>
+	</footer>
+</body>
+</html>

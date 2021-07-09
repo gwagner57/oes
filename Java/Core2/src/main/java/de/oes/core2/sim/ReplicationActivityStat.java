@@ -13,7 +13,7 @@ public class ReplicationActivityStat {
 		private Integer[] completedActivities;
 		private Integer[] waitingTimeouts;
 		private Map<String, Number> resUtil;
-		private ReplicationGenericStat waitingTime;
-		private ReplicationGenericStat cycleTime;
-		private ReplicationGenericStat queueLength;
+		private GenericStat[] waitingTime;
+		private GenericStat[] cycleTime;
+		private GenericStat[] queueLength;
 }
