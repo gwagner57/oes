@@ -22,7 +22,7 @@ import lombok.Setter;
 public class Examination extends aCTIVITY {
 
 	private static tASKqUEUE tasks;
-	public Map<String, List<rESOURCE>> resources = new HashMap <String, List<rESOURCE>>();
+	private Map<String, List<rESOURCE>> resources = new HashMap <String, List<rESOURCE>>();
 	public static Map<String, rESOURCErOLE> resRoles = new HashMap<String, rESOURCErOLE>();
 	
 	public Examination(Simulator sim, Number id, Number startTime, Number duration) {

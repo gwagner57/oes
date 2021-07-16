@@ -164,7 +164,6 @@ public class RunMedicalDepartment2bSimulation {
 			rESOURCEpOOL rp3 = new rESOURCEpOOL(s, "rooms", range, 4, null);
 			
 			// Schedule initial events
-			// TODO is it needed?
 			s.getResourcepools().put("doctors", rp);
 			s.getResourcepools().put("rooms", rp3);
 			
