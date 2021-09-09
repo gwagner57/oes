@@ -19,4 +19,4 @@ class Order extends eVENT {
     return rand.exponential( 0.5);
   }
 }
-Order.successorActivity = "MakePizza";
+Order.successorNode = "MakePizza";

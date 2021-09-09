@@ -9,4 +9,4 @@ GoToLoadingSite.resourceRoles = {
   "truck": {range: Truck}
 }
 GoToLoadingSite.PERFORMER = "truck";
-GoToLoadingSite.successorActivity = "Load";
+GoToLoadingSite.successorNode = "Load";

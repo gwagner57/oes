@@ -63,8 +63,18 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   }
   // Assign model parameters with experiment parameter values
   if (expParSlots) sim.assignModelParameters( expParSlots);
-  // Set up initial state and statistics
+  // Set up initial state
   if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
+  // schedule initial events if no initial event has been scheduled
+  if (sim.FEL.isEmpty()) {
+    for (const evtTypeName of sim.model.eventTypes) {
+      const ET = sim.Classes[evtTypeName];
+      if (ET.recurrence) {
+        sim.FEL.add( new ET({occTime: ET.recurrence()}));
+      }
+    }
+  }
+  // Set up statistics
   if (sim.model.setupStatistics) sim.model.setupStatistics();
 };
 /*******************************************************
@@ -111,7 +121,7 @@ sim.runScenario = function (createLog) {
     // process next (=current) events
     for (const e of nextEvents) {
       // apply event rule
-      let followUpEvents = e.onEvent();
+      const followUpEvents = e.onEvent();
       // schedule follow-up events
       for (const f of followUpEvents) {
         sim.FEL.add( f);
@@ -300,10 +310,8 @@ sim.runExperiment = async function () {
       id: eXPERIMENTrUN.getAutoId(),
       experimentType: exp.id,
       baseScenarioNo: sim.scenario.scenarioNo,
-      dateTime: (new Date()).toISOString(),
-    };
+      dateTime: (new Date()).toISOString()};
     try {
-      //await idbc.add( "experiment_runs", expRun);
       await sim.db.add("experiment_runs", expRun);
     } catch( err) {
       console.log("IndexedDB error: ", err.message);

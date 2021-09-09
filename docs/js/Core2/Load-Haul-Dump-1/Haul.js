@@ -9,4 +9,4 @@ Haul.resourceRoles = {
   "truck": {range: Truck}
 }
 Haul.PERFORMER = "truck";
-Haul.successorActivity = "Dump";
+Haul.successorNode = "Dump";

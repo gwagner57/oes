@@ -26,16 +26,16 @@ sim.initializeSimulator = function () {
   } else {
     if (sim.model.OnEachTimeStep) sim.timeIncrement = 1;  // default
   }
-  // Make sure these lists are defined
+  // make sure these lists are defined
   sim.model.objectTypes ??= [];  // ES 2020
   sim.model.eventTypes ??= [];
-  // a Map of all objects (accessible by ID)
+  // initialize the Map of all objects (accessible by ID)
   sim.objects = new Map();
-  // The Future Events List
+  // initialize the Future Events List
   sim.FEL = new EventList();
-  // a map for statistics variables
+  // initialize the map of statistics variables
   sim.stat = Object.create(null);
-  // a className->Class map
+  // initialize the className->Class map
   sim.Classes = Object.create(null);
   // Make object classes accessible via their object type name
   sim.model.objectTypes.forEach( function (objTypeName) {
@@ -48,58 +48,81 @@ sim.initializeSimulator = function () {
   // Assign scenarioNo = 0 to default scenario
   sim.scenario.scenarioNo ??= 0;
   sim.scenario.title ??= "Default scenario";
-  /*** Activity extensions **********************************************/
+  /***********************************************************
+  * Activity extensions **************************************
+  ************************************************************/
+  // make sure these collections are defined
   sim.model.activityTypes ??= [];
-  // Make activity classes accessible via their activity type name
-  sim.model.activityTypes.forEach( function (actTypeName) {
-    sim.Classes[actTypeName] = util.getClass( actTypeName);
-  });
-  oes.setupActivityStatistics();
-  // a map for resource pools if there are no explicit process owners
-  sim.resourcePools = Object.create(null);
-  // Initializations per activity type
-  for (const actTypeName of sim.model.activityTypes) {
-    const AT = sim.Classes[actTypeName];
-    AT.resourceRoles ??= Object.create(null);
-    // Create the tasks queues
-    AT.tasks = new tASKqUEUE();
-    // Create the resource pools
-    for (const resRoleName of Object.keys( AT.resourceRoles)) {
-      const resRole = AT.resourceRoles[resRoleName];
-      let pn="", altResTypes=null;
-      // set default cardinality
-      if (!resRole.card && !resRole.minCard) resRole.card = 1;
-      if (resRole.range) {  // the resource role is associated with an individual pool
-        let rn = resRole.range.name;
-        pn = rn.charAt(0).toLowerCase() + rn.slice(1) + "s";
-        // create only if not yet created
-        sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, resourceType: resRole.range});
-        // assign resource pool to resource type
-        resRole.range.resourcePool = sim.resourcePools[pn];
-        altResTypes = sim.resourcePools[pn].resourceType.alternativeResourceTypes;
-      } else {  // the resource role is associated with a count pool
-        if (resRole.countPoolName) {
-          // a count pool has been explicitly assigned to the resource role
-          pn = resRole.countPoolName;
-        } else {
-          // create default name for implicit count pool
-          pn = resRoleName + (!resRole.card||resRole.card===1 ? "s":"");
-          // assign count pool to the resource role
-          resRole.countPoolName = pn;
+  sim.model.networkNodes ??= {};
+  sim.scenario.networkNodes ??= {};
+  if (sim.model.activityTypes.length > 0 || Object.keys( sim.model.networkNodes).length > 0) {
+    // make activity classes accessible via their activity type name
+    for (const actTypeName of sim.model.activityTypes) {
+      sim.Classes[actTypeName] = util.getClass( actTypeName);
+    }
+    // create a map for resource pools (assuming there are no explicit process owners)
+    sim.resourcePools = Object.create(null);
+    // construct the implicitly defined AN model
+    if (Object.keys( sim.model.networkNodes).length === 0) {
+      // construct the event nodes of the implicitly defined AN model
+      for (const evtTypeName of sim.model.eventTypes) {
+        const ET = sim.Classes[evtTypeName];
+        // the AN node name is the lower-cased type name suffixed by "{Evt|Act}Node"
+        const nodeName = oes.getNodeNameFromEvtTypeName( evtTypeName);
+        sim.model.networkNodes[nodeName] = {name: nodeName, typeName:"eVENTnODE", eventTypeName: evtTypeName};
+        if (ET.successorNode) {
+          const succNodeName = oes.getNodeNameFromActTypeName( ET.successorNode);
+          sim.model.networkNodes[nodeName].successorNodeName = succNodeName;
         }
-        // create count pool only if not yet created
-        sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, available:0});
       }
-      // assign the (newly created) pool to the resource role
-      resRole.resPool = sim.resourcePools[pn];
-      // Subscribe activity types to resource pools
-      resRole.resPool.dependentActivityTypes.push( AT);
-      if (altResTypes) {  // only individual pools have alternativeResourceTypes
-        for (arT of altResTypes) {
-          resRole.resPool.dependentActivityTypes.push( arT);
+      // construct the activity nodes of the implicitly defined AN model
+      for (const actTypeName of sim.model.activityTypes) {
+        const AT = sim.Classes[actTypeName];
+        AT.resourceRoles ??= Object.create(null);  // make sure AT.resourceRoles is defined
+        // the AN node name is the lower-cased type name suffixed by "{Evt|Act}Node"
+        const nodeName = oes.getNodeNameFromActTypeName( actTypeName);
+        const node = sim.model.networkNodes[nodeName] =
+            {name: nodeName, typeName:"aCTIVITYnODE", activityTypeName: actTypeName};
+        if (AT.waitingTimeout) node.waitingTimeout = AT.waitingTimeout;
+        if (AT.successorNode) {
+          if (typeof AT.successorNode === "string") {
+            node.successorNodeName = oes.getNodeNameFromActTypeName( AT.successorNode);
+          } else if (typeof AT.successorNode === "function") {
+            node.successorActivityTypeNameExpr = AT.successorNode;
+          }
         }
+      }
+      sim.model.isAN = true;
+    } else {  // networkNodes have been defined in simulation.js
+      const nodeNames = Object.keys( sim.model.networkNodes);
+      if ("typeName" in sim.model.networkNodes[nodeNames[0]]) {  // a PN model
+        sim.model.isPN = true;
+        sim.Classes["pROCESSINGoBJECT"] = pROCESSINGoBJECT;
+        sim.Classes["EntryNode"] = sim.Classes["eNTRYnODE"] = eNTRYnODE;
+        sim.Classes["ProcessingNode"] = sim.Classes["pROCESSINGnODE"] = pROCESSINGnODE;
+        sim.Classes["ExitNode"] = sim.Classes["eXITnODE"] = eXITnODE;
+        // assign predefined resource role "processingStation" to processing nodes
+        for (const nodeName of nodeNames) {
+          const node = sim.model.networkNodes[nodeName];
+          if (node.typeName === "pROCESSINGnODE" || node.typeName === "ProcessingNode") {
+            if (!node.resourceRoles) {
+              node.resourceRoles = {"processingStation": {card:1}};
+            } else if (!("processingStation" in node.resourceRoles)) {
+              node.resourceRoles["processingStation"] = {card:1};
+            }
+          }
+        }
+      } else {  // AN
+        sim.model.isAN = true;
       }
     }
+    if (sim.model.isAN) {
+      sim.Classes["EventNode"] = sim.Classes["eVENTnODE"] = eVENTnODE;
+      sim.Classes["ActivityNode"] = sim.Classes["aCTIVITYnODE"] = aCTIVITYnODE;
+    }
+    oes.createResourcePools();
+    oes.setupActNetStatistics();
+    // there is no need to setupProcNetStatistics since these are simple numbers
   }
 }
 /*******************************************************************
@@ -109,6 +132,7 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   // clear initial state data structures
   sim.objects.clear();
   sim.FEL.clear();
+  sim.ongoingActivities = Object.create( null);  // a map of all ongoing activities accessible by ID
   sim.step = 0;  // simulation loop step counter
   sim.time = 0;  // 1 time
   // Set default values for end time parameters
@@ -131,29 +155,37 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   if (expParSlots) sim.assignModelParameters( expParSlots);
   // reset model-specific statistics
   if (sim.model.setupStatistics) sim.model.setupStatistics();
-  /***START Activity extensions BEFORE-setupInitialState ********************/
-  // Initialize resource pools
-  for (const poolName of Object.keys( sim.resourcePools)) {
-    sim.resourcePools[poolName].clear();
+
+  /***START AN/PN extensions BEFORE-setupInitialState ********************/
+  if (sim.model.isAN || sim.model.isPN) {
+    oes.initializeResourcePools();
+    oes.setupActNetScenario();
   }
-  /***END Activity extensions BEFORE-setupInitialState *********************/
-  // Set up initial state
+  /***END AN/PN extensions BEFORE-setupInitialState *********************/
+
+  // set up initial state
   if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
-  /***START Activity extensions AFTER-setupInitialState ********************/
-  oes.initializeActivityStatistics();
-  for (const actTypeName of sim.model.activityTypes) {
-    // Reset/clear the tasks queues
-    sim.Classes[actTypeName].tasks.length = 0;
-  }
-  // Initialize resource pools
-  for (const poolName of Object.keys( sim.resourcePools)) {
-    const nmrOfAvailRes = sim.resourcePools[poolName].available;
-    if (nmrOfAvailRes !== undefined) {  // a count pool
-      // the size of a count pool is the number of initially available resources
-      sim.resourcePools[poolName].size = nmrOfAvailRes;
+
+  /***START AN/PN extensions AFTER-setupInitialState ********************/
+  if (sim.model.isAN || sim.model.isPN) {
+    //oes.initializeActNetScenario();
+    oes.initializeActNetStatistics();
+    if (sim.model.isPN) {
+      //TODO: Needed? oes.initializeProcNetStatistics();
+      oes.scheduleInitialArrivalEvents();  // in sim.scenario.networkNodes
     }
   }
-  /***END Activity extensions AFTER-setupInitialState *********************/
+  /***END AN/PN extensions AFTER-setupInitialState *********************/
+
+  // schedule initial events if no initial event has been scheduled
+  if (sim.FEL.isEmpty()) {
+    for (const evtTypeName of sim.model.eventTypes) {
+      const ET = sim.Classes[evtTypeName];
+      if (ET.recurrence) {
+        sim.FEL.add( new ET({occTime: ET.recurrence()}));
+      }
+    }
+  }
 };
 /*******************************************************************
  * Assign model parameters with experiment parameter values ********
@@ -206,7 +238,7 @@ sim.runScenario = function (createLog) {
     const nextEvents = sim.FEL.removeNextEvents();
     // sort simultaneous events according to priority order
     if (nextEvents.length > 1) nextEvents.sort( eVENT.rank);
-    // process next (=current) events
+    // process next (="current") events
     for (const e of nextEvents) {
       // apply event rule
       const followUpEvents = typeof e.onEvent === "function" ? e.onEvent() : [];
@@ -216,17 +248,17 @@ sim.runScenario = function (createLog) {
       }
       const EventClass = e.constructor;
 
-      /**** ACTIVITIES extension START ****/
-      // if event class with successorActivity
-      if (EventClass.successorActivity) {
-        const SuccActivityClass = sim.Classes[EventClass.successorActivity];
-        // enqueue successor activity
-        SuccActivityClass.tasks.startOrEnqueue( new SuccActivityClass());
+      /**** AN/PN extension START ****/
+      if (EventClass.name !== "aRRIVAL" && e.node?.successorNode) {  //TODO: refactor such that a PN item does not occur in AN code
+        const successorNode = e.node.successorNode;
+        const SuccAT = sim.Classes[successorNode.activityTypeName];
+        // schedule successor activity
+        successorNode.tasks.startOrEnqueue( new SuccAT({node: successorNode}));
       }
-      /**** ACTIVITIES extension END ****/
+      /**** AN/PN extension END ****/
 
       // test if e is an exogenous event
-      if (EventClass.recurrence) {
+      if ("createNextEvent" in e) {
         // create and schedule next exogenous event
         const ne = e.createNextEvent();
         if (ne) sim.FEL.add( ne);
@@ -239,7 +271,7 @@ sim.runScenario = function (createLog) {
     }
   }
   // compute generic statistics (incl. resource utilization)
-  sim.computeFinalStatistics();
+  oes.computeFinalActNetStatistics();
   // compute user-defined statistics
   if (sim.model.computeFinalStatistics) sim.model.computeFinalStatistics();
 }
@@ -259,7 +291,7 @@ sim.runStandaloneScenario = function (createLog) {
  ********************************************************/
 sim.runExperiment = async function () {
   var exp = sim.experimentType, expRun={},
-      compositeStatVarNames = ["actTypes"],
+      compositeStatVarNames = ["nodes"],
       simpleStatVarNames = [];
   // set up user-defined statistics variables
   sim.model.setupStatistics();
@@ -275,22 +307,19 @@ sim.runExperiment = async function () {
       exp.replicStat[varName] = [];  // an array per statistics variable
     }
     /***START Activity extensions BEFORE-runSimpleExperiment ********************/
-    exp.replicStat.actTypes = Object.create(null);  // empty map
+    exp.replicStat.nodes = Object.create(null);  // empty map
     let throughputStatVarList = ["enqueuedActivities","waitingTimeouts","startedActivities","completedActivities"];
     let throughputStatVarListWithoutTmout = ["enqueuedActivities","startedActivities","completedActivities"];
-    for (const actTypeName of Object.keys( sim.stat.actTypes)) {
-      if (typeof sim.Classes[actTypeName].waitingTimeout === "function") {
-        exp.replicStat.actTypes[actTypeName] = {
-          enqueuedActivities:[], waitingTimeouts:[], startedActivities:[], completedActivities:[],
-          queueLength:{max:[]}, waitingTime:{max:[]}, cycleTime:{max:[]}
-        };
-      } else {
-        exp.replicStat.actTypes[actTypeName] = {
-          enqueuedActivities:[], startedActivities:[], completedActivities:[],
-          queueLength:{max:[]}, waitingTime:{max:[]}, cycleTime:{max:[]}
-        };
+    for (const nodeName of Object.keys( sim.stat.networkNodes)) {
+      const AT = sim.Classes[sim.model.networkNodes[nodeName].activityTypeName];
+      exp.replicStat.nodes[nodeName] = {
+        enqueuedActivities:[], startedActivities:[], completedActivities:[],
+        queueLength:{max:[]}, waitingTime:{max:[]}, cycleTime:{max:[]}
+      };
+      if (typeof AT.waitingTimeout === "function") {
+        exp.replicStat.nodes[nodeName].waitingTimeouts = [];
       }
-      //exp.replicStat.actTypes[actTypeName].resUtil = {};
+      //exp.replicStat.nodes[nodeName].resUtil = {};
     }
     /***END Activity extensions BEFORE-runSimpleExperiment ********************/
     // run experiment scenario replications
@@ -300,21 +329,22 @@ sim.runExperiment = async function () {
       sim.runScenario();
       // store replication statistics
       for (const key of Object.keys( exp.replicStat)) {
-        if (key !== "actTypes") exp.replicStat[key][k] = sim.stat[key];
+        if (key !== "nodes") exp.replicStat[key][k] = sim.stat[key];
       }
       /***START Activity extensions AFTER-runSimpleExperimentScenario ********************/
-      for (const actTypeName of Object.keys( exp.replicStat.actTypes)) {
-        const replActStat = exp.replicStat.actTypes[actTypeName],
-              actStat = sim.stat.actTypes[actTypeName];
-        replActStat.enqueuedActivities[k] = actStat.enqueuedActivities;
-        if (typeof sim.Classes[actTypeName].waitingTimeout === "function") {
-          replActStat.waitingTimeouts[k] = actStat.waitingTimeouts;
+      for (const nodeName of Object.keys( exp.replicStat.nodes)) {
+        const replStatPerNode = exp.replicStat.nodes[nodeName],
+              statPerNode = sim.stat.networkNodes[nodeName];
+        const AT = sim.Classes[sim.model.networkNodes[nodeName].activityTypeName];
+        replStatPerNode.enqueuedActivities[k] = statPerNode.enqueuedActivities;
+        if (typeof AT.waitingTimeout === "function") {
+          replStatPerNode.waitingTimeouts[k] = statPerNode.waitingTimeouts;
         }
-        replActStat.startedActivities[k] = actStat.startedActivities;
-        replActStat.completedActivities[k] = actStat.completedActivities;
-        replActStat.queueLength.max[k] = actStat.queueLength.max;
-        replActStat.waitingTime.max[k] = actStat.waitingTime.max;
-        replActStat.cycleTime.max[k] = actStat.cycleTime.max;
+        replStatPerNode.startedActivities[k] = statPerNode.startedActivities;
+        replStatPerNode.completedActivities[k] = statPerNode.completedActivities;
+        replStatPerNode.queueLength.max[k] = statPerNode.queueLength.max;
+        replStatPerNode.waitingTime.max[k] = statPerNode.waitingTime.max;
+        replStatPerNode.cycleTime.max[k] = statPerNode.cycleTime.max;
         //actStat.resUtil = {};
       }
       /***END Activity extensions AFTER-runSimpleExperimentScenario ********************/
@@ -326,7 +356,7 @@ sim.runExperiment = async function () {
             outputStatistics: {...sim.stat}  // clone
           });
         } catch( err) {
-          console.log("Error: ", err.message);
+          console.log("DB Error: ", err.message);
         }
       }
     }
@@ -334,39 +364,40 @@ sim.runExperiment = async function () {
     exp.summaryStat = Object.create(null);
     // aggregate replication statistics in exp.summaryStat
     for (const key of Object.keys( exp.replicStat)) {
-      if (key !== "actTypes") {  // key is a user-defined statistics variable name
+      if (key !== "nodes") {  // key is a user-defined statistics variable name
         exp.summaryStat[key] = Object.create(null);  // empty map
         for (const aggr of Object.keys( math.stat.summary)) {
           const aggrF = math.stat.summary[aggr].f;
-          exp.summaryStat[key][aggr] = aggrF(exp.replicStat[key]);
+          exp.summaryStat[key][aggr] = aggrF( exp.replicStat[key]);
         }
       }
     }
     /***START Activity extensions AFTER-runSimpleExperimentScenario ********************/
-    exp.summaryStat.actTypes = Object.create(null);  // empty map
-    for (const actTypeName of Object.keys( exp.replicStat.actTypes)) {
-      const replActStat = exp.replicStat.actTypes[actTypeName];
-      exp.summaryStat.actTypes[actTypeName] = Object.create(null);  // empty map
-      if (typeof sim.Classes[actTypeName].waitingTimeout === "function") {
+    exp.summaryStat.nodes = Object.create(null);  // empty map
+    for (const nodeName of Object.keys( exp.replicStat.nodes)) {
+      const replStatPerNode = exp.replicStat.nodes[nodeName];
+      const AT = sim.Classes[sim.model.networkNodes[nodeName].activityTypeName];
+      exp.summaryStat.nodes[nodeName] = Object.create(null);  // empty map
+      if (typeof AT.waitingTimeout === "function") {
         statVarList = throughputStatVarList
       } else {
         statVarList = throughputStatVarListWithoutTmout
       }
       for (const statVarName of statVarList) {
-        exp.summaryStat.actTypes[actTypeName][statVarName] = Object.create(null);  // empty map
+        exp.summaryStat.nodes[nodeName][statVarName] = Object.create(null);  // empty map
         for (const aggr of Object.keys( math.stat.summary)) {
-          const aggrF = math.stat.summary[aggr].f;
+          const aggrF = math.stat.summary[aggr].f;  // an aggregation function
           // compute/store the result of aggregation over the replication value list
-          exp.summaryStat.actTypes[actTypeName][statVarName][aggr] = aggrF( replActStat[statVarName]);
+          exp.summaryStat.nodes[nodeName][statVarName][aggr] = aggrF( replStatPerNode[statVarName]);
         }
       }
       //Possibly TODO: also support averages
       for (const statVarName of ["queueLength","waitingTime","cycleTime"]) {
-        exp.summaryStat.actTypes[actTypeName][statVarName] = Object.create(null);  // empty map
+        exp.summaryStat.nodes[nodeName][statVarName] = Object.create(null);  // empty map
         for (const aggr of Object.keys( math.stat.summary)) {
           const aggrF = math.stat.summary[aggr].f;
           // compute/store the result of aggregation over the replication value list
-          exp.summaryStat.actTypes[actTypeName][statVarName][aggr] = aggrF( replActStat[statVarName].max);
+          exp.summaryStat.nodes[nodeName][statVarName][aggr] = aggrF( replStatPerNode[statVarName].max);
         }
       }
       /*****TODO: support also the following statistics *****/
@@ -376,7 +407,7 @@ sim.runExperiment = async function () {
     // send experiment statistics to main thread
     postMessage({simpleExperiment: exp});
   }
-  async function runParVarExperiment() {
+  async function runParVarExperiment() {  // parameter variation experiment
     const valueSets = [], expParSlots = {},
         N = exp.parameterDefs.length;
     exp.scenarios = [];
@@ -498,26 +529,5 @@ sim.runExperiment = async function () {
   }
   if (exp.parameterDefs?.length) runParVarExperiment();
   else runSimpleExperiment();
-}
-/*******************************************************
- * Compute the final statistics
- ********************************************************/
-sim.computeFinalStatistics = function () {
-  // finalize resource utilization statistics
-  if (Array.isArray( sim.model.activityTypes)) {
-    sim.model.activityTypes.forEach( function (actTypeName) {
-      var resUtilPerAT = sim.stat.actTypes[actTypeName].resUtil;
-      Object.keys( resUtilPerAT).forEach( function (key) {
-        var utiliz = resUtilPerAT[key];
-        // key is either an objIdStr or a count pool name
-        utiliz /= sim.time;
-        // if key is a count pool name
-        if (sim.resourcePools[key]) {
-          utiliz /= sim.resourcePools[key].size;
-        }
-        resUtilPerAT[key] = math.round( utiliz, oes.defaults.expostStatDecimalPlaces);
-      });
-    });
-  }
 }
 

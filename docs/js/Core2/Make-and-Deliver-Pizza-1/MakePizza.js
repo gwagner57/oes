@@ -1,12 +1,12 @@
 class MakePizza extends aCTIVITY {
-  constructor({id, startTime, duration}={}) {
-    super({id, startTime, duration});
+  constructor({id, startTime, duration, node}={}) {
+    super({id, startTime, duration, node});
   }
-  duration() {return rand.triangular(3,6,4);}
+  static duration() {return rand.triangular(3,6,4);}
 }
 MakePizza.resourceRoles = {
   "pizzaMakers": {range: PizzaMaker, card: 2},
   "oven": {card: 1}
 }
 MakePizza.PERFORMER = ["pizzaMaker"];
-MakePizza.successorActivity = "DeliverPizza";
+MakePizza.successorNode = "DeliverPizza";

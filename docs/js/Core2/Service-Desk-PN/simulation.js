@@ -1,33 +1,30 @@
 /*******************************************************
  Simulation Model
 ********************************************************/
-sim.model.name = "Service-Desk-with-Activity";
+sim.model.name = "Service-Desk-as-PN";
 sim.model.time = "continuous";
 sim.model.timeUnit = "min";  // minutes
-sim.model.objectTypes = ["ServiceDesk"];
-sim.model.eventTypes = ["CustomerArrival"];
-sim.model.activityTypes = ["Service"];
+
+sim.model.networkNodes = {
+  "entrance": {typeName: "EntryNode", name:"entrance", arrivalRate: 0.3, successorNodeName:"serviceDesk"},
+  "serviceDesk": {typeName: "ProcessingNode", name:"serviceDesk", successorNodeName:"exit",
+      processingDuration: () => rand.uniform(1,4)},
+  "exit": {typeName: "ExitNode", name:"exit"}
+};
 /*******************************************************
  Simulation Scenario
- ********************************************************/
+********************************************************/
 sim.scenario.title = "Basic scenario with one service desk";
-sim.scenario.durationInSimTime = 1000;
+sim.scenario.durationInSimTime = 100;
 //sim.scenario.durationInSimSteps = 1000;
 //sim.scenario.durationInCpuTime = 1000;  // seconds
 sim.scenario.idCounter = 11;  // start value of auto IDs
 // Initial State
 sim.scenario.setupInitialState = function () {
-  // Create initial objects
-  const sd1 = new ServiceDesk({id: 1, name:"sd1", status: rESOURCEsTATUS.AVAILABLE});
-  // Initialize the individual resource pool "serviceDesks"
-  sim.resourcePools["serviceDesks"].clear();
-  sim.resourcePools["serviceDesks"].availResources.push( sd1);
-  // Schedule initial events
-  sim.FEL.add( new CustomerArrival({occTime: 1, serviceDesk: sd1}));
 }
 /*******************************************************
  Alternative Scenarios
- ********************************************************/
+********************************************************/
 sim.scenarios[1] = {
   scenarioNo: 1,
   title: "Scenario with two service desks",

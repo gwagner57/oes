@@ -7,11 +7,20 @@ sim.model.timeUnit = "min";  // minutes
 sim.model.objectTypes = ["ServiceDesk"];
 sim.model.eventTypes = ["CustomerArrival"];
 sim.model.activityTypes = ["Service"];
+/*** implicitly created AN
+ sim.model.networkNodes = {
+  "customerArrivalEvtNode": {name:"customerArrivalEvtNode", typeName:"eVENTnODE",
+        eventTypeName:"CustomerArrival", successorNodeName:"serviceActNode",
+        arrivalRecurrence: () => rand.exponential( sim.v.orderEventRate)},
+  "serviceActNode": {name:"serviceActNode", typeName:"aCTIVITYnODE", activityTypeName:"Service",
+        duration: () => rand.triangular(0.5, 1.5, 1)}
+};
+*/
 /*******************************************************
  Simulation Scenario
  ********************************************************/
 sim.scenario.title = "Basic scenario with one service desk";
-sim.scenario.durationInSimTime = 1000;
+sim.scenario.durationInSimTime = 100;
 //sim.scenario.durationInSimSteps = 1000;
 //sim.scenario.durationInCpuTime = 1000;  // seconds
 sim.scenario.idCounter = 11;  // start value of auto IDs
@@ -22,8 +31,6 @@ sim.scenario.setupInitialState = function () {
   // Initialize the individual resource pool "serviceDesks"
   sim.resourcePools["serviceDesks"].clear();
   sim.resourcePools["serviceDesks"].availResources.push( sd1);
-  // Schedule initial events
-  sim.FEL.add( new CustomerArrival({occTime: 1, serviceDesk: sd1}));
 }
 /*******************************************************
  Alternative Scenarios

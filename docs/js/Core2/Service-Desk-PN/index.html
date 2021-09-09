@@ -8,20 +8,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta charset="utf-8">
-  <title>DES Example Service Desk</title>
+  <title>DES Example: A Service Desk System as a Processing Network</title>
   <meta name="viewport" content="width=device-width, initial-scale = 1.0" />
-  <style>
-    table {
-      border: thin solid black;
-      /* margin: 1em auto; */
-      border-collapse: collapse;
-      empty-cells: show;
-    }
-    table td, table th {
-      border: thin solid black;
-      padding: 0.2em;
-    }
-  </style>
+    <link href="../../../css/index.css" rel="stylesheet" />
     <script src="../lib/math.js"></script>
     <script src="../lib/util.js"></script>
     <script src="../lib/idb5.js"></script>
@@ -40,7 +29,9 @@
     <script src="simulation.js"></script>
 </head>
 <body>
- <h1>Service Desk Simulation</h1>
+ <h1>A Service Desk System as a Processing Network</h1>
+ <p>This simple Processing Network model consists of two nodes: an <em>entry node</em> where customers arrive
+     and a <em>processing node</em> where service activities are performed on customers.</p>
  <form id="run">
      <div><label>Select scenario: <select name="selScen"></select></label></div>
      <div><button type="button" onclick="run()">Run</button> <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>

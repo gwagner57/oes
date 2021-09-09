@@ -4,4 +4,4 @@ class ServiceDesk extends oBJECT {
     this.status = status;
   }
 }
-ServiceDesk.labels = {"status":"st", "activityState":"act"};
+ServiceDesk.labels = {"status":"st", "activityState":"actSt"};

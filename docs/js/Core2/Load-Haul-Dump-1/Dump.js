@@ -9,6 +9,6 @@ Dump.resourceRoles = {
   "truck": {range: Truck}
 }
 Dump.PERFORMER = "truck";
-Dump.successorActivity = function () {
+Dump.successorNode = function () {
   return sim.model.v.nmrOfLoads > 0 ? "GoBackToLoadingSite":"GoHome";
 }

@@ -13,12 +13,12 @@ sim.model = {};
 sim.model.v = Object.create(null); // map of (global) model variables
 sim.model.f = Object.create(null); // map of (global) model functions
 sim.model.p = Object.create(null); // map of model parameters
-sim.scenario = {};
-sim.scenarios = [];
+sim.scenario = {};  // default scenario record/object
+sim.scenarios = [];  // list of alternative scenarios
 sim.stat = Object.create(null); // map of statistics variables
 sim.experimentTypes = [];
 
-oes = {};  // cannot be const, since also defined in simulatorUI.js
+var oes = {};  // cannot be const, since also defined in simulatorUI.js
 oes.defaults = {
   nextMomentDeltaT: 0.01,
   expostStatDecimalPlaces: 2,
@@ -32,8 +32,8 @@ oes.defaults = {
 class oBJECT {
   constructor( id, name) {
     this.id = id || sim.idCounter++;
-    this.name = name;  // optional
-    // add each new object to list of simulation objects
+    if (name) this.name = name;  // optional
+    // add each new object to Map of simulation objects
     sim.objects.set( this.id, this);
   }
   // overwrite/improve the standard toString method
@@ -42,7 +42,7 @@ class oBJECT {
         str = Class.name + `-${this.id}{ `,
         decPl = oes.defaults.simLogDecimalPlaces,
         i=0, valStr="";
-    Object.keys( this).forEach( function (prop) {
+    for (const prop of Object.keys( this)) {
       var propLabel = (Class.labels && Class.labels[prop]) ? Class.labels[prop] : "",
           val = this[prop];
       if (typeof val === "number" && !Number.isInteger( val)) {
@@ -56,7 +56,7 @@ class oBJECT {
         str += (i>0 ? ", " : "") + propLabel +": "+ valStr;
         i = i+1;
       }
-    }, this);
+    }
     return str +"}";
   }
 }
@@ -64,8 +64,8 @@ class oBJECT {
  * An OES event may be instantaneous or it may have a non-zero duration.
  */
 class eVENT {
-    constructor({occTime, delay, startTime, duration}) {
-      if (occTime) this.occTime = occTime;
+    constructor({occTime, delay, startTime, duration, node}) {
+      if (occTime !== undefined) this.occTime = occTime;
       else if (delay) this.occTime = sim.time + delay;
       else if (startTime !== undefined) {  // e.g., an activity
         if (startTime > 0) {  // a meaningful startTime
@@ -76,6 +76,14 @@ class eVENT {
           }
         }
       } else this.occTime = sim.time + sim.nextMomentDeltaT;
+      if (node) {
+        this.node = node;
+      } else if (sim.model.isAN && Object.getPrototypeOf( this.constructor) === eVENT &&
+      !["aCTIVITYsTART","aCTIVITYeND"].includes( this.constructor.name)) {
+        // assign AN event node using the default node name
+        const nodeName = oes.getNodeNameFromEvtTypeName( this.constructor.name);
+        this.node = sim.scenario.networkNodes[nodeName];
+      }
   }
   // overwrite/improve the standard toString method
   toString() {

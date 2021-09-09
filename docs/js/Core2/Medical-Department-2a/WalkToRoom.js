@@ -19,4 +19,4 @@ WalkToRoom.PERFORMER = "nurse";
 // assign resource pools to resource roles
 WalkToRoom.resourceRoles["room"].countPoolName = "rooms";
 // enqueue a new planned examination
-WalkToRoom.successorActivity = "Examination";
+WalkToRoom.successorNode = "Examination";

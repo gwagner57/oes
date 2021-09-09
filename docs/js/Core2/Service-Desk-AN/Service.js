@@ -1,17 +1,8 @@
 class Service extends aCTIVITY {
-  constructor({id, startTime, duration, serviceDesk}={}) {
+  constructor({id, startTime, duration}={}) {
     super({id, startTime, duration});
   }
-  /*
-  onActivityStart() {return [];}
-  */
-  /*
-  onActivityEnd() {
-    const followupEvents=[];
-    return followupEvents;
-  }
-  */
-static duration() {return rand.uniform( 1, 4);}
+static duration() {return rand.uniform( 1, 4)}
 }
 // A service requires a service desk.
 Service.resourceRoles = {

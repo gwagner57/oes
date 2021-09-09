@@ -9,8 +9,26 @@ sim.model.objectTypes = ["OrderTaker","PizzaMaker"];
 sim.model.eventTypes = ["OrderCall"];
 sim.model.activityTypes = ["TakeOrder","MakePizza","DeliverPizza"];
 
+/*** implicitly created AN
+sim.model.networkNodes = {
+  "orderCallEvtNode": {name:"orderCallEvtNode", evtTypeName:"OrderCall", successorNodeName:"takeOrderActNode",
+        arrivalRecurrence: () => rand.exponential( sim.v.orderEventRate)},
+  "takeOrderActNode": {name:"takeOrderActNode", activityTypeName:"TakeOrder", successorNodeName:"makePizzaActNode",
+        duration: () => rand.triangular(0.5, 1.5, 1)},
+  "makePizzaActNode": {name:"makePizzaActNode", activityTypeName:"MakePizza", successorNodeName:"deliverPizzaActNode"},
+  "deliverPizzaActNode": {name:"deliverPizzaActNode", activityTypeName:"DeliverPizza",
+        onActivityEnd: function () {
+          var backlogQuantity = sim.stat.arrivedOrders - sim.stat.departedOrders;
+          sim.stat.revenue += sim.v.revenuePerOrder;
+          sim.stat.manuCosts += sim.v.manuCostsPerOrder;
+          sim.stat.backlogCosts += sim.v.backlogCostsPerOrderPerTimeUnit * backlogQuantity;
+          return [];
+        }}
+};
+*/
+
 /*******************************************************
- Simulation Scenario
+ Default Simulation Scenario
  ********************************************************/
 sim.scenario.durationInSimTime = 300;
 sim.scenario.title = "Default scenario.";
