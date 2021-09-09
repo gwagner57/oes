@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>OES Core 1 Simulation Examples</title>
+<meta name="viewport" content="width=device-width, initial-scale = 1.0" />
+<meta name="description"
+	content="Simulation examples for OES Core simulators" />
+<style>
+p.description {
+	font-size: smaller;
+}
+</style>
+</head>
+<body>
+
+	<main>
+		<h1>Service Desk Simulation</h1>
+		
+		<form method="post" th:object="${scenario}">
+			<p> Select scenario: 
+				<select th:field="*{init}">
+				    <option th:value="0" th:text="'(0) Basic scenario with one service desk'"></option>
+				    <option th:value="1" th:text="'(1) Scenario with two service desks'"></option>
+				</select>
+		    </p>
+			<p>
+				<button class="btn btn-primary" type="submit">Submit form</button>
+				<select th:field="*{type}" onChange="document.getElementById('log').style.display = (this.selectedIndex === 0) ? 'block' : 'none';">
+				    <option th:value="0" th:text="'(0) Standalone scenario'"></option>
+				    <option th:value="1" th:text="'(1) Simple Experiment with 10 replications, each running for 1000 min.'"></option>
+				</select>
+			</p>
+		<div id="log">
+			<p>
+			Simulation log
+				<input type="checkbox" name="logs" th:field="*{simulationLog}" value="true" />
+			</p>
+		</div>
+		
+		</form>
+	</main>
+	<footer>
+		<p>
+			© 2021 G. Wagner (<a
+				href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>),
+			Brandenburg University of Technology, Germany
+		</p>
+	</footer>
+</body>
+</html>
