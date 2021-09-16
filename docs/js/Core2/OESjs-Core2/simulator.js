@@ -106,9 +106,9 @@ sim.initializeSimulator = function () {
           const node = sim.model.networkNodes[nodeName];
           if (node.typeName === "pROCESSINGnODE" || node.typeName === "ProcessingNode") {
             if (!node.resourceRoles) {
-              node.resourceRoles = {"processingStation": {card:1}};
+              node.resourceRoles = {"processingStation": {range: pROCESSINGnODE}};
             } else if (!("processingStation" in node.resourceRoles)) {
-              node.resourceRoles["processingStation"] = {card:1};
+              node.resourceRoles["processingStation"] = {range: pROCESSINGnODE};
             }
           }
         }
@@ -218,21 +218,22 @@ sim.advanceSimulationTime = function () {
  Run a simulation scenario
  ********************************************************/
 sim.runScenario = function (createLog) {
-  function sendLogMsg() {
+  function sendLogMsg( currEvts) {
     let objStr = [...sim.objects.values()].toString();
     if (objStr) objStr += " | ";
     postMessage({ step: sim.step, time: sim.time,
       // convert values() iterator to array
       objectsStr: objStr + Object.values( sim.resourcePools).toString(),
-      eventsStr: sim.FEL.toString()
+      currEvtsStr: currEvts.toString(),
+      futEvtsStr: sim.FEL.toString()
     });
   }
   const startTime = (new Date()).getTime();
+  if (createLog) sendLogMsg([]);  // log initial state
   // Simulation Loop
   while (sim.time < sim.scenario.durationInSimTime &&
       sim.step < sim.scenario.durationInSimSteps &&
       (new Date()).getTime() - startTime < sim.scenario.durationInCpuTime) {
-    if (createLog) sendLogMsg();
     sim.advanceSimulationTime();
     // extract and process next events
     const nextEvents = sim.FEL.removeNextEvents();
@@ -249,11 +250,13 @@ sim.runScenario = function (createLog) {
       const EventClass = e.constructor;
 
       /**** AN/PN extension START ****/
+      // handle AN event nodes with a successor node
       if (EventClass.name !== "aRRIVAL" && e.node?.successorNode) {  //TODO: refactor such that a PN item does not occur in AN code
-        const successorNode = e.node.successorNode;
-        const SuccAT = sim.Classes[successorNode.activityTypeName];
+        const successorNode = e.node.successorNode,
+              SuccAT = sim.Classes[successorNode.activityTypeName],
+              succActy = new SuccAT({node: successorNode});
         // schedule successor activity
-        successorNode.tasks.startOrEnqueue( new SuccAT({node: successorNode}));
+        succActy.startOrEnqueue();
       }
       /**** AN/PN extension END ****/
 
@@ -264,6 +267,7 @@ sim.runScenario = function (createLog) {
         if (ne) sim.FEL.add( ne);
       }
     }
+    if (createLog) sendLogMsg( nextEvents);  // log initial state
     // end simulation if no time increment and no more events
     if (!sim.timeIncrement && sim.FEL.isEmpty()) {
       if (createLog) sendLogMsg();

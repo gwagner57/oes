@@ -18,96 +18,7 @@ class qUEUE extends Array {
     return this.length>0 ? this.shift() : null;
   }
 }
-// Datatype class for queues of tasks (= planned activities)
-class tASKqUEUE extends qUEUE {
-  constructor() {
-    super();
-  }
-  /*
-   May be called with an activity or activity/processing node argument
-   TODO: turn into an instance-level method with an optional "acty" parameter
-   */
-  static ifAvailAllocReqResAndStartNextActivity( actyOrActNode) {
-    var actNode=null, nextActy=null, taskQueue=null;
-    if (actyOrActNode instanceof aCTIVITY) {
-      nextActy = actyOrActNode;
-      actNode = nextActy.node;
-      taskQueue = actNode.tasks;
-    } else {
-      actNode = actyOrActNode;
-      taskQueue = actNode.tasks;
-      if (taskQueue.length === 0) return false;  // no next activity to start
-      nextActy = taskQueue[0];
-      // take care of waiting timeouts
-      while (nextActy.waitingTimeout && sim.time > nextActy.waitingTimeout) {
-        // remove nextActy from queue
-        taskQueue.dequeue();
-        // increment the waitingTimeouts statistic
-        sim.stat.networkNodes[actNode.name].waitingTimeouts++;
-        if (taskQueue.length === 0) return false;
-        else nextActy = taskQueue[0];
-      }
-    }
-    // Are all required resources available?
-    if (Object.keys( actNode.resourceRoles)
-        // test only for resources not yet assigned
-        .filter( resRoleName => !nextActy[resRoleName])
-        .map( resRoleName => actNode.resourceRoles[resRoleName])
-        .every( resRole => (resRole.resourcePool?.isAvailable( resRole.card||resRole.minCard) ||
-                resRole.range?.resourcePool.isAvailable( resRole.card||resRole.minCard)))) {
-      // remove nextActy from queue if it's its head element
-      if (nextActy === taskQueue[0]) taskQueue.dequeue();
-      // Allocate all required resources
-      for (const resRoleName of Object.keys( actNode.resourceRoles)) {
-        if (!nextActy[resRoleName]) {
-          const resRole = actNode.resourceRoles[resRoleName],
-                resPool = resRole.resourcePool ?? resRole.range.resourcePool;
-          // allocate the required/maximal quantity of resources from the pool
-          let resQuantity=0;
-          if (resRole.card) resQuantity = resRole.card;
-          else if (resRole.maxCard) {
-            resQuantity = Math.min( resRole.maxCard, resPool.nmrAvailable());
-          }
-          const allocatedRes = resPool.allocate( resQuantity);
-          if (allocatedRes) {  // individual resource pool
-            // create an activity property slot for this resource role
-            if (allocatedRes.length === 1) {
-              nextActy[resRoleName] = allocatedRes[0];
-            } else {
-              nextActy[resRoleName] = allocatedRes;
-            }
-          }
-        }
-      }
-      // start next activity with the allocated resources
-      if (typeof pROCESSINGaCTIVITY === "function" && nextActy instanceof pROCESSINGaCTIVITY) {
-        sim.FEL.add( new pROCESSINGaCTIVITYsTART({plannedActivity: nextActy}));
-      } else {
-        sim.FEL.add( new aCTIVITYsTART({plannedActivity: nextActy}));
-      }
-      return true;
-    } else {
-      return false;
-    }
-  }
-  startOrEnqueue( acty) {
-    // if available, allocate required resources and start next activity
-    const actyStarted = tASKqUEUE.ifAvailAllocReqResAndStartNextActivity( acty);
-    if (!actyStarted) {
-      acty.enqueueTime = sim.time;
-      if (typeof acty.node.waitingTimeout === "function") {
-        acty.waitingTimeout = sim.time + acty.node.waitingTimeout();
-      }
-      this.push( acty);  // add acty to task queue
-      const nodeStat = sim.stat.networkNodes[acty.node.name];
-      nodeStat.enqueuedActivities += 1;
-      // compute generic queue length statistics per activity type
-      if (this.length > nodeStat.queueLength.max) {
-        nodeStat.queueLength.max = this.length;
-      }
-    }
-  }
-}
+
 // An activity state (of an object) is a set of activity type names
 class aCTIVITYsTATE extends Set {
   constructor() {
@@ -120,10 +31,10 @@ class aCTIVITYsTATE extends Set {
 }
 
 /****************************************************************************
- "out of order": defective/broken.
+ "out of order": defective/broken/ill
  "out of duty":  applies to human/performer resources only
- "blocked":      applies to processing stations only, which may be blocked
- because the input buffer of their successor station is full.
+ "blocked":      applies to processing nodes/stations only, which may be blocked
+                 because the input buffer of their successor station is full
  ****************************************************************************/
 const rESOURCEsTATUS = new eNUMERATION("ResourceStatusEL",
     ["available","busy","out of order","out of duty","blocked"]);
@@ -253,7 +164,7 @@ at simulation step ${sim.step}!`);
     }
     // try starting enqueued tasks depending on this type of resource
     for (const node of this.dependentNodes) {
-      tASKqUEUE.ifAvailAllocReqResAndStartNextActivity( node);
+      node.ifAvailAllocReqResAndStartNextActivity();
     }
   }
   clear() {
@@ -336,11 +247,16 @@ class eVENTnODE extends oBJECT {
  * does not have a "successorNode" attribute slot, it represents an end node (where processes end).
  */
 class aCTIVITYnODE extends oBJECT {
-  constructor({id, name, activityTypeName, duration, waitingTimeout,
+  constructor({id, name, activityTypeName, resourceRoles, duration, waitingTimeout,
                 successorNodeName, successorActivityTypeNameExpr, successorNodeNames}) {
     super( id||name, name);  // set id to name
     // a user-defined subclass of aCTIVITY
-    this.activityTypeName = activityTypeName;
+    if (activityTypeName) {
+      this.activityTypeName = activityTypeName;
+      // copy resourceRoles from AT to node
+      if (!resourceRoles) this.resourceRoles = sim.Classes[activityTypeName].resourceRoles;
+    }
+    if (resourceRoles) this.resourceRoles = resourceRoles;
     // a fixed value or a random variable function expression
     if (duration) this.duration = duration;
     // a fixed value or a random variable function expression
@@ -351,9 +267,84 @@ class aCTIVITYnODE extends oBJECT {
     if (successorActivityTypeNameExpr) this.successorActivityTypeNameExpr = successorActivityTypeNameExpr;
     // a map with node names as keys and conditions as values for OR/AND splitting
     if (successorNodeNames) this.successorNodeNames = successorNodeNames;
-    this.tasks = new tASKqUEUE();
-    // copy resourceRoles from AT to node
-    this.resourceRoles = sim.Classes[activityTypeName].resourceRoles;
+    this.tasks = new qUEUE();
+  }
+  getSuccessorNode() {
+    //TODO: node.successorNodeNames may be a map from names to conditions for (X)OR/AND splitting
+    let succNode = null;
+    if (this.successorNode || this.successorNodeName ||
+        this.successorActivityTypeNameExpr) {  // a string or a function returning a string
+      if (this.successorNode) {
+        succNode = this.successorNode;
+      } else if (typeof this.successorNodeName === "function") {
+        succNode = sim.scenario.networkNodes[this.successorNodeName()];
+      } else if (typeof this.successorActivityTypeNameExpr === "function") {
+        const succActyTypeName = this.successorActivityTypeNameExpr();
+        const successorNodeName = oes.getNodeNameFromActTypeName(succActyTypeName);
+        succNode = sim.scenario.networkNodes[successorNodeName];
+      }
+    }
+    return succNode;
+  }
+  ifAvailAllocReqResAndStartNextActivity( nextActy) {
+    const taskQueue = this.tasks;
+    if (!nextActy) {
+      if (taskQueue.length === 0) return false;  // no next activity to start
+      else nextActy = taskQueue[0];
+    }
+    // take care of waiting timeouts
+    while (nextActy.waitingTimeout && sim.time > nextActy.waitingTimeout) {
+      // remove nextActy from queue
+      taskQueue.dequeue();
+      // increment the waitingTimeouts statistic
+      sim.stat.networkNodes[this.name].waitingTimeouts++;
+      if (taskQueue.length === 0) return false;
+      else nextActy = taskQueue[0];
+    }
+    const resRoles = this.resourceRoles;
+    // Are all required resources available?
+    if (Object.keys( resRoles)
+        // test only for resources not yet assigned
+        .filter( resRoleName => !nextActy[resRoleName])
+        .map( resRoleName => resRoles[resRoleName])
+        .every( resRole => (resRole.resourcePool?.isAvailable( resRole.card||resRole.minCard) ||
+            resRole.range?.resourcePool?.isAvailable( resRole.card||resRole.minCard)))) {
+      // remove nextActy from queue if it's its head element
+      if (nextActy === taskQueue[0]) taskQueue.dequeue();
+      // Allocate all required resources
+      for (const resRoleName of Object.keys( resRoles)) {
+        if (!nextActy[resRoleName]) {
+          const resRole = resRoles[resRoleName],
+                resPool = resRole.resourcePool ?? resRole.range.resourcePool;
+          // allocate the required/maximal quantity of resources from the pool
+          let resQuantity=0;
+          if (resRole.card) resQuantity = resRole.card;
+          else if (resRole.maxCard) {
+            resQuantity = Math.min( resRole.maxCard, resPool.nmrAvailable());
+          } else resQuantity = 1;  // default
+          const allocatedRes = resPool.allocate( resQuantity);
+          if (allocatedRes) {  // individual resource pool
+            // create an activity property slot for this resource role
+            if (allocatedRes.length === 1) {
+              nextActy[resRoleName] = allocatedRes[0];
+            } else {
+              nextActy[resRoleName] = allocatedRes;
+            }
+          }
+        }
+      }
+      this.scheduleActivityStartEvent( nextActy);
+      return nextActy;
+    } else {
+      return null;
+    }
+  }
+  scheduleActivityStartEvent( acty) {
+    sim.FEL.add( new aCTIVITYsTART({plannedActivity: acty}));
+  }
+  toString() {
+    var str = this.name + `{ tasks: ${this.tasks.length}}`;
+    return str;
   }
 }
 /**
@@ -421,6 +412,46 @@ class aCTIVITY extends eVENT {
     this.node = node;
     if (enqueueTime) this.enqueueTime = enqueueTime;
   }
+  releaseResources() {
+    const node = this.node,
+          resourceRoles = node?.resourceRoles ?? this.constructor.resourceRoles,
+          resRoleNames = Object.keys( resourceRoles);
+    for (const resRoleName of resRoleNames) {
+      const resRole = resourceRoles[resRoleName];
+      if (resRole.countPoolName) {
+        // release the used number of count pool resources
+        resRole.resourcePool.release( resRole.card);
+      } else {
+        const resObj = this[resRoleName];
+        // release the used individual resource if it has not been transferred to succActy
+        if (resObj) {
+          if (resRole.resourcePool) {  // a node/resRole-specific pool
+            resRole.resourcePool.release( resObj);
+          } else {  // a pool associated with the resource type (=range)
+            resRole.range.resourcePool.release( resObj);
+          }
+        }
+      }
+    }
+  }
+  startOrEnqueue() {
+    // if available, allocate required resources and start activity
+    const nextActy = this.node.ifAvailAllocReqResAndStartNextActivity( this);
+    if (!nextActy) {
+      const taskQueue = this.node.tasks;
+      this.enqueueTime = sim.time;
+      if (typeof this.node.waitingTimeout === "function") {
+        this.waitingTimeout = sim.time + this.node.waitingTimeout();
+      }
+      taskQueue.enqueue( this);  // add acty to task queue
+      const nodeStat = sim.stat.networkNodes[this.node.name];
+      nodeStat.enqueuedActivities += 1;
+      // compute generic task queue length statistics
+      if (taskQueue.length > nodeStat.queueLength.max) {
+        nodeStat.queueLength.max = taskQueue.length;
+      }
+    }
+  }
 }
 // define the exponential PDF as the default duration random variable
 aCTIVITY.defaultDurationMean = 1;
@@ -445,20 +476,21 @@ class aCTIVITYsTART extends eVENT {
   onEvent() {
     const acty = this.plannedActivity,
           node = acty.node,
-          AT = acty.constructor,  // the activity's type/class
+          resourceRoles = node.resourceRoles,
+          actyTypeName = node.activityTypeName || "ProcActy",  // the activity's type/class
           followupEvents=[];
     // set  new activity
     acty.startTime = this.occTime;
     // update statistics
     sim.stat.networkNodes[acty.node.name].startedActivities++;
     // set activity state for all involved resource objects
-    for (const resRoleName of Object.keys( AT.resourceRoles)) {
-      if (AT.resourceRoles[resRoleName].range) {  // an individual pool
+    for (const resRoleName of Object.keys( resourceRoles)) {
+      if (resourceRoles[resRoleName].range) {  // an individual pool
         let resObjects = acty[resRoleName];
         if (!Array.isArray( resObjects)) resObjects = [resObjects];
         for (const resObj of resObjects) {
           if (!resObj.activityState) resObj.activityState = new aCTIVITYsTATE();
-          resObj.activityState.add( AT.name);
+          resObj.activityState.add( actyTypeName);
         }
       }
     }
@@ -508,12 +540,11 @@ class aCTIVITYeND extends eVENT {
   }
   onEvent() {
     const acty = this.activity,
+          node = acty.node,
           AT = acty.constructor,  // the activity's type/class
-          nodeStat = sim.stat.networkNodes[acty.node.name],
-          waitingTimeStat = nodeStat.waitingTime,
-          cycleTimeStat = nodeStat.cycleTime,
-          resUtilPerNode = nodeStat.resUtil;
-    const followupEvents=[];
+          resourceRoles = node?.resourceRoles ?? AT.resourceRoles,
+          resRoleNames = Object.keys( resourceRoles),
+          followupEvents=[];
     // if there is an onActivityEnd procedure, execute it
     if (typeof acty.onActivityEnd === "function") {
       followupEvents.push(...acty.onActivityEnd());
@@ -526,82 +557,68 @@ class aCTIVITYeND extends eVENT {
     }
     // drop activity from map/collection of ongoing activities
     delete sim.ongoingActivities[this.activity.id];
-    // update AN statistics
-    nodeStat.completedActivities++;
-    const waitingTime = acty.enqueueTime ? acty.startTime - acty.enqueueTime : 0;
-    //waitingTimeStat.total += waitingTime;
-    if (waitingTimeStat.max < waitingTime) waitingTimeStat.max = waitingTime;
-    const cycleTime = waitingTime + acty.occTime - acty.startTime;
-    //cycleTimeStat.total += cycleTime;
-    if (cycleTimeStat.max < cycleTime) cycleTimeStat.max = cycleTime;
-    // compute resource utilization per activity type (per resource object or per count pool)
-    for (const resRoleName of Object.keys( AT.resourceRoles)) {
-      const resRole = AT.resourceRoles[resRoleName];
-      if (resRole.range) {  // per resource object
-        let resObjects = acty[resRoleName];
-        if (!Array.isArray( resObjects)) resObjects = [resObjects];
-        for (const resObj of resObjects) {
-          resUtilPerNode[String(resObj.id)] += acty.duration;
-          // update the activity state of resource objects
-          resObj.activityState.delete( AT.name);
+
+    if (node) {  // update AN statistics
+      const nodeStat = sim.stat.networkNodes[node.name],
+            waitingTimeStat = nodeStat.waitingTime,
+            cycleTimeStat = nodeStat.cycleTime,
+            resUtilPerNode = nodeStat.resUtil;
+      nodeStat.completedActivities++;
+      const waitingTime = acty.enqueueTime ? acty.startTime - acty.enqueueTime : 0;
+      //waitingTimeStat.total += waitingTime;
+      if (waitingTimeStat.max < waitingTime) waitingTimeStat.max = waitingTime;
+      const cycleTime = waitingTime + acty.occTime - acty.startTime;
+      //cycleTimeStat.total += cycleTime;
+      if (cycleTimeStat.max < cycleTime) cycleTimeStat.max = cycleTime;
+      // compute resource utilization per node (per resource object or per count pool)
+      for (const resRoleName of resRoleNames) {
+        const resRole = resourceRoles[resRoleName];
+        if (resRole.range) {  // per resource object
+          let resObjects = acty[resRoleName];
+          if (!Array.isArray( resObjects)) resObjects = [resObjects];
+          for (const resObj of resObjects) {
+            resUtilPerNode[String(resObj.id)] += acty.duration;
+            // update the activity state of resource objects
+            resObj.activityState.delete( AT.name);
+          }
+        } else {  // per count pool
+          resUtilPerNode[resRole.countPoolName] += acty.duration;
         }
-      } else {  // per count pool
-        resUtilPerNode[resRole.countPoolName] += acty.duration;
       }
     }
-    // is there a successor node (activity)?
-    if (acty.node?.successorNode || acty.node?.successorNodeName ||
-        acty.node?.successorActivityTypeNameExpr) {  // a string or a function returning a string
-      let successorNode=null;
-      if (acty.node.successorNode) {
-        successorNode = acty.node.successorNode;
-      } else if (typeof acty.node.successorNodeName === "function") {
-        successorNode = sim.scenario.networkNodes[acty.node.successorNodeName()];
-      } else if (typeof acty.node.successorActivityTypeNameExpr === "function") {
-        const succActyTypeName = acty.node.successorActivityTypeNameExpr();
-        const successorNodeName = oes.getNodeNameFromActTypeName( succActyTypeName);
-        successorNode = sim.scenario.networkNodes[successorNodeName];
-      }
-      //TODO: AT.successorNodes may be a map from node names to conditions for (X)OR/AND splitting
-      const SuccAT = sim.Classes[successorNode.activityTypeName];
-      const succActy = new SuccAT({node: successorNode});
-      const succActyResRoleNames = Object.keys( SuccAT.resourceRoles),
-            actyResRoleNames = Object.keys( AT.resourceRoles);
-      // By default, keep (individual) resources that are shared between AT and SuccAT
-      for (const resRoleName of actyResRoleNames) {
-        if (SuccAT.resourceRoles[resRoleName] && acty[resRoleName]) {
-          // re-allocate resource to successor activity
-          succActy[resRoleName] = acty[resRoleName];
-          delete acty[resRoleName];
+    // execute this code only for AN nodes, and not for PN nodes
+    if (node.constructor === aCTIVITYnODE) {
+      const succNode = node.getSuccessorNode();
+      if (succNode) {
+        const SuccAT = sim.Classes[succNode.activityTypeName];
+        const succActy = new SuccAT({node: succNode});
+        const succResRoles = succNode.resourceRoles ?? SuccAT.resourceRoles,
+              succResRoleNames = Object.keys( succResRoles);
+        // By default, keep (individual) resources that are shared between AT and SuccAT
+        for (const resRoleName of resRoleNames) {
+          if (succNode.resourceRoles[resRoleName] && acty[resRoleName]) {
+            // re-allocate resource to successor activity
+            succActy[resRoleName] = acty[resRoleName];
+            //TODO: better form a collection of transferred resource role names
+            delete acty[resRoleName];  // used below for checking if resource transferred
+          }
         }
-      }
-      // is AT a plain activity type (and not a processing activity type)?
-      if (Object.getPrototypeOf( AT) === aCTIVITY) {
         // start or enqueue a successor activity according to the AN model
         // are all successor activity resources already allocated (since included in activity resources)?
-        if (succActyResRoleNames.every( rn => actyResRoleNames.includes( rn))) {
+        if (succResRoleNames.every( rn => resRoleNames.includes( rn))) {
           // start successor activity
           followupEvents.push( new aCTIVITYsTART({plannedActivity: succActy}));
         } else {  // start or enqueue successor activity
-          successorNode.tasks.startOrEnqueue( succActy);
+          succActy.startOrEnqueue();
         }
       }
-    }
-    // release all (remaining) resources of acty
-    for (const resRoleName of Object.keys( AT.resourceRoles)) {
-      const resRole = AT.resourceRoles[resRoleName];
-      if (resRole.countPoolName) {
-        // release the used number of count pool resources
-        resRole.resourcePool.release( resRole.card);
-      } else {
-        // release the used individual resource if it has not been transferred to succActy
-        if (acty[resRoleName]) resRole.range.resourcePool.release( acty[resRoleName]);
+      // release all (remaining) resources of acty
+      acty.releaseResources();
+      // if there are still planned activities in the task queue
+      if (node.tasks.length > 0) {
+        // if available, allocate required resources and start next activity
+        node.ifAvailAllocReqResAndStartNextActivity();
       }
-    }
-    // if there are still planned activities in the task queue
-    if (acty.node.tasks.length > 0) {
-      // if available, allocate required resources and schedule next activity
-      tASKqUEUE.ifAvailAllocReqResAndStartNextActivity( acty.node);
     }
     return followupEvents;
   }
@@ -611,8 +628,8 @@ class aCTIVITYeND extends eVENT {
         AT = acty.constructor,  // the activity's type/class
         eventTypeName = (AT.shortLabel || AT.name) + "End",
         evtStr = "", slotListStr = "";
-    Object.keys( AT.resourceRoles).forEach(function (resRoleName) {
-      if (AT.resourceRoles[resRoleName].range) {
+    Object.keys( acty.node.resourceRoles).forEach(function (resRoleName) {
+      if (acty.node.resourceRoles[resRoleName].range) {
         const resObj = acty[resRoleName];
         let resObjStr = "";
         if (Array.isArray( resObj)) {
@@ -653,7 +670,7 @@ oes.createResourcePools = function () {
          includes( node.typeName)) continue;
     const resourceRoles = node.resourceRoles || sim.Classes[node.activityTypeName].resourceRoles;
     for (const resRoleName of Object.keys( resourceRoles)) {
-      // skip the predefined pool "processingStation" created for each proc. node
+      // skip the predefined resource role "processingStation" created for each proc. node
       if (resRoleName === "processingStation") continue;
       const resRole = resourceRoles[resRoleName];
       let pn="";
@@ -760,54 +777,17 @@ oes.initializeActNetScenario = function () {
       } else if (scenNode instanceof pROCESSINGnODE) {
         scenNode.tasks.length = 0;  // clear the task queue
         scenNode.inputBuffer.length = 0;  // clear the input buffer
+        scenNode.workInProgress.clear();  // clear the WiP buffer
         scenNode.nmrOfArrivedObjects = 0;
         scenNode.nmrOfDepartedObjects = 0;
-        scenNode.resourceRoles["processingStation"].resourcePool.available = 1;
+        scenNode.resourceRoles["processingStation"].resourcePool.availResources = [scenNode];
       } else if (scenNode instanceof eNTRYnODE) {
         scenNode.nmrOfArrivedObjects = 0;
       } else if (scenNode instanceof eXITnODE) {
         scenNode.nmrOfDepartedObjects = 0;
       }
-/*
-    } else {  // create scenario node object from model node record
-      const node = sim.scenario.networkNodes[nodeName] = new NodeType( nodeRec);
-      if (["aCTIVITYnODE","ActivityNode","pROCESSINGnODE","ProcessingNode"].includes( node.typeName)) {
-        for (const resRoleName of Object.keys( node.resourceRoles)) {
-          const resRole = node.resourceRoles[resRoleName];
-          let altResTypes=[];
-          if (resRole.range) {  // the resource role is associated with an individual pool
-            const rn = resRole.range.name;
-            // the pool name is the lower-cased pluralized range name
-            const pn = rn.charAt(0).toLowerCase() + rn.slice(1) + "s";
-            altResTypes = sim.resourcePools[pn].resourceType.alternativeResourceTypes || [];
-            resRole.range.resourcePool.dependentNodes.push( node);
-          } else {
-            resRole.resourcePool.dependentNodes.push( node);
-          }
-          // subscribe node to resource pools
-          for (const arT of altResTypes) {
-            arT.resourcePool.dependentNodes.push( node);
-          }
-        }
-      }
-      if (sim.model.isPN) oes.createProcessingStationResourcePools();
-*/
     }
   }
-  /*
-  // second pass for setting the successorNode property if no branching
-  for (const nodeName of nodeNames) {
-    const node = sim.scenario.networkNodes[nodeName];
-    let succNodeName="";
-    if (!node.successorNodeName || typeof node.successorNodeName === "function") continue;
-    succNodeName = node.successorNodeName;
-    // assign successor node
-    node.successorNode = sim.scenario.networkNodes[succNodeName];
-    // set predecessor node for being able to handle blocking due to full input buffers
-    if (sim.model.isPN) node.successorNode.predecessorNode = node;
-
-  }
-  */
 }
 /*******************************************************
  * Set up the generic AN ex-post statistics

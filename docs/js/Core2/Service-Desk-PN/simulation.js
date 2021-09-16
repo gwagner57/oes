@@ -6,8 +6,8 @@ sim.model.time = "continuous";
 sim.model.timeUnit = "min";  // minutes
 
 sim.model.networkNodes = {
-  "entrance": {typeName: "EntryNode", name:"entrance", arrivalRate: 0.3, successorNodeName:"serviceDesk"},
-  "serviceDesk": {typeName: "ProcessingNode", name:"serviceDesk", successorNodeName:"exit",
+  "entrance": {typeName: "EntryNode", name:"entrance", arrivalRate: 0.3, successorNodeName:"service"},
+  "service": {typeName: "ProcessingNode", name:"service", successorNodeName:"exit",
       processingDuration: () => rand.uniform(1,4)},
   "exit": {typeName: "ExitNode", name:"exit"}
 };

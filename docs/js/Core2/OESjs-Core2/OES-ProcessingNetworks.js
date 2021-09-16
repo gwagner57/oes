@@ -20,7 +20,7 @@ class pROCESSINGoBJECT extends oBJECT {
   }
   // overwrite/improve the standard toString method
   toString() {
-    var str = " "+ this.name||"procObj" + `{arr:${math.round( this.arrivalTime,2)}}`;
+    var str = "procObj-"+ (this.name||this.id);
     return str;
   }
 }
@@ -54,14 +54,14 @@ class pROCESSINGoBJECT extends oBJECT {
  */
 class eNTRYnODE extends oBJECT {
   constructor({id, name, successorNodeName, successorNodeNames,
-                outputTypeName="pROCESSINGoBJECT",
+                outputTypeName,
                 arrivalRate, arrivalRecurrence, maxNmrOfArrivals, arrivalQuantity}) {
     super( name, name);  // set id to name
     // a fixed successor node name or an expression for XOR splitting
     if (successorNodeName) this.successorNodeName = successorNodeName;
     // a map with node names as keys and conditions as values for OR/AND splitting
     if (successorNodeNames) this.successorNodeNames = successorNodeNames;
-    this.outputTypeName = outputTypeName;
+    if (outputTypeName) this.outputTypeName = outputTypeName;
     if (arrivalRate) this.arrivalRate = arrivalRate;
     if (arrivalRecurrence) this.arrivalRecurrence = arrivalRecurrence;
     if (maxNmrOfArrivals) this.maxNmrOfArrivals = maxNmrOfArrivals;
@@ -94,12 +94,14 @@ class aRRIVAL extends eVENT {
     const nmrOfArrivedObjects = this.quantity || 1,
           arrivedObjects=[];
     // define the type of processing object
-    const ProcessingObject = sim.Classes[this.node.outputTypeName];
+    const ProcessingObject = this.node.outputTypeName ?
+        sim.Classes[this.node.outputTypeName] : pROCESSINGoBJECT;
     // create newly arrived processing object(s)
     for (let i=0; i < nmrOfArrivedObjects; i++) {
       const procObj = new ProcessingObject({arrivalTime: this.occTime});
       arrivedObjects.push( procObj);
     }
+    this.arrivedObject = arrivedObjects[0];
     // update statistics
     this.node.nmrOfArrivedObjects += nmrOfArrivedObjects;
     // invoke onArrival event rule method
@@ -113,10 +115,10 @@ class aRRIVAL extends eVENT {
           sim.Classes[succNode.activityTypeName] : pROCESSINGaCTIVITY;
       for (const procObj of arrivedObjects) {
         // enqueue newly arrived object(s) into the inputBuffer of the next node
-        succNode.inputBuffer.enqueue( procObj);
+        succNode.enqueueProcessingObject( procObj);
+        const succActy = new SuccAT({processingNode: succNode, processingObject: procObj});
         // schedule successor activity
-        succNode.tasks.startOrEnqueue( new SuccAT(
-            {processingNode: succNode, processingObject: procObj}));
+        succActy.startOrEnqueue();
       }
     } else {  // multiple successor nodes
       const succNodeNames=[];
@@ -152,12 +154,18 @@ class aRRIVAL extends eVENT {
     }
     return arrEvt;
   }
+  toString() {
+    const decPl = oes.defaults.simLogDecimalPlaces,
+          evtName = "Arrival"+ (this.arrivedObject ? "-"+ this.arrivedObject.id : "");
+    return `${evtName}@${math.round(this.occTime,decPl)}`;
+  }
 }
 // define the exponential distribution as the default inter-arrival time
 aRRIVAL.defaultEventRate = 1;
 aRRIVAL.defaultRecurrence = function () {
   return rand.exponential( aRRIVAL.defaultEventRate);
 };
+
 /*
  * A simple processing node has an input buffer for incoming processing objects 
  * and a successor node. Processing objects may be either of a generic default
@@ -183,49 +191,81 @@ aRRIVAL.defaultRecurrence = function () {
  * specifying an outputTypes map, there is no transformation and it holds that
  * outputs = inputs.
  */
-class pROCESSINGnODE extends oBJECT {
+class pROCESSINGnODE extends aCTIVITYnODE {
   // status: 1 = rESOURCEsTATUS.AVAILABLE
-  constructor({id, name, inputBufferCapacity, inputTypeName, inputTypes,
-      processingActivityTypeName, processingDuration, processingCapacity=1,
-      status=1, successorNodeName, successorNodeNames,
-      outputTypes, resourceRoles}) {
-    super( id||name, name);  // set id to name
+  constructor({id, name, activityTypeName, processingDuration, waitingTimeout,
+               inputBufferCapacity, inputTypeName, inputTypes,
+               processingCapacity=1, status=1, successorNodeName, successorNodeNames,
+               outputTypes, resourceRoles}) {
+    super( {id: id||name, name, activityTypeName, duration: processingDuration, waitingTimeout,
+            successorNodeName, successorNodeNames});
     if (inputBufferCapacity) this.inputBufferCapacity = inputBufferCapacity;
     // user-defined type of processing objects
     if (inputTypeName) this.inputType = sim.Classes( inputTypeName);
     // Ex: {"lemons": {type:"Lemon", quantity:2}, "ice": {type:"IceCubes", quantity:[0.2,"kg"]},...
     if (inputTypes) this.inputTypes = inputTypes;
-    // a user-defined subclass of pROCESSINGaCTIVITY
-    if (processingActivityTypeName) this.processingActivityTypeName = processingActivityTypeName;
-    // a fixed value or a random variable function expression
-    if (processingDuration) this.duration = processingDuration;
     this.processingCapacity = processingCapacity;
     // the resource status of the (implicitly associated) processing station
     this.status = status;
-    // a fixed successor node name or an expression for XOR splitting
-    if (successorNodeName) this.successorNodeName = successorNodeName;
-    // a map with node names as keys and conditions as values for OR/AND splitting
-    if (successorNodeNames) this.successorNodeNames = successorNodeNames;
     // Ex: {"lemonade": {type:"Lemonade", quantity:[1,"l"]}, ...
     if (outputTypes) this.outputTypes = outputTypes;
     if (resourceRoles) {
       this.resourceRoles = resourceRoles;
-      if (!("processingStation" in resourceRoles)) {
-        this.resourceRoles["processingStation"] = {card:1};
+      if (!(name in resourceRoles)) {
+        this.resourceRoles["processingStation"] = {range: pROCESSINGnODE};
       }
     } else {
-      this.resourceRoles = {"processingStation": {card:1}};
+      this.resourceRoles = {"processingStation": {range: pROCESSINGnODE}};
     }
-    this.tasks = new tASKqUEUE();
+    this.tasks = new qUEUE();
+    this.blockedSuccessorTasks = new qUEUE();
     this.inputBuffer = new qUEUE();
     this.workInProgress = new Set();
     // initialize node statistics
     this.nmrOfArrivedObjects = 0;
     this.nmrOfDepartedObjects = 0;
   }
-  // overwrite/improve the standard toString method
+  enqueueProcessingObject( o) {
+    this.inputBuffer.enqueue( o);
+    this.nmrOfArrivedObjects++;
+    if (this.inputBuffer.length === this.inputBuffer.capacity) {
+      this.predecessorNode.status = rESOURCEsTATUS.BLOCKED;
+      this.predecessorNode.blockedStartTime = sim.time;
+    }
+  }
+  dequeueProcessingObject() {
+    const procObj = this.inputBuffer.dequeue();
+    // add processing object to WiP
+    this.workInProgress.add( procObj);
+    // is the input buffer no longer full?
+    if (this.inputBuffer.length === this.inputBuffer.capacity-1) {
+      const predNode = this.predecessorNode;
+      if (predNode.status === rESOURCEsTATUS.BLOCKED) {
+        // then unload predecessor node
+        const blockedActy = predNode.blockedSuccessorTasks.dequeue();
+        predNode.workInProgress.remove( blockedActy.processingObject);
+        this.inputBuffer.enqueue( blockedActy.processingObject);
+        predNode.status = rESOURCEsTATUS.AVAILABLE;
+        //TODO: if input buffer not empty, start next activity
+        // collect processing node blocked time statistics
+        if (sim.stat.resUtil["pROCESSINGaCTIVITY"][predNode.id].blocked === undefined) {
+          sim.stat.resUtil["pROCESSINGaCTIVITY"][predNode.id].blocked =
+              sim.time - predNode.blockedStartTime;
+        } else {
+          sim.stat.resUtil["pROCESSINGaCTIVITY"][predNode.id].blocked +=
+              sim.time - predNode.blockedStartTime;
+        }
+        predNode.blockedStartTime = 0;  // reset
+      }
+    }
+    return procObj;
+  }
+  scheduleActivityStartEvent( acty) {
+    sim.FEL.add( new pROCESSINGaCTIVITYsTART({plannedActivity: acty}));
+  }
   toString() {
-    var str = " "+ this.name + `{tasks: ${this.tasks.length}}`;
+    var str = " "+ this.name + `{ tasks: ${this.tasks.length}, inpB: ${this.inputBuffer.length}, `+
+        `wiP: ${this.workInProgress.size}, arr: ${this.nmrOfArrivedObjects}, dep: ${this.nmrOfDepartedObjects}}`;
     return str;
   }
 }
@@ -251,24 +291,26 @@ class pROCESSINGaCTIVITYsTART extends aCTIVITYsTART {
     super({occTime, delay, plannedActivity});
   }
   onEvent() {
-    const pN = this.plannedActivity.node, followupEvents=[];
-    if (pN.inputBuffer.length===0) {
-      console.log(`ProcessingActivityStart with empty input buffer at ${pN.name} at step ${sim.step}`);
+    const node = this.plannedActivity.node, followupEvents=[];
+    if (node.inputBuffer.length===0) {
+      console.log(`ProcessingActivityStart with empty input buffer at ${node.name} at step ${sim.step}`);
+      return;
     }
-    // dequeue processing object and add it to WiP
-    pN.workInProgress.add( pN.inputBuffer.dequeue());
+    // move proc. obj. from input buffer to WiP
+    node.dequeueProcessingObject();
     // invoke event routine of aCTIVITYsTART
     followupEvents.push(...super.onEvent());
+
     return followupEvents;
   }
   toString() {
     const decPl = oes.defaults.simLogDecimalPlaces,
           acty = this.plannedActivity, AT = acty.constructor,
           resRoles = acty.node.resourceRoles,
-          evtTypeName = "ProcActyStart";
+          evtName = acty.node.name +"ProcStart-"+ acty.processingObject.id;
     var evtStr="", slotListStr="";
-    Object.keys( resRoles).forEach( function (resRoleName) {
-      if (resRoles[resRoleName].range) {
+    for (const resRoleName of Object.keys( resRoles)) {
+      if (resRoleName !== "processingStation" && resRoles[resRoleName].range) {
         const resObj = acty[resRoleName];
         let resObjStr = "";
         if (Array.isArray( resObj)) {
@@ -276,86 +318,99 @@ class pROCESSINGaCTIVITYsTART extends aCTIVITYsTART {
         } else {
           resObjStr = resObj.name || String(resObj.id);
         }
-        slotListStr += resObjStr +", ";
+        if (resObjStr) slotListStr += resObjStr +", ";
       }
-    });
-    evtStr = slotListStr ? `${evtTypeName}{ ${slotListStr}}` : evtTypeName;
+    }
+    evtStr = slotListStr ? `${evtName}{ ${slotListStr}}` : evtName;
     return `${evtStr}@${math.round(this.occTime,decPl)}`;
   }
 }
 class pROCESSINGaCTIVITYeND extends aCTIVITYeND {
   constructor({occTime, delay, activity}) {
     super({occTime, delay, activity});
-    // assign fixed (implied) activity type
-    this.activityType = "pROCESSINGaCTIVITY";
   }
   onEvent() {
-    var nextNode=null, followupEvt1=null, followupEvt2=null,
-        unloaded=false, followupEvents=[], pN = this.processingNode;
-    const acty = this.activity;
+    const acty = this.activity,
+          node = acty.node,
+          resourceRoles = node?.resourceRoles ?? AT.resourceRoles,
+          resRoleNames = Object.keys( resourceRoles),
+          followupEvents=[];
 
-    // process this event as an aCTIVITYeND event for getting AN statistics etc.
-    super.onEvent();
-    // the successor node may be dynamically assigned by a.onActivityEnd()
-    nextNode = pN.successorNode || acty.successorNode;
-    // is the next node a processing node?
-    if (nextNode.constructor.Name === "pROCESSINGnODE") {
-      // is the next processing node available?
-      if (nextNode.inputBuffer.length === 1 &&
-          nextNode.status === rESOURCEsTATUS.AVAILABLE) {
-        // then allocate next node and start its ProcessingActivity
-        nextNode.status = rESOURCEsTATUS.BUSY;
-        followupEvt1 = new pROCESSINGaCTIVITYsTART({
-          occTime: this.occTime + sim.nextMomentDeltaT,
-          processingNode: nextNode,
-          resourceRoles: acty.resourceRoles || {}
-        });
-        followupEvents.push( followupEvt1);
-      } else if (nextNode.inputBufferCapacity &&
-          nextNode.inputBuffer.length < nextNode.inputBufferCapacity) {
-        // pop processing object and push it to the input queue of the next node
-        nextNode.inputBuffer.enqueue( pN.inputBuffer.dequeue());
-        unloaded = true;
-      } else if (nextNode.inputBufferCapacity &&
-          nextNode.inputBuffer.length === nextNode.inputBufferCapacity) {
-        pN.status = rESOURCEsTATUS.BLOCKED;
-        pN.blockedStartTime = sim.time;
-      }
-    } else {  // the next node is an exit node
-      // pop processing object and push it to the input queue of the next node
-      nextNode.inputBuffer.enqueue( pN.inputBuffer.dequeue());
-      followupEvents.push( new dEPARTURE({
-        occTime: this.occTime + sim.nextMomentDeltaT,
-        exitNode: nextNode
-      }));
-    }
-    if (pN.status === rESOURCEsTATUS.BUSY) {
-      // are there more items in the input queue?
-      if (pN.inputBuffer.length > 0) {
-        followupEvt2 = new pROCESSINGaCTIVITYsTART({
-          occTime: this.occTime + sim.nextMomentDeltaT,
-          processingNode: pN,
-          resourceRoles: {}
-        });
-        followupEvents.push( followupEvt2);
-        if (unloaded && pN.inputBuffer.length === pN.inputBufferCapacity-1 &&
-            pN.predecessorNode.status === rESOURCEsTATUS.BLOCKED) {
-          // then unload predecessor node
-          pN.inputBuffer.enqueue( pN.predecessorNode.inputBuffer.dequeue());
-          pN.predecessorNode.status = rESOURCEsTATUS.AVAILABLE;
-          // collect processing node blocked time statistics
-          if (sim.stat.resUtil["pROCESSINGaCTIVITY"][pN.predecessorNode.id].blocked === undefined) {
-            sim.stat.resUtil["pROCESSINGaCTIVITY"][pN.predecessorNode.id].blocked =
-                sim.time - pN.predecessorNode.blockedStartTime;
-          } else {
-            sim.stat.resUtil["pROCESSINGaCTIVITY"][pN.predecessorNode.id].blocked +=
-                sim.time - pN.predecessorNode.blockedStartTime;
-          }
-          pN.predecessorNode.blockedStartTime = 0;  // reset
+    // invoke event routine of aCTIVITYeND
+    followupEvents.push(...super.onEvent());
+
+    const succNode = node.getSuccessorNode();
+    if (succNode) {
+      if (succNode instanceof pROCESSINGnODE) {
+        let SuccAT=null;
+        if (succNode.activityTypeName) {
+          SuccAT = sim.Classes[succNode.activityTypeName];
+        } else {
+          SuccAT = pROCESSINGaCTIVITY;
         }
-      } else pN.status = rESOURCEsTATUS.AVAILABLE;
+        const succActy = new SuccAT({processingNode: succNode,
+            processingObject: acty.processingObject});
+        const succResRoles = succNode.resourceRoles ?? SuccAT.resourceRoles,
+            succResRoleNames = Object.keys( succResRoles);
+        // By default, keep (individual) resources that are shared between AT and SuccAT
+        for (const resRoleName of resRoleNames) {
+          if (succNode.resourceRoles[resRoleName] && acty[resRoleName]) {
+            // re-allocate resource to successor activity
+            succActy[resRoleName] = acty[resRoleName];
+            //TODO: better form a collection of transferred resource role names
+            delete acty[resRoleName];  // used below for checking if resource transferred
+          }
+        }
+        if (succNode.inputBuffer.length < succNode.inputBuffer.capacity) {
+          // remove processing object from WiP
+          node.workInProgress.delete( acty.processingObject);
+          // enqueue processing object in the successor node's input buffer
+          succNode.enqueueProcessingObject( acty.processingObject);
+          // start or enqueue a successor activity according to the PN model
+          succActy.startOrEnqueue();
+          //TODO: needed?
+          //unloaded = true;
+        } else {  // succNode.inputBuffer is full
+          node.blockedSuccessorTasks.enqueue( succActy)
+        }
+      } else if (succNode instanceof eXITnODE) {
+        // remove processing object from WiP
+        node.workInProgress.delete( acty.processingObject);
+        followupEvents.push( new dEPARTURE({exitNode: succNode,
+                                     processingObject: acty.processingObject}));
+      }
+    }
+    // release all (remaining) resources of acty
+    acty.releaseResources();
+    // update statistics
+    node.nmrOfDepartedObjects++;
+    // if there are still planned activities in the task queue
+    if (node.tasks.length > 0) {
+      // if available, allocate required resources and create next activity
+      node.ifAvailAllocReqResAndStartNextActivity();
     }
     return followupEvents;
+  }
+  toString() {
+    const decPl = oes.defaults.simLogDecimalPlaces,
+        acty = this.activity,
+        resRoles = acty.node.resourceRoles,
+        evtName = acty.node.name +"ProcEnd-"+ acty.processingObject.id;
+    var evtStr="", slotListStr="";
+    for (const resRoleName of Object.keys( resRoles)) {
+      if (resRoleName !== "processingStation" && resRoles[resRoleName].range) {
+        const resObj = acty[resRoleName];
+        let resObjStr = "";
+        if (Array.isArray( resObj)) {
+          resObjStr = resObj.map( o => o.name || String(o.id)).toString();
+        } else {
+          resObjStr = resObj.name || String(resObj.id);
+        }
+        if (resObjStr) slotListStr += resObjStr +", ";
+      }
+    }
+    evtStr = slotListStr ? `${evtName}{ ${slotListStr}}` : evtName;
+    return `${evtStr}@${math.round(this.occTime,decPl)}`;
   }
 }
 /**
@@ -370,9 +425,8 @@ class pROCESSINGaCTIVITYeND extends aCTIVITYeND {
  * objects.
  */
 class eXITnODE extends oBJECT{
-  constructor({id, name, inputBuffer=[]}) {
-    super( name, name);  // set id to name
-    this.inputBuffer = inputBuffer;
+  constructor({id, name}) {
+    super( id||name, name);  // set id to name
     this.nmrOfDepartedObjects = 0;
     this.cumulativeTimeInSystem = 0;
   }
@@ -386,14 +440,14 @@ class eXITnODE extends oBJECT{
  * Departure events happen at an exit node.
  */
 class dEPARTURE extends eVENT {
-  constructor({occTime, delay, exitNode}) {
-    super( occTime, delay);
-    this.node = exitNode;
+  constructor({occTime, delay, exitNode, processingObject}) {
+    super( {occTime, delay, node: exitNode});
+    this.processingObject = processingObject;
   }
   onEvent() {
     var followupEvents = [];
     // dequeue processing object from the input queue
-    const procObj = this.node.inputBuffer.dequeue();
+    const procObj = this.processingObject;
     // update statistics
     this.node.nmrOfDepartedObjects++;
     this.node.cumulativeTimeInSystem += this.occTime - procObj.arrivalTime;
@@ -402,8 +456,13 @@ class dEPARTURE extends eVENT {
       followupEvents = this.node.onDeparture();
     }
     // remove processing object from simulation
-    sim.removeObject( procObj);
+    sim.objects.delete( procObj.id);
     return followupEvents;
+  }
+  toString() {
+    const decPl = oes.defaults.simLogDecimalPlaces,
+        evtName = "Departure"+ (this.arrivedObject ? "-"+ this.arrivedObject.id : "");
+    return `${evtName}@${math.round(this.occTime,decPl)}`;
   }
 }
 /*******************************************************
@@ -419,16 +478,17 @@ oes.scheduleInitialArrivalEvents = function () {
     }
   }
 }
-/*******************************************************
- * Create processing station resource pools
- ********************************************************/
+/**********************************************************************
+ * Create a processing station resource pool for each processing node
+ * (for simplicity, processing stations are identified with their nodes
+ **********************************************************************/
 oes.createProcessingStationResourcePools = function () {
   const nodeNames = Object.keys( sim.scenario.networkNodes);
   for (const nodeName of nodeNames) {
     const node = sim.scenario.networkNodes[nodeName];
     if (node instanceof pROCESSINGnODE) {
       node.resourceRoles["processingStation"].resourcePool =
-          new rESOURCEpOOL({name:"processingStations", available:1});
+          new rESOURCEpOOL({name: nodeName, resourceType: pROCESSINGnODE, resources:[node]});
     }
   }
 }

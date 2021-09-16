@@ -100,19 +100,20 @@ sim.advanceSimulationTime = function () {
  Run a simulation scenario
  ********************************************************/
 sim.runScenario = function (createLog) {
-  const startTime = (new Date()).getTime();
-  function sendLogMsg() {
+  function sendLogMsg( currEvts) {
     self.postMessage({ step: sim.step, time: sim.time,
       // convert values() iterator to array
       objectsStr: [...sim.objects.values()].toString(),
-      eventsStr: sim.FEL.toString()
+      currEvtsStr: currEvts.toString(),
+      futEvtsStr: sim.FEL.toString()
     });
   }
+  const startTime = (new Date()).getTime();
+  if (createLog) sendLogMsg([]);  // log initial state
   // Simulation Loop
   while (sim.time < sim.scenario.durationInSimTime &&
       sim.step < sim.scenario.durationInSimSteps &&
       (new Date()).getTime() - startTime < sim.scenario.durationInCpuTime) {
-    if (createLog) sendLogMsg();
     sim.advanceSimulationTime();
     // extract and process next events
     const nextEvents = sim.FEL.removeNextEvents();
@@ -134,6 +135,7 @@ sim.runScenario = function (createLog) {
         if (ne) sim.FEL.add( ne);
       }
     }
+    if (createLog) sendLogMsg( nextEvents);  // log initial state
     // end simulation if no time increment and no more events
     if (!sim.timeIncrement && sim.FEL.isEmpty()) {
       if (createLog) sendLogMsg();

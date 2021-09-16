@@ -10,13 +10,14 @@ if (typeof oes !== "object") {
 /*******************************************************
  Create a simulation log entry (table row)
  ********************************************************/
-oes.ui.logSimulationStep = function (simLogTableEl, step, time, objectsStr, eventsStr) {
-  var decPl = oes.defaults.simLogDecimalPlaces,
-      rowEl = simLogTableEl.insertRow();  // create new table row
+oes.ui.logSimulationStep = function (simLogTableEl, step, time, currEvtsStr, objectsStr, futEvtsStr) {
+  const decPl = oes.defaults.simLogDecimalPlaces,
+        rowEl = simLogTableEl.insertRow();  // create new table row
   rowEl.insertCell().textContent = String( step);
   rowEl.insertCell().textContent = String( math.round( time, decPl));
+  rowEl.insertCell().textContent = currEvtsStr;
   rowEl.insertCell().textContent = objectsStr;
-  rowEl.insertCell().textContent = eventsStr;
+  rowEl.insertCell().textContent = futEvtsStr;
 }
 /*******************************************************
  Display the standalone scenario statistics

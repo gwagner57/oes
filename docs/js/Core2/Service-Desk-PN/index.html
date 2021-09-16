@@ -30,8 +30,9 @@
 </head>
 <body>
  <h1>A Service Desk System as a Processing Network</h1>
- <p>This simple Processing Network model consists of two nodes: an <em>entry node</em> where customers arrive
-     and a <em>processing node</em> where service activities are performed on customers.</p>
+ <p>This simple Processing Network model consists of three nodes: an <em>entry node</em> where customers arrive,
+     a <em>processing node</em> where service activities are performed on customers, and an <em>exit node</em>
+     where customers depart.</p>
  <form id="run">
      <div><label>Select scenario: <select name="selScen"></select></label></div>
      <div><button type="button" onclick="run()">Run</button> <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>
@@ -42,7 +43,7 @@
  <table style="display: none">
      <caption>Simulation Log</caption>
      <thead>
-     <tr><th>Step</th><th>Time</th><th>System State</th><th>Future Events</th></tr>
+     <tr><th>Step</th><th>Time</th><th>Current Events</th><th>System State</th><th>Future Events</th></tr>
      </thead>
      <tbody id="simLog"></tbody>
  </table>
