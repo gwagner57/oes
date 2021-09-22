@@ -79,7 +79,7 @@ sim.initializeSimulator = function () {
       for (const actTypeName of sim.model.activityTypes) {
         const AT = sim.Classes[actTypeName];
         AT.resourceRoles ??= Object.create(null);  // make sure AT.resourceRoles is defined
-        // the AN node name is the lower-cased type name suffixed by "{Evt|Act}Node"
+        // the AN node name is the lower-cased type name suffixed by "{E|A}Node"
         const nodeName = oes.getNodeNameFromActTypeName( actTypeName);
         const node = sim.model.networkNodes[nodeName] =
             {name: nodeName, typeName:"aCTIVITYnODE", activityTypeName: actTypeName};
@@ -101,17 +101,6 @@ sim.initializeSimulator = function () {
         sim.Classes["EntryNode"] = sim.Classes["eNTRYnODE"] = eNTRYnODE;
         sim.Classes["ProcessingNode"] = sim.Classes["pROCESSINGnODE"] = pROCESSINGnODE;
         sim.Classes["ExitNode"] = sim.Classes["eXITnODE"] = eXITnODE;
-        // assign predefined resource role "processingStation" to processing nodes
-        for (const nodeName of nodeNames) {
-          const node = sim.model.networkNodes[nodeName];
-          if (node.typeName === "pROCESSINGnODE" || node.typeName === "ProcessingNode") {
-            if (!node.resourceRoles) {
-              node.resourceRoles = {"processingStation": {range: pROCESSINGnODE}};
-            } else if (!("processingStation" in node.resourceRoles)) {
-              node.resourceRoles["processingStation"] = {range: pROCESSINGnODE};
-            }
-          }
-        }
       } else {  // AN
         sim.model.isAN = true;
       }
@@ -126,7 +115,7 @@ sim.initializeSimulator = function () {
   }
 }
 /*******************************************************************
- * Initialize a (standalone or experiment scenario) simulation run *
+ * Initialize a (standalone or experiment) scenario simulation run *
  *******************************************************************/
 sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   // clear initial state data structures
@@ -169,6 +158,16 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   /***START AN/PN extensions AFTER-setupInitialState ********************/
   if (sim.model.isAN || sim.model.isPN) {
     //oes.initializeActNetScenario();
+    // complete count pool settings
+    for (const poolName of Object.keys( sim.resourcePools)) {
+      const resPool = sim.resourcePools[poolName];
+      if (resPool.available) {  // a count pool
+        // the size of a count pool is the number of initially available resources
+        if (!resPool.size) resPool.size = resPool.available;
+      } else {
+        resPool.available = resPool.size;
+      }
+    }
     oes.initializeActNetStatistics();
     if (sim.model.isPN) {
       //TODO: Needed? oes.initializeProcNetStatistics();
@@ -219,12 +218,14 @@ sim.advanceSimulationTime = function () {
  ********************************************************/
 sim.runScenario = function (createLog) {
   function sendLogMsg( currEvts) {
-    let objStr = [...sim.objects.values()].toString();
-    if (objStr) objStr += " | ";
+    let objStr = [...sim.objects.values()].map( el => el.toString()).join("|");
+    if (oes.defaults.showResPoolsInLog) {
+      objStr += " // "+ Object.values( sim.resourcePools).toString();
+    }
     postMessage({ step: sim.step, time: sim.time,
       // convert values() iterator to array
-      objectsStr: objStr + Object.values( sim.resourcePools).toString(),
-      currEvtsStr: currEvts.toString(),
+      objectsStr: objStr,
+      currEvtsStr: currEvts.map( el => el.toString()).join("|"),
       futEvtsStr: sim.FEL.toString()
     });
   }
@@ -261,18 +262,28 @@ sim.runScenario = function (createLog) {
       /**** AN/PN extension END ****/
 
       // test if e is an exogenous event
-      if ("createNextEvent" in e) {
-        // create and schedule next exogenous event
-        const ne = e.createNextEvent();
-        if (ne) sim.FEL.add( ne);
+      if (EventClass.recurrence || e.recurrence) {
+        if ("createNextEvent" in e) {
+          /* test if this generic approach for maxNmrOfEvents is computationally cheap enough
+          let nextEvt=null;
+          const maxNmrOfEvents = EventClass.maxNmrOfEvents || e.node?.maxNmrOfEvents;
+          if (maxNmrOfEvents) {
+            const nmrOfEvents = e.node?.nmrOfEvents;
+            if (nmrOfEvents && nmrOfEvents < maxNmrOfEvents) nextEvt = e.createNextEvent();
+          } else {
+            nextEvt = e.createNextEvent();
+          }
+          */
+          const nextEvt = e.createNextEvent();
+          if (nextEvt) sim.FEL.add( nextEvt);
+        } else {
+          sim.FEL.add( new EventClass({delay: EventClass.recurrence()}));
+        }
       }
     }
     if (createLog) sendLogMsg( nextEvents);  // log initial state
     // end simulation if no time increment and no more events
-    if (!sim.timeIncrement && sim.FEL.isEmpty()) {
-      if (createLog) sendLogMsg();
-      break;
-    }
+    if (!sim.timeIncrement && sim.FEL.isEmpty()) break;
   }
   // compute generic statistics (incl. resource utilization)
   oes.computeFinalActNetStatistics();

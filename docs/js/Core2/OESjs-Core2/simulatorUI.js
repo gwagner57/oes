@@ -24,8 +24,8 @@ oes.ui.logSimulationStep = function (simLogTableEl, step, time, currEvtsStr, obj
         rowEl = simLogTableEl.insertRow();  // create new table row
   rowEl.insertCell().textContent = String( step);
   rowEl.insertCell().textContent = String( math.round( time, decPl));
-  rowEl.insertCell().textContent = currEvtsStr;
-  rowEl.insertCell().textContent = objectsStr;
+  rowEl.insertCell().textContent = currEvtsStr.split("|").map( str => str.substring(0, str.indexOf("@"))).join(", ");
+  rowEl.insertCell().textContent = objectsStr.split("|").join(", ");
   rowEl.insertCell().textContent = futEvtsStr;
 }
 /*******************************************************
@@ -40,7 +40,7 @@ oes.ui.showStatistics = function (stat) {
     const nodeStat = oes.ui.nodeStat;
     var perNodeStatHeading="";
     if (!stat.includeTimeouts) delete nodeStat.tmout;
-    for (let nodeStatShortLabel of Object.keys( nodeStat)) {
+    for (const nodeStatShortLabel of Object.keys( nodeStat)) {
       perNodeStatHeading +=
           `<th title="${nodeStat[nodeStatShortLabel].title}">${nodeStatShortLabel}</th>`;
     }
@@ -57,7 +57,7 @@ oes.ui.showStatistics = function (stat) {
     for (const varName of Object.keys( stat)) {
       // skip pre-defined statistics (collection) variables
       if (["networkNodes","resUtil","includeTimeouts"].includes( varName)) continue;
-      let rowEl = tbodyEl.insertRow();  // create new table row
+      const rowEl = tbodyEl.insertRow();  // create new table row
       rowEl.insertCell().textContent = varName;
       rowEl.insertCell().textContent = math.round( stat[varName], decPl);
     }

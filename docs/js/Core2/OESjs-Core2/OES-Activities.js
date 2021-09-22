@@ -60,24 +60,26 @@ const rESsTAT = rESOURCEsTATUS;  // shortcut
  subtyping the role's range.
  ****************************************************************************/
 class rESOURCEpOOL {
-  constructor( {name, resourceType, available, resources}) {
+  constructor( {name, size, available, resourceType, resources}) {
     this.name = name;
-    if (available !== undefined) {  // a count pool
-      this.available = available;
+    if (Number.isInteger( size)) {  // a count pool
+      this.size = size;
+      if (!Number.isInteger( available)) this.available = size;
+      else this.available = available;
     } else if (resourceType) {  // an individual pool
       this.resourceType = resourceType;
       this.busyResources = [];
       this.availResources = [];
+      if (Array.isArray( resources)) {
+        for (const res of resources) {
+          if (res.status === rESOURCEsTATUS.AVAILABLE) this.availResources.push( res);
+          else if (res.status === rESOURCEsTATUS.BUSY) this.busyResources.push( res);
+        }
+      }
     } else {
       console.log(`Resource pool ${name} is not well-defined!`)
     }
     this.dependentNodes = [];
-    if (Array.isArray( resources)) {
-      for (const res of resources) {
-        if (res.status === rESOURCEsTATUS.AVAILABLE) this.availResources.push( res);
-        else if (res.status === rESOURCEsTATUS.BUSY) this.busyResources.push( res);
-      }
-    }
   }
   isAvailable( card) {
     if (card === undefined) card = 1;
@@ -168,11 +170,12 @@ at simulation step ${sim.step}!`);
     }
   }
   clear() {
-    if (this.available === undefined) {  // individual pool
+    if (this.resourceType) {  // individual pool
+      // resources are added in setupInitialState
       this.busyResources.length = 0;
       this.availResources.length = 0;
     } else {  // count pool
-      this.available = 0;
+      this.available = this.size;
     }
   }
   toString() {
@@ -227,6 +230,9 @@ class eVENTnODE extends oBJECT {
     if (successorNodeNames) this.successorNodeNames = successorNodeNames;
     this.nmrOfEvents = 0;
   }
+  toString() {
+    return "";  // overwrite the default event serialization
+  }
 }
 /*
  * Activity nodes are abstract objects associated with an activity type and a performer
@@ -256,7 +262,13 @@ class aCTIVITYnODE extends oBJECT {
       // copy resourceRoles from AT to node
       if (!resourceRoles) this.resourceRoles = sim.Classes[activityTypeName].resourceRoles;
     }
-    if (resourceRoles) this.resourceRoles = resourceRoles;
+    if (resourceRoles) {
+      for (const resRoleName of Object.keys(resourceRoles)) {
+        const resRole = resourceRoles[resRoleName];
+        if (typeof resRole.range === "string") resRole.range = sim.Classes[resRole.range];
+      }
+      this.resourceRoles = resourceRoles;
+    }
     // a fixed value or a random variable function expression
     if (duration) this.duration = duration;
     // a fixed value or a random variable function expression
@@ -343,7 +355,7 @@ class aCTIVITYnODE extends oBJECT {
     sim.FEL.add( new aCTIVITYsTART({plannedActivity: acty}));
   }
   toString() {
-    var str = this.name + `{ tasks: ${this.tasks.length}}`;
+    var str = this.name + `{ tasks:${this.tasks.length}}`;
     return str;
   }
 }
@@ -482,7 +494,7 @@ class aCTIVITYsTART extends eVENT {
     // set  new activity
     acty.startTime = this.occTime;
     // update statistics
-    sim.stat.networkNodes[acty.node.name].startedActivities++;
+    sim.stat.networkNodes[node.name].startedActivities++;
     // set activity state for all involved resource objects
     for (const resRoleName of Object.keys( resourceRoles)) {
       if (resourceRoles[resRoleName].range) {  // an individual pool
@@ -651,14 +663,14 @@ class aCTIVITYeND extends eVENT {
 * as the lower-cased type name suffixed by "{Evt|Act}Node"
 **********************************************************/
 oes.getNodeNameFromTypeName = function (typeName) {
-  const suffix = sim.model.eventTypes.includes( typeName) ? "EvtNode" : "ActNode";
+  const suffix = sim.model.eventTypes.includes( typeName) ? "ENode" : "ANode";
   return typeName.charAt(0).toLowerCase() + typeName.slice(1) + suffix;
 }
 oes.getNodeNameFromEvtTypeName = function (evtTypeName) {
-  return evtTypeName.charAt(0).toLowerCase() + evtTypeName.slice(1) + "EvtNode";
+  return evtTypeName.charAt(0).toLowerCase() + evtTypeName.slice(1) + "ENode";
 }
 oes.getNodeNameFromActTypeName = function (actTypeName) {
-  return actTypeName.charAt(0).toLowerCase() + actTypeName.slice(1) + "ActNode";
+  return actTypeName.charAt(0).toLowerCase() + actTypeName.slice(1) + "ANode";
 }
 /*********************************************************************
  * Create resource pools for AN activity nodes and PN processing nodes
@@ -668,11 +680,11 @@ oes.createResourcePools = function () {
     const node = sim.model.networkNodes[nodeName];
     if (!["aCTIVITYnODE","ActivityNode","pROCESSINGnODE","ProcessingNode"].
          includes( node.typeName)) continue;
-    const resourceRoles = node.resourceRoles || sim.Classes[node.activityTypeName].resourceRoles;
+    const resourceRoles = node.resourceRoles ||
+        sim.Classes[node.activityTypeName]?.resourceRoles || {};
     for (const resRoleName of Object.keys( resourceRoles)) {
-      // skip the predefined resource role "processingStation" created for each proc. node
-      if (resRoleName === "processingStation") continue;
       const resRole = resourceRoles[resRoleName];
+      if (typeof resRole.range === "string") resRole.range = sim.Classes[resRole.range];
       let pn="";
       // set default cardinality
       if (!resRole.card && !resRole.minCard) resRole.card = 1;
@@ -682,7 +694,7 @@ oes.createResourcePools = function () {
         pn = rn.charAt(0).toLowerCase() + rn.slice(1) + "s";
         // create only if not yet created
         sim.resourcePools[pn] ??= new rESOURCEpOOL({name: pn, resourceType: resRole.range});
-        // associate the (newly created) resource pool with the resource type
+        // assign the (newly created) resource pool to the resource type
         resRole.range.resourcePool = sim.resourcePools[pn];
       } else {  // the resource role is associated with a count pool
         if (resRole.countPoolName) {
@@ -695,10 +707,15 @@ oes.createResourcePools = function () {
           resRole.countPoolName = pn;
         }
         // create count pool only if not yet created
-        sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, available:0});
+        sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, size:0});
         // assign the (newly created) pool to the resource role
         resRole.resourcePool = sim.resourcePools[pn];
       }
+    }
+    // assign a node-specific processing station resource role to processing nodes
+    if (node.typeName === "pROCESSINGnODE" || node.typeName === "ProcessingNode") {
+      if (!node.resourceRoles) node.resourceRoles = {};
+      node.resourceRoles[node.name +"ProcStation"] = {range: pROCESSINGnODE, card:1};
     }
   }
 }
@@ -708,11 +725,6 @@ oes.createResourcePools = function () {
 oes.initializeResourcePools = function () {
   for (const poolName of Object.keys( sim.resourcePools)) {
     sim.resourcePools[poolName].clear();
-    const nmrOfAvailRes = sim.resourcePools[poolName].available;
-    if (nmrOfAvailRes !== undefined) {  // a count pool
-      // the size of a count pool is the number of initially available resources
-      sim.resourcePools[poolName].size = nmrOfAvailRes;
-    }
   }
 }
 /*******************************************************
@@ -780,7 +792,7 @@ oes.initializeActNetScenario = function () {
         scenNode.workInProgress.clear();  // clear the WiP buffer
         scenNode.nmrOfArrivedObjects = 0;
         scenNode.nmrOfDepartedObjects = 0;
-        scenNode.resourceRoles["processingStation"].resourcePool.availResources = [scenNode];
+        scenNode.resourceRoles[scenNode.name +"ProcStation"].resourcePool.availResources = [scenNode];
       } else if (scenNode instanceof eNTRYnODE) {
         scenNode.nmrOfArrivedObjects = 0;
       } else if (scenNode instanceof eXITnODE) {
@@ -799,28 +811,21 @@ oes.setupActNetStatistics = function () {
     const node = sim.model.networkNodes[nodeName];
     // AN activity node or PN processing node
     if (node.activityTypeName || node.typeName === "ProcessingNode") {
-      sim.stat.networkNodes[nodeName] = Object.create(null);
+      const nodeStat = sim.stat.networkNodes[nodeName] = Object.create(null)
       // generic queue length statistics
-      sim.stat.networkNodes[nodeName].queueLength = Object.create(null);
+      nodeStat.queueLength = Object.create(null);
       // waiting time statistics
-      sim.stat.networkNodes[nodeName].waitingTime = Object.create(null);
+      nodeStat.waitingTime = Object.create(null);
       // cycle time statistics
-      sim.stat.networkNodes[nodeName].cycleTime = Object.create(null);
+      nodeStat.cycleTime = Object.create(null);
       // resource utilization statistics
-      sim.stat.networkNodes[nodeName].resUtil = Object.create(null);
+      nodeStat.resUtil = Object.create(null);
     }
   }
   // set flag used for rendering the statistics table
   sim.stat.includeTimeouts = Object.keys( sim.model.networkNodes).
       map( nodeName => sim.model.networkNodes[nodeName]).
       some( node => typeof node.waitingTimeout === "function");
-  //if (Object.keys( oes.EntryNode.instances).length > 0) oes.setupProcNetStatistics();
-  /*
-  // initialize PN statistics
-  if (Object.keys( oes.ProcessingNode.instances).length > 0) {
-    sim.stat.resUtil["pROCESSINGaCTIVITY"] = {};
-  }
-  */
 }
 /*******************************************************
  * Initialize the generic ex-post AN statistics
@@ -829,11 +834,11 @@ oes.initializeActNetStatistics = function () {
   // per network node
   for (const nodeName of Object.keys( sim.scenario.networkNodes)) {
     const node = sim.scenario.networkNodes[nodeName];
-    // a processing node need not have an activityTypeName
-    if (node.activityTypeName || node.typeName === "ProcessingNode") {
+    // only for activity nodes, which include processing nodes
+    if (node instanceof aCTIVITYnODE) {
       const nodeStat = sim.stat.networkNodes[nodeName],
             resUtilPerNode = nodeStat.resUtil,
-            AT = sim.Classes[node.activityTypeName];
+            resRoles = node.resourceRoles || sim.Classes[node.activityTypeName].resourceRoles;
       // initialize throughput statistics
       nodeStat.enqueuedActivities = 0;
       if (typeof node.waitingTimeout === "function") nodeStat.waitingTimeouts = 0;
@@ -849,10 +854,11 @@ oes.initializeActNetStatistics = function () {
       //nodeStat.cycleTime.avg = 0.0;
       nodeStat.cycleTime.max = 0;
       // initialize resource utilization per resource object or per count pool
-      for (const resRoleName of Object.keys( AT.resourceRoles)) {
-        const resRole = AT.resourceRoles[resRoleName];
+      for (const resRoleName of Object.keys( resRoles)) {
+        const resRole = resRoles[resRoleName];
         if (resRole.range) {  // per resource object
-          for (const resObj of resRole.range.resourcePool.availResources) {
+          const resPool = resRole.resourcePool || resRole.range.resourcePool;
+          for (const resObj of resPool.availResources) {
             resUtilPerNode[String(resObj.id)] = 0;
           }
         } else {  // per count pool
@@ -874,7 +880,9 @@ oes.computeFinalActNetStatistics = function () {
       // key is either an objIdStr or a count pool name
       utiliz /= sim.time;
       // if key is a count pool name
-      if (sim.resourcePools[key]) utiliz /= sim.resourcePools[key].size;
+      if (sim.resourcePools[key]) {
+        utiliz /= sim.resourcePools[key].size;
+      }
       resUtilPerNode[key] = math.round( utiliz, oes.defaults.expostStatDecimalPlaces);
     }
   }

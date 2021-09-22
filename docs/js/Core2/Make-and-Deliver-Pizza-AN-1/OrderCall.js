@@ -2,9 +2,6 @@ class OrderCall extends eVENT {
   constructor({ occTime, delay}) {
     super({occTime, delay});
   }
-  createNextEvent() {
-    return new OrderCall({delay: OrderCall.recurrence()});
-  }
   static recurrence() {
     var hour = Math.floor(sim.time / 60);
     return rand.exponential( OrderCall.arrivalRates[hour]);

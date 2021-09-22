@@ -22,7 +22,8 @@ var oes = {};  // cannot be const, since also defined in simulatorUI.js
 oes.defaults = {
   nextMomentDeltaT: 0.01,
   expostStatDecimalPlaces: 2,
-  simLogDecimalPlaces: 2
+  simLogDecimalPlaces: 2,
+  showResPoolsInLog: false
 };
 
 /**
@@ -53,7 +54,7 @@ class oBJECT {
         valStr = "{"+ val.toString() +"}";
       } else valStr = JSON.stringify( val);
       if (propLabel && val !== undefined) {
-        str += (i>0 ? ", " : "") + propLabel +": "+ valStr;
+        str += (i>0 ? ", " : "") + propLabel +":"+ valStr;
         i = i+1;
       }
     }
@@ -75,11 +76,13 @@ class eVENT {
             this.occTime = startTime + duration;
           }
         }
-      } else this.occTime = sim.time + sim.nextMomentDeltaT;
+      } else {
+        this.occTime = sim.time + sim.nextMomentDeltaT;
+      }
       if (node) {
         this.node = node;
       } else if (sim.model.isAN && Object.getPrototypeOf( this.constructor) === eVENT &&
-      !["aCTIVITYsTART","aCTIVITYeND"].includes( this.constructor.name)) {
+                 !["aCTIVITYsTART","aCTIVITYeND"].includes( this.constructor.name)) {
         // assign AN event node using the default node name
         const nodeName = oes.getNodeNameFromEvtTypeName( this.constructor.name);
         this.node = sim.scenario.networkNodes[nodeName];

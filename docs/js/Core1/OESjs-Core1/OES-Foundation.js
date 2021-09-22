@@ -51,7 +51,7 @@ class oBJECT {
         valStr = "["+ val.map( v => v.id).toString() +"]";
       } else valStr = JSON.stringify( val);
       if (propLabel && val !== undefined) {
-        str += (i>0 ? ", " : "") + propLabel +": "+ valStr;
+        str += (i>0 ? ", " : "") + propLabel +":"+ valStr;
         i = i+1;
       }
     }, this);

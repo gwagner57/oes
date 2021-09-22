@@ -1,36 +1,37 @@
 /*******************************************************
  Simulation Model
 ********************************************************/
-sim.model.name = "Make-and-Deliver-Pizza-1";
+sim.model.name = "Make-and-Deliver-Pizza-PN-1";
 sim.model.time = "continuous";
 sim.model.timeUnit = "min";
 
 sim.model.objectTypes = ["OrderTaker","PizzaMaker"];
-sim.model.eventTypes = ["OrderCall"];
-sim.model.activityTypes = ["TakeOrder","MakePizza","DeliverPizza"];
+// arrival rates per minute (for a daily operation for 5 hours)
+sim.model.v.arrivalRates = [1/6, 1.5, 1/1.5, 1/6, 1/12]; // = 10, 90, 40, 10, 5 per hour
 
-/*** implicitly created AN
 sim.model.networkNodes = {
-  "orderCallEvtNode": {name:"orderCallEvtNode", evtTypeName:"OrderCall", successorNodeName:"takeOrderActNode",
-        arrivalRecurrence: () => rand.exponential( sim.v.orderEventRate)},
-  "takeOrderActNode": {name:"takeOrderActNode", activityTypeName:"TakeOrder", successorNodeName:"makePizzaActNode",
-        duration: () => rand.triangular(0.5, 1.5, 1)},
-  "makePizzaActNode": {name:"makePizzaActNode", activityTypeName:"MakePizza", successorNodeName:"deliverPizzaActNode"},
-  "deliverPizzaActNode": {name:"deliverPizzaActNode", activityTypeName:"DeliverPizza",
-        onActivityEnd: function () {
-          var backlogQuantity = sim.stat.arrivedOrders - sim.stat.departedOrders;
-          sim.stat.revenue += sim.v.revenuePerOrder;
-          sim.stat.manuCosts += sim.v.manuCostsPerOrder;
-          sim.stat.backlogCosts += sim.v.backlogCostsPerOrderPerTimeUnit * backlogQuantity;
-          return [];
-        }}
+  "orderCall": {typeName:"EntryNode", name:"orderCall",
+      arrivalRecurrence: () => rand.exponential( sim.model.v.arrivalRates[Math.floor(sim.time/60)]),
+      successorNodeName:"takeOrder"},
+  "takeOrder": {typeName:"ProcessingNode", name:"takeOrder",
+      resourceRoles: {"orderTaker": {range: "OrderTaker"}},
+      processingDuration: () => rand.uniform(1,4),
+      successorNodeName:"makePizza"},
+  "makePizza": {typeName:"ProcessingNode", name:"makePizza",
+      resourceRoles: {"pizzaMakers": {range:"PizzaMaker", card:2}, "oven":{card:1}},
+      processingDuration: () => rand.triangular(3,6,4),
+      successorNodeName:"deliverPizza"},
+  "deliverPizza": {typeName:"ProcessingNode", name:"deliverPizza",
+      resourceRoles: {"scooter":{card:1}},
+      processingDuration: () => rand.triangular(10,30,15),
+      successorNodeName:"exit"},
+  "exit": {typeName:"ExitNode", name:"exit"}
 };
-*/
 
 /*******************************************************
  Default Simulation Scenario
  ********************************************************/
-sim.scenario.durationInSimTime = 300;
+sim.scenario.durationInSimTime = 5*60;
 sim.scenario.title = "Default scenario.";
 sim.scenario.description = "The default scenario has 2 order takers, 10 pizza makers, 5 ovens, and 20 delivery scooters.";
 sim.scenario.setupInitialState = function () {
@@ -48,8 +49,6 @@ sim.scenario.setupInitialState = function () {
   // Initialize the count pools
   sim.resourcePools["ovens"].available = 3;
   sim.resourcePools["scooters"].available = 10;
-  // Schedule initial events
-  sim.FEL.add( new OrderCall({occTime: 1}));
 }
 /*******************************************************
  Alternative Scenarios
@@ -87,7 +86,7 @@ sim.scenarios[1] = {
  Statistics variables
 ********************************************************/
 sim.model.setupStatistics = function () {
-  sim.stat.deliveredPizzas = 0;
+  //sim.stat.deliveredPizzas = 0;
 };
 /*******************************************************
  Define an experiment (type)

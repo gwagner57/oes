@@ -103,8 +103,8 @@ sim.runScenario = function (createLog) {
   function sendLogMsg( currEvts) {
     self.postMessage({ step: sim.step, time: sim.time,
       // convert values() iterator to array
-      objectsStr: [...sim.objects.values()].toString(),
-      currEvtsStr: currEvts.toString(),
+      objectsStr: [...sim.objects.values()].map( el => el.toString()).join("|"),
+      currEvtsStr: currEvts.map( el => el.toString()).join("|"),
       futEvtsStr: sim.FEL.toString()
     });
   }
@@ -130,17 +130,18 @@ sim.runScenario = function (createLog) {
       const EventClass = e.constructor;
       // test if e is an exogenous event
       if (EventClass.recurrence) {
-        // create and schedule next exogenous event
-        const ne = e.createNextEvent();
-        if (ne) sim.FEL.add( ne);
+        // schedule next exogenous event
+        if ("createNextEvent" in e) {
+          const nextEvt = e.createNextEvent();
+          if (nextEvt) sim.FEL.add( nextEvt);
+        } else {
+          sim.FEL.add( new EventClass({delay: EventClass.recurrence()}));
+        }
       }
     }
     if (createLog) sendLogMsg( nextEvents);  // log initial state
     // end simulation if no time increment and no more events
-    if (!sim.timeIncrement && sim.FEL.isEmpty()) {
-      if (createLog) sendLogMsg();
-      break;
-    }
+    if (!sim.timeIncrement && sim.FEL.isEmpty()) break;
   }
   if (sim.model.computeFinalStatistics) sim.model.computeFinalStatistics();
 }

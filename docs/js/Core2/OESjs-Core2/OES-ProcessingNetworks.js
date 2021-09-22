@@ -52,20 +52,18 @@ class pROCESSINGoBJECT extends oBJECT {
  * TODO: If no successor node is defined for an entry node, an output queue is
  * automatically created.
  */
-class eNTRYnODE extends oBJECT {
-  constructor({id, name, successorNodeName, successorNodeNames,
-                outputTypeName,
-                arrivalRate, arrivalRecurrence, maxNmrOfArrivals, arrivalQuantity}) {
-    super( name, name);  // set id to name
-    // a fixed successor node name or an expression for XOR splitting
-    if (successorNodeName) this.successorNodeName = successorNodeName;
-    // a map with node names as keys and conditions as values for OR/AND splitting
-    if (successorNodeNames) this.successorNodeNames = successorNodeNames;
-    if (outputTypeName) this.outputTypeName = outputTypeName;
-    if (arrivalRate) this.arrivalRate = arrivalRate;
-    if (arrivalRecurrence) this.arrivalRecurrence = arrivalRecurrence;
-    if (maxNmrOfArrivals) this.maxNmrOfArrivals = maxNmrOfArrivals;
+class eNTRYnODE extends eVENTnODE {
+  constructor({id, name, arrivalRate, arrivalRecurrence,
+               maxNmrOfArrivals, arrivalQuantity,
+               successorNodeName, successorNodeNames, outputTypeName}) {
+    super( {id, name, eventTypeName:"aRRIVAL", eventRate: arrivalRate,
+        eventRecurrence: arrivalRecurrence, maxNmrOfEvents: maxNmrOfArrivals,
+        successorNodeName, successorNodeNames
+    });
+    // a fixed quantity or an expression
     if (arrivalQuantity) this.arrivalQuantity = arrivalQuantity;
+    // a special processing object type extending pROCESSINGoBJECT
+    if (outputTypeName) this.outputTypeName = outputTypeName;
     // statistics
     this.nmrOfArrivedObjects = 0;
   }
@@ -85,8 +83,7 @@ class eNTRYnODE extends oBJECT {
  */
 class aRRIVAL extends eVENT {
   constructor({occTime, delay, entryNode, quantity}) {
-    super({occTime, delay});
-    this.node = entryNode;
+    super({occTime, delay, node: entryNode});
     if (quantity) this.quantity = quantity;
   }
   onEvent() {
@@ -133,10 +130,10 @@ class aRRIVAL extends eVENT {
   recurrence() {
     var delay=0;
     // has an arrival recurrence function been defined for the entry node?
-    if (typeof this.node.arrivalRecurrence === "function") {
-      delay = this.node.arrivalRecurrence();
-    } else if (this.node.arrivalRate) {
-      delay = rand.exponential( this.node.arrivalRate);
+    if (typeof this.node.eventRecurrence === "function") {
+      delay = this.node.eventRecurrence();
+    } else if (this.node.eventRate) {  // = arrival rate
+      delay = rand.exponential( this.node.eventRate);
     } else {  // use the default recurrence
       delay = aRRIVAL.defaultRecurrence();
     }
@@ -144,12 +141,12 @@ class aRRIVAL extends eVENT {
   }
   createNextEvent() {
     var arrEvt=null;
-    if (!this.node.maxNmrOfArrivals ||
-        this.node.nmrOfArrivedObjects < this.node.maxNmrOfArrivals) {
+    if (!this.node.maxNmrOfEvents ||
+        this.node.nmrOfArrivedObjects < this.node.maxNmrOfEvents) {
       arrEvt = new aRRIVAL({delay: this.recurrence(), entryNode: this.node});
-      if (this.arrivalQuantity) {
-        arrEvt.quantity = typeof this.arrivalQuantity === "function" ?
-            this.arrivalQuantity() : this.arrivalQuantity;
+      if (this.node.arrivalQuantity) {
+        arrEvt.quantity = typeof this.node.arrivalQuantity === "function" ?
+            this.node.arrivalQuantity() : this.node.arrivalQuantity;
       }
     }
     return arrEvt;
@@ -193,11 +190,11 @@ aRRIVAL.defaultRecurrence = function () {
  */
 class pROCESSINGnODE extends aCTIVITYnODE {
   // status: 1 = rESOURCEsTATUS.AVAILABLE
-  constructor({id, name, activityTypeName, processingDuration, waitingTimeout,
+  constructor({id, name, activityTypeName, resourceRoles={}, processingDuration, waitingTimeout,
                inputBufferCapacity, inputTypeName, inputTypes,
                processingCapacity=1, status=1, successorNodeName, successorNodeNames,
-               outputTypes, resourceRoles}) {
-    super( {id: id||name, name, activityTypeName, duration: processingDuration, waitingTimeout,
+               outputTypes}) {
+    super( {id: id||name, name, activityTypeName, resourceRoles, duration: processingDuration, waitingTimeout,
             successorNodeName, successorNodeNames});
     if (inputBufferCapacity) this.inputBufferCapacity = inputBufferCapacity;
     // user-defined type of processing objects
@@ -209,14 +206,8 @@ class pROCESSINGnODE extends aCTIVITYnODE {
     this.status = status;
     // Ex: {"lemonade": {type:"Lemonade", quantity:[1,"l"]}, ...
     if (outputTypes) this.outputTypes = outputTypes;
-    if (resourceRoles) {
-      this.resourceRoles = resourceRoles;
-      if (!(name in resourceRoles)) {
-        this.resourceRoles["processingStation"] = {range: pROCESSINGnODE};
-      }
-    } else {
-      this.resourceRoles = {"processingStation": {range: pROCESSINGnODE}};
-    }
+    if (resourceRoles) this.resourceRoles = resourceRoles;
+    this.resourceRoles[name +"ProcStation"] = {range: pROCESSINGnODE, card:1};
     this.tasks = new qUEUE();
     this.blockedSuccessorTasks = new qUEUE();
     this.inputBuffer = new qUEUE();
@@ -264,8 +255,8 @@ class pROCESSINGnODE extends aCTIVITYnODE {
     sim.FEL.add( new pROCESSINGaCTIVITYsTART({plannedActivity: acty}));
   }
   toString() {
-    var str = " "+ this.name + `{ tasks: ${this.tasks.length}, inpB: ${this.inputBuffer.length}, `+
-        `wiP: ${this.workInProgress.size}, arr: ${this.nmrOfArrivedObjects}, dep: ${this.nmrOfDepartedObjects}}`;
+    var str = " "+ this.name + `{ tasks:${this.tasks.length}, inpB:${this.inputBuffer.length}, `+
+        `wiP:${this.workInProgress.size}, arr:${this.nmrOfArrivedObjects}, dep:${this.nmrOfDepartedObjects}}`;
     return str;
   }
 }
@@ -310,7 +301,7 @@ class pROCESSINGaCTIVITYsTART extends aCTIVITYsTART {
           evtName = acty.node.name +"ProcStart-"+ acty.processingObject.id;
     var evtStr="", slotListStr="";
     for (const resRoleName of Object.keys( resRoles)) {
-      if (resRoleName !== "processingStation" && resRoles[resRoleName].range) {
+      if (resRoleName !== acty.node.name +"ProcStation" && resRoles[resRoleName].range) {
         const resObj = acty[resRoleName];
         let resObjStr = "";
         if (Array.isArray( resObj)) {
@@ -398,7 +389,7 @@ class pROCESSINGaCTIVITYeND extends aCTIVITYeND {
         evtName = acty.node.name +"ProcEnd-"+ acty.processingObject.id;
     var evtStr="", slotListStr="";
     for (const resRoleName of Object.keys( resRoles)) {
-      if (resRoleName !== "processingStation" && resRoles[resRoleName].range) {
+      if (resRoleName !== acty.node.name +"ProcStation" && resRoles[resRoleName].range) {
         const resObj = acty[resRoleName];
         let resObjStr = "";
         if (Array.isArray( resObj)) {
@@ -424,9 +415,9 @@ class pROCESSINGaCTIVITYeND extends aCTIVITYeND {
  * (2) "cumulativeTimeInSystem" for adding up the times in system of all departed
  * objects.
  */
-class eXITnODE extends oBJECT{
+class eXITnODE extends eVENTnODE {
   constructor({id, name}) {
-    super( id||name, name);  // set id to name
+    super({id, name, eventTypeName:"dEPARTURE"});
     this.nmrOfDepartedObjects = 0;
     this.cumulativeTimeInSystem = 0;
   }
@@ -479,7 +470,7 @@ oes.scheduleInitialArrivalEvents = function () {
   }
 }
 /**********************************************************************
- * Create a processing station resource pool for each processing node
+ * Create a processing-station-specific resource pool for each processing node
  * (for simplicity, processing stations are identified with their nodes
  **********************************************************************/
 oes.createProcessingStationResourcePools = function () {
@@ -487,8 +478,8 @@ oes.createProcessingStationResourcePools = function () {
   for (const nodeName of nodeNames) {
     const node = sim.scenario.networkNodes[nodeName];
     if (node instanceof pROCESSINGnODE) {
-      node.resourceRoles["processingStation"].resourcePool =
-          new rESOURCEpOOL({name: nodeName, resourceType: pROCESSINGnODE, resources:[node]});
+      node.resourceRoles[nodeName +"ProcStation"].resourcePool =
+          new rESOURCEpOOL({name: nodeName +"ProcStation" , resourceType: pROCESSINGnODE, resources:[node]});
     }
   }
 }
