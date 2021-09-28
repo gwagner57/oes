@@ -27,8 +27,7 @@ public class Examination extends aCTIVITY {
 	
 	public Examination(Simulator sim, Number id, Number startTime, Number duration) {
 		super(sim, id, null, startTime, duration, null);
-		this.durationFunc = this::duration;
-		
+		this.durationFunc = () -> Rand.uniform(5,10);
 		  // implying an individual pool with default name "doctors"
 		rESOURCErOLE rr = new rESOURCErOLE();
 		rr.setCard(1);

@@ -7,9 +7,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.commons.math3.random.Well19937c;
 import org.springframework.beans.factory.annotation.Autowired;
 import de.oes.core2.activities.aCTIVITY;
@@ -19,7 +22,7 @@ import de.oes.core2.activities.rESOURCErOLE;
 import de.oes.core2.activities.tASKqUEUE;
 import de.oes.core2.dao.eXPERIMENTrUNDao;
 import de.oes.core2.dao.eXPERIMENTsCENARIOrUNDao;
-import de.oes.core2.endpoint.ui.ExperimentsStatisticsDTO;
+import de.oes.core2.dto.ExperimentsStatisticsDTO;
 import de.oes.core2.entity.eXPERIMENTrUN;
 import de.oes.core2.entity.eXPERIMENTsCENARIOrUN;
 import de.oes.core2.foundations.ExogenousEvent;
@@ -28,6 +31,7 @@ import de.oes.core2.foundations.oBJECT;
 import de.oes.core2.lib.EventList;
 import de.oes.core2.lib.MathLib;
 import de.oes.core2.lib.Rand;
+import de.oes.core2.lib.SimulatorLogs;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -106,7 +110,7 @@ public class Simulator {
 		// The Future Events List
 		this.setFEL(new EventList());
 		// a map for statistics variables
-		this.setStat(new SimulationStat());
+		if(this.getStat() == null) this.setStat(new SimulationStat());
 		// a className->Class map
 		this.classes = new HashMap<String, Class<?>>();
 		// Make object classes accessible via their object type name
@@ -126,7 +130,7 @@ public class Simulator {
 		if(this.model.getActivityTypes() == null) this.model.setActivityTypes(new HashSet<String>());
 		// Make activity classes accessible via their activity type name
 		for (String actTypeName : this.model.getActivityTypes()) {
-				this.classes.put(actTypeName, aClasses.get(actTypeName).getClass());
+			this.classes.put(actTypeName, aClasses.get(actTypeName).getClass());
 		}
 		
 		this.setupActivityStatistics();
@@ -180,15 +184,7 @@ public class Simulator {
 		}
 	}
 	
-	/*******************************************************************
-	 * Assign model parameters with experiment parameter values ********
-	 *******************************************************************/
-	public void assignModelParameters(Map<String, Object> expParSlots) {
-		Map<String, Object> p = this.model.getP();
-		for (String key : p.keySet()) {
-			p.put(key, expParSlots.get(key));
-		}
-	}
+	
 	/*
 	 ******************************************************************
 	 * Initialize a (standalone or experiment scenario) simulation run *
@@ -271,6 +267,16 @@ public class Simulator {
 		
 	}
 	
+	/*******************************************************************
+	 * Assign model parameters with experiment parameter values ********
+	 *******************************************************************/
+	public void assignModelParameters(Map<String, Object> expParSlots) {
+		Map<String, Object> p = this.model.getP();
+		for (String key : p.keySet()) {
+			p.put(key, expParSlots.get(key));
+		}
+	}
+	
 	/*
 	 ******************************************************
 	 Run a simulation scenario
@@ -278,12 +284,12 @@ public class Simulator {
 	 */
 	public void runScenario(boolean debug) {
 		final long startTime = new Date().getTime();
-		SimulatorUI.clearLogs();
+		SimulatorLogs.clearLogs();
 		// Simulation Loop
 		while (this.time < this.scenario.getDurationInSimTime() &&
 				this.step < this.scenario.getDurationInSimSteps() &&
 				new Date().getTime() - startTime < this.getScenario().getDurationInCpuTime()) {
-			if(debug) SimulatorUI.logSimulationStep(this);
+			if(debug) SimulatorLogs.logSimulationStep(this);
 		    this.advanceSimulationTime();
 		    // extract and process next events
 		    List<eVENT> nextEvents = this.getFEL().removeNextEvents();
@@ -342,7 +348,7 @@ public class Simulator {
 	 ********************************************************/
 	public ExperimentsStatisticsDTO runExperiment(boolean debug) {
 		// set up user-defined statistics variables
-		if(this.model.getSetupStatistics() != null)this.model.getSetupStatistics().accept(this);
+		if(this.model.getSetupStatistics() != null) this.model.getSetupStatistics().accept(this);
 		
 		eXPERIMENTtYPE exp = this.getExperimentType();
 		this.initializeSimulator();
@@ -372,9 +378,6 @@ public class Simulator {
 		}
 		 /***START Activity extensions BEFORE-runSimpleExperiment ********************/
 		exp.getReplicStat().setActTypes(new HashMap<String,ReplicationActivityStat>());
-//	    TODO: Not needed?
-//		let throughputStatVarList = ["enqueuedActivities","waitingTimeouts","startedActivities","completedActivities"];
-//	    let throughputStatVarListWithoutTmout = ["enqueuedActivities","startedActivities","completedActivities"];
 	    for (String actTypeName : this.stat.getActTypes().keySet()) {
 	    	ReplicationActivityStat replStat = new ReplicationActivityStat();
 	    	Integer k = exp.getNmrOfReplications();
@@ -389,7 +392,6 @@ public class Simulator {
 	    	replStat.setWaitingTime(new GenericStat[k]);
 	    	replStat.setCycleTime(new GenericStat[k]);
 	        exp.getReplicStat().getActTypes().put(actTypeName, replStat);
-//	      exp.replicStat.actTypes[actTypeName].resUtil = {};
 	    }
 		   /***END Activity extensions BEFORE-runSimpleExperiment ********************/
 		
@@ -449,9 +451,65 @@ public class Simulator {
 				mathStats.put(stat.getKey(), calculatedStatValue);
 				System.out.println(stat.getKey() + " : " + calculatedStatValue);
 			}
+			
 			sumStat.put(var.getKey(), mathStats); // Exmpl: "queueLength" -> { {"Min":0}, {"Max":100}, {...} }
 		}
 		
+		
+		TreeMap<String, Map<String, Map<String, Number>>> actStat = new TreeMap<String, Map <String, Map<String, Number>>>();
+		for (Entry<String, ReplicationActivityStat> var : exp.getReplicStat().getActTypes().entrySet()) {
+			System.out.println("-----------------" + var.getKey() + "-----------------");
+			HashMap<String, Map<String, Number>> actPerTypeStat = new HashMap <String, Map<String, Number>>();
+			for (int i = 0; i < exp.getNmrOfReplications(); i++) {
+				HashMap<String, Number> actStatVal = new HashMap<String, Number>();
+				actStatVal.put("enqu", MathLib.round(var.getValue().getEnqueuedActivities()[i].doubleValue()));
+				actStatVal.put("start", MathLib.round(var.getValue().getStartedActivities()[i].doubleValue()));
+				actStatVal.put("compl", MathLib.round(var.getValue().getCompletedActivities()[i].doubleValue()));
+				actStatVal.put("wTime", MathLib.round(var.getValue().getWaitingTimeouts()[i].doubleValue()));
+				actStatVal.put("qLen", MathLib.round(var.getValue().getQueueLength()[i].getMax().doubleValue()));
+				actStatVal.put("cTime", MathLib.round(var.getValue().getCycleTime()[i].getMax().doubleValue()));
+				actPerTypeStat.put(String.valueOf(i), actStatVal);
+			}
+			for (Entry<String, Function<Number[], Number>> stat : MathLib.summary.entrySet()) {
+				Number ca = stat.getValue().apply(var.getValue().getCompletedActivities());
+				Number ea = stat.getValue().apply(var.getValue().getEnqueuedActivities());
+				Number sa = stat.getValue().apply(var.getValue().getStartedActivities());
+				Number wt = stat.getValue().apply(var.getValue().getWaitingTimeouts());
+				
+				List<Number> ql = Stream.of(var.getValue().getQueueLength()).map(GenericStat::getMax).collect(Collectors.toList());
+				Number[] qlArr = ql.toArray(new Number[0]);
+				Number qlStat = stat.getValue().apply(qlArr);
+				
+				List<Number> ct = Stream.of(var.getValue().getCycleTime()).map(GenericStat::getMax).collect(Collectors.toList());
+				Number[] ctArr = ct.toArray(new Number[0]);
+				Number ctStat = stat.getValue().apply(ctArr);
+				
+				
+				List<Number> wtt = Stream.of(var.getValue().getWaitingTime()).map(GenericStat::getMax).collect(Collectors.toList());
+				Number[] wttArr = wtt.toArray(new Number[0]);
+				Number wttStat = stat.getValue().apply(wttArr);
+				
+				HashMap<String, Number> actStatVal = new HashMap<String, Number>();
+				actStatVal.put("enqu", MathLib.round(ea.doubleValue()));
+				actStatVal.put("start", MathLib.round(sa.doubleValue()));
+				actStatVal.put("compl", MathLib.round(ca.doubleValue()));
+				actStatVal.put("wTime", MathLib.round(wt.doubleValue()));
+				actStatVal.put("qLen", MathLib.round(qlStat.doubleValue()));
+				actStatVal.put("cTime", MathLib.round(ctStat.doubleValue()));
+				actPerTypeStat.put(stat.getKey(), actStatVal);
+				
+				System.out.println(stat.getKey() + " queueLength : " + qlStat);
+				System.out.println(stat.getKey() + " cycleTime : " + ctStat);
+				System.out.println(stat.getKey() + " completedActivities : " + ca);
+				System.out.println(stat.getKey() + " enqueuedActivities : " + ea);
+				System.out.println(stat.getKey() + " startedActivities : " + sa);
+				System.out.println(stat.getKey() + " waitingTimeouts : " + wt);
+			}
+			
+			actStat.put(var.getKey(), actPerTypeStat);
+		}
+		
+		dto.setActStat(actStat);
 		dto.setSumStat(sumStat);
 		dto.setExperiments(experimenStats);
 		return dto;

@@ -1,7 +1,6 @@
 package de.oes.core2.endpoint.acitivity;
 
 import java.util.Collection;
-
 import java.util.List;
 
 import java.util.Set;
@@ -14,24 +13,22 @@ import org.springframework.stereotype.Component;
 
 import de.oes.core2.activities.rANGE;
 import de.oes.core2.activities.rESOURCEpOOL;
-import de.oes.core2.activities.rESOURCEsTATUS;
-import de.oes.core2.endpoint.ui.ExperimentsStatisticsDTO;
-import de.oes.core2.endpoint.ui.SimulationSettingsDTO;
+import de.oes.core2.dto.ExperimentsStatisticsDTO;
+import de.oes.core2.dto.SimulationSettingsDTO;
 import de.oes.core2.lib.MathLib;
-import de.oes.core2.medicaldepartament_1c.Doctor;
-import de.oes.core2.medicaldepartament_1c.Examination;
-import de.oes.core2.medicaldepartament_1c.NewCase;
+import de.oes.core2.lib.SimulatorLogs;
+import de.oes.core2.medicaldepartament_1b.Examination;
+import de.oes.core2.medicaldepartament_1b.NewCase;
 import de.oes.core2.sim.ActivityStat;
 import de.oes.core2.sim.Model;
 import de.oes.core2.sim.Scenario;
 import de.oes.core2.sim.Simulator;
-import de.oes.core2.sim.SimulatorUI;
 import de.oes.core2.sim.Time;
 import de.oes.core2.sim.TimeUnit;
 import de.oes.core2.sim.eXPERIMENTtYPE;
 
 @Component
-public class RunMedicalDepartment1cSimulation {
+public class RunMedicalDepartment1bSimulationActivity {
 
 	@Autowired
 	private  AutowireCapableBeanFactory autowireCapableBeanFactory;
@@ -52,7 +49,7 @@ public class RunMedicalDepartment1cSimulation {
 			m.addAttribute("stat", sim.getStat().getSimpleStat());
 			calculateResUtil(sim.getStat().getActTypes().values(), sim);
 			m.addAttribute("actStat", sim.getStat().getActTypes());
-			if(dto.isSimulationLog()) m.addAttribute("logs", SimulatorUI.getLogs());
+			if(dto.isSimulationLog()) m.addAttribute("logs", SimulatorLogs.getLogs());
 		} else { // (1) Simple Experiment with 10 replications, each running for 1000 min.
 			eXPERIMENTtYPE expType = defineExperimentType(model, scenario);
 			ExperimentsStatisticsDTO resutlDTO = runExperiment(sim, expType, dto.isSimulationLog());
@@ -128,19 +125,12 @@ public class RunMedicalDepartment1cSimulation {
 		scenario.setDurationInSimTime(1000l);
 		// Initial State
 		Consumer<Simulator> setupInitialState = s -> {
-			Doctor d1 = new Doctor(1, "d1", s, null, rESOURCEsTATUS.AVAILABLE);
-			Doctor d2 = new Doctor(2, "d2", s, null, rESOURCEsTATUS.AVAILABLE);
-			Doctor d3 = new Doctor(3, "d3", s, null, rESOURCEsTATUS.AVAILABLE);
-			
-			// Create initial objects
+			 // Create initial objects
 			rANGE range = new rANGE();
-			rESOURCEpOOL rp = new rESOURCEpOOL(s, "doctors", range, 3, List.of(d1,d2,d3));
-			d1.setResourcePool(rp);
-			d2.setResourcePool(rp);
-			d3.setResourcePool(rp);
+			rESOURCEpOOL rp = new rESOURCEpOOL(s, "doctors", range, 3, null);
 			// Schedule initial events
-			s.getResourcepools().put("doctors", rp);
-			Examination.resRoles.get("doctor").setResPool(rp);
+			Examination.resRoles.get("doctors").setCountPoolName("doctors");
+			Examination.resRoles.get("doctors").setResPool(rp);
 			s.getFEL().add(new NewCase(s, 1l, null, null, null));
 		};
 		scenario.setSetupInitialState(setupInitialState);
@@ -153,7 +143,7 @@ public class RunMedicalDepartment1cSimulation {
 	********************************************************/
 	private Model initializeModel() {
 		Model model = new Model();
-		model.setName("Medical-Department-1c");
+		model.setName("Medical-Department-1b");
 		model.setTime(Time.CONT);
 		model.setTimeUnit(TimeUnit.min);
 		

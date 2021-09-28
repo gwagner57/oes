@@ -1,4 +1,4 @@
-package de.oes.core2.sim;
+package de.oes.core2.lib;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,8 +6,9 @@ import java.util.List;
 
 import de.oes.core2.dto.LogEntryDTO;
 import de.oes.core2.foundations.eVENT;
+import de.oes.core2.sim.Simulator;
 
-public class SimulatorUI {
+public class SimulatorLogs {
 
 	private static List<LogEntryDTO> logs;
 	

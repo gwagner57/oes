@@ -13,9 +13,10 @@ import org.springframework.stereotype.Component;
 import de.oes.core2.activities.rANGE;
 import de.oes.core2.activities.rESOURCEpOOL;
 import de.oes.core2.activities.rESOURCEsTATUS;
-import de.oes.core2.endpoint.ui.ExperimentsStatisticsDTO;
-import de.oes.core2.endpoint.ui.SimulationSettingsDTO;
+import de.oes.core2.dto.ExperimentsStatisticsDTO;
+import de.oes.core2.dto.SimulationSettingsDTO;
 import de.oes.core2.lib.MathLib;
+import de.oes.core2.lib.SimulatorLogs;
 import de.oes.core2.loadhauldump.Dump;
 import de.oes.core2.loadhauldump.GoBackToLoadingSite;
 import de.oes.core2.loadhauldump.GoHome;
@@ -29,13 +30,12 @@ import de.oes.core2.sim.ActivityStat;
 import de.oes.core2.sim.Model;
 import de.oes.core2.sim.Scenario;
 import de.oes.core2.sim.Simulator;
-import de.oes.core2.sim.SimulatorUI;
 import de.oes.core2.sim.Time;
 import de.oes.core2.sim.TimeUnit;
 import de.oes.core2.sim.eXPERIMENTtYPE;
 
 @Component
-public class RunLoadHaulDumpSimulation {
+public class RunLoadHaulDumpSimulationActivity {
 	
 	@Autowired
 	private  AutowireCapableBeanFactory autowireCapableBeanFactory;
@@ -60,7 +60,7 @@ public class RunLoadHaulDumpSimulation {
 			m.addAttribute("stat", sim.getStat().getSimpleStat());
 			calculateResUtil(sim.getStat().getActTypes().values(), sim);
 			m.addAttribute("actStat", sim.getStat().getActTypes());
-			if(dto.isSimulationLog()) m.addAttribute("logs", SimulatorUI.getLogs());
+			if(dto.isSimulationLog()) m.addAttribute("logs", SimulatorLogs.getLogs());
 		} else { // (1) Simple Experiment with 10 replications, each running for 1000 min.
 			eXPERIMENTtYPE expType = defineExperimentType(model, scenario);
 			ExperimentsStatisticsDTO resutlDTO = runExperiment(sim, expType, dto.isSimulationLog());
@@ -126,6 +126,12 @@ public class RunLoadHaulDumpSimulation {
 	}
 	
 	public Scenario initAltScenario(Simulator sim) {
+		sim.getAClasses().put("GoToLoadingSite", new GoToLoadingSite(sim,0,0,null));
+		sim.getAClasses().put("Load", new Load(sim,0,0,null));
+		sim.getAClasses().put("Haul", new Haul(sim,0,0,null));
+		sim.getAClasses().put("GoBackToLoadingSite", new GoBackToLoadingSite(sim,0,0,null));
+		sim.getAClasses().put("GoHome", new GoHome(sim,0,0,null));
+		sim.getAClasses().put("Dump", new Dump(sim,0,0,null));
 		Scenario altScenario = new Scenario();
 		altScenario.setScenarioNo(1l);
 		altScenario.setTitle("Scenario with 2 wheel loaders");

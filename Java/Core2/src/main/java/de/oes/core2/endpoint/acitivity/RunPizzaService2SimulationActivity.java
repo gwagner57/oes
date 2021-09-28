@@ -13,9 +13,10 @@ import org.springframework.stereotype.Component;
 import de.oes.core2.activities.rANGE;
 import de.oes.core2.activities.rESOURCEpOOL;
 import de.oes.core2.activities.rESOURCEsTATUS;
-import de.oes.core2.endpoint.ui.ExperimentsStatisticsDTO;
-import de.oes.core2.endpoint.ui.SimulationSettingsDTO;
+import de.oes.core2.dto.ExperimentsStatisticsDTO;
+import de.oes.core2.dto.SimulationSettingsDTO;
 import de.oes.core2.lib.MathLib;
+import de.oes.core2.lib.SimulatorLogs;
 import de.oes.core2.pizzaservice2.MakePizza;
 import de.oes.core2.pizzaservice2.Order;
 import de.oes.core2.pizzaservice2.PizzaService;
@@ -23,13 +24,12 @@ import de.oes.core2.sim.ActivityStat;
 import de.oes.core2.sim.Model;
 import de.oes.core2.sim.Scenario;
 import de.oes.core2.sim.Simulator;
-import de.oes.core2.sim.SimulatorUI;
 import de.oes.core2.sim.Time;
 import de.oes.core2.sim.TimeUnit;
 import de.oes.core2.sim.eXPERIMENTtYPE;
 
 @Component
-public class RunPizzaService2Simulation {
+public class RunPizzaService2SimulationActivity {
 
 		@Autowired
 		private  AutowireCapableBeanFactory autowireCapableBeanFactory;
@@ -51,7 +51,7 @@ public class RunPizzaService2Simulation {
 				
 				calculateResUtil(sim.getStat().getActTypes().values(), sim);
 				m.addAttribute("actStat", sim.getStat().getActTypes());
-				if(dto.isSimulationLog()) m.addAttribute("logs", SimulatorUI.getLogs());
+				if(dto.isSimulationLog()) m.addAttribute("logs", SimulatorLogs.getLogs());
 			} else { // (1) Simple Experiment with 10 replications, each running for 1000 min.
 				eXPERIMENTtYPE expType = defineExperimentType(model, scenario);
 				ExperimentsStatisticsDTO resutlDTO = runExperiment(sim, expType, dto.isSimulationLog());

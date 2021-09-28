@@ -47,6 +47,26 @@ p.description {
 			</tr>
 		</tbody>
 	</table>
+	<div th:if="${type} == 1">
+			<div th:each="entry : ${stat.getActStat()}">
+			<h3 th:text="${entry.key}"></h3>
+			<table>
+			<thead>
+				<tr>
+					<th>Key</th>
+					<th>Value</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="e : ${entry.value}">
+					<td th:text="${e.key}"></td>
+					<td th:text="${e.value}"></td>
+				</tr>
+			</tbody>
+			</table>
+			</div>
+		</div>
+
 		
 <!-- 	SIMPLE STAT TABLE -->
 		<table th:if="${type} == 0"> 

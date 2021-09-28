@@ -1,4 +1,4 @@
-package de.oes.core2.endpoint.ui;
+package de.oes.core2.dto;
 
 import java.util.Map;
 

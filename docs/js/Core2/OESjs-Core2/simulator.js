@@ -88,7 +88,7 @@ sim.initializeSimulator = function () {
           resRole.countPoolName = pn;
         }
         // create count pool only if not yet created/*******************************************************
- * Compute the final statistics
+ /* Compute the final statistics
         ********************************************************/
         sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, available:0});
       }
