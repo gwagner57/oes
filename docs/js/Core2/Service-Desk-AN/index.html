@@ -29,9 +29,16 @@
     <script src="simulation.js"></script>
 </head>
 <body>
+<div><small>An <em><a href="https://gwagner57.github.io/oes/">Object Event Simulation (OES)</a></em> example model.
+    You can download and inspect its code from the <a href="https://github.com/gwagner57/oes/tree/master/docs/js/Core2">OES
+        GitHub repo</a>.</small></div>
+ <figure class="right"><img alt="Process Design Model" src="PDM.svg" width="300" /></figure>
  <h1>A Service Desk System as an Activity Network</h1>
- <p>This simple Activity Network model consists of two nodes: an initial <em>event node</em> for "CustomerArrival" events
-     and an <em>activity node</em> for "Service" activities.</p>
+ <p id="copyright">© 2020 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
+  Brandenburg University of Technology, Germany.</p>
+ <p>This minimal <em>Activity Network</em> model consists of two nodes: an initial <em>event node</em> for recurrent
+  "CustomerArrival" events and an <em>activity node</em> for "Service" activities, which require a service desk as
+  a (performer) resource. These two nodes are connected with a <em>Resource-Dependent Activity Scheduling (RDAS)</em> arrow.</p>
  <form id="run">
      <div><label>Select scenario: <select name="selScen"></select></label></div>
      <div><button type="button" onclick="run()">Run</button> <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>

@@ -174,12 +174,11 @@ aRRIVAL.defaultRecurrence = function () {
  * If no "processingDuration" is defined, the exponential distribution with an event
  * rate of 1 is used as a default function for sampling processing durations.
  * 
- * By default, the processing station of a processing node represents a singleton
- * resource pool allowing to process only one processing object at a time, unless
- * the "processingCapacity" attribute is set to a value greater than 1. In that case,
- * the processing station represents a count pool with "processingCapacity" defining
- * its capacity, which is the number of processing objects that can be processed at
- * that station at a time.
+ * By default, a processing node has an infinite processing capacity. Its processing
+ * station only represents a required resource if its processingCapacity attribute
+ * has a positive integer value. In that case, the node has an implicit count pool
+ * with "processingCapacity" defining its capacity, which is the number of
+ * processing objects that can be processed at that processing station at a time.
  *
  * In the general case, a processing node may have several input object types,
  * and an input buffer for each of them, and either a successor processing node or
@@ -192,7 +191,7 @@ class pROCESSINGnODE extends aCTIVITYnODE {
   // status: 1 = rESOURCEsTATUS.AVAILABLE
   constructor({id, name, activityTypeName, resourceRoles={}, processingDuration, waitingTimeout,
                inputBufferCapacity, inputTypeName, inputTypes,
-               processingCapacity=1, status=1, successorNodeName, successorNodeNames,
+               processingCapacity=Infinity, status=1, successorNodeName, successorNodeNames,
                outputTypes}) {
     super( {id: id||name, name, activityTypeName, resourceRoles, duration: processingDuration, waitingTimeout,
             successorNodeName, successorNodeNames});
@@ -201,13 +200,16 @@ class pROCESSINGnODE extends aCTIVITYnODE {
     if (inputTypeName) this.inputType = sim.Classes( inputTypeName);
     // Ex: {"lemons": {type:"Lemon", quantity:2}, "ice": {type:"IceCubes", quantity:[0.2,"kg"]},...
     if (inputTypes) this.inputTypes = inputTypes;
+    // how many proc. objects can be processed at the same time
     this.processingCapacity = processingCapacity;
     // the resource status of the (implicitly associated) processing station
     this.status = status;
     // Ex: {"lemonade": {type:"Lemonade", quantity:[1,"l"]}, ...
     if (outputTypes) this.outputTypes = outputTypes;
     if (resourceRoles) this.resourceRoles = resourceRoles;
-    this.resourceRoles[name +"ProcStation"] = {range: pROCESSINGnODE, card:1};
+    if (Number.isInteger( this.processingCapacity)) {
+      this.resourceRoles[name +"ProcStation"] = {countPoolName: name +"ProcStation", card:1};
+    }
     this.tasks = new qUEUE();
     this.blockedSuccessorTasks = new qUEUE();
     this.inputBuffer = new qUEUE();
@@ -477,9 +479,9 @@ oes.createProcessingStationResourcePools = function () {
   const nodeNames = Object.keys( sim.scenario.networkNodes);
   for (const nodeName of nodeNames) {
     const node = sim.scenario.networkNodes[nodeName];
-    if (node instanceof pROCESSINGnODE) {
+    if (node instanceof pROCESSINGnODE && Number.isInteger( node.processingCapacity)) {
       node.resourceRoles[nodeName +"ProcStation"].resourcePool =
-          new rESOURCEpOOL({name: nodeName +"ProcStation" , resourceType: pROCESSINGnODE, resources:[node]});
+          new rESOURCEpOOL({name: nodeName +"ProcStation" , size: node.processingCapacity});
     }
   }
 }

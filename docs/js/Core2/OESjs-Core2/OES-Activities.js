@@ -62,7 +62,7 @@ const rESsTAT = rESOURCEsTATUS;  // shortcut
 class rESOURCEpOOL {
   constructor( {name, size, available, resourceType, resources}) {
     this.name = name;
-    if (Number.isInteger( size)) {  // a count pool
+    if (Number.isInteger( size) || size === Infinity) {  // a count pool
       this.size = size;
       if (!Number.isInteger( available)) this.available = size;
       else this.available = available;
@@ -81,9 +81,8 @@ class rESOURCEpOOL {
     }
     this.dependentNodes = [];
   }
-  isAvailable( card) {
-    if (card === undefined) card = 1;
-    if (this.available === undefined) {  // individual pool
+  isAvailable( card=1) {
+    if (this.resourceType) {  // individual pool
       if (this.availResources.length >= card) return true;
       // check if there are alternative resources
       const altResTypes = this.resourceType.alternativeResourceTypes;
@@ -107,9 +106,8 @@ class rESOURCEpOOL {
       return allocatedRes;
     } else this.available = 0;  // count pool
   }
-  allocate( card) {
+  allocate( card=1) {
     var rP=null;
-    if (card === undefined) card = 1;
     if (this.availResources) {  // individual pool
       if (this.availResources.length >= card) {
         rP = this;
@@ -136,11 +134,13 @@ class rESOURCEpOOL {
         rP.busyResources.push( res);
       }
       return allocatedRes;
-    } else this.available -= card;
+    } else {  // count pool
+      this.available -= card;
+    }
   }
   release( nmrOrRes) {  // number or resource(s)
     if (nmrOrRes === undefined) nmrOrRes = 1;
-    if (typeof nmrOrRes === "number" && Number.isInteger( this.available)) {
+    if (typeof nmrOrRes === "number" && this.size) {  // count pool
       this.available += nmrOrRes;
     } else if (typeof nmrOrRes === "object") {  // individual pool
       let resources = nmrOrRes;
@@ -179,7 +179,7 @@ at simulation step ${sim.step}!`);
     }
   }
   toString() {
-    if (this.available === undefined) {  // individual pool
+    if (this.resourceType) {  // individual pool
       const availRes = this.availResources.map( r => r.name || r.id);
       return `av. ${this.name}: ${availRes}`;
     } else {
@@ -713,9 +713,11 @@ oes.createResourcePools = function () {
       }
     }
     // assign a node-specific processing station resource role to processing nodes
-    if (node.typeName === "pROCESSINGnODE" || node.typeName === "ProcessingNode") {
+    if ((node.typeName === "pROCESSINGnODE" || node.typeName === "ProcessingNode") &&
+        Number.isInteger( node.processingCapacity)) {
       if (!node.resourceRoles) node.resourceRoles = {};
-      node.resourceRoles[node.name +"ProcStation"] = {range: pROCESSINGnODE, card:1};
+      node.resourceRoles[node.name +"ProcStation"] =
+          {countPoolName: name +"ProcStation", card: node.processingCapacity};
     }
   }
 }
@@ -792,7 +794,10 @@ oes.initializeActNetScenario = function () {
         scenNode.workInProgress.clear();  // clear the WiP buffer
         scenNode.nmrOfArrivedObjects = 0;
         scenNode.nmrOfDepartedObjects = 0;
-        scenNode.resourceRoles[scenNode.name +"ProcStation"].resourcePool.availResources = [scenNode];
+        if (Number.isInteger( scenNode.processingCapacity)) {
+          const scenNodeResPool = scenNode.resourceRoles[scenNode.name +"ProcStation"].resourcePool;
+          scenNodeResPool.available = scenNodeResPool.size;
+        }
       } else if (scenNode instanceof eNTRYnODE) {
         scenNode.nmrOfArrivedObjects = 0;
       } else if (scenNode instanceof eXITnODE) {
