@@ -2,7 +2,7 @@
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
  <meta charset="UTF-8" />
- <title>Make-and-Deliver-Pizza-PN-1</title>
+ <title>Make-and-Deliver-Pizza-AN-1</title>
  <meta content="width=device-width, initial-scale = 1.0" name="viewport" />
  <link href="../../../css/index.css" rel="stylesheet" />
  <script src="../lib/math.js"></script>
@@ -26,15 +26,13 @@
  <div><small>An <em><a href="https://gwagner57.github.io/oes/">Object Event Simulation (OES)</a></em> example model.
   You can download and inspect its code from the <a href="https://github.com/gwagner57/oes/tree/master/docs/js/Core2">OES
   GitHub repo</a>.</small></div>
- <figure class="right"><img alt="Process Design Model" src="img/PDM.svg" width="600" /></figure>
- <h1>Make-and-Deliver-Pizza-PN-1 <a href="description.html">Read more...</a></h1>
- <p id="copyright">© 2021 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
+ <figure class="right"><img alt="Process Design Model" src="img/PDM.svg" width="500" /></figure>
+ <h1>Make-and-Deliver-Pizza-AN-1 <a href="description.html">Read more...</a></h1>
+ <p id="copyright">© 2020 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
   Brandenburg University of Technology, Germany.</p>
- <p>The Make-and-Deliver-Pizza-PN-1 <em>processing network</em> model consists of the resource object types
-  "OrderTaker" and "PizzaMaker", the entry node "orderCall", the processing nodes "takeOrder", "makePizza"
-  and "deliverPizza", and an exit node. It's dynamics is described by the DPMN process diagram shown above.
-  Notice that, since for all three processing nodes, the attribute <em>processingCapacity</em> is not defined, the
-  corresponding processing stations are not specified as resources.</p>
+ <p>The Make-and-Deliver-Pizza-AN-1 <em>activity network</em> model consists of the object types "OrderTaker" and "PizzaMaker",
+   the event type/node "OrderCall", and the activity types/node "TakeOrder", "MakePizza" and "DeliverPizza".
+   It's dynamics is described by the DPMN process diagram on the right.</p>
  <h2 id="scenarioTitle">Default scenario</h2>
  <p id="scenarioDescription">The default scenario has 2 order takers (with IDs 1 and 2), 6 pizza makers (with IDs 11&ndash;16),
   3 ovens, and 10 delivery scooters.</p>

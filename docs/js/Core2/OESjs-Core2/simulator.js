@@ -180,8 +180,8 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   if (sim.FEL.isEmpty()) {
     for (const evtTypeName of sim.model.eventTypes) {
       const ET = sim.Classes[evtTypeName];
-      if (ET.recurrence) {
-        sim.FEL.add( new ET({occTime: ET.recurrence()}));
+      if (ET.recurrence || ET.eventRate) {
+        sim.FEL.add( new ET());
       }
     }
   }
@@ -262,7 +262,7 @@ sim.runScenario = function (createLog) {
       /**** AN/PN extension END ****/
 
       // test if e is an exogenous event
-      if (EventClass.recurrence || e.recurrence) {
+      if (EventClass.recurrence || e.recurrence || EventClass.eventRate) {
         if ("createNextEvent" in e) {
           /* test if this generic approach for maxNmrOfEvents is computationally cheap enough
           let nextEvt=null;
@@ -277,7 +277,7 @@ sim.runScenario = function (createLog) {
           const nextEvt = e.createNextEvent();
           if (nextEvt) sim.FEL.add( nextEvt);
         } else {
-          sim.FEL.add( new EventClass({delay: EventClass.recurrence()}));
+          sim.FEL.add( new EventClass());
         }
       }
     }

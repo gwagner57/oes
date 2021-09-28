@@ -66,16 +66,20 @@ class oBJECT {
  */
 class eVENT {
     constructor({occTime, delay, startTime, duration, node}) {
-      if (occTime !== undefined) this.occTime = occTime;
-      else if (delay) this.occTime = sim.time + delay;
-      else if (startTime !== undefined) {  // e.g., an activity
-        if (startTime > 0) {  // a meaningful startTime
-          this.startTime = startTime;
-          if (duration) {
-            this.duration = duration;
-            this.occTime = startTime + duration;
-          }
+      if (typeof occTime === "number" && occTime >= sim.time) {
+        this.occTime = occTime;
+      } else if (typeof delay === "number" && delay > 0) {
+        this.occTime = sim.time + delay;
+      } else if (typeof startTime === "number" && startTime >= sim.time) {  // e.g., an activity
+        this.startTime = startTime;
+        if (duration) {
+          this.duration = duration;
+          this.occTime = startTime + duration;
         }
+      } else if (this.constructor.eventRate) {  // exogenous/recurrent event
+        this.occTime = sim.time + rand.exponential( this.constructor.eventRate);
+      } else if (this.constructor.recurrence) {  // exogenous/recurrent event
+        this.occTime = sim.time + this.constructor.recurrence();
       } else {
         this.occTime = sim.time + sim.nextMomentDeltaT;
       }

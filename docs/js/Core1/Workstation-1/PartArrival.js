@@ -24,10 +24,7 @@ class PartArrival extends eVENT {
       return null;
     } else {
       PartArrival.counter++;
-      return new PartArrival({
-        delay: PartArrival.recurrence(),
-        workStation: this.workStation
-      });
+      return new PartArrival({workStation: this.workStation});
     }
   }
   static recurrence() {return rand.exponential(1/6);}
