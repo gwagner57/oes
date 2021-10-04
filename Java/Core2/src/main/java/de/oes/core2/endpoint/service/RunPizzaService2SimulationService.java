@@ -1,4 +1,4 @@
-package de.oes.core2.endpoint.acitivity;
+package de.oes.core2.endpoint.service;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,7 +29,7 @@ import de.oes.core2.sim.TimeUnit;
 import de.oes.core2.sim.eXPERIMENTtYPE;
 
 @Component
-public class RunPizzaService2SimulationActivity {
+public class RunPizzaService2SimulationService {
 
 		@Autowired
 		private  AutowireCapableBeanFactory autowireCapableBeanFactory;

@@ -1,8 +1,8 @@
-package de.oes.core2.endpoint.acitivity;
+package de.oes.core2.endpoint.service;
 
 import java.util.Collection;
-
 import java.util.List;
+
 
 import java.util.Set;
 import java.util.Map.Entry;
@@ -12,16 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Component;
 
-import de.oes.core2.activities.rANGE;
-import de.oes.core2.activities.rESOURCEpOOL;
-import de.oes.core2.activities.rESOURCEsTATUS;
-import de.oes.core2.dto.ExperimentsStatisticsDTO;
-import de.oes.core2.dto.SimulationSettingsDTO;
-import de.oes.core2.lib.MathLib;
-import de.oes.core2.lib.SimulatorLogs;
-import de.oes.core2.medicaldepartament_1c.Doctor;
-import de.oes.core2.medicaldepartament_1c.Examination;
-import de.oes.core2.medicaldepartament_1c.NewCase;
 import de.oes.core2.sim.ActivityStat;
 import de.oes.core2.sim.Model;
 import de.oes.core2.sim.Scenario;
@@ -29,9 +19,16 @@ import de.oes.core2.sim.Simulator;
 import de.oes.core2.sim.Time;
 import de.oes.core2.sim.TimeUnit;
 import de.oes.core2.sim.eXPERIMENTtYPE;
+import de.oes.core2.dto.ExperimentsStatisticsDTO;
+import de.oes.core2.dto.SimulationSettingsDTO;
+import de.oes.core2.lib.MathLib;
+import de.oes.core2.lib.SimulatorLogs;
+import de.oes.core2.pizzaservice1.MakePizza;
+import de.oes.core2.pizzaservice1.Order;
+import de.oes.core2.pizzaservice1.PizzaService;
 
 @Component
-public class RunMedicalDepartment1cSimulationActivity {
+public class RunPizzaService1SimulationService {
 
 	@Autowired
 	private  AutowireCapableBeanFactory autowireCapableBeanFactory;
@@ -59,13 +56,12 @@ public class RunMedicalDepartment1cSimulationActivity {
 			m.addAttribute("stat", resutlDTO);
 		}
 	}
-	
+
 	private void calculateResUtil(Collection<ActivityStat> activityStats, Simulator sim) {
 		for (ActivityStat activityStat : activityStats) {
 			activityStat.getResUtil().replaceAll((k,v) -> MathLib.round(v.doubleValue() / sim.getTime()));
 		}
 	}
-
 
 	private ExperimentsStatisticsDTO runExperiment(Simulator sim, eXPERIMENTtYPE expType, boolean logs) {
 		autowireCapableBeanFactory.autowireBean(sim);
@@ -103,7 +99,7 @@ public class RunMedicalDepartment1cSimulationActivity {
 			null, // parameterDef
 			new Integer[] {123, 234, 345, 456, 567, 678, 789, 890, 901, 1012} // seeds
 			);
-		expType.setStoreExpResults(true);
+		expType.setStoreExpResults(false);
 		return expType;
 	}
 
@@ -113,6 +109,9 @@ public class RunMedicalDepartment1cSimulationActivity {
 	********************************************************/
 	private void setStatisticVariables(Model model, Simulator sim) {
 		Consumer<Simulator> setupStatistics = s -> {
+			 s.getStat().getSimpleStat().put("nmrOfOrders", Integer.valueOf(0));
+			 s.getStat().getSimpleStat().put("nmrOfDeliveredPizzas", Integer.valueOf(0));
+			 s.getStat().getSimpleStat().put("maxQueueLength", Double.valueOf(0));
 		};
 		model.setSetupStatistics(setupStatistics);
 	}
@@ -121,27 +120,16 @@ public class RunMedicalDepartment1cSimulationActivity {
 	 Simulation Scenario
 	 ********************************************************/
 	private Scenario initScenario(Simulator sim) {
-		sim.getAClasses().put("Examination", new Examination(sim,0,0,0));
+		sim.getAClasses().put("MakePizza", new MakePizza(sim,0,0,0,null));
 		Scenario scenario = new Scenario();
-		scenario.setIdCounter(11); // start value of auto IDs
-		scenario.setTitle("Basic scenario with one medical department");
-		scenario.setDurationInSimTime(1000l);
+		scenario.setDurationInSimTime(300l);
 		// Initial State
 		Consumer<Simulator> setupInitialState = s -> {
-			Doctor d1 = new Doctor(1, "d1", s, null, rESOURCEsTATUS.AVAILABLE);
-			Doctor d2 = new Doctor(2, "d2", s, null, rESOURCEsTATUS.AVAILABLE);
-			Doctor d3 = new Doctor(3, "d3", s, null, rESOURCEsTATUS.AVAILABLE);
-			
-			// Create initial objects
-			rANGE range = new rANGE();
-			rESOURCEpOOL rp = new rESOURCEpOOL(s, "doctors", range, 3, List.of(d1,d2,d3));
-			d1.setResourcePool(rp);
-			d2.setResourcePool(rp);
-			d3.setResourcePool(rp);
+			 // Create initial objects
+			 //const ps = new PizzaService({id: 1, name:"ps", status: rESOURCEsTATUS.AVAILABLE});
+			PizzaService ps = new PizzaService(1, "ps", sim, 0, false);
 			// Schedule initial events
-			s.getResourcepools().put("doctors", rp);
-			Examination.resRoles.get("doctor").setResPool(rp);
-			s.getFEL().add(new NewCase(s, 1l, null, null, null));
+			s.getFEL().add(new Order(s, 1l, null, ps));
 		};
 		scenario.setSetupInitialState(setupInitialState);
 		return scenario;
@@ -153,12 +141,13 @@ public class RunMedicalDepartment1cSimulationActivity {
 	********************************************************/
 	private Model initializeModel() {
 		Model model = new Model();
-		model.setName("Medical-Department-1c");
+		model.setName("Pizza-Server-1");
 		model.setTime(Time.CONT);
 		model.setTimeUnit(TimeUnit.min);
 		
-		model.setEventTypes(List.of(NewCase.class));
-		model.setActivityTypes(Set.of("Examination"));
+		model.setObjectTypes(List.of(PizzaService.class));
+		model.setEventTypes(List.of(Order.class));
+		model.setActivityTypes(Set.of("MakePizza"));
 		return model;
 	}
 }

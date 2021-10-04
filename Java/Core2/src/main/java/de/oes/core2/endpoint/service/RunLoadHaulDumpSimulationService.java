@@ -1,4 +1,4 @@
-package de.oes.core2.endpoint.acitivity;
+package de.oes.core2.endpoint.service;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,11 +35,20 @@ import de.oes.core2.sim.TimeUnit;
 import de.oes.core2.sim.eXPERIMENTtYPE;
 
 @Component
-public class RunLoadHaulDumpSimulationActivity {
+public class RunLoadHaulDumpSimulationService {
 	
+	/**
+	 * Factory for spring component injection (needed to persist objects in DB)
+	 */
 	@Autowired
-	private  AutowireCapableBeanFactory autowireCapableBeanFactory;
+	private AutowireCapableBeanFactory autowireCapableBeanFactory;
 	
+	
+	/**
+	 * Runs the load-haul-dump simualtion model
+	 * @param dto - simulation settings defined by client
+	 * @param m - Thymeleaf model v
+	 */
 	public void run(SimulationSettingsDTO dto, org.springframework.ui.Model m) {
 		Model model = initializeModel();
 		Simulator sim = new Simulator();
@@ -69,12 +78,24 @@ public class RunLoadHaulDumpSimulationActivity {
 	}
 
 
+	/**
+	 * Calculate resource utilization for activity types
+	 * @param activityStats - collected activity statistics
+	 * @param sim - current simulation
+	 */
 	private void calculateResUtil(Collection<ActivityStat> activityStats, Simulator sim) {
 		for (ActivityStat activityStat : activityStats) {
 			activityStat.getResUtil().replaceAll((k,v) -> MathLib.round(v.doubleValue() / sim.getTime()));
 		}
 	}
 
+	/**
+	 * Runs simulation scenario with replications (as experiment)
+	 * @param sim - current simulation
+	 * @param expType - type of the experiment
+	 * @param logs - defines if simulation steps must be logged
+	 * @return
+	 */
 	private ExperimentsStatisticsDTO runExperiment(Simulator sim, eXPERIMENTtYPE expType, boolean logs) {
 		autowireCapableBeanFactory.autowireBean(sim);
 		sim.setExperimentType(expType);
@@ -83,6 +104,11 @@ public class RunLoadHaulDumpSimulationActivity {
 
 
 
+	/**
+	 * Run simulation as a simple scenario without replications
+	 * @param sim - current simulation
+	 * @param logs - defines if simulation steps must be logged
+	 */
 	private void runStandaloneScenario(Simulator sim, boolean logs) {
 		sim.runStandaloneScenario(logs);
 		System.out.println("FINAL STAT");
@@ -93,6 +119,11 @@ public class RunLoadHaulDumpSimulationActivity {
 
 
 
+	/**
+	 * @param model
+	 * @param sim
+	 * @param scenario
+	 */
 	private void initSimulation(Model model, Simulator sim, Scenario scenario) {
 		sim.setModel(model);
 		sim.setScenario(scenario);
@@ -100,9 +131,13 @@ public class RunLoadHaulDumpSimulationActivity {
 
 
 
-	/*******************************************************
-	 Define an experiment (type)
-	********************************************************/
+	
+	/**
+	 * Definition of experiment type for the given model
+	 * @param model - simulation model
+	 * @param scenario - current simulation scenario
+	 * @return
+	 */
 	private eXPERIMENTtYPE defineExperimentType(Model model, Scenario scenario) {
 		eXPERIMENTtYPE expType = new eXPERIMENTtYPE(
 			model,
@@ -116,15 +151,23 @@ public class RunLoadHaulDumpSimulationActivity {
 	}
 
 
-	/*******************************************************
-	 Statistics variables
-	********************************************************/
+	
+	/**
+	 * Initialization of statistic variables
+	 * @param model - simulation model
+	 * @param sim - current simulation
+	 */
 	private void setStatisticVariables(Model model, Simulator sim) {
 		Consumer<Simulator> setupStatistics = s -> {
 		};
 		model.setSetupStatistics(setupStatistics);
 	}
 	
+	/**
+	 * Initialization of alternative simulation scenario
+	 * @param sim - current simulation
+	 * @return initialized simulation scenario object
+	 */
 	public Scenario initAltScenario(Simulator sim) {
 		sim.getAClasses().put("GoToLoadingSite", new GoToLoadingSite(sim,0,0,null));
 		sim.getAClasses().put("Load", new Load(sim,0,0,null));
@@ -180,9 +223,12 @@ public class RunLoadHaulDumpSimulationActivity {
 		return altScenario;
 	}
 
-	/*******************************************************
-	 Simulation Scenario
-	 ********************************************************/
+
+	/**
+	 * Initialization of a basic simulation scenario
+	 * @param sim - current simulation
+	 * @return initialized simulation scenario object
+	 */
 	private Scenario initScenario(Simulator sim) {
 		sim.getAClasses().put("GoToLoadingSite", new GoToLoadingSite(sim,0,0,null));
 		sim.getAClasses().put("Load", new Load(sim,0,0,null));
@@ -192,7 +238,6 @@ public class RunLoadHaulDumpSimulationActivity {
 		sim.getAClasses().put("Dump", new Dump(sim,0,0,null));
 		Scenario scenario = new Scenario();
 		scenario.setTitle("The default scenario has 5 trucks (with IDs 1-5) and one wheel loader (with ID 11).");
-//		scenario.setDurationInSimTime(300l);
 		// Initial State
 		Consumer<Simulator> setupInitialState = s -> {
 			 // Create initial objects
@@ -234,9 +279,11 @@ public class RunLoadHaulDumpSimulationActivity {
 	}
 
 	
-	/*******************************************************
-	 Simulation Model
-	********************************************************/
+	
+	/**
+	 * Initialization of simulation model parameters
+	 * @return initialized simulation model object
+	 */
 	private Model initializeModel() {
 		Model model = new Model();
 		model.setName("Load-Haul-Dump-1");

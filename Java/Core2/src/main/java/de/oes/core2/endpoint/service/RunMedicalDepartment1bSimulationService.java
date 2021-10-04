@@ -1,4 +1,4 @@
-package de.oes.core2.endpoint.acitivity;
+package de.oes.core2.endpoint.service;
 
 import java.util.Collection;
 import java.util.List;
@@ -28,7 +28,7 @@ import de.oes.core2.sim.TimeUnit;
 import de.oes.core2.sim.eXPERIMENTtYPE;
 
 @Component
-public class RunMedicalDepartment1bSimulationActivity {
+public class RunMedicalDepartment1bSimulationService {
 
 	@Autowired
 	private  AutowireCapableBeanFactory autowireCapableBeanFactory;

@@ -8,45 +8,45 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import de.oes.core2.dto.SimulationSettingsDTO;
-import de.oes.core2.endpoint.acitivity.RunMakeAndDeliverPizzaSimulationActivity;
-import de.oes.core2.endpoint.acitivity.RunLoadHaulDumpSimulationActivity;
-import de.oes.core2.endpoint.acitivity.RunMedicalDepartment1aSimulationActivity;
-import de.oes.core2.endpoint.acitivity.RunMedicalDepartment1bSimulationActivity;
-import de.oes.core2.endpoint.acitivity.RunMedicalDepartment1cSimulationActivity;
-import de.oes.core2.endpoint.acitivity.RunMedicalDepartment2aSimulationActivity;
-import de.oes.core2.endpoint.acitivity.RunMedicalDepartment2bSimulationActivity;
-import de.oes.core2.endpoint.acitivity.RunPizzaService1SimulationActivity;
-import de.oes.core2.endpoint.acitivity.RunPizzaService2SimulationActivity;
+import de.oes.core2.endpoint.service.RunLoadHaulDumpSimulationService;
+import de.oes.core2.endpoint.service.RunMakeAndDeliverPizzaSimulationService;
+import de.oes.core2.endpoint.service.RunMedicalDepartment1aSimulationService;
+import de.oes.core2.endpoint.service.RunMedicalDepartment1bSimulationService;
+import de.oes.core2.endpoint.service.RunMedicalDepartment1cSimulationService;
+import de.oes.core2.endpoint.service.RunMedicalDepartment2aSimulationService;
+import de.oes.core2.endpoint.service.RunMedicalDepartment2bSimulationService;
+import de.oes.core2.endpoint.service.RunPizzaService1SimulationService;
+import de.oes.core2.endpoint.service.RunPizzaService2SimulationService;
 
 @Controller
 public class MaintainObjectEventSimulationsEndpoint {
 
 	@Autowired
-	private RunPizzaService1SimulationActivity pizzaService1;
+	private RunPizzaService1SimulationService pizzaService1;
 	
 	@Autowired
-	private RunPizzaService2SimulationActivity pizzaService2;
+	private RunPizzaService2SimulationService pizzaService2;
 	
 	@Autowired
-	private RunMakeAndDeliverPizzaSimulationActivity makeAndDeliver;
+	private RunMakeAndDeliverPizzaSimulationService makeAndDeliver;
 	
 	@Autowired
-	private RunLoadHaulDumpSimulationActivity loadHaulDumpSimulation;
+	private RunLoadHaulDumpSimulationService loadHaulDumpSimulation;
 	
 	@Autowired
-	private RunMedicalDepartment1aSimulationActivity runMedDep1a;
+	private RunMedicalDepartment1aSimulationService runMedDep1a;
 	
 	@Autowired
-	private RunMedicalDepartment1bSimulationActivity runMedDep1b;
+	private RunMedicalDepartment1bSimulationService runMedDep1b;
 	
 	@Autowired
-	private RunMedicalDepartment1cSimulationActivity runMedDep1c;
+	private RunMedicalDepartment1cSimulationService runMedDep1c;
 	
 	@Autowired
-	private RunMedicalDepartment2aSimulationActivity runMedDep2a;
+	private RunMedicalDepartment2aSimulationService runMedDep2a;
 	
 	@Autowired
-	private RunMedicalDepartment2bSimulationActivity runMedDep2b;
+	private RunMedicalDepartment2bSimulationService runMedDep2b;
 	
 	@RequestMapping("/")
 	public String index() {
