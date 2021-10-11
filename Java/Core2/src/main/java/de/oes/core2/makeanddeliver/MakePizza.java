@@ -30,7 +30,7 @@ public class MakePizza extends aCTIVITY {
 	
 	public MakePizza(Simulator sim, Number id, Number startTime, Number duration) {
 		super(sim, id, null, startTime, duration, null);
-		this.durationFunc = MakePizza::duration;
+		this.durationFunc = () -> Rand.triangular(3, 6, 4);
 		
 		//pizzaMakers
 		rESOURCErOLE rr = new rESOURCErOLE();
