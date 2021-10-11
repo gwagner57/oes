@@ -7,7 +7,7 @@ if (typeof oes !== "object") {
     simLogDecimalPlaces: 2
   };
 }
-oes.ui.actStat = {
+oes.ui.nodeStat = {
   enqu: {title:"enqueued activities"},
   tmout: {title:"number of waiting timeouts (reneging)"},
   start: {title:"started activities"},
@@ -19,13 +19,14 @@ oes.ui.actStat = {
 /*******************************************************
  Create a simulation log entry (table row)
  ********************************************************/
-oes.ui.logSimulationStep = function (simLogTableEl, step, time, objectsStr, eventsStr) {
-  var decPl = oes.defaults.simLogDecimalPlaces,
-      rowEl = simLogTableEl.insertRow();  // create new table row
+oes.ui.logSimulationStep = function (simLogTableEl, step, time, currEvtsStr, objectsStr, futEvtsStr) {
+  const decPl = oes.defaults.simLogDecimalPlaces,
+        rowEl = simLogTableEl.insertRow();  // create new table row
   rowEl.insertCell().textContent = String( step);
   rowEl.insertCell().textContent = String( math.round( time, decPl));
-  rowEl.insertCell().textContent = objectsStr;
-  rowEl.insertCell().textContent = eventsStr;
+  rowEl.insertCell().textContent = currEvtsStr.split("|").map( str => str.substring(0, str.indexOf("@"))).join(", ");
+  rowEl.insertCell().textContent = objectsStr.split("|").join(", ");
+  rowEl.insertCell().textContent = futEvtsStr;
 }
 /*******************************************************
  Display the standalone scenario statistics
@@ -33,19 +34,19 @@ oes.ui.logSimulationStep = function (simLogTableEl, step, time, objectsStr, even
 oes.ui.showStatistics = function (stat) {
   var decPl = oes.defaults.expostStatDecimalPlaces,
       nmrOfPredefStatSlots = "includeTimeouts" in stat ? 2 : 1;
-  var perActyStatTblHeadElemsString="";
+  var perNodeStatTblHeadElemsString="";
 
   function createActStatTableHead()  {
-    const actStat = oes.ui.actStat;
-    var perActyStatHeading="";
-    if (!stat.includeTimeouts) delete actStat.tmout;
-    for (let actStatShortLabel of Object.keys( actStat)) {
-      perActyStatHeading +=
-          `<th title="${actStat[actStatShortLabel].title}">${actStatShortLabel}</th>`;
+    const nodeStat = oes.ui.nodeStat;
+    var perNodeStatHeading="";
+    if (!stat.includeTimeouts) delete nodeStat.tmout;
+    for (const nodeStatShortLabel of Object.keys( nodeStat)) {
+      perNodeStatHeading +=
+          `<th title="${nodeStat[nodeStatShortLabel].title}">${nodeStatShortLabel}</th>`;
     }
-    return perActyStatHeading;
+    return perNodeStatHeading;
   }
-  perActyStatTblHeadElemsString = createActStatTableHead();
+  perNodeStatTblHeadElemsString = createActStatTableHead();
   // create table for user-defined statistics
   if (Object.keys( stat).length > nmrOfPredefStatSlots) {
     const usrStatTblElem = document.createElement("table"),
@@ -55,8 +56,8 @@ oes.ui.showStatistics = function (stat) {
     usrStatTblElem.appendChild( tbodyEl);
     for (const varName of Object.keys( stat)) {
       // skip pre-defined statistics (collection) variables
-      if (["actTypes","resUtil","includeTimeouts"].includes( varName)) continue;
-      let rowEl = tbodyEl.insertRow();  // create new table row
+      if (["networkNodes","resUtil","includeTimeouts"].includes( varName)) continue;
+      const rowEl = tbodyEl.insertRow();  // create new table row
       rowEl.insertCell().textContent = varName;
       rowEl.insertCell().textContent = math.round( stat[varName], decPl);
     }
@@ -64,29 +65,29 @@ oes.ui.showStatistics = function (stat) {
         "afterend", usrStatTblElem);
   }
   // create table for statistics per activity type
-  if (Object.keys( stat.actTypes).length > 0) {
+  if (Object.keys( stat.networkNodes).length > 0) {
     const actStatTblElem = document.createElement("table"),
         tbodyEl = document.createElement("tbody");
     actStatTblElem.id = "activityStatisticsTbl";
-    actStatTblElem.innerHTML = '<caption>Activity statistics</caption>';
+    actStatTblElem.innerHTML = '<caption>Activity Network statistics</caption>';
     actStatTblElem.appendChild( tbodyEl);
     let rowEl = tbodyEl.insertRow();
-    rowEl.innerHTML = "<tr><th>Activity type</th>"+ perActyStatTblHeadElemsString +
+    rowEl.innerHTML = "<tr><th>Activity node</th>"+ perNodeStatTblHeadElemsString +
         "<th>resource utilization</th></tr>";
-    for (const actTypeName of Object.keys( stat.actTypes)) {
-      const actStat = stat.actTypes[actTypeName];
+    for (const nodeName of Object.keys( stat.networkNodes)) {
+      const nodeStat = stat.networkNodes[nodeName];
       const rowEl = tbodyEl.insertRow();
-      rowEl.insertCell().textContent = actTypeName;
-      rowEl.insertCell().textContent = actStat.enqueuedActivities;
+      rowEl.insertCell().textContent = nodeName;
+      rowEl.insertCell().textContent = nodeStat.enqueuedActivities;
       if (stat.includeTimeouts) {
-        rowEl.insertCell().textContent = actStat.waitingTimeouts;
+        rowEl.insertCell().textContent = nodeStat.waitingTimeouts;
       }
-      rowEl.insertCell().textContent = actStat.startedActivities;
-      rowEl.insertCell().textContent = actStat.completedActivities;
-      rowEl.insertCell().textContent = actStat.queueLength.max;
-      rowEl.insertCell().textContent = math.round( actStat.waitingTime.max, decPl);
-      rowEl.insertCell().textContent = math.round( actStat.cycleTime.max, decPl);
-      rowEl.insertCell().textContent = JSON.stringify( actStat.resUtil);
+      rowEl.insertCell().textContent = nodeStat.startedActivities;
+      rowEl.insertCell().textContent = nodeStat.completedActivities;
+      rowEl.insertCell().textContent = nodeStat.queueLength.max;
+      rowEl.insertCell().textContent = math.round( nodeStat.waitingTime.max, decPl);
+      rowEl.insertCell().textContent = math.round( nodeStat.cycleTime.max, decPl);
+      rowEl.insertCell().textContent = JSON.stringify( nodeStat.resUtil);
     }
     document.getElementById("execInfo").insertAdjacentElement(
         "beforebegin", actStatTblElem);
@@ -142,39 +143,39 @@ oes.ui.showSimpleExpResults = function (exp) {
 
   function createSimpleExpResultsTableHead()  {
     // number of user-defined statistics
-    const M = Object.keys( exp.replicStat).length - 1,  // deduct "actTypes"
+    const M = Object.keys( exp.replicStat).length - 1,  // deduct "networkNodes"
           // number of activity types
-          N = Object.keys( exp.replicStat.actTypes).length,
-          actStat = oes.ui.actStat,
-          actStatWithoutTmout = {...actStat};
+          N = Object.keys( exp.replicStat.networkNodes).length,
+          nodeStat = oes.ui.nodeStat,
+          actStatWithoutTmout = {...nodeStat};
     var colHeadingsRow="", usrDefStatVarHeads="", actTypeHeads="", nmrOfTmoutStat=0,
         perActyStatHeading="", perActyStatHeadingWithoutTmout="", perActyStatHeads = "",
-        NAS = Object.keys( actStat).length - 1;  // number of activity statistics without tmout
+        NAS = Object.keys( nodeStat).length - 1;  // number of activity statistics without tmout
     // drop tmout entry
     delete actStatWithoutTmout.tmout;
     // create heading for activity type with tmout
-    for (let actStatShortLabel of Object.keys( actStat)) {
+    for (let actStatShortLabel of Object.keys( nodeStat)) {
       perActyStatHeading +=
-          `<th title="${actStat[actStatShortLabel].title}">${actStatShortLabel}</th>`;
+          `<th title="${nodeStat[actStatShortLabel].title}">${actStatShortLabel}</th>`;
     }
     // create heading for activity type without tmout
     for (let actStatShortLabel of Object.keys( actStatWithoutTmout)) {
       perActyStatHeadingWithoutTmout +=
-          `<th title="${actStat[actStatShortLabel].title}">${actStatShortLabel}</th>`;
+          `<th title="${nodeStat[actStatShortLabel].title}">${actStatShortLabel}</th>`;
     }
-    for (const actTypeName of Object.keys( exp.replicStat.actTypes)) {
-      const replActStat = exp.replicStat.actTypes[actTypeName];
+    for (const nodeName of Object.keys( exp.replicStat.networkNodes)) {
+      const replActStat = exp.replicStat.networkNodes[nodeName];
       perActyStatHeads += replActStat.waitingTimeouts ?
           perActyStatHeading : perActyStatHeadingWithoutTmout;
       if (replActStat.waitingTimeouts) nmrOfTmoutStat++;
     }
     for (const key of Object.keys( exp.replicStat)) {
       const thStartTag = N>0 ? "<th rowspan='2'>" : "<th>";
-      usrDefStatVarHeads += key !== "actTypes" ? thStartTag + key +"</th>" : "";
+      usrDefStatVarHeads += key !== "networkNodes" ? thStartTag + key +"</th>" : "";
     }
-    actTypeHeads = Object.keys( exp.replicStat.actTypes).reduce( function (prev, actTypeName) {
-      const n = exp.replicStat.actTypes[actTypeName].waitingTimeouts ? NAS+1 : NAS;
-      return prev + `<th colspan='${n}'>${actTypeName}</th>`;
+    actTypeHeads = Object.keys( exp.replicStat.networkNodes).reduce( function (prev, nodeName) {
+      const n = exp.replicStat.networkNodes[nodeName].waitingTimeouts ? NAS+1 : NAS;
+      return prev + `<th colspan='${n}'>${nodeName}</th>`;
     },"");
     colHeadingsRow = `<tr><th rowspan='${2 + (N>0?1:0)}'>Replication</th>`;
     colHeadingsRow += M > 0 ? `<th colspan='${M}'>User-Def. Statistics</th>`:"";
@@ -191,13 +192,13 @@ oes.ui.showSimpleExpResults = function (exp) {
     const rowEl = tbodyEl.insertRow();  // create new table row
     rowEl.insertCell().textContent = String(i+1);  // replication No
     for (const varName of Object.keys( exp.replicStat)) {
-      if (varName !== "actTypes") {  // key is a user-defined statistics variable name
+      if (varName !== "networkNodes") {  // key is a user-defined statistics variable name
         const val = exp.replicStat[varName][i];
         rowEl.insertCell().textContent = math.round( val, decPl);
       }
     }
-    for (const actTypeName of Object.keys( exp.replicStat.actTypes)) {
-      const replActStat = exp.replicStat.actTypes[actTypeName];
+    for (const nodeName of Object.keys( exp.replicStat.networkNodes)) {
+      const replActStat = exp.replicStat.networkNodes[nodeName];
       rowEl.insertCell().textContent = replActStat["enqueuedActivities"][i];
       if (replActStat["waitingTimeouts"]) {
         rowEl.insertCell().textContent = replActStat["waitingTimeouts"][i];
@@ -209,7 +210,7 @@ oes.ui.showSimpleExpResults = function (exp) {
         rowEl.insertCell().textContent = Number.isInteger(val) ? val : math.round( val, decPl);
       }
       /*****TODO: support also the following statistics *****/
-      //actStat.resUtil = {};
+      //nodeStat.resUtil = {};
     }
   }
   // create footer with summary statistics
@@ -217,19 +218,19 @@ oes.ui.showSimpleExpResults = function (exp) {
     rowEl = tbodyEl.insertRow();  // create new table row
     rowEl.insertCell().textContent = math.stat.summary[aggr].label;
     for (const varName of Object.keys( exp.summaryStat)) {
-      if (varName !== "actTypes") {  // varName is a user-defined statistics variable name
+      if (varName !== "networkNodes") {  // varName is a user-defined statistics variable name
         const val = exp.summaryStat[varName][aggr];
         rowEl.insertCell().textContent = math.round( val, decPl);
       }
     }
-    for (const actTypeName of Object.keys( exp.summaryStat.actTypes)) {
-      const sumActStat = exp.summaryStat.actTypes[actTypeName];
+    for (const nodeName of Object.keys( exp.summaryStat.networkNodes)) {
+      const sumActStat = exp.summaryStat.networkNodes[nodeName];
       for (const statVarName of Object.keys( sumActStat)) {
         const val = sumActStat[statVarName][aggr];
         rowEl.insertCell().textContent = math.round( val, decPl);
       }
       /*****TODO: support also the following statistics *****/
-      //actStat.resUtil = {};
+      //nodeStat.resUtil = {};
     }
   }
   document.getElementById("simInfo").insertAdjacentElement( "afterend", tableEl);

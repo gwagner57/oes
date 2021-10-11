@@ -8,20 +8,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta charset="utf-8">
-  <title>DES Example Service Desk</title>
+  <title>DES Example: A Service Desk System as a Processing Network</title>
   <meta name="viewport" content="width=device-width, initial-scale = 1.0" />
-  <style>
-    table {
-      border: thin solid black;
-      /* margin: 1em auto; */
-      border-collapse: collapse;
-      empty-cells: show;
-    }
-    table td, table th {
-      border: thin solid black;
-      padding: 0.2em;
-    }
-  </style>
+    <link href="../../../css/index.css" rel="stylesheet" />
     <script src="../lib/math.js"></script>
     <script src="../lib/util.js"></script>
     <script src="../lib/idb5.js"></script>
@@ -40,7 +29,18 @@
     <script src="simulation.js"></script>
 </head>
 <body>
- <h1>Service Desk Simulation</h1>
+<div><small>An <em><a href="https://gwagner57.github.io/oes/">Object Event Simulation (OES)</a></em> example model.
+    You can download and inspect its code from the <a href="https://github.com/gwagner57/oes/tree/master/docs/js/Core2">OES
+        GitHub repo</a>.</small></div>
+ <figure class="right"><img alt="Process Design Model" src="PDM.svg" width="500" /></figure>
+ <h1>A Service Desk System as a Processing Network</h1>
+ <p id="copyright">© 2021 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
+  Brandenburg University of Technology, Germany.</p>
+ <p>This minimal <em>Processing Network</em> model consists of three nodes: an <em>entry node</em> where customers arrive,
+  a <em>processing node</em> where service activities are performed on customers, and an <em>exit node</em>
+  where customers depart. These nodes are connected with <em>processing flow</em> arrows combining event/activity
+  scheduling with object flow. The processing node's setting <i>processingCapacity=1</i> means that the
+  node's processing station is a resource that can process exactly one processing object at a time.</p>
  <form id="run">
      <div><label>Select scenario: <select name="selScen"></select></label></div>
      <div><button type="button" onclick="run()">Run</button> <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>
@@ -51,7 +51,7 @@
  <table style="display: none">
      <caption>Simulation Log</caption>
      <thead>
-     <tr><th>Step</th><th>Time</th><th>System State</th><th>Future Events</th></tr>
+     <tr><th>Step</th><th>Time</th><th>Current Events</th><th>System State</th><th>Future Events</th></tr>
      </thead>
      <tbody id="simLog"></tbody>
  </table>

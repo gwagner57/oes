@@ -152,7 +152,7 @@ function run() {
     if (e.data.step !== undefined) {  // create simulation log entry
       simLogTableEl.parentElement.style.display = "block";
       oes.ui.logSimulationStep( simLogTableEl, e.data.step, e.data.time,
-          e.data.objectsStr, e.data.eventsStr);
+          e.data.currEvtsStr, e.data.objectsStr, e.data.futEvtsStr);
     } else if (e.data.expScenNo !== undefined) {  // parameter variation experiment
       oes.ui.showResultsFromParVarExpScenarioRun( e.data, statisticsTableEl);
     } else { // standalone simulation run or simple experiment

@@ -14,5 +14,5 @@ class NewCase extends eVENT {
   }
 }
 // Enqueue a new planned examination (of the newly arrived patient)
-NewCase.successorActivity = "Examination";
+NewCase.successorNode = "Examination";
 // = Examination.tasks.enqueue( new Examination());

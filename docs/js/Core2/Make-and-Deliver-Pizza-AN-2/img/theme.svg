@@ -1,0 +1,1392 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="7.1260753in"
+   height="2.105644in"
+   viewBox="0 0 513.07763 151.60629"
+   xml:space="preserve"
+   color-interpolation-filters="sRGB"
+   class="st22"
+   version="1.1"
+   id="svg292"
+   sodipodi:docname="theme.svg"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"><metadata
+   id="metadata296"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1920"
+   inkscape:window-height="1001"
+   id="namedview294"
+   showgrid="false"
+   inkscape:showpageshadow="false"
+   showborder="false"
+   inkscape:zoom="0.84778383"
+   inkscape:cx="235.83051"
+   inkscape:cy="194.42906"
+   inkscape:window-x="-9"
+   inkscape:window-y="-9"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="svg292" />
+	<v:documentProperties
+   v:langID="1033"
+   v:viewMarkup="false" />
+
+	<style
+   type="text/css"
+   id="style2">
+	<![CDATA[
+		.st1 {fill:none;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.72}
+		.st2 {fill:#000000;font-family:Calibri;font-size:0.666664em}
+		.st3 {fill:#ffffff}
+		.st4 {stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.72}
+		.st5 {fill:none;stroke:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.75}
+		.st6 {font-size:1em}
+		.st7 {fill:#ffffff;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.75}
+		.st8 {marker-end:url(#mrkr26-40);stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.5}
+		.st9 {fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1;stroke-width:0.13368983957219}
+		.st10 {marker-end:url(#mrkr13-72);stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.5}
+		.st11 {fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1;stroke-width:0.25773195876289}
+		.st12 {fill:#ffffff;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.72}
+		.st13 {marker-end:url(#mrkr11-87);stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.5}
+		.st14 {fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1;stroke-width:0.21739130434783}
+		.st15 {visibility:visible}
+		.st16 {fill:#7f7f7f;stroke:#7f7f7f;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.25}
+		.st17 {fill:#f2f2f2;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.25}
+		.st18 {stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.5}
+		.st19 {stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.75}
+		.st20 {stroke:#000000;stroke-dasharray:5.25,3.75;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.75}
+		.st21 {fill:#ffffff;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.24}
+		.st22 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+	]]>
+	</style>
+
+	<defs
+   id="Markers">
+		<g
+   id="lend26">
+			<path
+   d="m 1.5,-0.75 v 1.5 m 0.75,-1.5 v 1.5 M 3,-0.75 v 1.5"
+   style="fill:none;stroke-linecap:round;stroke-linejoin:round"
+   id="path4" />
+		</g>
+		<marker
+   id="mrkr26-40"
+   class="st9"
+   v:arrowType="26"
+   v:arrowSize="3"
+   orient="auto"
+   markerUnits="strokeWidth"
+   overflow="visible">
+			<use
+   xlink:href="#lend26"
+   transform="scale(-7.48)"
+   id="use7"
+   x="0"
+   y="0"
+   width="100%"
+   height="100%" />
+		</marker>
+		<g
+   id="lend13">
+			<path
+   d="M 3,1 0,0 3,-1 v 2"
+   style="stroke:none"
+   id="path10" />
+		</g>
+		<marker
+   id="mrkr13-72"
+   class="st11"
+   v:arrowType="13"
+   v:arrowSize="0"
+   v:setback="11.64"
+   refX="-11.64"
+   orient="auto"
+   markerUnits="strokeWidth"
+   overflow="visible">
+			<use
+   xlink:href="#lend13"
+   transform="scale(-3.88)"
+   id="use13"
+   x="0"
+   y="0"
+   width="100%"
+   height="100%" />
+		</marker>
+		<g
+   id="lend11">
+			<path
+   d="m 0.75,-0.75 v 1.5 h -1.5 v -1.5 h 1.5"
+   style="stroke:none"
+   id="path16" />
+		</g>
+		<marker
+   id="mrkr11-87"
+   class="st14"
+   v:arrowType="11"
+   v:arrowSize="1"
+   v:setback="3.45"
+   refX="-3.45"
+   orient="auto"
+   markerUnits="strokeWidth"
+   overflow="visible">
+			<use
+   xlink:href="#lend11"
+   transform="scale(-4.6)"
+   id="use19"
+   x="0"
+   y="0"
+   width="100%"
+   height="100%" />
+		</marker>
+	</defs>
+	<g
+   v:mID="0"
+   v:index="1"
+   v:groupContext="foregroundPage"
+   id="g290"
+   transform="translate(-0.516047,-0.124)"
+   inkscape:export-xdpi="210.49455"
+   inkscape:export-ydpi="210.49455">
+		<title
+   id="title23">Page-1</title>
+		<v:pageProperties
+   v:drawingScale="0.0393701"
+   v:pageScale="0.0393701"
+   v:drawingUnits="24"
+   v:shadowOffsetX="8.50394"
+   v:shadowOffsetY="-8.50394" />
+		<v:layer
+   v:name="Swimlanes"
+   v:index="0"
+   v:snap="false"
+   v:glue="false" />
+		<g
+   id="shape2-1"
+   v:mID="2"
+   v:groupContext="shape"
+   v:layerMember="0"
+   transform="translate(242.373,-0.72)">
+			<title
+   id="title25">Swimlane.20</title>
+			<desc
+   id="desc27">:ScooterDriver</desc>
+			<v:userDefs>
+				<v:ud
+   v:nameU="UMLShapeType"
+   v:val="VT0(63):26" />
+				<v:ud
+   v:nameU="UMLObjectGUID"
+   v:val="VT4({BAA3C790-207E-41E1-A3A3-B0B34AF5632D})" />
+				<v:ud
+   v:nameU="UMLError"
+   v:val="VT0(0):26" />
+				<v:ud
+   v:nameU="UMLPresOption1"
+   v:val="VT0(1):26" />
+				<v:ud
+   v:nameU="UMLVersion"
+   v:val="VT0(2):26" />
+				<v:ud
+   v:nameU="visDescription"
+   v:val="VT4(Represents a partition for organizing responsibility for activities.)" />
+				<v:ud
+   v:nameU="visVersion"
+   v:val="VT0(14):26" />
+			</v:userDefs>
+			<v:textBlock
+   v:margins="rect(4,4,4,4)"
+   v:tabSpace="42.5197"
+   v:verticalAlign="0" />
+			<v:textRect
+   cx="55.8425"
+   cy="96.4876"
+   width="111.69"
+   height="107.717" />
+			<rect
+   x="0"
+   y="42.629299"
+   width="111.685"
+   height="107.717"
+   class="st1"
+   id="rect29" />
+			<text
+   x="32.330002"
+   y="53.830002"
+   class="st2"
+   v:langID="1031"
+   id="text31"><v:paragraph
+   v:horizAlign="1" /><v:tabList />:ScooterDriver</text>		</g>
+		<g
+   id="shape3-4"
+   v:mID="3"
+   v:groupContext="shape"
+   v:layerMember="0"
+   transform="translate(128.722,-0.72)">
+			<title
+   id="title34">Swimlane.19</title>
+			<desc
+   id="desc36">pizzaMakers[2] : PizzaMaker</desc>
+			<v:userDefs>
+				<v:ud
+   v:nameU="UMLShapeType"
+   v:val="VT0(63):26" />
+				<v:ud
+   v:nameU="UMLObjectGUID"
+   v:val="VT4({35DEA3DB-C994-4F50-8F93-E949419668BD})" />
+				<v:ud
+   v:nameU="UMLError"
+   v:val="VT0(0):26" />
+				<v:ud
+   v:nameU="UMLPresOption1"
+   v:val="VT0(1):26" />
+				<v:ud
+   v:nameU="UMLVersion"
+   v:val="VT0(2):26" />
+				<v:ud
+   v:nameU="visDescription"
+   v:val="VT4(Represents a partition for organizing responsibility for activities.)" />
+				<v:ud
+   v:nameU="visVersion"
+   v:val="VT0(14):26" />
+			</v:userDefs>
+			<v:textBlock
+   v:margins="rect(4,4,4,4)"
+   v:tabSpace="42.5197"
+   v:verticalAlign="0" />
+			<v:textRect
+   cx="56.6929"
+   cy="96.4876"
+   width="113.39"
+   height="107.717" />
+			<rect
+   x="0"
+   y="42.629299"
+   width="113.386"
+   height="107.717"
+   class="st1"
+   id="rect38" />
+			<text
+   x="10.53"
+   y="53.830002"
+   class="st2"
+   v:langID="1031"
+   id="text40"><v:paragraph
+   v:horizAlign="1" /><v:tabList />pizzaMakers[2] : PizzaMaker</text>		</g>
+		<g
+   id="shape4-7"
+   v:mID="4"
+   v:groupContext="shape"
+   v:layerMember="0"
+   transform="translate(1.16339,-0.72)">
+			<title
+   id="title43">Swimlane</title>
+			<desc
+   id="desc45">:OrderTaker</desc>
+			<v:userDefs>
+				<v:ud
+   v:nameU="UMLShapeType"
+   v:val="VT0(63):26" />
+				<v:ud
+   v:nameU="UMLObjectGUID"
+   v:val="VT4({31CCCDD7-0C75-4B73-A36C-A0B9376E5CBC})" />
+				<v:ud
+   v:nameU="UMLError"
+   v:val="VT0(0):26" />
+				<v:ud
+   v:nameU="UMLPresOption1"
+   v:val="VT0(1):26" />
+				<v:ud
+   v:nameU="UMLVersion"
+   v:val="VT0(2):26" />
+				<v:ud
+   v:nameU="visDescription"
+   v:val="VT4(Represents a partition for organizing responsibility for activities.)" />
+				<v:ud
+   v:nameU="visVersion"
+   v:val="VT0(14):26" />
+			</v:userDefs>
+			<v:textBlock
+   v:margins="rect(4,4,4,4)"
+   v:tabSpace="42.5197"
+   v:verticalAlign="0" />
+			<v:textRect
+   cx="63.7795"
+   cy="96.4876"
+   width="127.56"
+   height="107.717" />
+			<rect
+   x="0"
+   y="42.629299"
+   width="127.559"
+   height="107.717"
+   class="st1"
+   id="rect47" />
+			<text
+   x="44.110001"
+   y="53.830002"
+   class="st2"
+   v:langID="1031"
+   id="text49"><v:paragraph
+   v:horizAlign="1" /><v:tabList />:OrderTaker</text>		</g>
+		<g
+   id="group5-10"
+   transform="translate(55.5005,-36.2407)"
+   v:mID="5"
+   v:groupContext="group">
+			<v:userDefs>
+				<v:ud
+   v:nameU="UMLShapeType"
+   v:val="VT0(40):26" />
+				<v:ud
+   v:nameU="UMLObjectGUID"
+   v:val="VT4({402D57AA-8CF2-45CF-B47E-80A4069B9F57})" />
+				<v:ud
+   v:nameU="UMLError"
+   v:val="VT0(0):26" />
+				<v:ud
+   v:nameU="UMLPresOption1"
+   v:val="VT0(1):26" />
+				<v:ud
+   v:nameU="UMLSuppressOption"
+   v:val="VT0(0):26" />
+				<v:ud
+   v:nameU="UMLVersion"
+   v:val="VT0(2):26" />
+				<v:ud
+   v:nameU="UMLAutoLockTextEdit"
+   v:val="VT0(1):26" />
+				<v:ud
+   v:nameU="visDescription"
+   v:val="VT4(Represents a condition during which an object satisfies some condition, performs an action or waits for an event.)" />
+				<v:ud
+   v:nameU="visVersion"
+   v:val="VT0(14):26" />
+			</v:userDefs>
+			<title
+   id="title52">State</title>
+			<g
+   id="shape6-11"
+   v:mID="6"
+   v:groupContext="shape">
+				<title
+   id="title54">Sheet.6</title>
+				<path
+   d="m 9,150.35 h 46.7 a 9,9 -180 0 0 9,-9 v -35.86 a 9,9 -180 0 0 -9,-9 H 9 a 9,9 -180 0 0 -9,9 v 35.86 a 9,9 -180 0 0 9,9 z"
+   class="st3"
+   id="path56" />
+				<path
+   d="m 9,150.35 h 46.7 a 9,9 -180 0 0 9,-9 v -35.86 a 9,9 -180 0 0 -9,-9 H 9 a 9,9 -180 0 0 -9,9 v 35.86 a 9,9 -180 0 0 9,9"
+   class="st4"
+   id="path58" />
+				<path
+   d="M 0,123.14 H 64.7"
+   class="st4"
+   id="path60" />
+			</g>
+			<g
+   id="shape7-15"
+   v:mID="7"
+   v:groupContext="shape">
+				<title
+   id="title63">Transitions</title>
+				<desc
+   id="desc65">wtmout=DU(3,6) duration=U(1,4)</desc>
+				<v:textBlock
+   v:margins="rect(4,4,4,4)"
+   v:tabSpace="42.5197"
+   v:verticalAlign="0" />
+				<v:textRect
+   cx="32.3494"
+   cy="136.744"
+   width="64.7"
+   height="27.2035" />
+				<rect
+   x="0"
+   y="123.142"
+   width="64.698799"
+   height="27.203501"
+   class="st5"
+   id="rect67" />
+				<text
+   x="4"
+   y="134.34"
+   class="st2"
+   v:langID="1031"
+   id="text71"><v:paragraph /><v:tabList />wtmout=DU(3,6)<v:newlineChar /><tspan
+   x="4"
+   dy="1.2em"
+   class="st6"
+   id="tspan69">duration</tspan>=U(1,4)</text>			</g>
+			<g
+   id="shape8-19"
+   v:mID="8"
+   v:groupContext="shape"
+   transform="translate(5.34941,-27.2035)">
+				<title
+   id="title74">Name</title>
+				<desc
+   id="desc76">:TakeOrder</desc>
+				<v:textBlock
+   v:margins="rect(4,4,4,4)"
+   v:tabSpace="42.5197" />
+				<v:textRect
+   cx="27"
+   cy="137.746"
+   width="54"
+   height="25.2" />
+				<rect
+   x="0"
+   y="125.146"
+   width="54"
+   height="25.200001"
+   class="st5"
+   id="rect78" />
+				<text
+   x="8.7299995"
+   y="140.14999"
+   class="st2"
+   v:langID="1031"
+   id="text80"><v:paragraph
+   v:horizAlign="1" /><v:tabList />:TakeOrder</text>			</g>
+		</g>
+		<g
+   id="shape9-22"
+   v:mID="9"
+   v:groupContext="shape"
+   transform="translate(10.0987,-54.6659)">
+			<title
+   id="title84">Initial State</title>
+			<v:userDefs>
+				<v:ud
+   v:nameU="UMLShapeType"
+   v:val="VT0(42):26" />
+				<v:ud
+   v:nameU="UMLObjectGUID"
+   v:val="VT4({F79F1E4F-0CE0-44BC-B826-3AD703E8CB8B})" />
+				<v:ud
+   v:nameU="UMLError"
+   v:val="VT0(0):26" />
+				<v:ud
+   v:nameU="UMLPresOptions"
+   v:val="VT0(3):26" />
+				<v:ud
+   v:nameU="UMLVersion"
+   v:val="VT0(2):26" />
+				<v:ud
+   v:nameU="visDescription"
+   v:val="VT4(Represents the point at which a newly created object starts. )" />
+				<v:ud
+   v:nameU="visVersion"
+   v:val="VT0(14):26" />
+			</v:userDefs>
+			<path
+   d="m 0,141.84 a 8.505,8.505 0 1 1 17.01,0 8.505,8.505 0 0 1 -17.01,0 z"
+   class="st7"
+   id="path86" />
+		</g>
+		<g
+   id="group10-24"
+   transform="translate(151.824,-36.1684)"
+   v:mID="10"
+   v:groupContext="group">
+			<v:userDefs>
+				<v:ud
+   v:nameU="UMLShapeType"
+   v:val="VT0(40):26" />
+				<v:ud
+   v:nameU="UMLObjectGUID"
+   v:val="VT4({140F78DD-5B11-4BCB-BE37-3C2BCFF0D04D})" />
+				<v:ud
+   v:nameU="UMLError"
+   v:val="VT0(0):26" />
+				<v:ud
+   v:nameU="UMLPresOption1"
+   v:val="VT0(1):26" />
+				<v:ud
+   v:nameU="UMLSuppressOption"
+   v:val="VT0(0):26" />
+				<v:ud
+   v:nameU="UMLVersion"
+   v:val="VT0(2):26" />
+				<v:ud
+   v:nameU="UMLAutoLockTextEdit"
+   v:val="VT0(1):26" />
+				<v:ud
+   v:nameU="visDescription"
+   v:val="VT4(Represents a condition during which an object satisfies some condition, performs an action or waits for an event.)" />
+				<v:ud
+   v:nameU="visVersion"
+   v:val="VT0(14):26" />
+			</v:userDefs>
+			<title
+   id="title89">State.9</title>
+			<g
+   id="shape11-25"
+   v:mID="11"
+   v:groupContext="shape">
+				<title
+   id="title91">Sheet.11</title>
+				<path
+   d="m 9,150.35 h 53.29 a 9,9 -180 0 0 9,-9 v -35.86 a 9,9 -180 0 0 -9,-9 H 9 a 9,9 -180 0 0 -9,9 v 35.86 a 9,9 -180 0 0 9,9 z"
+   class="st3"
+   id="path93" />
+				<path
+   d="m 9,150.35 h 53.29 a 9,9 -180 0 0 9,-9 v -35.86 a 9,9 -180 0 0 -9,-9 H 9 a 9,9 -180 0 0 -9,9 v 35.86 a 9,9 -180 0 0 9,9"
+   class="st4"
+   id="path95" />
+				<path
+   d="M 0,125.12 H 71.29"
+   class="st4"
+   id="path97" />
+			</g>
+			<g
+   id="shape12-29"
+   v:mID="12"
+   v:groupContext="shape">
+				<title
+   id="title100">Transitions</title>
+				<desc
+   id="desc102">duration=Tri(3,4,6)</desc>
+				<v:textBlock
+   v:margins="rect(4,4,4,4)"
+   v:tabSpace="42.5197"
+   v:verticalAlign="0" />
+				<v:textRect
+   cx="35.6465"
+   cy="137.732"
+   width="71.3"
+   height="25.2283" />
+				<rect
+   x="0"
+   y="125.117"
+   width="71.293098"
+   height="25.2283"
+   class="st5"
+   id="rect104" />
+				<text
+   x="4"
+   y="136.32001"
+   class="st2"
+   v:langID="1031"
+   id="text106"><v:paragraph /><v:tabList />duration=Tri(3,4,6)</text>			</g>
+			<g
+   id="shape13-32"
+   v:mID="13"
+   v:groupContext="shape"
+   transform="translate(8.64654,-25.2283)">
+				<title
+   id="title109">Name</title>
+				<desc
+   id="desc111">:Make Pizza</desc>
+				<v:textBlock
+   v:margins="rect(4,4,4,4)"
+   v:tabSpace="42.5197" />
+				<v:textRect
+   cx="27"
+   cy="137.746"
+   width="54"
+   height="25.2" />
+				<rect
+   x="0"
+   y="125.146"
+   width="54"
+   height="25.200001"
+   class="st5"
+   id="rect113" />
+				<text
+   x="7.8200002"
+   y="140.14999"
+   class="st2"
+   v:langID="1031"
+   id="text115"><v:paragraph
+   v:horizAlign="1" /><v:tabList />:Make Pizza</text>			</g>
+		</g>
+		<g
+   id="shape14-35"
+   v:mID="14"
+   v:groupContext="shape"
+   transform="rotate(0.131041,27680.165,52674.074)">
+			<title
+   id="title119">Sheet.14</title>
+			<path
+   d="M 0,150.35 H 31.62"
+   class="st8"
+   id="path121" />
+		</g>
+		<g
+   id="group15-41"
+   transform="translate(263.349,-36.2746)"
+   v:mID="15"
+   v:groupContext="group">
+			<v:userDefs>
+				<v:ud
+   v:nameU="UMLShapeType"
+   v:val="VT0(40):26" />
+				<v:ud
+   v:nameU="UMLObjectGUID"
+   v:val="VT4({4126AC5E-BFF6-491F-ADB2-26B593C028E0})" />
+				<v:ud
+   v:nameU="UMLError"
+   v:val="VT0(0):26" />
+				<v:ud
+   v:nameU="UMLPresOption1"
+   v:val="VT0(1):26" />
+				<v:ud
+   v:nameU="UMLSuppressOption"
+   v:val="VT0(0):26" />
+				<v:ud
+   v:nameU="UMLVersion"
+   v:val="VT0(2):26" />
+				<v:ud
+   v:nameU="UMLAutoLockTextEdit"
+   v:val="VT0(1):26" />
+				<v:ud
+   v:nameU="visDescription"
+   v:val="VT4(Represents a condition during which an object satisfies some condition, performs an action or waits for an event.)" />
+				<v:ud
+   v:nameU="visVersion"
+   v:val="VT0(14):26" />
+			</v:userDefs>
+			<title
+   id="title124">State.17</title>
+			<g
+   id="shape16-42"
+   v:mID="16"
+   v:groupContext="shape">
+				<title
+   id="title126">Sheet.16</title>
+				<path
+   d="m 9,150.35 h 65.46 a 9,9 -180 0 0 9,-9 v -35.86 a 9,9 -180 0 0 -9,-9 H 9 a 9,9 -180 0 0 -9,9 v 35.86 a 9,9 -180 0 0 9,9 z"
+   class="st3"
+   id="path128" />
+				<path
+   d="m 9,150.35 h 65.46 a 9,9 -180 0 0 9,-9 v -35.86 a 9,9 -180 0 0 -9,-9 H 9 a 9,9 -180 0 0 -9,9 v 35.86 a 9,9 -180 0 0 9,9"
+   class="st4"
+   id="path130" />
+				<path
+   d="M 0,125.12 H 83.46"
+   class="st4"
+   id="path132" />
+			</g>
+			<g
+   id="shape17-46"
+   v:mID="17"
+   v:groupContext="shape">
+				<title
+   id="title135">Transitions</title>
+				<desc
+   id="desc137">duration=Tri(10,15,30)</desc>
+				<v:textBlock
+   v:margins="rect(4,4,4,4)"
+   v:tabSpace="42.5197"
+   v:verticalAlign="0" />
+				<v:textRect
+   cx="41.7287"
+   cy="137.732"
+   width="83.46"
+   height="25.2283" />
+				<rect
+   x="0"
+   y="125.117"
+   width="83.457397"
+   height="25.2283"
+   class="st5"
+   id="rect139" />
+				<text
+   x="4"
+   y="136.32001"
+   class="st2"
+   v:langID="1031"
+   id="text141"><v:paragraph /><v:tabList />duration=Tri(10,15,30)</text>			</g>
+			<g
+   id="shape18-49"
+   v:mID="18"
+   v:groupContext="shape"
+   transform="translate(14.7287,-25.2283)">
+				<title
+   id="title144">Name</title>
+				<desc
+   id="desc146">:DeliverPizza</desc>
+				<v:textBlock
+   v:margins="rect(4,4,4,4)"
+   v:tabSpace="42.5197" />
+				<v:textRect
+   cx="27"
+   cy="137.746"
+   width="54"
+   height="25.2" />
+				<rect
+   x="0"
+   y="125.146"
+   width="54"
+   height="25.200001"
+   class="st5"
+   id="rect148" />
+				<text
+   x="6.3899999"
+   y="140.14999"
+   class="st2"
+   v:langID="1031"
+   id="text150"><v:paragraph
+   v:horizAlign="1" /><v:tabList />:DeliverPizza</text>			</g>
+		</g>
+		<g
+   id="shape19-52"
+   v:mID="19"
+   v:groupContext="shape"
+   transform="translate(0.75,-41.9229)">
+			<title
+   id="title154">Sheet.19</title>
+			<desc
+   id="desc156">:OrderCall</desc>
+			<v:textBlock
+   v:margins="rect(0,0,0,0)"
+   v:tabSpace="42.5197" />
+			<v:textRect
+   cx="20.2559"
+   cy="144.677"
+   width="40.52"
+   height="11.3386" />
+			<rect
+   x="0"
+   y="139.007"
+   width="40.511799"
+   height="11.3386"
+   class="st5"
+   id="rect158" />
+			<text
+   x="3.77"
+   y="147.08"
+   class="st2"
+   v:langID="1031"
+   id="text160"><v:paragraph
+   v:horizAlign="1" /><v:tabList />:OrderCall</text>		</g>
+		<g
+   id="shape20-55"
+   v:mID="20"
+   v:groupContext="shape"
+   transform="translate(27.1065,-63.1698)">
+			<title
+   id="title163">Sheet.20</title>
+			<path
+   d="M 0,150.35 H 28.39"
+   class="st8"
+   id="path165" />
+		</g>
+		<g
+   id="shape21-60"
+   v:mID="21"
+   v:groupContext="shape"
+   transform="rotate(-0.151234,-23793.249,-84410.118)">
+			<title
+   id="title168">Sheet.21</title>
+			<path
+   d="M 0,150.35 H 40.23"
+   class="st8"
+   id="path170" />
+		</g>
+		<g
+   id="shape22-65"
+   v:mID="22"
+   v:groupContext="shape"
+   transform="translate(39.3192,-16.1486)">
+			<title
+   id="title173">Initial State.42</title>
+			<v:userDefs>
+				<v:ud
+   v:nameU="UMLShapeType"
+   v:val="VT0(42):26" />
+				<v:ud
+   v:nameU="UMLObjectGUID"
+   v:val="VT4({B24FC1BB-22BE-4484-82BE-8C122FA54BFE})" />
+				<v:ud
+   v:nameU="UMLError"
+   v:val="VT0(0):26" />
+				<v:ud
+   v:nameU="UMLPresOptions"
+   v:val="VT0(3):26" />
+				<v:ud
+   v:nameU="UMLVersion"
+   v:val="VT0(2):26" />
+				<v:ud
+   v:nameU="visDescription"
+   v:val="VT4(Represents the point at which a newly created object starts. )" />
+				<v:ud
+   v:nameU="visVersion"
+   v:val="VT0(14):26" />
+			</v:userDefs>
+			<path
+   d="m 0,141.84 a 8.505,8.505 0 1 1 17.01,0 8.505,8.505 0 0 1 -17.01,0 z"
+   class="st7"
+   id="path175" />
+		</g>
+		<g
+   id="shape23-67"
+   v:mID="23"
+   v:groupContext="shape"
+   transform="rotate(90,47.0095,151.1595)">
+			<title
+   id="title178">Sheet.23</title>
+			<path
+   d="M 0,150.35 H 7.22"
+   class="st10"
+   id="path180" />
+		</g>
+		<g
+   id="shape24-73"
+   v:mID="24"
+   v:groupContext="shape"
+   transform="translate(59.1617,-14.8932)">
+			<title
+   id="title183">Sheet.24</title>
+			<desc
+   id="desc185">:LostOrder</desc>
+			<v:textBlock
+   v:margins="rect(0,0,0,0)"
+   v:tabSpace="42.5197" />
+			<v:textRect
+   cx="18.4252"
+   cy="144.677"
+   width="36.86"
+   height="11.3386" />
+			<rect
+   x="0"
+   y="139.007"
+   width="36.850399"
+   height="11.3386"
+   class="st5"
+   id="rect187" />
+			<text
+   x="1.13"
+   y="147.08"
+   class="st2"
+   v:langID="1031"
+   id="text189"><v:paragraph
+   v:horizAlign="1" /><v:tabList />:LostOrder</text>		</g>
+		<g
+   id="group25-76"
+   transform="translate(160.778,-4.97197)"
+   v:mID="25"
+   v:groupContext="group">
+			<v:userDefs>
+				<v:ud
+   v:nameU="UMLSuppressOption"
+   v:val="VT0(4):26" />
+				<v:ud
+   v:nameU="UMLVersion"
+   v:val="VT0(2):26" />
+				<v:ud
+   v:nameU="UMLAutoLockTextEdit"
+   v:val="VT0(1):26" />
+				<v:ud
+   v:nameU="UMLShapeType"
+   v:val="VT0(51):26" />
+				<v:ud
+   v:nameU="UMLObjectGUID"
+   v:val="VT4({60B32F84-174F-4F2D-ABAA-32EB5F81AAC5})" />
+				<v:ud
+   v:nameU="UMLError"
+   v:val="VT0(0):26" />
+				<v:ud
+   v:nameU="UMLPresOption1"
+   v:val="VT0(19):26" />
+				<v:ud
+   v:nameU="UMLPresOption2"
+   v:val="VT0(1024):26" />
+				<v:ud
+   v:nameU="DefaultWidth"
+   v:val="VT0(0.74803149606299):24" />
+				<v:ud
+   v:nameU="EnsureWidthOK"
+   v:val="VT0(0.75):0" />
+				<v:ud
+   v:nameU="visDescription"
+   v:val="VT4(Represents an instance of a class.)" />
+				<v:ud
+   v:nameU="visVersion"
+   v:val="VT0(14):26" />
+			</v:userDefs>
+			<title
+   id="title192">Object</title>
+			<g
+   id="shape26-77"
+   v:mID="26"
+   v:groupContext="shape">
+				<title
+   id="title194">Attributes</title>
+			</g>
+			<g
+   id="shape27-79"
+   v:mID="27"
+   v:groupContext="shape">
+				<title
+   id="title197">Name</title>
+				<desc
+   id="desc199">:Oven</desc>
+				<v:userDefs>
+					<v:ud
+   v:nameU="HeightRatio"
+   v:val="VT0(1):24" />
+				</v:userDefs>
+				<v:textBlock
+   v:margins="rect(1,1,1,1)"
+   v:tabSpace="42.5197" />
+				<v:textRect
+   cx="26.9291"
+   cy="143.117"
+   width="53.86"
+   height="14.4567" />
+				<rect
+   x="0"
+   y="135.88901"
+   width="53.858299"
+   height="14.4567"
+   class="st12"
+   id="rect201" />
+				<text
+   x="17.309999"
+   y="145.52"
+   class="st2"
+   v:langID="1031"
+   id="text203"><v:paragraph
+   v:horizAlign="1" /><v:tabList />:Oven</text>			</g>
+		</g>
+		<g
+   id="shape28-82"
+   v:mID="28"
+   v:groupContext="shape"
+   transform="rotate(89.1915,112.07626,227.32883)">
+			<title
+   id="title207">Sheet.28</title>
+			<path
+   d="M 0,150.35 H 15.02"
+   class="st13"
+   id="path209" />
+		</g>
+		<g
+   id="shape29-88"
+   v:mID="29"
+   v:groupContext="shape"
+   transform="translate(176.368,-19.1452)">
+			<title
+   id="title212">Sheet.29</title>
+			<desc
+   id="desc214">1</desc>
+			<v:textBlock
+   v:margins="rect(0,0,0,0)"
+   v:tabSpace="42.5197" />
+			<v:textRect
+   cx="5.54173"
+   cy="144.677"
+   width="11.09"
+   height="11.3386" />
+			<rect
+   x="0"
+   y="139.007"
+   width="11.0835"
+   height="11.3386"
+   class="st5"
+   id="rect216" />
+			<text
+   x="3.51"
+   y="147.08"
+   class="st2"
+   v:langID="1031"
+   id="text218"><v:paragraph
+   v:horizAlign="1" /><v:tabList />1</text>		</g>
+		<g
+   id="group30-91"
+   transform="translate(278.148,-4.97197)"
+   v:mID="30"
+   v:groupContext="group">
+			<v:userDefs>
+				<v:ud
+   v:nameU="UMLSuppressOption"
+   v:val="VT0(4):26" />
+				<v:ud
+   v:nameU="UMLVersion"
+   v:val="VT0(2):26" />
+				<v:ud
+   v:nameU="UMLAutoLockTextEdit"
+   v:val="VT0(1):26" />
+				<v:ud
+   v:nameU="UMLShapeType"
+   v:val="VT0(51):26" />
+				<v:ud
+   v:nameU="UMLObjectGUID"
+   v:val="VT4({E56DE516-BA36-4AD3-8E55-75E0A7A27E1B})" />
+				<v:ud
+   v:nameU="UMLError"
+   v:val="VT0(0):26" />
+				<v:ud
+   v:nameU="UMLPresOption1"
+   v:val="VT0(19):26" />
+				<v:ud
+   v:nameU="UMLPresOption2"
+   v:val="VT0(1024):26" />
+				<v:ud
+   v:nameU="DefaultWidth"
+   v:val="VT0(0.74803149606299):24" />
+				<v:ud
+   v:nameU="EnsureWidthOK"
+   v:val="VT0(0.75):0" />
+				<v:ud
+   v:nameU="visDescription"
+   v:val="VT4(Represents an instance of a class.)" />
+				<v:ud
+   v:nameU="visVersion"
+   v:val="VT0(14):26" />
+			</v:userDefs>
+			<title
+   id="title221">Object.33</title>
+			<g
+   id="shape31-92"
+   v:mID="31"
+   v:groupContext="shape">
+				<title
+   id="title223">Attributes</title>
+			</g>
+			<g
+   id="shape32-94"
+   v:mID="32"
+   v:groupContext="shape">
+				<title
+   id="title226">Name</title>
+				<desc
+   id="desc228">:Scooter</desc>
+				<v:userDefs>
+					<v:ud
+   v:nameU="HeightRatio"
+   v:val="VT0(1):24" />
+				</v:userDefs>
+				<v:textBlock
+   v:margins="rect(1,1,1,1)"
+   v:tabSpace="42.5197" />
+				<v:textRect
+   cx="26.9291"
+   cy="143.117"
+   width="53.86"
+   height="14.4567" />
+				<rect
+   x="0"
+   y="135.88901"
+   width="53.858299"
+   height="14.4567"
+   class="st12"
+   id="rect230" />
+				<text
+   x="13.39"
+   y="145.52"
+   class="st2"
+   v:langID="1031"
+   id="text232"><v:paragraph
+   v:horizAlign="1" /><v:tabList />:Scooter</text>			</g>
+		</g>
+		<g
+   id="shape33-97"
+   v:mID="33"
+   v:groupContext="shape"
+   transform="rotate(90,170.676,284.747)">
+			<title
+   id="title236">Sheet.33</title>
+			<path
+   d="M 0,150.35 H 15.12"
+   class="st13"
+   id="path238" />
+		</g>
+		<g
+   id="shape34-102"
+   v:mID="34"
+   v:groupContext="shape"
+   transform="translate(293.113,-19.9956)">
+			<title
+   id="title241">Sheet.34</title>
+			<desc
+   id="desc243">1</desc>
+			<v:textBlock
+   v:margins="rect(0,0,0,0)"
+   v:tabSpace="42.5197" />
+			<v:textRect
+   cx="5.54173"
+   cy="144.677"
+   width="11.09"
+   height="11.3386" />
+			<rect
+   x="0"
+   y="139.007"
+   width="11.0835"
+   height="11.3386"
+   class="st5"
+   id="rect245" />
+			<text
+   x="3.51"
+   y="147.08"
+   class="st2"
+   v:langID="1031"
+   id="text247"><v:paragraph
+   v:horizAlign="1" /><v:tabList />1</text>		</g>
+		<g
+   id="group35-105"
+   transform="translate(41.5869,-47.0462)"
+   v:mID="35"
+   v:groupContext="group">
+			<title
+   id="title250">Sheet.35</title>
+			<g
+   id="shape36-106"
+   v:mID="36"
+   v:groupContext="shape">
+				<title
+   id="title252">Sheet.36</title>
+				<g
+   id="shadow36-107"
+   v:groupContext="shadow"
+   v:shadowOffsetX="0"
+   v:shadowOffsetY="0"
+   v:shadowType="1"
+   v:shadowScale="1.1"
+   transform="matrix(1.1,0,0,1.1,-0.595276,-14.4393)"
+   class="st15">
+					<circle
+   cx="5.9527602"
+   cy="144.39301"
+   class="st16"
+   id="ellipse254"
+   r="5.9527602" />
+				</g>
+				<circle
+   cx="5.9527602"
+   cy="144.39301"
+   class="st17"
+   id="ellipse257"
+   r="5.9527602" />
+			</g>
+			<g
+   id="shape37-110"
+   v:mID="37"
+   v:groupContext="shape"
+   transform="rotate(90,8.3625,147.9365)">
+				<title
+   id="title260">Sheet.37</title>
+				<path
+   d="M 0,150.35 H 5.1"
+   class="st18"
+   id="path262" />
+			</g>
+			<g
+   id="shape38-113"
+   v:mID="38"
+   v:groupContext="shape"
+   transform="translate(5.95276,-5.66929)">
+				<title
+   id="title265">Sheet.38</title>
+				<path
+   d="M 0,150.35 H 3.69"
+   class="st19"
+   id="path267" />
+			</g>
+		</g>
+		<g
+   id="group39-116"
+   transform="translate(0.636047,-114.106)"
+   v:mID="39"
+   v:groupContext="group">
+			<v:userDefs>
+				<v:ud
+   v:nameU="UMLShapeType"
+   v:val="VT0(30):26" />
+				<v:ud
+   v:nameU="UMLObjectGUID"
+   v:val="VT4({EABFD121-34DD-4357-8167-18E1B2C13D32})" />
+				<v:ud
+   v:nameU="UMLError"
+   v:val="VT0(0):26" />
+				<v:ud
+   v:nameU="UMLVersion"
+   v:val="VT0(2):26" />
+				<v:ud
+   v:nameU="UMLPresOption1"
+   v:val="VT0(10):26" />
+				<v:ud
+   v:nameU="visDescription"
+   v:val="VT4(Represents a semantic relationship among model elements that specifies conditions and propositions that must be maintained as true.)" />
+				<v:ud
+   v:nameU="visVersion"
+   v:val="VT0(14):26" />
+			</v:userDefs>
+			<title
+   id="title271">Constraint</title>
+			<g
+   id="shape40-117"
+   v:mID="40"
+   v:groupContext="shape"
+   transform="translate(64.2876,-18)">
+				<title
+   id="title273">Sheet.40</title>
+				<path
+   d="m 0,150.35 -46.32,60.43"
+   class="st20"
+   id="path275" />
+			</g>
+			<g
+   id="shape41-120"
+   v:mID="41"
+   v:groupContext="shape">
+				<title
+   id="title278">Name</title>
+				<desc
+   id="desc280">{arrivals/minute over 5 hours = [1/6, 1.5, 2/3, 1/6, 1/12]}</desc>
+				<v:textBlock
+   v:margins="rect(4,4,4,4)"
+   v:tabSpace="42.5197" />
+				<v:textRect
+   cx="64.2876"
+   cy="132.346"
+   width="128.58"
+   height="36" />
+				<path
+   d="m 128.58,125.15 -9,-10.8 v 10.8 z M 0,150.35 h 128.58 v -25.2 h -9 v -10.8 H 0 Z"
+   class="st21"
+   id="path282" />
+				<text
+   x="4"
+   y="129.95"
+   class="st2"
+   v:langID="1031"
+   id="text286"><v:paragraph /><v:tabList />{arrivals/minute over 5 hours = <v:newlineChar /><tspan
+   x="4"
+   dy="1.2em"
+   class="st6"
+   id="tspan284">[</tspan>1/6, 1.5, 2/3, 1/6, 1/12]}</text>			</g>
+		</g>
+	</g>
+<g
+   id="Filled_outline"
+   data-name="Filled outline"
+   transform="matrix(0.31319968,0,0,0.31320416,357.73023,-3.7445555)"
+   inkscape:export-xdpi="210.49455"
+   inkscape:export-ydpi="210.49455"><path
+     d="M 488,366.18 V 496 H 232 V 392 l -16,40 -56,-32 23.05,-51.85 a 47.967,47.967 0 0 1 30.07,-26.48 L 272,304 l 16,-8 v -56 h 80 v 56 l 16,8 66.79,15.41 A 48.006,48.006 0 0 1 488,366.18 Z"
+     fill="#fdc8a2"
+     id="path387" /><path
+     d="m 368,240 v 29.29 a 80.052,80.052 0 0 1 -80,0 V 240 Z"
+     fill="#fdbf92"
+     id="path389" /><path
+     d="M 232,496 V 392 l -16,40 -56,-32 23.046,-51.854 a 48,48 0 0 1 30.07,-26.481 L 272,304 l 16,-8 40,64 40,-64 16,8 66.793,15.414 A 48,48 0 0 1 488,366.185 V 416 h -64 v 80"
+     fill="#d65246"
+     id="path391" /><path
+     d="m 288,296 -16,8 v 56 l 32,-16 24,16 z"
+     fill="#df6257"
+     id="path393" /><path
+     d="m 368,296 16,8 v 56 l -32,-16 -24,16 z"
+     fill="#df6257"
+     id="path395" /><path
+     d="m 160,400 -19.086,41.989 A 32.544,32.544 0 0 0 170.541,488 32.543,32.543 0 0 0 200.453,468.276 L 216,432 Z"
+     fill="#fdbf92"
+     id="path397" /><path
+     d="M 201.3,449.471 176,304 H 72 a 32,32 0 0 0 32,32 h 32 V 455.107 A 32.893,32.893 0 0 0 168.893,488 32.892,32.892 0 0 0 201.3,449.471 Z"
+     fill="#fdc8a2"
+     id="path399" /><path
+     d="m 248,104 v 80 a 80,80 0 0 0 80,80 80,80 0 0 0 80,-80 v -80 z"
+     fill="#fdc8a2"
+     id="path401" /><path
+     d="m 248,96 v 22 a 26,26 0 0 0 26,26 72.706,72.706 0 0 0 27,-5.2 72.7,72.7 0 0 1 54,0 72.706,72.706 0 0 0 27,5.2 26,26 0 0 0 26,-26 V 96 Z"
+     fill="#fdbf92"
+     id="path403" /><path
+     d="m 248,128 v -24 h 32 z"
+     fill="#7a432a"
+     id="path405" /><path
+     d="M 408,128 V 104 H 376 Z"
+     fill="#7a432a"
+     id="path407" /><path
+     d="m 368,168 a 16,16 0 1 1 16,-16 16.019,16.019 0 0 1 -16,16 z"
+     fill="#91563a"
+     id="path409" /><path
+     d="m 288,168 a 16,16 0 1 1 16,-16 16.019,16.019 0 0 1 -16,16 z"
+     fill="#91563a"
+     id="path411" /><path
+     d="m 296,24 h 64 a 48,48 0 0 1 48,48 v 32 H 248 V 72 a 48,48 0 0 1 48,-48 z"
+     fill="#c7483c"
+     id="path413" /><path
+     d="m 382,128 a 72.706,72.706 0 0 1 -27,-5.2 72.7,72.7 0 0 0 -54,0 72.706,72.706 0 0 1 -27,5.2 26,26 0 0 1 -26,-26 v -6 l 17.642,-5.881 A 197.2,197.2 0 0 1 328,80 197.2,197.2 0 0 1 390.358,90.119 L 408,96 v 6 a 26,26 0 0 1 -26,26 z"
+     fill="#d65246"
+     id="path415" /><path
+     d="M 318.6,216 H 312 v -16 h 6.6 a 66.019,66.019 0 0 0 29.377,-6.935 l 0.441,-0.22 7.156,14.31 -0.44,0.22 A 82.1,82.1 0 0 1 318.6,216 Z"
+     fill="#fcb079"
+     id="path417" /><path
+     d="m 240,128 h 8 v 48 h -8 a 24,24 0 0 1 -24,-24 24,24 0 0 1 24,-24 z"
+     fill="#fdb683"
+     id="path419" /><path
+     d="m 432,128 h 8 v 48 h -8 a 24,24 0 0 1 -24,-24 24,24 0 0 1 24,-24 z"
+     fill="#fdb683"
+     transform="rotate(180,424,152)"
+     id="path421" /><path
+     d="m 320,352 h 16 v 72 h -16 z"
+     fill="#c7483c"
+     id="path423" /><path
+     d="m 288,376 h 16 v 16 h -16 z"
+     fill="#df6257"
+     id="path425" /><path
+     d="m 416,384 h 16 v 32 h -16 z"
+     fill="#c7483c"
+     id="path427" /><path
+     d="m 352,432 h 48 v 16 h -48 z"
+     fill="#c7483c"
+     id="path429" /><path
+     d="m 24,208 h 224 v 48 H 24 Z"
+     fill="#ffb431"
+     id="path431" /><path
+     d="m 152,208 h 96 v 48 h -96 z"
+     fill="#f99e0c"
+     id="path433" /><path
+     d="M 88,232 A 24,24 0 0 1 64,208 h 48 a 24,24 0 0 1 -24,24 z"
+     fill="#f99e0c"
+     id="path435" /><path
+     d="m 24,256 h 224 v 48 H 24 Z"
+     fill="#ffb431"
+     id="path437" /><g
+     fill="#f99e0c"
+     id="g445"><path
+       d="m 152,256 h 96 v 48 h -96 z"
+       id="path439" /><path
+       d="M 88,280 A 24,24 0 0 1 64,256 h 48 a 24,24 0 0 1 -24,24 z"
+       id="path441" /><path
+       d="m 24,248 h 128 v 16 H 24 Z"
+       id="path443" /></g><path
+     d="m 152,248 h 96 v 16 h -96 z"
+     fill="#f4970c"
+     id="path447" /><path
+     d="m 480,408 h -48 v -24 h -16 v 112 h 16 v -72 h 48 v 72 h 16 V 384 h -16 z"
+     id="path449" /><path
+     d="m 352.575,353.231 27.847,13.924 A 8,8 0 0 0 392,360 v -45.944 l 56.99,13.149 A 39.825,39.825 0 0 1 480,366.18 h 16 A 55.753,55.753 0 0 0 452.589,311.615 L 386.727,296.415 376,291.056 v -33.31 A 88.327,88.327 0 0 0 416,184 32,32 0 0 0 416,120 V 72 A 56.063,56.063 0 0 0 360,16 h -64 a 55.9,55.9 0 0 0 -37.335,14.261 l 10.67,11.922 A 39.935,39.935 0 0 1 296,32 h 64 a 40.045,40.045 0 0 1 40,40 v 12.9 l -7.112,-2.371 a 205.192,205.192 0 0 0 -129.776,0 L 256,84.9 V 72 a 39.961,39.961 0 0 1 5.347,-19.994 L 247.5,43.994 A 55.989,55.989 0 0 0 240,72 v 48 a 32,32 0 0 0 0,64 h 16 v -53.175 a 33.785,33.785 0 0 0 18,5.175 80.358,80.358 0 0 0 29.973,-5.772 64.427,64.427 0 0 1 48.057,0 A 80.349,80.349 0 0 0 382,136 33.785,33.785 0 0 0 400,130.825 V 184 a 71.98,71.98 0 0 1 -123.413,50.4 l -11.424,11.2 A 88.358,88.358 0 0 0 280,257.745 v 33.311 l -10.961,5.48 L 256,300.449 V 208 a 8,8 0 0 0 -8,-8 H 24 a 8,8 0 0 0 -8,8 v 8 h 49.376 a 24,24 0 0 0 45.248,0 H 144 v 32 H 32 V 232 H 16 v 72 a 8,8 0 0 0 8,8 H 64.805 A 40.067,40.067 0 0 0 104,344 h 24 V 455.107 A 40.94,40.94 0 0 0 168.893,496 c 0.548,0 27.107,1 38.911,-24.571 L 224,433.541 V 496 h 16 V 392 a 8,8 0 0 0 -15.428,-2.971 l -12.586,31.464 -8.445,-4.825 -11.695,-67.245 a 40.011,40.011 0 0 1 23.574,-19.09 L 264,314.754 V 360 a 8,8 0 0 0 11.578,7.155 L 303.425,353.231 320,364.281 V 424 h 16 V 364.281 Z M 240,168 a 16,16 0 0 1 0,-32 z m 192,-16 a 16.019,16.019 0 0 1 -16,16 v -32 a 16.019,16.019 0 0 1 16,16 z m -50,-32 c -18.632,0 -35.164,-10.426 -54,-10.426 -18.836,0 -35.291,10.426 -54,10.426 a 18.019,18.019 0 0 1 -18,-18 v -0.235 l 12.173,-4.058 a 189.2,189.2 0 0 1 119.654,0 L 400,101.766 V 102 a 18.019,18.019 0 0 1 -18,18 z m -6,227.056 -20.422,-10.211 a 7.993,7.993 0 0 0 -3.151,-0.834 l 18.5,-29.6 5.073,2.533 z m -16,-81.082 v 27.731 l -32,51.2 -32,-51.2 v -27.731 a 87.978,87.978 0 0 0 64,0 z M 160,296 v -32 h 80 v 32 z m 80,-80 v 32 H 160 V 216 Z M 32,264 h 33.376 a 24,24 0 0 0 45.248,0 H 144 v 32 H 32 Z M 144,455.107 V 336 a 8,8 0 0 0 -8,-8 H 104 A 24.042,24.042 0 0 1 81.371,312 h 87.9 l 24.147,138.842 A 24.893,24.893 0 1 1 144,455.107 Z m 66.82,-141.1 a 56.049,56.049 0 0 0 -22.66,13.221 L 185.511,312 h 32 z m 89.6,22.837 -20.42,10.212 v -38.112 l 5.071,-2.535 18.5,29.6 a 7.993,7.993 0 0 0 -3.149,0.836 z"
+     id="path451" /><path
+     d="m 288,376 h 16 v 16 h -16 z"
+     id="path453" /><circle
+     cx="368"
+     cy="152"
+     r="16"
+     id="circle455" /><circle
+     cx="288"
+     cy="152"
+     r="16"
+     id="circle457" /><path
+     d="M 347.981,193.065 A 66.019,66.019 0 0 1 318.6,200 H 312 v 16 h 6.6 a 82.1,82.1 0 0 0 36.534,-8.625 l 0.44,-0.22 -7.156,-14.31 z"
+     id="path459" /><path
+     d="m 352,432 h 48 v 16 h -48 z"
+     id="path461" /></g></svg>

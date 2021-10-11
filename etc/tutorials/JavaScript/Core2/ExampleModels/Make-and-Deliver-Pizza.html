@@ -189,10 +189,10 @@
   <i>pizzaMakers</i>.</p><p>Notice that <i>OrderCall</i> events are exogenous,
   having a recurrence function defined case-wise for each of the five hours
   per day operation of the pizza service company (in the attached invariant
-  box).</p>For implementing the waiting timeout event defined in the process
-  model, the activity type <i>TakeOrder</i> has a class-level
+  box).</p><p>For implementing the waiting timeout event defined in the
+  process model, the activity type <i>TakeOrder</i> has a class-level
   <i>waitingTimeout</i> function implementing a random variable with PDF
-  <i>U(3,6)</i>.</details><details open="open"><summary>Process Design
+  <i>U(3,6)</i>.</p></details><details open="open"><summary>Process Design
   Model</summary><p>A process design model, in the form of a DPMN process
   diagram as shown below, is derived from a conceptual process model by
   abstracting away from items that are not design-relevant and possibly adding
@@ -262,11 +262,11 @@
   resource role <i>pizzaMaker</i>. The members of this pool are instances of
   the organizational position <i>PizzaMaker</i>. These default pool
   assignments are normally not shown in a DPMN diagram, but an <abbr
-  title="Object Event">OE</abbr> simulator takes care of them.</p>Combined
+  title="Object Event">OE</abbr> simulator takes care of them.</p><p>Combined
   with its underlying <abbr title="Object Event">OE</abbr> class design model,
   a <abbr title="Discrete Event Process Modeling Notation">DPMN</abbr> process
   design model provides a computationally complete specification of a
-  simulation model.</details></details><details open="open"><summary>Model
+  simulation model.</p></details></details><details open="open"><summary>Model
   Variant: Orders May Also Be Taken by Pizza Makers</summary><p>For decreasing
   the number of lost orders due to long waiting times, it is advisable to
   charge pizza makers with taking orders whenever no order taker is available.

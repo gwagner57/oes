@@ -22,5 +22,5 @@ class PartArrival extends eVENT {
   }
   static recurrence() {return rand.exponential(1/6);}
 }
-PartArrival.successorActivity = "Processing";
+PartArrival.successorNode = "Processing";
 PartArrival.counter = 1;

@@ -51,7 +51,7 @@ class oBJECT {
         valStr = "["+ val.map( v => v.id).toString() +"]";
       } else valStr = JSON.stringify( val);
       if (propLabel && val !== undefined) {
-        str += (i>0 ? ", " : "") + propLabel +": "+ valStr;
+        str += (i>0 ? ", " : "") + propLabel +":"+ valStr;
         i = i+1;
       }
     }, this);
@@ -63,9 +63,15 @@ class oBJECT {
  */
 class eVENT {
     constructor({occTime, delay}) {
-      if (occTime) this.occTime = occTime;
-      else if (delay) this.occTime = sim.time + delay;
-      else this.occTime = sim.time + sim.nextMomentDeltaT;
+      if (typeof occTime === "number" && occTime >= sim.time) {
+        this.occTime = occTime;
+      } else if (typeof delay === "number" && delay > 0) {
+        this.occTime = sim.time + delay;
+      } else if (this.constructor.recurrence) {  // exogenous/recurrent event
+        this.occTime = sim.time + this.constructor.recurrence();
+      } else {
+        this.occTime = sim.time + sim.nextMomentDeltaT;
+      }
   }
   // overwrite/improve the standard toString method
   toString() {

@@ -25,10 +25,7 @@ class CustomerArrival extends eVENT {
     return followupEvents;
   }
   createNextEvent() {
-    return new CustomerArrival({
-      delay: CustomerArrival.recurrence(),
-      serviceDesk: this.serviceDesk
-    });
+    return new CustomerArrival({serviceDesk: this.serviceDesk});
   }
   static recurrence() {
     return math.getUniformRandomNumber( 1, 6);

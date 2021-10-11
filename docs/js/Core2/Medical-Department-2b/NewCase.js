@@ -13,4 +13,4 @@ class NewCase extends eVENT {
  *** Process Model Items *******************************
  *******************************************************/
 // Enqueue a new planned walk
-NewCase.successorActivity = "WalkToRoom";
+NewCase.successorNode = "WalkToRoom";

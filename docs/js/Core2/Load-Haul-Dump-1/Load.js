@@ -21,4 +21,4 @@ Load.resourceRoles = {
   "truck": {range: Truck}
 }
 Load.PERFORMER = ["wheelLoader"];
-Load.successorActivity = "Haul";
+Load.successorNode = "Haul";

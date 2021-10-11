@@ -9,10 +9,12 @@ sim.model.objectTypes = ["Truck", "WheelLoader"];
 sim.model.eventTypes = ["HaulRequest"];
 sim.model.activityTypes = ["GoToLoadingSite","Load","Haul","Dump","GoBackToLoadingSite","GoHome"];
 
+// will be computed on the basis of the HaulRequest quantity
 sim.model.v.nmrOfLoads = 66;
 /*******************************************************
  Default Scenario
  ********************************************************/
+sim.scenario.durationInSimTime = 5000;
 /* Do not define a fixed simulation duration since a simulation run ends,
    when the job is done (i.e., when the simulator runs out of future events).
  */

@@ -43,7 +43,7 @@
     <ul>
      <li><h3><a href="Pizza-Service-1/index.html">Pizza-Service-1</a></h3></li>
      <li><h3><a href="Pizza-Service-2/index.html">Pizza-Service-2</a></h3></li>
-     <li><h3><a href="Make-and-Deliver-Pizza-1/index.html">Make-and-Deliver-Pizza-1</a></h3></li>
+     <li><h3><a href="Make-and-Deliver-Pizza-AN-1/index.html">Make-and-Deliver-Pizza-AN-1</a></h3></li>
      <li><h3><a href="Load-Haul-Dump-1/index.html">Load-Haul-Dump-1</a></h3></li>
      <li><h3><a href="Medical-Department-1a/index.html">Medical-Department-1a</a></h3>
       <p>This example explicitly models the resource management of doctors with the help of a counter variable
@@ -59,8 +59,8 @@
        instead of a count pool. This allows making the model more realistic, for instance, by assigning an
        individual work schedule to each doctor defining her availability.</p></li>
      <li><h3><a href="Medical-Department-2a/index.html">Medical-Department-2a</a></h3>
-      <p>This model includes two activity types: <i>WalkToRoom</i> activities involve a <i>room</i> and are performed by
-       a <i>nurse</i>, while <i>Examination</i> activities involve a <i>room</i> and are performed by a <i>doctor</i>.
+      <p>This model includes two activity types: <i>WalkToRoom</i> activities require a <i>room</i> and are performed by
+       a <i>nurse</i>, while <i>Examination</i> activities also require a <i>room</i> and are performed by a <i>doctor</i>.
        The resource pools <i>nurses</i> and <i>doctors</i> are modeled as individual resource pools,
        while the resource pool <i>rooms</i>, which is used by both <i>WalkToRoom</i> and <i>Examination</i> activities,
        is modeled as a count pool.</p></li>
@@ -73,7 +73,7 @@
   <p>OESjs Core 2 is using:</p>
   <ul>
    <li>David Bau's seedable random number generator <a href="https://github.com/davidbau/seedrandom">seedrandom</a>.</li>
-   <li>Jake Archibald's IndexedDB library <a href="https://github.com/jakearchibald/idb">IDB</a>.</li>
+   <li>Jake Archibald's IndexedDB library <a href="https://github.com/jakearchibald/idb">IDB</a> for storing experiment data.</li>
   </ul>
     
  </main>
