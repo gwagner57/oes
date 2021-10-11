@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+ <style>
+      table,
+      th,
+      td {
+        padding: 10px;
+        border: 1px solid black;
+        border-collapse: collapse;
+      }
+    </style>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>OES Core 2 Simulation Examples</title>
+<meta name="viewport" content="width=device-width, initial-scale = 1.0" />
+<meta name="description"
+	content="Simulation examples for OES Core simulators" />
+<style>
+p.description {
+	font-size: smaller;
+}
+</style>
+</head>
+<body>
+
+	<main>
+		<h1>Load-Haul-Dump Simulation</h1>
+		<p th:text="${expInfo}"></p>
+		
+<!-- 	EXPERIMENT TABLE	 -->
+	<table th:if="${type} == 1">
+		<thead>
+			<tr>
+				<th>Key</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="entry : ${stat.getExperiments()}">
+				<td th:text="${entry.key}"></td>
+				<td th:text="${entry.value}"></td>
+			</tr>
+			<tr th:each="entry : ${stat.getSumStat()}">
+				<td th:text="${entry.key}"></td>
+				<td th:text="${entry.value}"></td>
+			</tr>
+		</tbody>
+	</table>
+	<div th:if="${type} == 1">
+			<div th:each="entry : ${stat.getActStat()}">
+			<h3 th:text="${entry.key}"></h3>
+			<table>
+			<thead>
+				<tr>
+					<th>Key</th>
+					<th>Value</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="e : ${entry.value}">
+					<td th:text="${e.key}"></td>
+					<td th:text="${e.value}"></td>
+				</tr>
+			</tbody>
+			</table>
+			</div>
+		</div>
+
+		
+<!-- 	SIMPLE STAT TABLE -->
+		<table th:if="${type} == 0"> 
+			<thead>
+				<tr>
+					<th>Key</th>
+					<th>Value</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="entry : ${stat.entrySet()}">
+					<td th:text="${entry.key}"></td>
+					<td th:text="${entry.value}"></td>
+				</tr>
+			</tbody>
+		</table>
+				
+<!-- ACTIVITY STAT TABLE -->
+	<table th:if="${type} == 0"> 
+		<thead>
+				<tr>
+					<th>Key</th>
+					<th>Value</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="entry : ${actStat.entrySet()}">
+					<td th:text="${entry.key}"></td>
+					<td>
+						<table>
+						 	<tr>
+						   		<td>enqueued activities</td>
+						   		<td th:text="${entry.value.getEnqueuedActivities()}"></td>
+						    </tr>
+						    <tr>
+						   		<td>started activities</td>
+						   		<td th:text="${entry.value.getStartedActivities()}"></td>
+						    </tr>
+						    <tr>
+						   		<td>completed activities</td>
+						   		<td th:text="${entry.value.getCompletedActivities()}"></td>
+						    </tr>
+						    <tr>
+						   		<td>waiting time</td>
+						   		<td th:text="${entry.value.getWaitingTime().getMax()}"></td>
+						    </tr>
+						     <tr>
+						   		<td>cycle time</td>
+						   		<td th:text="${entry.value.getCycleTime().getMax()}"></td>
+						    </tr>
+						    <tr>
+						   		<td>queue length</td>
+						   		<td th:text="${entry.value.getQueueLength().getMax()}"></td>
+						    </tr>
+						    <tr>
+						   		<td>res util</td>
+						   		<td>
+						   			<table>
+							   			<tr th:each="e : ${entry.value.getResUtil()}">
+								   			<td th:text="${e.key}"></td>
+								   			<td th:text="${e.value}"></td>
+								   		</tr>
+						   			</table>
+						   		</td>
+						   	</tr>
+				    	</table>
+				</tr>
+			</tbody>
+		</table>
+
+		<table th:if="${hasLogs}"> 
+			<thead>
+				<tr>
+					<th>Step</th>
+					<th>Time</th>
+					<th>System State</th>
+					<th>Future Events</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="entry : ${logs}">
+					<td th:text="${entry.getSimStep()}"></td>
+					<td th:text="${entry.getTime()}"></td>
+					<td th:text="${entry.getSystemState()}"></td>
+					<td th:text="${entry.getFutureEvents()}"></td>
+				</tr>
+			</tbody>
+		</table>
+		
+		
+	</main>
+	<footer>
+		<p>
+			© 2021 G. Wagner (<a
+				href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>),
+			Brandenburg University of Technology, Germany
+		</p>
+	</footer>
+</body>
+</html>
