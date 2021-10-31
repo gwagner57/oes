@@ -53,8 +53,8 @@ sim.initializeSimulator = function () {
   ************************************************************/
   // make sure these collections are defined
   sim.model.activityTypes ??= [];
-  sim.model.networkNodes ??= {};
-  sim.scenario.networkNodes ??= {};
+  sim.model.networkNodes ??= Object.create(null);
+  sim.scenario.networkNodes ??= Object.create(null);
   if (sim.model.activityTypes.length > 0 || Object.keys( sim.model.networkNodes).length > 0) {
     // make activity classes accessible via their activity type name
     for (const actTypeName of sim.model.activityTypes) {
@@ -111,7 +111,7 @@ sim.initializeSimulator = function () {
     }
     oes.createResourcePools();
     oes.setupActNetStatistics();
-    // there is no need to setupProcNetStatistics since these are simple numbers
+    if (sim.model.isPN) oes.setupProcNetStatistics();
   }
 }
 /*******************************************************************
@@ -170,7 +170,7 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
     }
     oes.initializeActNetStatistics();
     if (sim.model.isPN) {
-      //TODO: Needed? oes.initializeProcNetStatistics();
+      oes.initializeProcNetStatistics();
       oes.scheduleInitialArrivalEvents();  // in sim.scenario.networkNodes
     }
   }
@@ -286,7 +286,10 @@ sim.runScenario = function (createLog) {
     if (!sim.timeIncrement && sim.FEL.isEmpty()) break;
   }
   // compute generic statistics (incl. resource utilization)
-  oes.computeFinalActNetStatistics();
+  if (sim.model.isAN || sim.model.isPN) {
+    oes.computeFinalActNetStatistics();
+    if (sim.model.isPN) oes.computeFinalProcNetStatistics();
+  }
   // compute user-defined statistics
   if (sim.model.computeFinalStatistics) sim.model.computeFinalStatistics();
 }
@@ -305,7 +308,7 @@ sim.runStandaloneScenario = function (createLog) {
  Run an Experiment (in a JS worker)
  ********************************************************/
 sim.runExperiment = async function () {
-  var exp = sim.experimentType, expRun={},
+  var exp = sim.experimentType, expRun = Object.create(null),
       compositeStatVarNames = ["nodes"],
       simpleStatVarNames = [];
   // set up user-defined statistics variables
@@ -334,7 +337,7 @@ sim.runExperiment = async function () {
       if (typeof AT.waitingTimeout === "function") {
         exp.replicStat.nodes[nodeName].waitingTimeouts = [];
       }
-      //exp.replicStat.nodes[nodeName].resUtil = {};
+      //exp.replicStat.nodes[nodeName].resUtil = Object.create(null);
     }
     /***END Activity extensions BEFORE-runSimpleExperiment ********************/
     // run experiment scenario replications
@@ -360,7 +363,7 @@ sim.runExperiment = async function () {
         replStatPerNode.queueLength.max[k] = statPerNode.queueLength.max;
         replStatPerNode.waitingTime.max[k] = statPerNode.waitingTime.max;
         replStatPerNode.cycleTime.max[k] = statPerNode.cycleTime.max;
-        //actStat.resUtil = {};
+        //actStat.resUtil = Object.create(null);
       }
       /***END Activity extensions AFTER-runSimpleExperimentScenario ********************/
       if (exp.storeExpResults) {
@@ -416,14 +419,14 @@ sim.runExperiment = async function () {
         }
       }
       /*****TODO: support also the following statistics *****/
-      //actStat.resUtil = {};
+      //actStat.resUtil = Object.create(null);
     }
     /***END Activity extensions AFTER-runSimpleExperimentScenario ********************/
     // send experiment statistics to main thread
     postMessage({simpleExperiment: exp});
   }
   async function runParVarExperiment() {  // parameter variation experiment
-    const valueSets = [], expParSlots = {},
+    const valueSets = [], expParSlots = Object.create(null),
         N = exp.parameterDefs.length;
     exp.scenarios = [];
     // create a list of value sets, one set for each parameter

@@ -3,32 +3,17 @@
   <head>
     <meta charset="UTF-8" />
 
-    <title>Make and Deliver Pizza</title>
+    <title>Implementation with OESjs</title>
   </head>
 
-  <body><figure style="float:right"><div><img alt="???"
-  src="../img/Pizza-Delivery.svg" width="150" /></div><small>Image by <a
-  href="https://www.flaticon.com/authors/monkik">monkik</a></small></figure><p>A
-  pizza service company takes phone orders for making and delivering pizzas,
-  with the help of order takers, pizza makers, ovens and a crew of pizza
-  delivery scooter drivers. From time to time the order takers cannot cope
-  with the number of incoming calls, and then customers grow impatient and
-  hang up the phone without placing an order.</p><p>For getting a quick
-  impression, you can <a
-  href="https://gwagner57.github.io/oes/js/Core2/Make-and-Deliver-Pizza-1/">run
-  this model</a> from the OES GitHub website, or inspect its <a
-  href="https://github.com/gwagner57/oes/tree/master/docs/js/Core2/Make-and-Deliver-Pizza-1">OESjs
-  code</a>. </p><p>Since there is a high number of lost orders due to long
-  waiting times in the first model, assigning different responsibilities to
-  organizational roles for allowing a more flexible use of human resources is
-  considered in a variant of the first model.</p><blockquote
-  class="role-note"><p>Our <em>Make-and-Deliver-Pizza</em> modeling problem is
-  based on the chapter "Example Model 3: Pizzeria operation" in the book <a
-  href="https://www.anylogic.com/resources/books/the-art-of-process-centric-modeling-with-anylogic/">The
-  Art of Process-Centric Modeling with AnyLogic</a> by Arash
-  Mahdavi.</p></blockquote><details open="open"><summary>Conceptual
-  Model</summary><p>A pizza service company has resource pools for order
-  takers, pizza makers, pizza ovens, delivery staff and scooters. While
+  <body><p>The JavaScript-based simulator OESjs-Core2 implements the
+  <em>Object Event Simulation (OES)</em> paradigm, and, consequently, allows a
+  straight-forward coding of <abbr title="Object Event">OE</abbr> class design
+  models and <abbr
+  title="Discrete Event Process Modeling Notation">DPMN</abbr> process design
+  models.</p><details open="open"><summary><h4>Implementing the OE Class
+  Design Model</h4></summary><p>A pizza service company has resource pools for
+  order takers, pizza makers, pizza ovens, delivery staff and scooters. While
   <em>take order</em> activities are performed by an <em>order taker</em>,
   <em>make pizza</em> activities require both an <em>oven</em> and a <em>pizza
   maker</em>. Finally, <i><em>deliver</em> pizza</i> activities require a
@@ -118,22 +103,23 @@
   become available), in the case of the event <i>lost order</i>, the incoming
   "sequence flow" arrow means that a new event is scheduled to occur
   immediately.</p><p>These three issues of BPMN have been solved in DPMN,
-  where <em>resource-dependent activity scheduling (RDAS) arrows</em> are
-  distinguished from <em>event scheduling arrows</em>, as shown in the
-  following DPMN process diagram:</p><figure><img
+  where <em>resource-dependent activity start arrows</em> are distinguished
+  from <em>event scheduling arrows</em>, as shown in the following DPMN
+  process diagram:</p><figure><img
   alt="A conceptual process model in the form of a DPMN diagram"
   src="../img/Pizzeria_CPM.svg" width="500" /></figure><p>Notice how the
   timeout event circle (with a clock icon) is attached to the three bars of
-  the <abbr title="resource-dependent activity scheduling">RDAS</abbr> arrow
-  representing the queue of planned order taking activities waiting for the
-  availability of an order taker. This implies that the timeout applies to the
-  waiting phase only, and not to the entire order taking activity.</p><p>A
-  conceptual DPMN process diagram does normally not include any element
-  representing a resource pool. Yet, it may display the performer roles of
-  activity types, like <i>order taker</i> and <i>pizza maker </i> in the
-  diagram above. It is assumed that for any organizational position described
-  in the underlying <abbr title="Object Event">OE</abbr> class model, the
-  organization under consideration has a corresponding resource
+  the resource-dependent activity start arrow representing the queue of
+  planned order taking activities waiting for the availability of an order
+  taker. This implies that the timeout applies to the waiting phase, and not
+  to the order taking activity.</p><p>A conceptual <abbr
+  title="Discrete Event Process Modeling Notation">DPMN</abbr> process diagram
+  does normally not include any element representing a resource pool. Yet, it
+  may display the performer roles of activity types, like <i>order taker</i>
+  and <i>pizza maker </i> in the diagram above. It is assumed that for any
+  organizational position described in the underlying <abbr
+  title="Object Event">OE</abbr> class model, the organization under
+  consideration has a corresponding resource
   pool.</p></details></details><details open="open"><summary>Simulation
   Design</summary><p>In our simulation design, we make the following
   simplifications. We consider only one particular pizza service company,
@@ -148,7 +134,7 @@
   a conceptual information model by </p><ol>
       <li>Abstracting away from items that are not design-relevant.</li>
 
-      <li>Adding properties, functions and methods to object, event and
+      <li>Adding properties,functions and methods to object, event and
       activity classes. In particular, a <i>status</i> attribute is added to
       all resource object types, such as <i>OrderTaker</i> and <i>Oven</i>,
       and a class-level <i>duration</i> function is added to all activity
@@ -163,20 +149,19 @@
   distribution function (PDF), which is symbolically indicated with
   expressions like <i>Tri(30,40,50)</i> standing for the <em>triangular</em>
   PDF with lower and upper bounds 30 and 50 and a median of 40, or
-  <i>DU(1,4)</i> standing for the <em>discrete uniform</em> PDF with lower and
-  upper bounds 3 and 6.</p><p>In the case of the event type <i>OrderCall</i>,
-  the random variable function <em>recurrence</em> samples from an
-  <em>exponential</em> PDF with five different event rates given for the five
-  consecutive hours during which the pizza service operates.</p><p>The
-  activity type <i>TakeOrder</i> is associated with the object type
-  <i>OrderTaker</i> via the implicit resource role <i>orderTaker</i> (with a
-  resource cardinality constraint of "exactly 1"), indicated with the
-  association end stereotype «rr» standing for "resource role". A resource
-  role assigns resource objects to activities. </p><p>Likewise,
-  <i>MakePizza</i> is associated with <i>PizzaMaker</i> and <i>Oven</i> via
-  the (implicitly named) resource roles <i>pizzaMakers</i>, having a resource
-  cardinality constraint of "exactly 2", and <i>oven</i>, having a resource
-  cardinality constraint of "exactly 1".</p><p>An <abbr
+  <i>DU(1,4)</i> standing for the discrete uniform PDF with lower and upper
+  bounds 3 and 6.</p><p>In the case of the event type <i>OrderCall</i>, the
+  random variable function recurrence samples from an exponential PDF with
+  five different event rates given for the five consecutive hours during which
+  the pizza service operates.</p><p>The activity type <i>TakeOrder</i> is
+  associated with the object type <i>OrderTaker</i> via the implicit resource
+  role <i>orderTaker</i> (with a resource cardinality constraint of "exactly
+  1"), indicated with the association end stereotype «rr» standing for
+  "resource role". A resource role assigns resource objects to activities.
+  </p><p>Likewise, <i>MakePizza</i> is associated with <i>PizzaMaker</i> and
+  <i>Oven</i> via the (implicitly named) resource roles <i>pizzaMakers</i>,
+  having a resource cardinality constraint of "exactly 2", and <i>oven</i>,
+  having a resource cardinality constraint of "exactly 1".</p><p>An <abbr
   title="Object Event">OE</abbr> class design diagram like the one above,
   defines resource roles (like <i>pizzaMakers</i>), resource role types (like
   <i>PizzaMaker</i>) and resource cardinality constraints (like "exactly 2")
@@ -251,10 +236,10 @@
   representing a resource pool. It is assumed that for any organizational
   position described in the underlying <abbr title="Object Event">OE</abbr>
   class model, the organization under consideration has a corresponding
-  resource pool. By default, each resource role of an activity type is
+  resource pool. By default , each resource role of an activity type is
   associated with a resource pool having the same (yet pluralized) name, such
-  that its resource objects are instances of a corresponding resource role
-  type, which is an organizational position in the case of human resources.
+  that its resources are instances of a corresponding resource role type,
+  which is an organizational position in the case of human resources.
   </p><p>For instance, for the <i>MakePizza</i> activity a pool <i>ovens</i>
   is assigned to its resource role <i>oven</i> by default. The members of the
   pool <i>ovens</i> are instances of the (resource) object type <i>Oven</i>.

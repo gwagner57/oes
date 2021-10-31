@@ -1,9 +1,7 @@
 class CustomerArrival extends eVENT {
-  constructor({ occTime, delay}) {
+  constructor({ occTime, delay}={}) {
     super({occTime, delay});
   }
-  static recurrence() {
-    return rand.exponential( 0.3);
-  }
 }
+CustomerArrival.eventRate = 0.3;
 CustomerArrival.successorNode = "Service";

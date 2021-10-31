@@ -198,7 +198,7 @@ at simulation step ${sim.step}!`);
  * node (where processes start). When an event node does not have a "successorNode"
  * attribute slot, it represents an end node (where processes end).
  *
- * A "maxNmrOfEvents" attribute slot of a start node allows defining a maximum number
+ * A "maxNmrOfEvents" attribute slot of a start event node allows defining a maximum number
  * of events after which no more events of the given type at the given node will be
  * created (and, consequently, the simulation may run out of future events).
  *
@@ -665,13 +665,13 @@ class aCTIVITYeND extends eVENT {
 oes.getNodeNameFromTypeName = function (typeName) {
   const suffix = sim.model.eventTypes.includes( typeName) ? "ENode" : "ANode";
   return typeName.charAt(0).toLowerCase() + typeName.slice(1) + suffix;
-}
+};
 oes.getNodeNameFromEvtTypeName = function (evtTypeName) {
   return evtTypeName.charAt(0).toLowerCase() + evtTypeName.slice(1) + "ENode";
-}
+};
 oes.getNodeNameFromActTypeName = function (actTypeName) {
   return actTypeName.charAt(0).toLowerCase() + actTypeName.slice(1) + "ANode";
-}
+};
 /*********************************************************************
  * Create resource pools for AN activity nodes and PN processing nodes
  *********************************************************************/
@@ -715,12 +715,12 @@ oes.createResourcePools = function () {
     // assign a node-specific processing station resource role to processing nodes
     if ((node.typeName === "pROCESSINGnODE" || node.typeName === "ProcessingNode") &&
         Number.isInteger( node.processingCapacity)) {
-      if (!node.resourceRoles) node.resourceRoles = {};
+      if (!node.resourceRoles) node.resourceRoles = Object.create(null);
       node.resourceRoles[node.name +"ProcStation"] =
           {countPoolName: name +"ProcStation", card: node.processingCapacity};
     }
   }
-}
+};
 /*******************************************************
  * Initialize resource pools
  ********************************************************/
@@ -728,7 +728,7 @@ oes.initializeResourcePools = function () {
   for (const poolName of Object.keys( sim.resourcePools)) {
     sim.resourcePools[poolName].clear();
   }
-}
+};
 /*******************************************************
  * Setup AN scenario
 ********************************************************/
@@ -772,7 +772,7 @@ oes.setupActNetScenario = function () {
     // set predecessor node for being able to handle blocking due to full input buffers
     if (sim.model.isPN) node.successorNode.predecessorNode = node;
   }
-}
+};
 /*******************************************************
  * Setup/initialize AN scenario
  ********************************************************/
@@ -805,7 +805,7 @@ oes.initializeActNetScenario = function () {
       }
     }
   }
-}
+};
 /*******************************************************
  * Set up the generic AN ex-post statistics
  ********************************************************/
@@ -827,11 +827,11 @@ oes.setupActNetStatistics = function () {
       nodeStat.resUtil = Object.create(null);
     }
   }
-  // set flag used for rendering the statistics table
+  // set flag used when rendering the statistics table
   sim.stat.includeTimeouts = Object.keys( sim.model.networkNodes).
       map( nodeName => sim.model.networkNodes[nodeName]).
       some( node => typeof node.waitingTimeout === "function");
-}
+};
 /*******************************************************
  * Initialize the generic ex-post AN statistics
  ********************************************************/
@@ -872,23 +872,26 @@ oes.initializeActNetStatistics = function () {
       }
     }
   }
-}
+};
 /*******************************************************
  * Compute the final AN statistics
  ********************************************************/
 oes.computeFinalActNetStatistics = function () {
   // finalize resource utilization statistics
   for (const nodeName of Object.keys( sim.stat.networkNodes)) {
-    const resUtilPerNode = sim.stat.networkNodes[nodeName].resUtil;
-    for (const key of Object.keys( resUtilPerNode)) {
-      var utiliz = resUtilPerNode[key];
-      // key is either an objIdStr or a count pool name
-      utiliz /= sim.time;
-      // if key is a count pool name
-      if (sim.resourcePools[key]) {
-        utiliz /= sim.resourcePools[key].size;
+    const node = sim.stat.networkNodes[nodeName];
+    if ("resUtil" in node) {
+      const resUtilPerNode = node.resUtil;
+      for (const key of Object.keys( resUtilPerNode)) {
+        var utiliz = resUtilPerNode[key];
+        // key is either an objIdStr or a count pool name
+        utiliz /= sim.time;
+        // if key is a count pool name
+        if (sim.resourcePools[key]) {
+          utiliz /= sim.resourcePools[key].size;
+        }
+        resUtilPerNode[key] = math.round( utiliz, oes.defaults.expostStatDecimalPlaces);
       }
-      resUtilPerNode[key] = math.round( utiliz, oes.defaults.expostStatDecimalPlaces);
     }
   }
-}
+};

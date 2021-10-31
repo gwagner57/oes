@@ -100,6 +100,7 @@ class aRRIVAL extends eVENT {
     }
     this.arrivedObject = arrivedObjects[0];
     // update statistics
+    sim.stat.networkNodes[this.node.name].nmrOfArrivedObjects += nmrOfArrivedObjects;
     this.node.nmrOfArrivedObjects += nmrOfArrivedObjects;
     // invoke onArrival event rule method
     if (typeof this.node.onArrival === "function") followupEvents = this.node.onArrival();
@@ -191,7 +192,7 @@ class pROCESSINGnODE extends aCTIVITYnODE {
   // status: 1 = rESOURCEsTATUS.AVAILABLE
   constructor({id, name, activityTypeName, resourceRoles={}, processingDuration, waitingTimeout,
                inputBufferCapacity, inputTypeName, inputTypes,
-               processingCapacity=Infinity, status=1, successorNodeName, successorNodeNames,
+               processingCapacity=1, status=1, successorNodeName, successorNodeNames,
                outputTypes}) {
     super( {id: id||name, name, activityTypeName, resourceRoles, duration: processingDuration, waitingTimeout,
             successorNodeName, successorNodeNames});
@@ -201,14 +202,14 @@ class pROCESSINGnODE extends aCTIVITYnODE {
     // Ex: {"lemons": {type:"Lemon", quantity:2}, "ice": {type:"IceCubes", quantity:[0.2,"kg"]},...
     if (inputTypes) this.inputTypes = inputTypes;
     // how many proc. objects can be processed at the same time
-    this.processingCapacity = processingCapacity;
+    this.processingCapacity = processingCapacity;  // by default: 1
     // the resource status of the (implicitly associated) processing station
-    this.status = status;
+    this.status = status;  // by default: 1=AVAILABLE
     // Ex: {"lemonade": {type:"Lemonade", quantity:[1,"l"]}, ...
     if (outputTypes) this.outputTypes = outputTypes;
-    if (resourceRoles) this.resourceRoles = resourceRoles;
+    this.resourceRoles = resourceRoles;  // by default: {}
     if (Number.isInteger( this.processingCapacity)) {
-      this.resourceRoles[name +"ProcStation"] = {countPoolName: name +"ProcStation", card:1};
+      this.resourceRoles[name +"ProcStation"] = {countPoolName: name +"ProcStation", card:processingCapacity};
     }
     this.tasks = new qUEUE();
     this.blockedSuccessorTasks = new qUEUE();
@@ -442,8 +443,10 @@ class dEPARTURE extends eVENT {
     // dequeue processing object from the input queue
     const procObj = this.processingObject;
     // update statistics
-    this.node.nmrOfDepartedObjects++;
-    this.node.cumulativeTimeInSystem += this.occTime - procObj.arrivalTime;
+    sim.stat.networkNodes[this.node.name].nmrOfDepartedObjects++;
+    //this.node.nmrOfDepartedObjects++;
+    sim.stat.networkNodes[this.node.name].cumulativeTimeInSystem +=
+        this.occTime - procObj.arrivalTime;
     // invoke onDeparture event rule method
     if (typeof this.node.onDeparture === "function") {
       followupEvents = this.node.onDeparture();
@@ -492,70 +495,52 @@ oes.createProcessingStationResourcePools = function () {
  *   and "meanTimeInSystem"
  */
 oes.setupProcNetStatistics = function () {
-  var entryNodes = oes.EntryNode.instances,
-      exitNodes = oes.ExitNode.instances;
-  if (!sim.model.statistics) sim.model.statistics = {};
-  // define default statistics variables for PN entry node statistics
-  Object.keys( entryNodes).forEach( function (nodeIdStr) {
-    var suppressDefaultEntry=false,
-        entryNode = entryNodes[nodeIdStr],
-        varName = Object.keys( entryNodes).length === 1 ?
-            "arrivedObjects" : entryNode.name +"_arrivedObjects";
-    entryNode.nmrOfArrivedObjects = 0;
-    if (sim.model.statistics[varName] && !sim.model.statistics[varName].label) {
-      // model-defined suppression of default statistics
-      suppressDefaultEntry = true;
+  for (const nodeName of Object.keys( sim.model.networkNodes)) {
+    const node = sim.model.networkNodes[nodeName];
+    // PN entry node
+    if (node.typeName === "EntryNode") {
+      const nodeStat = sim.stat.networkNodes[nodeName] = Object.create(null)
+      nodeStat.nmrOfArrivedObjects = 0;
     }
-    if (!suppressDefaultEntry) {
-      if (!sim.model.statistics[varName]) sim.model.statistics[varName] = {};
-      sim.model.statistics[varName].range = "NonNegativeInteger";
-      if (!sim.model.statistics[varName].label) {
-        sim.model.statistics[varName].label = "Arrived objects";
-      }
-      sim.model.statistics[varName].entryNode = entryNode;
-      sim.model.statistics[varName].computeOnlyAtEnd = true;
+    // PN exit node
+    if (node.typeName === "ExitNode") {
+      const nodeStat = sim.stat.networkNodes[nodeName] = Object.create(null)
+      nodeStat.nmrOfDepartedObjects = 0;
+      nodeStat.cumulativeTimeInSystem = 0;
     }
-  });
-  // define default statistics variables for PN exit node statistics
-  Object.keys( exitNodes).forEach( function (nodeIdStr) {
-    var suppressDefaultEntry=false,
-        exitNode = exitNodes[nodeIdStr],
-        varName = Object.keys( exitNodes).length === 1 ?
-            "departedObjects" : exitNode.name +"_departedObjects";
-    exitNode.nmrOfDepartedObjects = 0;
-    if (sim.model.statistics[varName] && !sim.model.statistics[varName].label) {
-      // model-defined suppression of default statistics
-      suppressDefaultEntry = true;
+  }
+};
+/*******************************************************
+ * Initialize the generic ex-post AN statistics
+ ********************************************************/
+oes.initializeProcNetStatistics = function () {
+  // per network node
+  for (const nodeName of Object.keys( sim.scenario.networkNodes)) {
+    const node = sim.scenario.networkNodes[nodeName];
+    if (node instanceof eNTRYnODE) {
+      const nodeStat = sim.stat.networkNodes[nodeName];
+      nodeStat.nmrOfArrivedObjects = 0;
     }
-    if (!suppressDefaultEntry) {
-      if (!sim.model.statistics[varName]) sim.model.statistics[varName] = {};
-      sim.model.statistics[varName].range = "NonNegativeInteger";
-      if (!sim.model.statistics[varName].label) {
-        sim.model.statistics[varName].label = "Departed objects";
-      }
-      sim.model.statistics[varName].exitNode = exitNode;
-      sim.model.statistics[varName].computeOnlyAtEnd = true;
+    if (node instanceof eXITnODE) {
+      const nodeStat = sim.stat.networkNodes[nodeName];
+      nodeStat.nmrOfDepartedObjects = 0;
+      nodeStat.cumulativeTimeInSystem = 0;
     }
-    exitNode.cumulativeTimeInSystem = 0;
-    varName = Object.keys( exitNodes).length === 1 ?
-        "meanTimeInSystem" : exitNode.name +"_meanTimeInSystem";
-    if (sim.model.statistics[varName] && !sim.model.statistics[varName].label) {
-      // model-defined suppression of default statistics
-      suppressDefaultEntry = true;
+  }
+};
+/*******************************************************
+ * Compute the final PN statistics
+ ********************************************************/
+oes.computeFinalProcNetStatistics = function () {
+  for (const nodeName of Object.keys( sim.scenario.networkNodes)) {
+    const node = sim.scenario.networkNodes[nodeName];
+    if (node instanceof eXITnODE) {
+      const nodeStat = sim.stat.networkNodes[nodeName];
+      // compute throughput time (mean time in system)
+      nodeStat.throughputTime = math.round( nodeStat.cumulativeTimeInSystem / nodeStat.nmrOfDepartedObjects,
+          oes.defaults.expostStatDecimalPlaces);
     }
-    if (!suppressDefaultEntry) {
-      if (!sim.model.statistics[varName]) sim.model.statistics[varName] = {};
-      sim.model.statistics[varName].range = "Decimal";
-      if (!sim.model.statistics[varName].label) {
-        sim.model.statistics[varName].label = "Mean time in system";
-      }
-      sim.model.statistics[varName].exitNode = exitNode;
-      sim.model.statistics[varName].computeOnlyAtEnd = true;
-      sim.model.statistics[varName].expression = function () {
-        return exitNode.cumulativeTimeInSystem / exitNode.nmrOfDepartedObjects
-      };
-    }
-  });
+  }
 };
 /**
  * Check model constraints

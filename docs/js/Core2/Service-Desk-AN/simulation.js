@@ -20,16 +20,12 @@ sim.model.activityTypes = ["Service"];
  Simulation Scenario
  ********************************************************/
 sim.scenario.title = "Basic scenario with one service desk";
-sim.scenario.durationInSimTime = 100;
-//sim.scenario.durationInSimSteps = 1000;
-//sim.scenario.durationInCpuTime = 1000;  // seconds
+sim.scenario.durationInSimTime = 360;
 sim.scenario.idCounter = 11;  // start value of auto IDs
 // Initial State
 sim.scenario.setupInitialState = function () {
   // Create initial objects
   const sd1 = new ServiceDesk({id: 1, name:"sd1", status: rESOURCEsTATUS.AVAILABLE});
-  // Initialize the individual resource pool "serviceDesks"
-  sim.resourcePools["serviceDesks"].clear();
   sim.resourcePools["serviceDesks"].availResources.push( sd1);
 }
 /*******************************************************

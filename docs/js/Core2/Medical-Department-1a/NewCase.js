@@ -16,10 +16,10 @@ class NewCase extends eVENT {
       medDep.allocateDoctor();
       // start next examination
       followupEvents.push( new aCTIVITYsTART({
-        plannedActivity: new Examination({medicalDepartment: medDep})
+        plannedActivity: new DoECG({medicalDepartment: medDep})
       }));
     } else {  // queue up next planned examination
-      medDep.plannedExaminations.push( new Examination());
+      medDep.plannedExaminations.push( new DoECG());
     }
     return followupEvents;
   }

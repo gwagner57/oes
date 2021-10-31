@@ -8,17 +8,17 @@
  ******************************************************************************/
 
 // Create initial (namespace) objects/maps/arrays
-const sim = {};
-sim.model = {};
+const sim = Object.create(null);
+sim.model = Object.create(null);
 sim.model.v = Object.create(null); // map of (global) model variables
 sim.model.f = Object.create(null); // map of (global) model functions
 sim.model.p = Object.create(null); // map of model parameters
-sim.scenario = {};  // default scenario record/object
+sim.scenario = Object.create(null);  // default scenario record/object
 sim.scenarios = [];  // list of alternative scenarios
 sim.stat = Object.create(null); // map of statistics variables
 sim.experimentTypes = [];
 
-var oes = {};  // cannot be const, since also defined in simulatorUI.js
+var oes = Object.create(null);  // cannot be const, since also defined in simulatorUI.js
 oes.defaults = {
   nextMomentDeltaT: 0.01,
   expostStatDecimalPlaces: 2,

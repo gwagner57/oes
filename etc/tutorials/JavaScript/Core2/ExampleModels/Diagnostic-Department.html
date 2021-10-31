@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Diagnostic Department</title>
+  </head>
+
+  <body><figure style="float:right"><div><img alt="???"
+  src="../../../../../docs/js/Core2/Diagnostic-Department-1-AN/img/Young-Female-Doctor.svg"
+  width="300" /><img alt="???"
+  src="../../../../../docs/js/Core2/Diagnostic-Department-1-AN/img/Young-Male-Doctor.svg"
+  width="300" /></div></figure><p>At a diagnostic department of a hospital,
+  incoming patients first get recordings of their heart’s electrical activity
+  via an Electrocardiography (ECG) and then get an ultrasound scan.</p><p>For
+  getting a quick impression, you can <a
+  href="https://gwagner57.github.io/oes/js/Core2/Make-and-Deliver-Pizza-1/">run
+  this model</a> from the OES GitHub website, or inspect its <a
+  href="https://github.com/gwagner57/oes/tree/master/docs/js/Core2/Make-and-Deliver-Pizza-1">OESjs
+  code</a>. </p><blockquote class="role-note"><p>Our <em>Diagnostic
+  Department</em> modeling problem is based on the chapter "Example Model 4:
+  Clinic" in the book <a
+  href="https://www.anylogic.com/resources/books/the-art-of-process-centric-modeling-with-anylogic/">The
+  Art of Process-Centric Modeling with AnyLogic</a> by Arash
+  Mahdavi.</p></blockquote><p>The diagnostic process consists of two
+  subprocesses:</p><ol>
+      <li><p>Performing the ECG: When a patient enters the clinic, they must
+      wait in a waiting area for their name to be called. A patient whose name
+      is called will walk to the “ECG room”, choose a free spot and wait for
+      an ECG technician. ECG technicians have to walk from the “ECG technician
+      room” to the “ECG Room” after being requested to a new patient. They
+      will first go to the “ECG storage room", pick up an ECG machine, bring
+      it to the waiting patient in the ECG room and start the ECG procedure.
+      When the ECG procedure is completed, the technician returns the ECG
+      machine to the storage room and walks back to the ECG technician room.
+      After each procedure, ECG technicians rest for five minutes before they
+      accept a new patient. A patient who has completed the ECG will not leave
+      the ECG room until there is an available spot in the “ultrasound
+      room”.</p></li>
+
+      <li><p>Performing the ultrasound (US) scan: At the start of this
+      procedure, a patient is done with the ECG but still waiting in the ECG
+      room for a free spot in the US room. Each US spot is a combination of a
+      US machine and the bed it's assigned to. When there is an available
+      spot, the patient's name is called; they walk to the assigned bed and
+      lay down on it. At this point, the patient is ready and a request for a
+      doctor is sent to the “Doctors on Call” room. If there is no doctor
+      available (that is, they are resting or with other patients), the
+      patient must wait until a doctor becomes available. When an on‐call
+      doctor is readily available, they will walk to the patient's bed in the
+      US room and start the US scan.</p></li>
+    </ol><p>The department's management has the following business objectives:
+  </p><ol>
+      <li>Process 50 patients during each operating day.</li>
+
+      <li>Minimize the time to process patients (also called <em>throughput
+      time</em>), as this is the most important indicator of patient
+      satisfaction.</li>
+
+      <li>Complete the ECG and US procedures for all admitted patients by the
+      end of the department's daily working hours (within eight hours) and
+      without the need for after-hour work.</li>
+    </ol><p>The purpose of this modeling and simulation project is to find
+  system designs that fulfill the above business objectives. For observing if
+  a system design fulfills the objectives, we can use the following simulation
+  statistics: (a) average throughput time, (b) utilization of resources, (c)
+  the departure time of the last patient (used as a measure of daily operation
+  duration)</p><details open="open"><summary>Conceptual Model</summary><p>The
+  diagnostic department under consideration has resource pools for ECG spots,
+  ECG technicians, ECG machines, US beds, US machines and doctors. While a
+  <em>perform ECG</em> activity is performed by an ECG technician using an ECG
+  machine and an ECG spot, a <em>perform US</em> activity requires a doctor
+  using a US machine and a US bed. </p><p>For simplicity, we make a
+  non-spatial (purely temporal) model, not modeling any spatial aspects, as
+  opposed to the model discussed in <a
+  href="https://www.anylogic.com/resources/books/the-art-of-process-centric-modeling-with-anylogic/">The
+  Art of Process-Centric Modeling with AnyLogic</a>.</p><details
+  open="open"><summary>Conceptual Information Model</summary><p>The
+  potentially relevant <em>object types</em> are:</p><ol>
+      <li>diagnostic departments (the organizational units that own/manage
+      their diagnosis business processes);</li>
+
+      <li>patients;</li>
+
+      <li>the seven spaces/rooms: waiting area, ECG room, ECG technician room,
+      ECG storage room, ultrasound room, "doctors on call" room, doctors
+      resting room;</li>
+
+      <li>the six resource object types ECG spots, ECG technicians, ECG
+      machines, US beds, US machines and doctors.</li>
+    </ol><p>Potentially relevant <em>types of events</em> and
+  <em>activities</em> are:</p><ol>
+      <li>arrivals of new patients;</li>
+
+      <li>patients walking to the ECG room;</li>
+
+      <li>ECG technicians (a) walking to the ECG storage room, (b) moving an
+      ECG machine from the ECG storage room to the ECG room, (c) performing an
+      ECG on a patient, (d) returning the ECG machine to the storage room, (e)
+      walking back to the ECG technician room, and (f) resting for five
+      minutes;</li>
+
+      <li>patients going from the ECG room to the US room,</li>
+
+      <li>doctors (a) walking from the "doctors on call" room to the patient's
+      bed in the US room, (b) performing an US scan on the patient, (c)
+      walking to the doctors resting room, (d) resting for some time, and (e)
+      going back to the "doctors on call" room;</li>
+
+      <li>departure of patients.</li>
+    </ol><p>When making a process model, we normally adopt the perspective of
+  the organization (or organizational unit) that "owns" the business process
+  to be modeled, here: the diagnostic department. Notice the conceptual issue
+  that the activities performed by patients (walking to the ECG room, going to
+  the US room) are not ordinary business activities, since they are not
+  performed by an organizational actor, such as a technician or doctor,
+  counting as a resource. In their case, the performer (a patient) is not a
+  resource. For this reason they will be modeled without a performer
+  role.</p><p>Object, event and activity types, together with their
+  participation associations, can be visually described in a conceptual
+  information model in the form of a conceptual Object Event (<abbr
+  title="Object Event">OE</abbr>) class diagram. The following OE class model
+  describes the core elements of our diagnostic department viewed as a
+  business system.</p><figure><img
+  alt="conceptual information model describing object, event and activity types"
+  src="../../../../../../DES-Engineering/chCaseStudies/img/DiagnosticDep_CIM.svg"
+  width="600" /></figure><p>While this model defines primary business activity
+  types together with their resource roles (association ends annotated with
+  «rr»), associated resource types and corresponding resource pools
+  (association ends annotated with «rp»), it does not capture the types of
+  secondary business activities of </p><ol>
+      <li>ECG technicians (a) walking to the ECG storage room, (b) moving an
+      ECG machine from that storage room to the ECG room, (c) returning the
+      ECG machine to the storage room, (d) walking back to the ECG technician
+      room, and (e) resting for five minutes;</li>
+
+      <li>doctors (a) walking from the "doctors on call" room to the patient's
+      bed in the US room, (b) walking to the doctors resting room, (c) resting
+      for some time, and (d) going back to the "doctors on call" room.</li>
+    </ol><p>These secondary business activities are described in the following
+  <abbr title="Object Event">OE</abbr> class diagrams.</p><figure><img
+  alt="conceptual information model describing object, event and activity types"
+  src="../../../../../../DES-Engineering/chCaseStudies/img/DiagnosticDep_CIM2a.svg"
+  width="450" /><img
+  alt="conceptual information model describing object, event and activity types"
+  src="../../../../../../DES-Engineering/chCaseStudies/img/DiagnosticDep_CIM2b.svg"
+  width="300" /></figure></details><details open="open"><summary>Conceptual
+  Process Model</summary><p>As service processes, health care processes can be
+  viewed/modeled as Processing Networks (PNs). Since PNs are more high-level
+  than Activity Networks (ANs), it is preferable to model the Diagnostic
+  Department as a PN.</p><p>The following BPMN process diagram shows a
+  coarse-grained conceptual process model of the primary business activities
+  of the Diagnostic Department, with two swimlanes for the two performers of
+  the process:</p><figure><img
+  alt="A conceptual process model in the form of a BPMN diagram"
+  src="../../../../../../DES-Engineering/chCaseStudies/img/DiagnDep_CPM_BPMN.svg"
+  width="500" /></figure><p>Unfortunately, as an AN modeling language, BPMN
+  does not provide any special elements for modeling PNs. While BPMN allows
+  modeling the performers of activities with <em>lanes</em>, it does not
+  support modeling other types of resource objects. As a workaround, we have
+  included the resource objects <i>ECG spot</i>, <i>ECG machine</i> and <i>US
+  bed</i> in the form of BPMN Data Objects. But this does not allow to clearly
+  display the processing nodes of a processing network as a combination of a
+  processing station (like <i>ECG spot</i>) with its processing activity (like
+  <i>perform ECG</i>).</p><p>An even more severe issue of the BPMN model is
+  its uniform (semantically overloaded) use of "sequence flow" arrows for
+  representing different types of flows: event flows, activity flows and
+  processing flows. While in the case of an activity, incoming arrows do not
+  mean that an activity is started, but rather that a new <em>planned
+  activity</em> (or <em>task</em>) is enqueued and only started when all
+  required resources become available, in the case of a processing node, an
+  incoming arrow represents a <em>processing flow</em>, which is a combined
+  object-event flow of processing objects and their delayed processing
+  activity start events.</p><p>These issues of BPMN have been solved in DPMN,
+  which supports the visual modeling of processing networks with processing
+  nodes connected by processing flow arrows, as shown in the following DPMN
+  process diagram:</p><figure><img
+  alt="A conceptual process model in the form of a DPMN diagram"
+  src="../../../../../../DES-Engineering/chCaseStudies/img/DiagnDep_CPM_DPMN.svg"
+  width="700" /></figure><p>This conceptual <abbr
+  title="Discrete Event Process Modeling Notation">DPMN</abbr> process diagram
+  is based on the underlying <abbr title="Object Event">OE</abbr> class model
+  discussed in the previous section. Notice that a two-part name of a
+  processing node (like "ECG spot / perform ECG") contains both the name of
+  the node's processing station ("ECG spot") and the name of the node's
+  processing activity ("perform ECG"). For the processing node "ECG spot /
+  perform ECG", the model specifies three resource objects: an "ECG
+  technician" as the performer, the processing station "ECG spot" (specified
+  in the node name), and an additional resource object "ECG machine".
+  </p><p>While this model attains a highly compact description of the
+  Diagnostic Department system by compressing "ECG spot" resources and the
+  "perform ECG" activity, as well as "US bed" resources and the "perform US
+  scan" activity, into a corresponding processing node, it abstracts away from
+  the activities of patients walking to the ECG room and walking from the ECG
+  room to the US room.</p><p>The above model can be further refined by
+  explicitly modeling the two patient activities "walk to ECG spot" and "walk
+  to US bed". While the first of them requires an "ECG spot" as a resource,
+  the second one requires a "US bed". In the following <abbr
+  title="Discrete Event Process Modeling Notation">DPMN</abbr> process
+  diagram, we do not display the rectangular container (called <em>pool</em>))
+  for the Diagnostic Department, leaving it implicit.</p><figure><img
+  alt="A conceptual process model in the form of a DPMN diagram"
+  src="../../../../../../DES-Engineering/chCaseStudies/img/DiagnDep_CPM2_DPMN.svg"
+  width="700" /></figure><p>Notice that in this refined model, the processing
+  nodes of the previous model have been resolved into corresponding processing
+  activities (and associated resources).</p><p>According to DPMN's
+  <em>declarative resource modeling</em> principles, a required resource will
+  be allocated before an activity starts and, unless the follow-up activity
+  also requires a resource of that type, released after it has completed. In
+  the case of the activity sequence of "perform ECG" and "walk patient to US
+  bed", however, the resource "ECG spot" must not be released before the
+  follow-up activity "walk patient to US bed" starts, because it represents
+  the location of the patient (in the ECG room), which only becomes available
+  when the patient leaves the room (for going to the US room) and not when the
+  "perform ECG" activity ends. </p><p>DPMN allows to mark such a
+  <b><i>deferred resource de-allocation</i></b> with the help of a special
+  resource role association end (a dot with a bar), as can be seen in the
+  diagram at the "ECG spot" resource type rectangle. It means that this
+  resource is not released when the activity ends, but when the follow-up
+  activity starts.</p><p>In this example, the requirement for deferred
+  resource de-allocation stems from the ambiguity of the ECG room (with three
+  spots) representing both a spatial resource and an input buffer for the
+  processing activity "walk to US bed". This points to an intricate
+  relationship between the concepts of spatial resources and input buffers in
+  PNs, which requires further research. </p></details></details><details
+  open="open"><summary>Simulation Design</summary><p>We are going to make two
+  design models, a simpler (more abstract) one and a more detailed one. In
+  both designs, we consider only one diagnostic department, which does not
+  have to be modeled as an explicit object. </p><p>These secondary business
+  activities will only be modeled in a second version of our
+  model.</p><section><h4>Diagnostic-Department-1</h4><p></p></section><p>We
+  consider a scenario with two order takers, ten pizza makers, five ovens and
+  20 scooters.</p><details open="open"><summary>Information Design
+  Model</summary><p>An information design model, in the form of an <abbr
+  title="Object Event">OE</abbr> class diagram as shown below, is derived from
+  a conceptual information model by </p><ol>
+      <li>Abstracting away from items that are not design-relevant.</li>
+
+      <li>Adding properties,functions and methods to object, event and
+      activity classes. In particular, a <i>status</i> attribute is added to
+      all resource object types, such as <i>OrderTaker</i> and <i>Oven</i>,
+      and a class-level <i>duration</i> function is added to all activity
+      classes.</li>
+    </ol><figure id="figMakeAndDeliverPizzaIDM"><img alt="???"
+  src="../img/Pizzeria_IDMa.svg" width="500" /><figcaption>An information
+  design model defining object, event and activity
+  types.</figcaption></figure><p>Notice how functions representing random
+  variables, like the <code>duration</code> function of all activity types,
+  are marked with the keyword (or UML 'stereotype') «rv» standing for "random
+  variable". These random variable functions sample from a probability
+  distribution function (PDF), which is symbolically indicated with
+  expressions like <i>Tri(30,40,50)</i> standing for the <em>triangular</em>
+  PDF with lower and upper bounds 30 and 50 and a median of 40, or
+  <i>DU(1,4)</i> standing for the discrete uniform PDF with lower and upper
+  bounds 3 and 6.</p><p>In the case of the event type <i>OrderCall</i>, the
+  random variable function recurrence samples from an exponential PDF with
+  five different event rates given for the five consecutive hours during which
+  the pizza service operates.</p><p>The activity type <i>TakeOrder</i> is
+  associated with the object type <i>OrderTaker</i> via the implicit resource
+  role <i>orderTaker</i> (with a resource cardinality constraint of "exactly
+  1"), indicated with the association end stereotype «rr» standing for
+  "resource role". A resource role assigns resource objects to activities.
+  </p><p>Likewise, <i>MakePizza</i> is associated with <i>PizzaMaker</i> and
+  <i>Oven</i> via the (implicitly named) resource roles <i>pizzaMakers</i>,
+  having a resource cardinality constraint of "exactly 2", and <i>oven</i>,
+  having a resource cardinality constraint of "exactly 1".</p><p>An <abbr
+  title="Object Event">OE</abbr> class design diagram like the one above,
+  defines resource roles (like <i>pizzaMakers</i>), resource role types (like
+  <i>PizzaMaker</i>) and resource cardinality constraints (like "exactly 2")
+  for all types of activities. Normally, in an <abbr
+  title="Object Event">OE</abbr> simulation there is a one-to-one
+  correspondence between resource role types and resource pools. By
+  convention, a resource pool has the same name as the corresponding resource
+  role type, yet pluralized and starting with a lowercase character. For
+  instance, the name of the resource pool for <i>PizzaMaker</i> is
+  <i>pizzaMakers</i>.</p><p>Notice that <i>OrderCall</i> events are exogenous,
+  having a recurrence function defined case-wise for each of the five hours
+  per day operation of the pizza service company (in the attached invariant
+  box).</p><p>For implementing the waiting timeout event defined in the
+  process model, the activity type <i>TakeOrder</i> has a class-level
+  <i>waitingTimeout</i> function implementing a random variable with PDF
+  <i>U(3,6)</i>.</p></details><details open="open"><summary>Process Design
+  Model</summary><p>A process design model, in the form of a DPMN process
+  diagram as shown below, is derived from a conceptual process model by
+  abstracting away from items that are not design-relevant and possibly adding
+  certain computational details. </p><p>A <abbr
+  title="Discrete Event Process Modeling Notation">DPMN</abbr> process design
+  model (like the one shown in <a href="#figMakeAndDeliverPizzaPDM1"></a>)
+  essentially defines the admissible sequences of events and activities
+  together with their dependencies and effects on objects, while its
+  underlying <abbr title="Object Event">OE</abbr> class design model (like the
+  one shown in <a href="#figMakeAndDeliverPizzaIDM"></a>) defines the types of
+  objects, events and activities, together with the participation of objects
+  in events and activities, including the resource roles of activities, as
+  well as resource cardinality constraints, parallel participation
+  constraints, alternative resources, and task priorities. </p><figure
+  id="figMakeAndDeliverPizzaPDM1"><img src="../img/Pizzeria_PDM.svg"
+  width="450" /><figcaption>A process design for the Make-and-Deliver-Pizza
+  business process</figcaption></figure><p>It is an option, though, to enrich
+  a <abbr title="Discrete Event Process Modeling Notation">DPMN</abbr> process
+  design model by displaying more computational details, especially the
+  recurrence of exogenous events, the duration of activities and the most
+  important resource management features defined in the underlying <abbr
+  title="Object Event">OE</abbr> class design model, such as resource roles
+  (in particular, performer roles can be displayed in the form of
+  <em>Lanes</em>) and resource cardinality constraints. The following model
+  shows an enriched version of <a
+  href="#figMakeAndDeliverPizzaPDM1"></a>:</p><figure
+  id="figMakeAndDeliverPizzaPDM2"><img src="../img/Pizzeria_PDM2.svg"
+  width="550" /><figcaption>An enriched process design
+  model</figcaption></figure><p>Such an enriched <abbr
+  title="Discrete Event Process Modeling Notation">DPMN</abbr> process design
+  model includes all computational details needed for an implementation
+  without a separate explicit <abbr title="Object Event">OE</abbr> class
+  design model. In fact, such a process model implicitly defines a
+  corresponding class model. For instance, the enriched <abbr
+  title="Discrete Event Process Modeling Notation">DPMN</abbr> model of <a
+  href="#figMakeAndDeliverPizzaPDM2"></a> implicitly defines the <abbr
+  title="Object Event">OE</abbr> class model of <a
+  href="#figMakeAndDeliverPizzaIDM"></a> above.</p><p>The notation for
+  defining performer roles in <em>Lanes</em> consists of a performer role name
+  (such as <i>pizzaMakers</i>) and and an object type name (such as
+  <i>PizzaMaker</i>) denoting its range, separated by a colon. When the
+  performer role name is appended by a multiplicity expression in brackets, as
+  in <i>pizzaMakers[2]</i>, this denotes a resource cardinality constraint
+  (stating that exactly 2 pizzaMakers are required). When only a performer
+  type prefixed with a colon (such as <i>:OrderTaker</i>) is provided, this
+  means that the implicit performer role name is obtained by lowercasing the
+  performer type name (as in <i>orderTaker:OrderTaker</i>).</p>The notation
+  for defining a non-performer resource role, such as <i>oven:Oven</i>,
+  consists of a named object rectangle, such as the <i>:Oven</i> rectangle in
+  <a href="#figMakeAndDeliverPizzaPDM2"></a>, attached to an activity
+  rectangle by means of a connection line with a small filled square
+  representing a resource link, such as the line between the <i>MakePizza</i>
+  activity rectangle and the <i>:Oven</i> object rectangle in <a
+  href="#figMakeAndDeliverPizzaPDM2"></a>.<p>Notice that the model of <a
+  href="#figMakeAndDeliverPizzaPDM2"></a> does not include any element
+  representing a resource pool. It is assumed that for any organizational
+  position described in the underlying <abbr title="Object Event">OE</abbr>
+  class model, the organization under consideration has a corresponding
+  resource pool. By default , each resource role of an activity type is
+  associated with a resource pool having the same (yet pluralized) name, such
+  that its resources are instances of a corresponding resource role type,
+  which is an organizational position in the case of human resources.
+  </p><p>For instance, for the <i>MakePizza</i> activity a pool <i>ovens</i>
+  is assigned to its resource role <i>oven</i> by default. The members of the
+  pool <i>ovens</i> are instances of the (resource) object type <i>Oven</i>.
+  Likewise, a pool <i>pizzaMakers</i> is assigned to the <i>MakePizza</i>
+  resource role <i>pizzaMaker</i>. The members of this pool are instances of
+  the organizational position <i>PizzaMaker</i>. These default pool
+  assignments are normally not shown in a DPMN diagram, but an <abbr
+  title="Object Event">OE</abbr> simulator takes care of them.</p><p>Combined
+  with its underlying <abbr title="Object Event">OE</abbr> class design model,
+  a <abbr title="Discrete Event Process Modeling Notation">DPMN</abbr> process
+  design model provides a computationally complete specification of a
+  simulation model.</p></details></details><details open="open"><summary>Model
+  Variant: Orders May Also Be Taken by Pizza Makers</summary><p>For decreasing
+  the number of lost orders due to long waiting times, it is advisable to
+  charge pizza makers with taking orders whenever no order taker is available.
+  In resource management terminology, the organizational position <i>pizza
+  maker</i> is redefined by adding the performer role <i>order taker</i> to
+  its portfolio of organizational roles. </p><p>In a conceptual <abbr
+  title="Object Event">OE</abbr> class diagram, this can be expressed by
+  adding a subtyping arrow from <i>pizza makers</i> to <i>order takers</i>
+  categorized as an <em><b>alternative resource subtyping</b></em> arrow with
+  the stereotype «ar», as shown in the following diagram:</p><figure><img
+  alt="conceptual information model describing object, event and activity types"
+  src="../img/Pizzeria-AlternativeResourceSubtyping_IDM.svg"
+  width="450" /></figure><p>The <abbr title="Object Event">OE</abbr> class
+  design diagram is extended in the same way, by adding an <em>alternative
+  resource subtyping</em> arrow from <i>PizzaMaker</i> to
+  <i>OrderTaker</i>.</p><p>The DPMN process design model is not affected by
+  this change.</p></details></body>
+</html>

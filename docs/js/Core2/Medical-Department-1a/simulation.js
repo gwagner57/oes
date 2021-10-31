@@ -20,7 +20,7 @@ sim.scenario.setupInitialState = function () {
   // Create initial objects
   var md1 = new MedicalDepartment({id: 1, name:"md1", nmrOfAvailDoctors: 3});
   // Schedule initial events
-  sim.FEL.add( new NewCase({occTime: 1, medicalDepartment: md1}));
+  sim.FEL.add( new PatientArrival({occTime: 1, medicalDepartment: md1}));
 }
 /*******************************************************
  Statistics variables

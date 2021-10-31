@@ -15,14 +15,17 @@ sim.model.networkNodes = {
       arrivalRate: 0.5,
       successorNodeName:"takeOrder"},
   "takeOrder": {typeName:"ProcessingNode", name:"takeOrder",
+      processingCapacity: Infinity,  // no processing station as resource
       resourceRoles: {"orderTaker": {range: "OrderTaker"}},
       processingDuration: () => rand.uniform(1,4),
       successorNodeName:"makePizza"},
   "makePizza": {typeName:"ProcessingNode", name:"makePizza",
+      processingCapacity: Infinity,  // no processing station as resource
       resourceRoles: {"pizzaMakers": {range:"PizzaMaker", card:2}, "oven":{card:1}},
       processingDuration: () => rand.triangular(3,6,4),
       successorNodeName:"deliverPizza"},
   "deliverPizza": {typeName:"ProcessingNode", name:"deliverPizza",
+      processingCapacity: Infinity,  // no processing station as resource
       resourceRoles: {"scooter":{card:1}},
       processingDuration: () => rand.triangular(10,30,15),
       successorNodeName:"exit"},

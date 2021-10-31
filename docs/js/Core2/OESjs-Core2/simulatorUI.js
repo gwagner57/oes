@@ -32,11 +32,11 @@ oes.ui.logSimulationStep = function (simLogTableEl, step, time, currEvtsStr, obj
  Display the standalone scenario statistics
  ********************************************************/
 oes.ui.showStatistics = function (stat) {
-  var decPl = oes.defaults.expostStatDecimalPlaces,
-      nmrOfPredefStatSlots = "includeTimeouts" in stat ? 2 : 1;
-  var perNodeStatTblHeadElemsString="";
+  const decPl = oes.defaults.expostStatDecimalPlaces,
+        nmrOfPredefStatSlots = "includeTimeouts" in stat ? 2 : 1;
+  var perNodeStatTblHeadElemsString="", isPN=false;
 
-  function createActStatTableHead()  {
+  function createActyNodeStatTableHead()  {
     const nodeStat = oes.ui.nodeStat;
     var perNodeStatHeading="";
     if (!stat.includeTimeouts) delete nodeStat.tmout;
@@ -46,7 +46,7 @@ oes.ui.showStatistics = function (stat) {
     }
     return perNodeStatHeading;
   }
-  perNodeStatTblHeadElemsString = createActStatTableHead();
+  perNodeStatTblHeadElemsString = createActyNodeStatTableHead();
   // create table for user-defined statistics
   if (Object.keys( stat).length > nmrOfPredefStatSlots) {
     const usrStatTblElem = document.createElement("table"),
@@ -64,33 +64,70 @@ oes.ui.showStatistics = function (stat) {
     document.getElementById("simInfo").insertAdjacentElement(
         "afterend", usrStatTblElem);
   }
-  // create table for statistics per activity type
   if (Object.keys( stat.networkNodes).length > 0) {
-    const actStatTblElem = document.createElement("table"),
-        tbodyEl = document.createElement("tbody");
-    actStatTblElem.id = "activityStatisticsTbl";
-    actStatTblElem.innerHTML = '<caption>Activity Network statistics</caption>';
-    actStatTblElem.appendChild( tbodyEl);
+    // create table for PN statistics per entry node
+    const entryNodeStatTblElem = document.createElement("table");
+    let tbodyEl = document.createElement("tbody");
+    entryNodeStatTblElem.id = "entryNodeStatisticsTbl";
+    //entryNodeStatTblElem.innerHTML = "<caption>Entry node statistics</caption>";
+    entryNodeStatTblElem.appendChild( tbodyEl);
     let rowEl = tbodyEl.insertRow();
-    rowEl.innerHTML = "<tr><th>Activity node</th>"+ perNodeStatTblHeadElemsString +
+    rowEl.innerHTML = "<tr><th>Entry node</th><th>arrived</th></tr>";
+    for (const nodeName of Object.keys( stat.networkNodes)) {
+      const nodeStat = stat.networkNodes[nodeName];
+      if ("nmrOfArrivedObjects" in nodeStat) {  // entry node
+        isPN = true;
+        const rowEl = tbodyEl.insertRow();
+        rowEl.insertCell().textContent = nodeName;
+        rowEl.insertCell().textContent = nodeStat.nmrOfArrivedObjects;
+      }
+    }
+    document.getElementById("execInfo").insertAdjacentElement("beforebegin", entryNodeStatTblElem);
+    // create table for AN/PN statistics per activity/processing node
+    const actyNodeStatTblElem = document.createElement("table");
+    tbodyEl = document.createElement("tbody");
+    actyNodeStatTblElem.id = "activityNodeStatisticsTbl";
+    //actyNodeStatTblElem.innerHTML = "<caption>Activity node statistics</caption>";
+    actyNodeStatTblElem.appendChild( tbodyEl);
+    rowEl = tbodyEl.insertRow();
+    rowEl.innerHTML = `<tr><th>${isPN ? "Processing":"Activity"} node</th>`+ perNodeStatTblHeadElemsString +
         "<th>resource utilization</th></tr>";
     for (const nodeName of Object.keys( stat.networkNodes)) {
       const nodeStat = stat.networkNodes[nodeName];
-      const rowEl = tbodyEl.insertRow();
-      rowEl.insertCell().textContent = nodeName;
-      rowEl.insertCell().textContent = nodeStat.enqueuedActivities;
-      if (stat.includeTimeouts) {
-        rowEl.insertCell().textContent = nodeStat.waitingTimeouts;
+      if ("resUtil" in nodeStat) {
+        const rowEl = tbodyEl.insertRow();
+        rowEl.insertCell().textContent = nodeName;
+        rowEl.insertCell().textContent = nodeStat.enqueuedActivities;
+        if (stat.includeTimeouts) {
+          rowEl.insertCell().textContent = nodeStat.waitingTimeouts;
+        }
+        rowEl.insertCell().textContent = nodeStat.startedActivities;
+        rowEl.insertCell().textContent = nodeStat.completedActivities;
+        rowEl.insertCell().textContent = nodeStat.queueLength.max;
+        rowEl.insertCell().textContent = math.round( nodeStat.waitingTime.max, decPl);
+        rowEl.insertCell().textContent = math.round( nodeStat.cycleTime.max, decPl);
+        rowEl.insertCell().textContent = JSON.stringify( nodeStat.resUtil);
       }
-      rowEl.insertCell().textContent = nodeStat.startedActivities;
-      rowEl.insertCell().textContent = nodeStat.completedActivities;
-      rowEl.insertCell().textContent = nodeStat.queueLength.max;
-      rowEl.insertCell().textContent = math.round( nodeStat.waitingTime.max, decPl);
-      rowEl.insertCell().textContent = math.round( nodeStat.cycleTime.max, decPl);
-      rowEl.insertCell().textContent = JSON.stringify( nodeStat.resUtil);
     }
-    document.getElementById("execInfo").insertAdjacentElement(
-        "beforebegin", actStatTblElem);
+    document.getElementById("execInfo").insertAdjacentElement("beforebegin", actyNodeStatTblElem);
+    // create table for PN statistics per exit node
+    const exitNodeStatTblElem = document.createElement("table");
+    tbodyEl = document.createElement("tbody");
+    exitNodeStatTblElem.id = "exitNodeStatisticsTbl";
+    //entryNodeStatTblElem.innerHTML = "<caption>Entry node statistics</caption>";
+    exitNodeStatTblElem.appendChild( tbodyEl);
+    rowEl = tbodyEl.insertRow();
+    rowEl.innerHTML = "<tr><th>Exit node</th><th>departed</th><th>avg. throughput time</th></tr>";
+    for (const nodeName of Object.keys( stat.networkNodes)) {
+      const nodeStat = stat.networkNodes[nodeName];
+      if ("nmrOfDepartedObjects" in nodeStat) {  // exit node
+        const rowEl = tbodyEl.insertRow();
+        rowEl.insertCell().textContent = nodeName;
+        rowEl.insertCell().textContent = nodeStat.nmrOfDepartedObjects;
+        rowEl.insertCell().textContent = nodeStat.throughputTime;
+      }
+    }
+    document.getElementById("execInfo").insertAdjacentElement("beforebegin", exitNodeStatTblElem);
   }
   /* show resource utilization statistics
   if (Object.keys( stat.resUtil).length > 0) {

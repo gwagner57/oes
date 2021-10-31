@@ -6,8 +6,10 @@ sim.model.time = "continuous";
 sim.model.timeUnit = "min";  // minutes
 
 sim.model.networkNodes = {
-  "customerEntrance": {typeName: "EntryNode", name:"customerEntrance", arrivalRate: 0.3, successorNodeName:"service"},
-  "service": {typeName: "ProcessingNode", name:"service", processingCapacity:1, successorNodeName:"customerExit",
+  "customerEntrance": {typeName: "EntryNode", name:"customerEntrance",
+      arrivalRate: 0.3, successorNodeName:"service"},
+  "service": {typeName: "ProcessingNode", name:"service",
+      processingCapacity: 1, successorNodeName:"customerExit",
       processingDuration: () => rand.uniform(1,4)},
   "customerExit": {typeName: "ExitNode", name:"customerExit"}
 };
@@ -15,13 +17,9 @@ sim.model.networkNodes = {
  Simulation Scenario
 ********************************************************/
 sim.scenario.title = "Basic scenario with one service desk";
-sim.scenario.durationInSimTime = 100;
-//sim.scenario.durationInSimSteps = 1000;
-//sim.scenario.durationInCpuTime = 1000;  // seconds
+sim.scenario.durationInSimTime = 360;
 sim.scenario.idCounter = 11;  // start value of auto IDs
-// Initial State
-sim.scenario.setupInitialState = function () {
-}
+//sim.scenario.setupInitialState = function () {}
 /*******************************************************
  Alternative Scenarios
 ********************************************************/
