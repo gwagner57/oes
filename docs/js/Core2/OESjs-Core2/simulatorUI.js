@@ -34,7 +34,7 @@ oes.ui.logSimulationStep = function (simLogTableEl, step, time, currEvtsStr, obj
 oes.ui.showStatistics = function (stat) {
   const decPl = oes.defaults.expostStatDecimalPlaces,
         nmrOfPredefStatSlots = "includeTimeouts" in stat ? 2 : 1;
-  var perNodeStatTblHeadElemsString="", isPN=false;
+  var perNodeStatTblHeadElemsString="";
 
   function createActyNodeStatTableHead()  {
     const nodeStat = oes.ui.nodeStat;
@@ -65,29 +65,29 @@ oes.ui.showStatistics = function (stat) {
         "afterend", usrStatTblElem);
   }
   if (Object.keys( stat.networkNodes).length > 0) {
-    // create table for PN statistics per entry node
-    const entryNodeStatTblElem = document.createElement("table");
-    let tbodyEl = document.createElement("tbody");
-    entryNodeStatTblElem.id = "entryNodeStatisticsTbl";
-    //entryNodeStatTblElem.innerHTML = "<caption>Entry node statistics</caption>";
-    entryNodeStatTblElem.appendChild( tbodyEl);
-    let rowEl = tbodyEl.insertRow();
-    rowEl.innerHTML = "<tr><th>Entry node</th><th>arrived</th></tr>";
-    for (const nodeName of Object.keys( stat.networkNodes)) {
-      const nodeStat = stat.networkNodes[nodeName];
-      if ("nmrOfArrivedObjects" in nodeStat) {  // entry node
-        isPN = true;
-        const rowEl = tbodyEl.insertRow();
-        rowEl.insertCell().textContent = nodeName;
-        rowEl.insertCell().textContent = nodeStat.nmrOfArrivedObjects;
+    const isPN = Object.keys( stat.networkNodes).some( nodeName => "nmrOfArrivedObjects" in stat.networkNodes[nodeName]);
+    if (isPN) {
+      // create table for PN statistics per entry node
+      const entryNodeStatTblElem = document.createElement("table");
+      const tbodyEl = document.createElement("tbody");
+      entryNodeStatTblElem.id = "entryNodeStatisticsTbl";
+      entryNodeStatTblElem.appendChild( tbodyEl);
+      const rowEl = tbodyEl.insertRow();
+      rowEl.innerHTML = "<tr><th>Entry node</th><th>arrived</th></tr>";
+      for (const nodeName of Object.keys( stat.networkNodes)) {
+        const nodeStat = stat.networkNodes[nodeName];
+        if ("nmrOfArrivedObjects" in nodeStat) {  // entry node
+          const rowEl = tbodyEl.insertRow();
+          rowEl.insertCell().textContent = nodeName;
+          rowEl.insertCell().textContent = nodeStat.nmrOfArrivedObjects;
+        }
       }
+      document.getElementById("execInfo").insertAdjacentElement("beforebegin", entryNodeStatTblElem);
     }
-    document.getElementById("execInfo").insertAdjacentElement("beforebegin", entryNodeStatTblElem);
     // create table for AN/PN statistics per activity/processing node
     const actyNodeStatTblElem = document.createElement("table");
     tbodyEl = document.createElement("tbody");
     actyNodeStatTblElem.id = "activityNodeStatisticsTbl";
-    //actyNodeStatTblElem.innerHTML = "<caption>Activity node statistics</caption>";
     actyNodeStatTblElem.appendChild( tbodyEl);
     rowEl = tbodyEl.insertRow();
     rowEl.innerHTML = `<tr><th>${isPN ? "Processing":"Activity"} node</th>`+ perNodeStatTblHeadElemsString +
@@ -110,24 +110,25 @@ oes.ui.showStatistics = function (stat) {
       }
     }
     document.getElementById("execInfo").insertAdjacentElement("beforebegin", actyNodeStatTblElem);
-    // create table for PN statistics per exit node
-    const exitNodeStatTblElem = document.createElement("table");
-    tbodyEl = document.createElement("tbody");
-    exitNodeStatTblElem.id = "exitNodeStatisticsTbl";
-    //entryNodeStatTblElem.innerHTML = "<caption>Entry node statistics</caption>";
-    exitNodeStatTblElem.appendChild( tbodyEl);
-    rowEl = tbodyEl.insertRow();
-    rowEl.innerHTML = "<tr><th>Exit node</th><th>departed</th><th>avg. throughput time</th></tr>";
-    for (const nodeName of Object.keys( stat.networkNodes)) {
-      const nodeStat = stat.networkNodes[nodeName];
-      if ("nmrOfDepartedObjects" in nodeStat) {  // exit node
-        const rowEl = tbodyEl.insertRow();
-        rowEl.insertCell().textContent = nodeName;
-        rowEl.insertCell().textContent = nodeStat.nmrOfDepartedObjects;
-        rowEl.insertCell().textContent = nodeStat.throughputTime;
+    if (isPN) {
+      // create table for PN statistics per exit node
+      const exitNodeStatTblElem = document.createElement("table");
+      const tbodyEl = document.createElement("tbody");
+      exitNodeStatTblElem.id = "exitNodeStatisticsTbl";
+      exitNodeStatTblElem.appendChild( tbodyEl);
+      const rowEl = tbodyEl.insertRow();
+      rowEl.innerHTML = "<tr><th>Exit node</th><th>departed</th><th>avg. throughput time</th></tr>";
+      for (const nodeName of Object.keys( stat.networkNodes)) {
+        const nodeStat = stat.networkNodes[nodeName];
+        if ("nmrOfDepartedObjects" in nodeStat) {  // exit node
+          const rowEl = tbodyEl.insertRow();
+          rowEl.insertCell().textContent = nodeName;
+          rowEl.insertCell().textContent = nodeStat.nmrOfDepartedObjects;
+          rowEl.insertCell().textContent = nodeStat.throughputTime;
+        }
       }
+      document.getElementById("execInfo").insertAdjacentElement("beforebegin", exitNodeStatTblElem);
     }
-    document.getElementById("execInfo").insertAdjacentElement("beforebegin", exitNodeStatTblElem);
   }
   /* show resource utilization statistics
   if (Object.keys( stat.resUtil).length > 0) {

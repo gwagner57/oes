@@ -707,7 +707,7 @@ oes.createResourcePools = function () {
           resRole.countPoolName = pn;
         }
         // create count pool only if not yet created
-        sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, size:0});
+        sim.resourcePools[pn] ??= new rESOURCEpOOL({name: pn, size:0});
         // assign the (newly created) pool to the resource role
         resRole.resourcePool = sim.resourcePools[pn];
       }

@@ -71,14 +71,9 @@ sim.initializeSimulator = function () {
         const nodeName = oes.getNodeNameFromEvtTypeName( evtTypeName);
         sim.model.networkNodes[nodeName] = {name: nodeName, typeName:"eVENTnODE", eventTypeName: evtTypeName};
         if (ET.successorNode) {
-          const succNodeName = oes.getNodeNameFromActTypeName( ET.successorNode);
-          sim.model.networkNodes[nodeName].successorNodeName = succNodeName;
+          sim.model.networkNodes[nodeName].successorNodeName =
+              oes.getNodeNameFromActTypeName( ET.successorNode);
         }
-
-        // create count pool only if not yet created/*******************************************************
- /* Compute the final statistics
-        ********************************************************/
-        sim.resourcePools[pn] ??= new rESOURCEpOOL( {name: pn, available:0});
       }
       // construct the activity nodes of the implicitly defined AN model
       for (const actTypeName of sim.model.activityTypes) {
@@ -160,14 +155,6 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   // set up initial state
   if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
 
-  /***START Activity extensions AFTER-setupInitialState ****
-  ****************/
-  oes.initializeActivityStatistics();
-  for (const actTypeName of sim.model.activityTypes) {
-    // Reset/clear the tasks queues
-    sim.Classes[actTypeName].tasks.length = 0;
-
-
   /***START AN/PN extensions AFTER-setupInitialState ********************/
   if (sim.model.isAN || sim.model.isPN) {
     //oes.initializeActNetScenario();
@@ -186,7 +173,6 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
       oes.initializeProcNetStatistics();
       oes.scheduleInitialArrivalEvents();  // in sim.scenario.networkNodes
     }
-
   }
   /***END AN/PN extensions AFTER-setupInitialState *********************/
 

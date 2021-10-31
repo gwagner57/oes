@@ -1,5 +1,5 @@
 class OrderCall extends eVENT {
-  constructor({ occTime, delay}) {
+  constructor({occTime, delay}={}) {
     super({occTime, delay});
   }
   static recurrence() {
