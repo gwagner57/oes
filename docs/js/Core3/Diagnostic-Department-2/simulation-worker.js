@@ -2,8 +2,8 @@
 // load general framework code
 self.importScripts("../lib/seedrandom.min.js", "../lib/rand.js", "../lib/util.js",
     "../lib/math.js", "../lib/idb5.js", "../lib/EventList.js", "../lib/eNUMERATION.js");
-self.importScripts("../OESjs-Core2/OES-Foundation.js", "../OESjs-Core2/OES-Activities.js",
-    "../OESjs-Core2/simulator.js");
+self.importScripts("../OESjs-Core3/OES-Foundation.js", "../OESjs-Core3/OES-Activities.js",
+    "../OESjs-Core3/OES-ProcessingNetworks.js", "../OESjs-Core3/simulator.js");
 // load simulation-example-specific code
 self.importScripts("simulation.js");
 if (sim.model.objectTypes) {
