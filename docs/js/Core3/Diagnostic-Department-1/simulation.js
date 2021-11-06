@@ -14,13 +14,13 @@ sim.model.networkNodes = {
       successorNodeName:"ecgSpot-PerformECG"},
   "ecgSpot-PerformECG": {typeName:"ProcessingNode", name:"ecgSpot-PerformECG",
       processingCapacity: 3,  // ECG spots
-      resourceRoles: {"ecgTechnician":{range:"EcgTechnician"}, "ecg":{card:1}},
+      resourceRoles: {"ecgTechnician": {range:"EcgTechnician"}, "ecgMachine":{card:1}},
       processingDuration: () => rand.triangular(5,10, 7),
       successorNodeName:"usBed-PerformUsScan"},
   "usBed-PerformUsScan": {typeName:"ProcessingNode", name:"usBed-PerformUsScan",
       processingCapacity: 3,  // US beds
-      resourceRoles: {"doctor":{range:"Doctor"}},
-      processingDuration: () => rand.triangular(7,20,10),
+      resourceRoles: {"doctor": {range:"Doctor"}},
+      processingDuration: () => rand.triangular(5,25,10),
       successorNodeName:"patientExit"},
   "patientExit": {typeName:"ExitNode", name:"patientExit"}
 };
@@ -42,7 +42,7 @@ sim.scenario.setupInitialState = function () {
   sim.resourcePools["ecgTechnicians"].availResources.push( t1, t2, t3);
   sim.resourcePools["doctors"].availResources.push( d1, d2, d3);
   // Initialize the count pools
-  sim.resourcePools["ecgs"].available = 3;
+  sim.resourcePools["ecgMachines"].available = 3;
 }
 /*******************************************************
  Alternative Scenarios

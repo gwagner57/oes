@@ -7,9 +7,9 @@
   </head>
 
   <body><figure style="float:right"><div><img alt="???"
-  src="../../../../../docs/js/Core2/Diagnostic-Department-1-AN/img/Young-Female-Doctor.svg"
+  src="../../../../../../DES-Engineering/chCaseStudies/img/Young-Male-Doctor.svg"
   width="300" /><img alt="???"
-  src="../../../../../docs/js/Core2/Diagnostic-Department-1-AN/img/Young-Male-Doctor.svg"
+  src="../../../../../../DES-Engineering/chCaseStudies/img/Young-Female-Doctor.svg"
   width="300" /></div></figure><p>At a diagnostic department of a hospital,
   incoming patients first get recordings of their heart’s electrical activity
   via an Electrocardiography (ECG) and then get an ultrasound scan.</p><p>For
@@ -197,7 +197,7 @@
   to US bed". While the first of them requires an "ECG spot" as a resource,
   the second one requires a "US bed". In the following <abbr
   title="Discrete Event Process Modeling Notation">DPMN</abbr> process
-  diagram, we do not display the rectangular container (called <em>pool</em>))
+  diagram, we do not display the rectangular container (called <em>Pool</em>)
   for the Diagnostic Department, leaving it implicit.</p><figure><img
   alt="A conceptual process model in the form of a DPMN diagram"
   src="../../../../../../DES-Engineering/chCaseStudies/img/DiagnDep_CPM2_DPMN.svg"
@@ -216,24 +216,61 @@
   <b><i>deferred resource de-allocation</i></b> with the help of a special
   resource role association end (a dot with a bar), as can be seen in the
   diagram at the "ECG spot" resource type rectangle. It means that this
-  resource is not released when the activity ends, but when the follow-up
-  activity starts.</p><p>In this example, the requirement for deferred
-  resource de-allocation stems from the ambiguity of the ECG room (with three
-  spots) representing both a spatial resource and an input buffer for the
-  processing activity "walk to US bed". This points to an intricate
-  relationship between the concepts of spatial resources and input buffers in
-  PNs, which requires further research. </p></details></details><details
-  open="open"><summary>Simulation Design</summary><p>We are going to make two
-  design models, a simpler (more abstract) one and a more detailed one. In
-  both designs, we consider only one diagnostic department, which does not
-  have to be modeled as an explicit object. </p><p>These secondary business
-  activities will only be modeled in a second version of our
-  model.</p><section><h4>Diagnostic-Department-1</h4><p></p></section><p>We
-  consider a scenario with two order takers, ten pizza makers, five ovens and
-  20 scooters.</p><details open="open"><summary>Information Design
-  Model</summary><p>An information design model, in the form of an <abbr
-  title="Object Event">OE</abbr> class diagram as shown below, is derived from
-  a conceptual information model by </p><ol>
+  resource is not released when the activity (here "perform ECG") ends, but
+  only when the follow-up activity (here "walk patient to US bed")
+  starts.</p><p>In this example, the requirement for deferred resource
+  de-allocation stems from the ambiguity of the ECG room (with three spots)
+  representing both a spatial resource for the activity "perform ECG" and an
+  input buffer for the processing activity "walk to US bed". This points to an
+  intricate relationship between the concepts of spatial resources and input
+  buffers in PNs, which requires further research.
+  </p></details></details><details open="open"><summary>Simulation
+  Design</summary><p>Based on the two conceptual models discussed in the
+  previous section, we are going to make two design models, a simpler (more
+  abstract) one and a more detailed one. In both designs, we consider only one
+  diagnostic department, which does not have to be modeled as an explicit
+  object. </p><p>These secondary business activities will only be modeled in a
+  second version of our
+  model.</p><section><h4>Diagnostic-Department-1</h4><p></p><table border="1">
+      <thead>
+        <tr>
+          <th>Activity</th>
+
+          <th>Duration</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>perform ECG</td>
+
+          <td></td>
+        </tr>
+
+        <tr>
+          <th></th>
+
+          <td></td>
+        </tr>
+
+        <tr>
+          <th></th>
+
+          <td></td>
+        </tr>
+
+        <tr>
+          <th></th>
+
+          <td></td>
+        </tr>
+      </tbody>
+    </table></section><p>We consider a scenario with two order takers, ten
+  pizza makers, five ovens and 20 scooters.</p><details
+  open="open"><summary>Information Design Model</summary><p>An information
+  design model, in the form of an <abbr title="Object Event">OE</abbr> class
+  diagram as shown below, is derived from a conceptual information model by
+  </p><ol>
       <li>Abstracting away from items that are not design-relevant.</li>
 
       <li>Adding properties,functions and methods to object, event and

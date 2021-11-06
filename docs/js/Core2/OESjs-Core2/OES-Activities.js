@@ -189,6 +189,39 @@ at simulation step ${sim.step}!`);
 }
 
 /**
+ * 
+ */
+class nODE extends oBJECT {
+  constructor({id, name, successorNodeName, successorNodeExpr, successorNodeNames}) {
+    super( id||name, name);  // if not defined, set id to name
+    // a fixed successor node name
+    if (successorNodeName) this.successorNodeName = successorNodeName;
+    // a dynamic successor node name specified as an expression for XOR splitting
+    if (successorNodeExpr) this.successorNodeExpr = successorNodeExpr;
+    // a map with node names as keys and conditions as values for OR/AND splitting
+    if (successorNodeNames) this.successorNodeNames = successorNodeNames;
+  }
+  getSuccessorNode() {
+    //TODO: node.successorNodeNames may be a map from names to conditions for (X)OR/AND splitting
+    let succNode = null;
+    if (this.successorNode || this.successorNodeName || this.successorNodeExpr) {
+      if (this.successorNode) {
+        succNode = this.successorNode;
+      } else if (typeof this.successorNodeName === "function") {
+        succNode = sim.scenario.networkNodes[this.successorNodeName()];
+      } else if (typeof this.successorNodeExpr === "function") {
+        const succActyTypeName = this.successorNodeExpr();
+        const successorNodeName = oes.getNodeNameFromActTypeName(succActyTypeName);
+        succNode = sim.scenario.networkNodes[successorNodeName];
+      }
+    }
+    return succNode;
+  }
+  toString() {
+    return "";  // overwrite the default event serialization
+  }
+}
+/**
  * Event nodes are abstract objects are associated with an event type and a performer
  * such that events of that type schedule a successor activity to be performed by
  * this performer. The definition of an event node may include defining the associated
@@ -214,24 +247,15 @@ at simulation step ${sim.step}!`);
  * Event nodes have a built-in (read-only) statistics attribute "nmrOfEvents"
  * counting the number of events that have occurred at the given event node.
  */
-class eVENTnODE extends oBJECT {
+class eVENTnODE extends nODE {
   constructor({id, name, eventTypeName, eventRate, eventRecurrence, maxNmrOfEvents,
                 successorNodeName, successorNodeExpr, successorNodeNames}) {
-    super( id||name, name);  // set id to name
+    super({id, name, successorNodeName, successorNodeExpr, successorNodeNames});
     this.eventTypeName = eventTypeName;
     if (eventRate) this.eventRate = eventRate;
     if (eventRecurrence) this.eventRecurrence = eventRecurrence;
     if (maxNmrOfEvents) this.maxNmrOfEvents = maxNmrOfEvents;
-    // a fixed successor node name
-    if (successorNodeName) this.successorNodeName = successorNodeName;
-    // a dynamic successor node name specified as an expression for XOR splitting
-    if (successorNodeExpr) this.successorNodeExpr = successorNodeExpr;
-    // a map with node names as keys and conditions as values for OR/AND splitting
-    if (successorNodeNames) this.successorNodeNames = successorNodeNames;
     this.nmrOfEvents = 0;
-  }
-  toString() {
-    return "";  // overwrite the default event serialization
   }
 }
 /*
@@ -252,10 +276,10 @@ class eVENTnODE extends oBJECT {
  * node (where processes start via exogenous activity start events). When an activity node
  * does not have a "successorNode" attribute slot, it represents an end node (where processes end).
  */
-class aCTIVITYnODE extends oBJECT {
+class aCTIVITYnODE extends nODE {
   constructor({id, name, activityTypeName, resourceRoles, duration, waitingTimeout,
-                successorNodeName, successorActivityTypeNameExpr, successorNodeNames}) {
-    super( id||name, name);  // set id to name
+                successorNodeName, successorNodeExpr, successorNodeNames}) {
+    super({id, name, successorNodeName, successorNodeExpr, successorNodeNames});
     // a user-defined subclass of aCTIVITY
     if (activityTypeName) {
       this.activityTypeName = activityTypeName;
@@ -273,30 +297,8 @@ class aCTIVITYnODE extends oBJECT {
     if (duration) this.duration = duration;
     // a fixed value or a random variable function expression
     if (waitingTimeout) this.waitingTimeout = waitingTimeout;
-    // a fixed successor node name (or an expression for XOR splitting specified in an explicit AN definition)
-    if (successorNodeName) this.successorNodeName = successorNodeName;
-    // a dynamic successor activity type name specified as an expression in an AT for XOR splitting
-    if (successorActivityTypeNameExpr) this.successorActivityTypeNameExpr = successorActivityTypeNameExpr;
-    // a map with node names as keys and conditions as values for OR/AND splitting
-    if (successorNodeNames) this.successorNodeNames = successorNodeNames;
+    // create empty task queue
     this.tasks = new qUEUE();
-  }
-  getSuccessorNode() {
-    //TODO: node.successorNodeNames may be a map from names to conditions for (X)OR/AND splitting
-    let succNode = null;
-    if (this.successorNode || this.successorNodeName ||
-        this.successorActivityTypeNameExpr) {  // a string or a function returning a string
-      if (this.successorNode) {
-        succNode = this.successorNode;
-      } else if (typeof this.successorNodeName === "function") {
-        succNode = sim.scenario.networkNodes[this.successorNodeName()];
-      } else if (typeof this.successorActivityTypeNameExpr === "function") {
-        const succActyTypeName = this.successorActivityTypeNameExpr();
-        const successorNodeName = oes.getNodeNameFromActTypeName(succActyTypeName);
-        succNode = sim.scenario.networkNodes[successorNodeName];
-      }
-    }
-    return succNode;
   }
   ifAvailAllocReqResAndStartNextActivity( nextActy) {
     const taskQueue = this.tasks;
@@ -327,7 +329,7 @@ class aCTIVITYnODE extends oBJECT {
       for (const resRoleName of Object.keys( resRoles)) {
         if (!nextActy[resRoleName]) {
           const resRole = resRoles[resRoleName],
-                resPool = resRole.resourcePool ?? resRole.range.resourcePool;
+              resPool = resRole.resourcePool ?? resRole.range.resourcePool;
           // allocate the required/maximal quantity of resources from the pool
           let resQuantity=0;
           if (resRole.card) resQuantity = resRole.card;

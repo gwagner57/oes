@@ -35,8 +35,8 @@
   and "usBed/PerformUsScan", and an exit node. It's dynamics is described by the DPMN process diagram shown above.
   </p>
  <h2 id="scenarioTitle">Default scenario</h2>
- <p id="scenarioDescription">The default scenario has 3 ECG technicians (with IDs 1-3), 3 ECGs,
-  and 3 doctors (with IDs 11&ndash;13).</p>
+ <p id="scenarioDescription">The default scenario has two processing nodes ("ECG spot / perform ECG" and "US bed / perform US scan"),
+  each with a processing capacity of 3, 3 ECG technicians (with IDs 1-3), 3 ECG machines, and 3 doctors (with IDs 11&ndash;13).</p>
  <form id="run">
   <div><label>Select scenario: <select name="selScen" onchange="onChangeOfScenSelect()"></select></label></div>
   <div><button onclick="run()" type="button">Run</button>

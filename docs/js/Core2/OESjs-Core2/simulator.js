@@ -88,7 +88,7 @@ sim.initializeSimulator = function () {
           if (typeof AT.successorNode === "string") {
             node.successorNodeName = oes.getNodeNameFromActTypeName( AT.successorNode);
           } else if (typeof AT.successorNode === "function") {
-            node.successorActivityTypeNameExpr = AT.successorNode;
+            node.successorNodeExpr = AT.successorNode;
           }
         }
       }
@@ -98,8 +98,11 @@ sim.initializeSimulator = function () {
       if ("typeName" in sim.model.networkNodes[nodeNames[0]]) {  // a PN model
         sim.model.isPN = true;
         sim.Classes["pROCESSINGoBJECT"] = pROCESSINGoBJECT;
+        sim.Classes["ArrivalEventNode"] = sim.Classes["aRRIVALeVENTnODE"] = aRRIVALeVENTnODE;
         sim.Classes["EntryNode"] = sim.Classes["eNTRYnODE"] = eNTRYnODE;
+        sim.Classes["ProcessingActivityNode"] = sim.Classes["pROCESSINGaCTIVITYnODE"] = pROCESSINGaCTIVITYnODE;
         sim.Classes["ProcessingNode"] = sim.Classes["pROCESSINGnODE"] = pROCESSINGnODE;
+        sim.Classes["ExitNode"] = sim.Classes["eXITnODE"] = eXITnODE;
         sim.Classes["ExitNode"] = sim.Classes["eXITnODE"] = eXITnODE;
       } else {  // AN
         sim.model.isAN = true;

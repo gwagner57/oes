@@ -26,9 +26,21 @@
  <div><small>An <em><a href="https://gwagner57.github.io/oes/">Object Event Simulation (OES)</a></em> example model.
   You can download and inspect its code from the <a href="https://github.com/gwagner57/oes/tree/master/docs/js/Core3">OES
   GitHub repo</a>.</small></div>
- <h1>Medical-Department-2b</h1>
- <p>Like <a href="../Medical-Department-2a/index.html">Medical-Department-2a</a>, but now an <em>examination</em> requires not only a doctor and a room, but also two nurses.</p>
- <p>The scenario has 3 doctors, 7 nurses and 4 rooms.</p>
+ <figure class="right"><img alt="Process Design Model" src="img/CPM.svg" width="700" /></figure>
+ <h1>Diagnostic-Department-2 <a href="description.html">Read more...</a></h1>
+ <p id="copyright">© 2021 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
+     Brandenburg University of Technology, Germany.</p>
+ <p>Like in <a href="../Diagnostic-Department-1/index.html">Diagnostic-Department-1</a>, the two primary business
+  activities modeled are "perform electrocardiography (ECG)" and "perform ultrasound scan (US)", but now also
+  the activities of patients walking to the ECG room and then to the US room are taken into consideration.
+  While in Diagnostic-Department-1 "perform ECG" and "perform US" are modeled as two processing nodes ("servers")
+  that subsume all secondary activities as implicit factors, we now model all relevant activities
+  explicitly, no longer using processing nodes, but rather <em>processing activity nodes</em>.</p>
+ <p>Notice the special resource role association end (a dot with a bar) at the resource object type rectangle "ECG spot".
+  It represents <em>deferred resource de-allocation</em>, implying that the ECG spot of a "perform ECG" activity is not
+  released when the activity ends, but only when the follow-up activity "walk patient to US bed" starts.</p>
+ <p id="scenarioDescription">The default scenario has 3 "ECG spot" in the ECG room, 3 "US beds" in the US room,
+  3 ECG technicians (with IDs 1-3), 3 ECG machines, and 3 doctors (with IDs 11&ndash;13).</p>
  <form id="run">
      <div><label>Select scenario: <select name="selScen"></select></label></div>
      <div><button type="button" onclick="run()">Run</button> <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>

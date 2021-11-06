@@ -4,9 +4,31 @@
 sim.model.name = "Diagnostic-Department-1-AN";
 sim.model.time = "continuous";
 sim.model.timeUnit = "min";
-sim.model.objectTypes = ["Patient", "EcgTechnician", "Doctor"];
-sim.model.eventTypes = ["PatientArrival"];
-sim.model.activityTypes = ["PerformECG", "PerformUsScan"];
+sim.model.objectTypes = ["EcgTechnician", "Doctor"];
+sim.model.networkNodes = {
+  "patientArrival": {typeName:"ArrivalEventNode", name:"patientArrival",
+    arrivalRate: 1/6,  // 1/6 per min = 10 per hour
+    maxNmrOfArrivals: 50,
+    successorNodeName:"walkToECG"},
+  "walkToECG": {typeName:"ProcessingActivityNode", name:"walkToECG",
+    resourceRoles: {"ecgSpot": {card:1}},
+    processingDuration: () => 20/60,
+    successorNodeName:"performECG"},
+  "performECG": {typeName:"ProcessingActivityNode", name:"performECG",
+    resourceRoles: {"ecgTechnician": {range:"EcgTechnician"},
+        "ecgSpot": {card:1}, "ecgMachine": {card:1}},
+    processingDuration: () => rand.triangular(5,10, 7),
+    successorNodeName:"walkToUS"},
+  "walkToUS": {typeName:"ProcessingActivityNode", name:"walkToUS",
+    resourceRoles: {"usBed": {card:1}},
+    processingDuration: () => 25/60,
+    successorNodeName:"performUsScan"},
+  "performUsScan": {typeName:"ProcessingActivityNode", name:"performUsScan",
+    resourceRoles: {"doctor": {range:"Doctor"}, "usBed": {card:1}},
+    processingDuration: () => rand.triangular(5,25,10),
+    successorNodeName:"patientExit"},
+  "patientExit": {typeName:"ExitNode", name:"patientExit"}
+};
 /*******************************************************
  Simulation Scenario
  ********************************************************/
