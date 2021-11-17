@@ -1,6 +1,6 @@
 /* Changes from OESjs
 - sim.objects is a JS Map
-- sim.resourcePools
+- sim.scenario.resourcePools
 - etc.
  */
 
@@ -61,7 +61,7 @@ sim.initializeSimulator = function () {
       sim.Classes[actTypeName] = util.getClass( actTypeName);
     }
     // create a map for resource pools (assuming there are no explicit process owners)
-    sim.resourcePools = Object.create(null);
+    sim.scenario.resourcePools = Object.create(null);
     // construct the implicitly defined AN model
     if (Object.keys( sim.model.networkNodes).length === 0) {
       // construct the event nodes of the implicitly defined AN model
@@ -102,7 +102,7 @@ sim.initializeSimulator = function () {
         sim.Classes["EntryNode"] = sim.Classes["eNTRYnODE"] = eNTRYnODE;
         sim.Classes["ProcessingActivityNode"] = sim.Classes["pROCESSINGaCTIVITYnODE"] = pROCESSINGaCTIVITYnODE;
         sim.Classes["ProcessingNode"] = sim.Classes["pROCESSINGnODE"] = pROCESSINGnODE;
-        sim.Classes["ExitNode"] = sim.Classes["eXITnODE"] = eXITnODE;
+        sim.Classes["DepartureEventNode"] = sim.Classes["dEPARTUREeVENTnODE"] = dEPARTUREeVENTnODE;
         sim.Classes["ExitNode"] = sim.Classes["eXITnODE"] = eXITnODE;
       } else {  // AN
         sim.model.isAN = true;
@@ -152,6 +152,7 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   if (sim.model.isAN || sim.model.isPN) {
     oes.initializeResourcePools();
     oes.setupActNetScenario();
+    if (sim.model.isPN) oes.createProcessingStationResourcePools();
   }
   /***END AN/PN extensions BEFORE-setupInitialState *********************/
 
@@ -162,8 +163,8 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   if (sim.model.isAN || sim.model.isPN) {
     //oes.initializeActNetScenario();
     // complete count pool settings
-    for (const poolName of Object.keys( sim.resourcePools)) {
-      const resPool = sim.resourcePools[poolName];
+    for (const poolName of Object.keys( sim.scenario.resourcePools)) {
+      const resPool = sim.scenario.resourcePools[poolName];
       if (resPool.available) {  // a count pool
         // the size of a count pool is the number of initially available resources
         if (!resPool.size) resPool.size = resPool.available;
@@ -179,7 +180,7 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   }
   /***END AN/PN extensions AFTER-setupInitialState *********************/
 
-  // schedule initial events if no initial event has been scheduled
+  // schedule initial (exogenous) events if no initial event has been scheduled
   if (sim.FEL.isEmpty()) {
     for (const evtTypeName of sim.model.eventTypes) {
       const ET = sim.Classes[evtTypeName];
@@ -223,7 +224,7 @@ sim.runScenario = function (createLog) {
   function sendLogMsg( currEvts) {
     let objStr = [...sim.objects.values()].map( el => el.toString()).join("|");
     if (oes.defaults.showResPoolsInLog) {
-      objStr += " // "+ Object.values( sim.resourcePools).toString();
+      objStr += " // "+ Object.values( sim.scenario.resourcePools).toString();
     }
     postMessage({ step: sim.step, time: sim.time,
       // convert values() iterator to array

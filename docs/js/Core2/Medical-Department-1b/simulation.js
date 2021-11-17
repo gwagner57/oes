@@ -16,7 +16,7 @@ sim.scenario.idCounter = 11;  // start value of auto IDs
 // Initial State
 sim.scenario.setupInitialState = function () {
   // Initialize the count pool "doctors"
-  sim.resourcePools["doctors"].available = 3;
+  sim.scenario.resourcePools["doctors"].available = 3;
   // Schedule initial events
   sim.FEL.add( new PatientArrival({occTime: 1}));
 }

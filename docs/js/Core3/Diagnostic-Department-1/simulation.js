@@ -39,10 +39,10 @@ sim.scenario.setupInitialState = function () {
       d2 = new Doctor({id: 12, name:"d2", status: rESOURCEsTATUS.AVAILABLE}),
       d3 = new Doctor({id: 13, name:"d3", status: rESOURCEsTATUS.AVAILABLE});
   // Initialize the individual resource pools
-  sim.resourcePools["ecgTechnicians"].availResources.push( t1, t2, t3);
-  sim.resourcePools["doctors"].availResources.push( d1, d2, d3);
+  sim.scenario.resourcePools["ecgTechnicians"].availResources.push( t1, t2, t3);
+  sim.scenario.resourcePools["doctors"].availResources.push( d1, d2, d3);
   // Initialize the count pools
-  sim.resourcePools["ecgMachines"].available = 3;
+  sim.scenario.resourcePools["ecgMachines"].available = 3;
 }
 /*******************************************************
  Alternative Scenarios
@@ -65,11 +65,11 @@ sim.scenarios[1] = {
         pm5 = new PizzaMaker({id: 15, name:"pm5", status: rESOURCEsTATUS.AVAILABLE}),
         pm6 = new PizzaMaker({id: 16, name:"pm6", status: rESOURCEsTATUS.AVAILABLE});
     // Initialize the individual resource pools
-    sim.resourcePools["orderTakers"].availResources.push( ot1, ot2);
-    sim.resourcePools["pizzaMakers"].availResources.push( pm1,pm2,pm3,pm4,pm5,pm6);
+    sim.scenario.resourcePools["orderTakers"].availResources.push( ot1, ot2);
+    sim.scenario.resourcePools["pizzaMakers"].availResources.push( pm1,pm2,pm3,pm4,pm5,pm6);
     // Initialize the count pools
-    sim.resourcePools["ovens"].available = 3;
-    sim.resourcePools["scooters"].available = 10;
+    sim.scenario.resourcePools["ovens"].available = 3;
+    sim.scenario.resourcePools["scooters"].available = 10;
     // Schedule initial events
     sim.FEL.add( new OrderCall({occTime: 1}));
     //***** Model Variant ********************************************

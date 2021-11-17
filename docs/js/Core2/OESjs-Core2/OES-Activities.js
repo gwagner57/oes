@@ -49,7 +49,7 @@ const rESsTAT = rESOURCEsTATUS;  // shortcut
  Each resource role must be associated with a pool. By default, a count pool
  is directly associated with a resource role, while an individual pool is
  associated with the range of a resource role, which is a resource type. Resource
- pools may be globally indexed in the map "sim.resourcePools" with resource type
+ pools may be globally indexed in the map "sim.scenario.resourcePools" with resource type
  names or resource role names as keys. Otherwise, if they are identified by
  the combination of node and resRoleName, they can be locally indexed
  in the map "node.resourceRoles[resRoleName].resourcePool".
@@ -60,7 +60,7 @@ const rESsTAT = rESOURCEsTATUS;  // shortcut
  subtyping the role's range.
  ****************************************************************************/
 class rESOURCEpOOL {
-  constructor( {name, size, available, resourceType, resources}) {
+  constructor({name, size, available, resourceType, resources}) {
     this.name = name;
     if (Number.isInteger( size) || size === Infinity) {  // a count pool
       this.size = size;
@@ -426,19 +426,22 @@ class aCTIVITY extends eVENT {
     this.node = node;
     if (enqueueTime) this.enqueueTime = enqueueTime;
   }
-  releaseResources() {
+  releaseResources( resRoleNamesSharedWithSuccActivity) {
     const node = this.node,
           resourceRoles = node?.resourceRoles ?? this.constructor.resourceRoles,
           resRoleNames = Object.keys( resourceRoles);
     for (const resRoleName of resRoleNames) {
       const resRole = resourceRoles[resRoleName];
+      if (resRoleNamesSharedWithSuccActivity?.includes( resRoleName) ||
+          resRole.deferredRelease) continue;
       if (resRole.countPoolName) {
         // release the used number of count pool resources
         resRole.resourcePool.release( resRole.card);
       } else {
         const resObj = this[resRoleName];
-        // release the used individual resource if it has not been transferred to succActy
+        // if it has not been transferred to succActy and is not subject to deferredRelease
         if (resObj) {
+          // release the used individual resource
           if (resRole.resourcePool) {  // a node/resRole-specific pool
             resRole.resourcePool.release( resObj);
           } else {  // a pool associated with the resource type (=range)
@@ -600,8 +603,8 @@ class aCTIVITYeND extends eVENT {
         }
       }
     }
-    // execute this code only for AN nodes, and not for PN nodes
-    if (node.constructor === aCTIVITYnODE) {
+    // execute this code only for AN activity nodes, and not for PN nodes
+    if (node.constructor === aCTIVITYnODE) {  // isDirectInstanceOf
       const succNode = node.getSuccessorNode();
       if (succNode) {
         const SuccAT = sim.Classes[succNode.activityTypeName];
@@ -610,24 +613,28 @@ class aCTIVITYeND extends eVENT {
               succResRoleNames = Object.keys( succResRoles);
         // By default, keep (individual) resources that are shared between AT and SuccAT
         for (const resRoleName of resRoleNames) {
-          if (succNode.resourceRoles[resRoleName] && acty[resRoleName]) {
-            // re-allocate resource to successor activity
-            succActy[resRoleName] = acty[resRoleName];
-            //TODO: better form a collection of transferred resource role names
-            delete acty[resRoleName];  // used below for checking if resource transferred
+          if (succResRoles[resRoleName]) {  // shared resource role
+            succActy.resRoleNamesSharedWithPredActivity ??= [];
+            succActy.resRoleNamesSharedWithPredActivity.push( resRoleName);
+            if (typeof acty[resRoleName] === "object") {
+              // transfer/re-allocate individual resource to successor activity
+              succActy[resRoleName] = acty[resRoleName];
+            } else {
+              succActy[resRoleName] = true;  // keep anonymous countpool resource
+            }
           }
         }
         // start or enqueue a successor activity according to the AN model
         // are all successor activity resources already allocated (since included in activity resources)?
         if (succResRoleNames.every( rn => resRoleNames.includes( rn))) {
-          // start successor activity
+          // start successor activity with transferred resources
           followupEvents.push( new aCTIVITYsTART({plannedActivity: succActy}));
-        } else {  // start or enqueue successor activity
+        } else {  // start/enqueue successor activity
           succActy.startOrEnqueue();
         }
       }
-      // release all (remaining) resources of acty
-      acty.releaseResources();
+      // release all non-transferred resources of acty
+      acty.releaseResources( succActy?.resRoleNamesSharedWithPredActivity);
       // if there are still planned activities in the task queue
       if (node.tasks.length > 0) {
         // if available, allocate required resources and start next activity
@@ -680,8 +687,9 @@ oes.getNodeNameFromActTypeName = function (actTypeName) {
 oes.createResourcePools = function () {
   for (const nodeName of Object.keys( sim.model.networkNodes)) {
     const node = sim.model.networkNodes[nodeName];
-    if (!["aCTIVITYnODE","ActivityNode","pROCESSINGnODE","ProcessingNode"].
-         includes( node.typeName)) continue;
+    // skip any non-activity node
+    if (!["activitynode","processingactivitynode","processingnode"].includes(
+        node.typeName.toLowerCase())) continue;
     const resourceRoles = node.resourceRoles ||
         sim.Classes[node.activityTypeName]?.resourceRoles || {};
     for (const resRoleName of Object.keys( resourceRoles)) {
@@ -695,9 +703,9 @@ oes.createResourcePools = function () {
         // the pool name is the lower-cased pluralized range name
         pn = rn.charAt(0).toLowerCase() + rn.slice(1) + "s";
         // create only if not yet created
-        sim.resourcePools[pn] ??= new rESOURCEpOOL({name: pn, resourceType: resRole.range});
+        sim.scenario.resourcePools[pn] ??= new rESOURCEpOOL({name: pn, resourceType: resRole.range});
         // assign the (newly created) resource pool to the resource type
-        resRole.range.resourcePool = sim.resourcePools[pn];
+        resRole.range.resourcePool = sim.scenario.resourcePools[pn];
       } else {  // the resource role is associated with a count pool
         if (resRole.countPoolName) {
           // a count pool has been explicitly assigned to the resource role
@@ -709,17 +717,10 @@ oes.createResourcePools = function () {
           resRole.countPoolName = pn;
         }
         // create count pool only if not yet created
-        sim.resourcePools[pn] ??= new rESOURCEpOOL({name: pn, size:0});
+        sim.scenario.resourcePools[pn] ??= new rESOURCEpOOL({name: pn, size:0});
         // assign the (newly created) pool to the resource role
-        resRole.resourcePool = sim.resourcePools[pn];
+        resRole.resourcePool = sim.scenario.resourcePools[pn];
       }
-    }
-    // assign a node-specific processing station resource role to processing nodes
-    if ((node.typeName === "pROCESSINGnODE" || node.typeName === "ProcessingNode") &&
-        Number.isInteger( node.processingCapacity)) {
-      if (!node.resourceRoles) node.resourceRoles = Object.create(null);
-      node.resourceRoles[node.name +"ProcStation"] =
-          {countPoolName: name +"ProcStation", card: node.processingCapacity};
     }
   }
 };
@@ -727,8 +728,11 @@ oes.createResourcePools = function () {
  * Initialize resource pools
  ********************************************************/
 oes.initializeResourcePools = function () {
-  for (const poolName of Object.keys( sim.resourcePools)) {
-    sim.resourcePools[poolName].clear();
+  for (const poolName of Object.keys( sim.scenario.resourcePools)) {
+    const pool = sim.scenario.resourcePools[poolName];
+    pool.clear();
+    // add to simulation objects map (reconstructed for each scenario run)
+    sim.objects.set( poolName, pool);
   }
 };
 /*******************************************************
@@ -741,15 +745,19 @@ oes.setupActNetScenario = function () {
     const NodeType = sim.Classes[nodeRec.typeName];
     // create scenario node object from model node record
     const node = sim.scenario.networkNodes[nodeName] = new NodeType( nodeRec);
-    if (["aCTIVITYnODE","ActivityNode","pROCESSINGnODE","ProcessingNode"].includes( node.typeName)) {
+    // for all types of activity nodes, incl. processing (activity) nodes
+    if (node instanceof aCTIVITYnODE) {
+      // construct the list of dependentNodes for resource dependency tracking
       for (const resRoleName of Object.keys( node.resourceRoles)) {
+        // processing stations, as resources, need no dependency tracking
+        if (resRoleName.includes("ProcStation")) continue;
         const resRole = node.resourceRoles[resRoleName];
         let altResTypes=[];
         if (resRole.range) {  // the resource role is associated with an individual pool
           const rn = resRole.range.name;
           // the pool name is the lower-cased pluralized range name
           const pn = rn.charAt(0).toLowerCase() + rn.slice(1) + "s";
-          altResTypes = sim.resourcePools[pn].resourceType.alternativeResourceTypes || [];
+          altResTypes = sim.scenario.resourcePools[pn].resourceType.alternativeResourceTypes || [];
           resRole.range.resourcePool.dependentNodes.push( node);
         } else {
           resRole.resourcePool.dependentNodes.push( node);
@@ -761,16 +769,13 @@ oes.setupActNetScenario = function () {
       }
     }
   }
-  if (sim.model.isPN) oes.createProcessingStationResourcePools();
   // second pass for setting the successorNode property if no branching
   for (const nodeName of nodeNames) {
     const node = sim.scenario.networkNodes[nodeName];
-    let succNodeName="";
     // only set the successorNode property if no branching
     if (!node.successorNodeName || typeof node.successorNodeName === "function") continue;
-    succNodeName = node.successorNodeName;
     // assign successor node
-    node.successorNode = sim.scenario.networkNodes[succNodeName];
+    node.successorNode = sim.scenario.networkNodes[node.successorNodeName];
     // set predecessor node for being able to handle blocking due to full input buffers
     if (sim.model.isPN) node.successorNode.predecessorNode = node;
   }
@@ -797,7 +802,7 @@ oes.initializeActNetScenario = function () {
         scenNode.nmrOfArrivedObjects = 0;
         scenNode.nmrOfDepartedObjects = 0;
         if (Number.isInteger( scenNode.processingCapacity)) {
-          const scenNodeResPool = scenNode.resourceRoles[scenNode.name +"ProcStation"].resourcePool;
+          const scenNodeResPool = scenNode.resourceRoles[scenNode.name +"-ProcStation"].resourcePool;
           scenNodeResPool.available = scenNodeResPool.size;
         }
       } else if (scenNode instanceof eNTRYnODE) {
@@ -816,8 +821,9 @@ oes.setupActNetStatistics = function () {
   sim.stat.networkNodes = Object.create(null);  // an empty map
   for (const nodeName of Object.keys( sim.model.networkNodes)) {
     const node = sim.model.networkNodes[nodeName];
-    // AN activity node or PN processing node
-    if (node.activityTypeName || node.typeName === "ProcessingNode") {
+    // AN activity node or PN processing (activity) node
+    if (node.activityTypeName || ["activitynode","processingactivitynode","processingnode"].includes(
+        node.typeName.toLowerCase())) {
       const nodeStat = sim.stat.networkNodes[nodeName] = Object.create(null)
       // generic queue length statistics
       nodeStat.queueLength = Object.create(null);
@@ -841,7 +847,7 @@ oes.initializeActNetStatistics = function () {
   // per network node
   for (const nodeName of Object.keys( sim.scenario.networkNodes)) {
     const node = sim.scenario.networkNodes[nodeName];
-    // only for activity nodes, which include processing nodes
+    // only for activity nodes, which include processing (activity) nodes
     if (node instanceof aCTIVITYnODE) {
       const nodeStat = sim.stat.networkNodes[nodeName],
             resUtilPerNode = nodeStat.resUtil,
@@ -889,8 +895,8 @@ oes.computeFinalActNetStatistics = function () {
         // key is either an objIdStr or a count pool name
         utiliz /= sim.time;
         // if key is a count pool name
-        if (sim.resourcePools[key]) {
-          utiliz /= sim.resourcePools[key].size;
+        if (sim.scenario.resourcePools[key]) {
+          utiliz /= sim.scenario.resourcePools[key].size;
         }
         resUtilPerNode[key] = math.round( utiliz, oes.defaults.expostStatDecimalPlaces);
       }

@@ -27,8 +27,8 @@ sim.scenario.setupInitialState = function () {
       t5 = new Truck({id: 5, name:"t5", status: rESOURCEsTATUS.AVAILABLE}),
       wl1 = new WheelLoader({id: 11, name:"wl1", status: rESOURCEsTATUS.AVAILABLE});
   // Initialize the individual resource pools
-  sim.resourcePools["trucks"].availResources.push( t1, t2, t3, t4, t5);
-  sim.resourcePools["wheelLoaders"].availResources.push( wl1);
+  sim.scenario.resourcePools["trucks"].availResources.push( t1, t2, t3, t4, t5);
+  sim.scenario.resourcePools["wheelLoaders"].availResources.push( wl1);
   // Schedule initial events
   sim.FEL.add( new HaulRequest({occTime: 1, quantity: 990}));
 }
@@ -49,8 +49,8 @@ sim.scenarios[1] = {
         wl1 = new WheelLoader({id: 11, name:"wl1", status: rESOURCEsTATUS.AVAILABLE});
         wl2 = new WheelLoader({id: 12, name:"wl2", status: rESOURCEsTATUS.AVAILABLE});
     // Initialize the individual resource pools
-    sim.resourcePools["trucks"].availResources.push( t1, t2, t3, t4, t5);
-    sim.resourcePools["wheelLoaders"].availResources.push( wl1, wl2);
+    sim.scenario.resourcePools["trucks"].availResources.push( t1, t2, t3, t4, t5);
+    sim.scenario.resourcePools["wheelLoaders"].availResources.push( wl1, wl2);
     // Schedule initial events
     sim.FEL.add( new HaulRequest({occTime: 1, quantity: 990}));
   }

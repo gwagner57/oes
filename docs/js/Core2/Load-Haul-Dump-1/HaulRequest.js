@@ -5,7 +5,7 @@ class HaulRequest extends eVENT {
   }
   onEvent() {
     const followupEvents=[],
-          allocatedTrucks = sim.resourcePools["trucks"].allocateAll();
+          allocatedTrucks = sim.scenario.resourcePools["trucks"].allocateAll();
     sim.model.v.nmrOfLoads = Math.ceil( this.quantity / Truck.capacity);
     for (const t of allocatedTrucks) {
       const goActy = new GoToLoadingSite();

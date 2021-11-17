@@ -16,7 +16,7 @@ sim.scenario.durationInSimTime = 300;
 sim.scenario.setupInitialState = function () {
   let ps = new PizzaService({id: 1, name:"ps", status: rESOURCEsTATUS.AVAILABLE});
   // Initialize the resource pool
-  sim.resourcePools["pizzaServices"].availResources.push( ps);
+  sim.scenario.resourcePools["pizzaServices"].availResources.push( ps);
   // Schedule initial events
   sim.FEL.add( new Order({occTime: 1, pizzaService: ps}));
 }

@@ -20,8 +20,7 @@ class pROCESSINGoBJECT extends oBJECT {
   }
   // overwrite/improve the standard toString method
   toString() {
-    var str = "procObj-"+ (this.name||this.id);
-    return str;
+    return ""; // "procObj-"+ (this.name||this.id)
   }
 }
 
@@ -67,7 +66,7 @@ class aRRIVAL extends eVENT {
       for (const procObj of arrivedObjects) {
         // enqueue newly arrived object(s) into the inputBuffer of the next node
         succNode.enqueueProcessingObject( procObj);
-        const succActy = new SuccAT({processingNode: succNode, processingObject: procObj});
+        const succActy = new SuccAT({node: succNode, processingObject: procObj});
         // schedule successor activity
         succActy.startOrEnqueue();
       }
@@ -177,9 +176,35 @@ class eNTRYnODE extends aRRIVALeVENTnODE {
  * the definition of their processing node.
  */
 class pROCESSINGaCTIVITY extends aCTIVITY {
-  constructor({id, occTime, duration, enqueueTime, processingNode, processingObject}) {
-    super({id, occTime, duration, enqueueTime, node: processingNode});
+  constructor({id, occTime, duration, enqueueTime, node, processingObject, predecessorActivity}) {
+    super({id, occTime, duration, enqueueTime, node});
     if (processingObject) this.processingObject = processingObject;
+    // needed for the deferred release of resources
+    if (predecessorActivity) this.predecessorActivity = predecessorActivity;
+  }
+  performDeferredReleaseOfResources() {
+    const node = this.node,
+        resourceRoles = node?.resourceRoles ?? this.constructor.resourceRoles,
+        resRoleNames = Object.keys( resourceRoles);
+    for (const resRoleName of resRoleNames) {
+      const resRole = resourceRoles[resRoleName];
+      if (resRole.deferredRelease) {
+        if (resRole.countPoolName) {
+          // release the used number of count pool resources
+          resRole.resourcePool.release( resRole.card);
+        } else {
+          const resObj = this[resRoleName];
+          if (resObj) {
+            // release the used individual resource
+            if (resRole.resourcePool) {  // a node/resRole-specific pool
+              resRole.resourcePool.release( resObj);
+            } else {  // a pool associated with the resource type (=range)
+              resRole.range.resourcePool.release( resObj);
+            }
+          }
+        }
+      }
+    }
   }
 }
 // define the exponential PDF as the default duration random variable
@@ -192,7 +217,8 @@ class pROCESSINGaCTIVITYsTART extends aCTIVITYsTART {
     super({occTime, delay, plannedActivity});
   }
   onEvent() {
-    const node = this.plannedActivity.node, followupEvents=[];
+    const acty = this.plannedActivity,
+          node = acty.node, followupEvents=[];
     if (node.inputBuffer.length===0) {
       console.log(`ProcessingActivityStart with empty input buffer at ${node.name} at step ${sim.step}`);
       return;
@@ -201,7 +227,10 @@ class pROCESSINGaCTIVITYsTART extends aCTIVITYsTART {
     node.dequeueProcessingObject();
     // invoke event routine of aCTIVITYsTART
     followupEvents.push(...super.onEvent());
-
+    // take care of the deferred release of resources
+    if (acty.predecessorActivity) {
+      acty.predecessorActivity.performDeferredReleaseOfResources();
+    }
     return followupEvents;
   }
   toString() {
@@ -211,7 +240,7 @@ class pROCESSINGaCTIVITYsTART extends aCTIVITYsTART {
         evtName = acty.node.name +"ProcStart-"+ acty.processingObject.id;
     var evtStr="", slotListStr="";
     for (const resRoleName of Object.keys( resRoles)) {
-      if (resRoleName !== acty.node.name +"ProcStation" && resRoles[resRoleName].range) {
+      if (resRoleName !== acty.node.name +"-ProcStation" && resRoles[resRoleName].range) {
         const resObj = acty[resRoleName];
         let resObjStr = "";
         if (Array.isArray( resObj)) {
@@ -236,29 +265,38 @@ class pROCESSINGaCTIVITYeND extends aCTIVITYeND {
         resourceRoles = node?.resourceRoles ?? AT.resourceRoles,
         resRoleNames = Object.keys( resourceRoles),
         followupEvents=[];
+    let succActy=null;
 
     // invoke event routine of aCTIVITYeND
     followupEvents.push(...super.onEvent());
 
     const succNode = node.getSuccessorNode();
     if (succNode) {
-      if (succNode instanceof pROCESSINGnODE) {
+      if (succNode instanceof pROCESSINGaCTIVITYnODE) {
         let SuccAT=null;
         if (succNode.activityTypeName) {
           SuccAT = sim.Classes[succNode.activityTypeName];
         } else {
           SuccAT = pROCESSINGaCTIVITY;
         }
-        const succActy = new SuccAT({processingNode: succNode,
-            processingObject: acty.processingObject});
+        succActy = new SuccAT({
+            node: succNode, processingObject: acty.processingObject});
+        // only create a predecessorActivity slot, if some resource has a deferredRelease
+        if (resRoleNames.some( resRoleName => resourceRoles[resRoleName].deferredRelease)) {
+          succActy.predecessorActivity = acty;
+        }
         const succResRoles = succNode.resourceRoles ?? SuccAT.resourceRoles;
-        // By default, keep (individual) resources that are shared between AT and SuccAT
+        // By default, keep resources that are shared between AT and SuccAT
         for (const resRoleName of resRoleNames) {
-          if (succResRoles[resRoleName] && acty[resRoleName]) {
-            // re-allocate resource to successor activity
-            succActy[resRoleName] = acty[resRoleName];
-            //TODO: better form a collection of transferred resource role names
-            delete acty[resRoleName];  // used below for checking if resource transferred
+          if (succResRoles[resRoleName]) {  // shared resource role
+            succActy.resRoleNamesSharedWithPredActivity ??= [];
+            succActy.resRoleNamesSharedWithPredActivity.push( resRoleName);
+            if (typeof acty[resRoleName] === "object") {
+              // transfer/re-allocate individual resource to successor activity
+              succActy[resRoleName] = acty[resRoleName];
+            } else {
+              succActy[resRoleName] = true;  // keep anonymous countpool resource
+            }
           }
         }
         if (succNode.inputBuffer.length < succNode.inputBuffer.capacity) {
@@ -273,15 +311,15 @@ class pROCESSINGaCTIVITYeND extends aCTIVITYeND {
         } else {  // succNode.inputBuffer is full
           node.blockedSuccessorTasks.enqueue( succActy)
         }
-      } else if (succNode instanceof eXITnODE) {
+      } else if (succNode instanceof dEPARTUREeVENTnODE) {
         // remove processing object from WiP
         node.workInProgress.delete( acty.processingObject);
         followupEvents.push( new dEPARTURE({node: succNode,
           processingObject: acty.processingObject}));
       }
     }
-    // release all (remaining) resources of acty
-    acty.releaseResources();
+    // release all non-transferred resources of acty
+    acty.releaseResources( succActy?.resRoleNamesSharedWithPredActivity);
     // update statistics
     node.nmrOfDepartedObjects++;
     // if there are still planned activities in the task queue
@@ -298,7 +336,7 @@ class pROCESSINGaCTIVITYeND extends aCTIVITYeND {
         evtName = acty.node.name +"ProcEnd-"+ acty.processingObject.id;
     var evtStr="", slotListStr="";
     for (const resRoleName of Object.keys( resRoles)) {
-      if (resRoleName !== acty.node.name +"ProcStation" && resRoles[resRoleName].range) {
+      if (resRoleName !== acty.node.name +"-ProcStation" && resRoles[resRoleName].range) {
         const resObj = acty[resRoleName];
         let resObjStr = "";
         if (Array.isArray( resObj)) {
@@ -427,51 +465,8 @@ class pROCESSINGnODE extends pROCESSINGaCTIVITYnODE {
     // how many proc. objects can be processed at the same time
     this.processingCapacity = processingCapacity;  // by default: 1
     if (Number.isInteger( this.processingCapacity)) {
-      this.resourceRoles[name +"ProcStation"] = {countPoolName: name +"ProcStation", card:processingCapacity};
+      this.resourceRoles[name +"-ProcStation"] = {countPoolName: name +"-ProcStation", card:processingCapacity};
     }
-  }
-  enqueueProcessingObject( o) {
-    this.inputBuffer.enqueue( o);
-    this.nmrOfArrivedObjects++;
-    if (this.inputBuffer.length === this.inputBuffer.capacity) {
-      this.predecessorNode.status = rESOURCEsTATUS.BLOCKED;
-      this.predecessorNode.blockedStartTime = sim.time;
-    }
-  }
-  dequeueProcessingObject() {
-    const procObj = this.inputBuffer.dequeue();
-    // add processing object to WiP
-    this.workInProgress.add( procObj);
-    // is the input buffer no longer full?
-    if (this.inputBuffer.length === this.inputBuffer.capacity-1) {
-      const predNode = this.predecessorNode;
-      if (predNode.status === rESOURCEsTATUS.BLOCKED) {
-        // then unload predecessor node
-        const blockedActy = predNode.blockedSuccessorTasks.dequeue();
-        predNode.workInProgress.remove( blockedActy.processingObject);
-        this.inputBuffer.enqueue( blockedActy.processingObject);
-        predNode.status = rESOURCEsTATUS.AVAILABLE;
-        //TODO: if input buffer not empty, start next activity
-        // collect processing node blocked time statistics
-        if (sim.stat.resUtil["pROCESSINGaCTIVITY"][predNode.id].blocked === undefined) {
-          sim.stat.resUtil["pROCESSINGaCTIVITY"][predNode.id].blocked =
-              sim.time - predNode.blockedStartTime;
-        } else {
-          sim.stat.resUtil["pROCESSINGaCTIVITY"][predNode.id].blocked +=
-              sim.time - predNode.blockedStartTime;
-        }
-        predNode.blockedStartTime = 0;  // reset
-      }
-    }
-    return procObj;
-  }
-  scheduleActivityStartEvent( acty) {
-    sim.FEL.add( new pROCESSINGaCTIVITYsTART({plannedActivity: acty}));
-  }
-  toString() {
-    var str = " "+ this.name + `{ tasks:${this.tasks.length}, inpB:${this.inputBuffer.length}, `+
-        `wiP:${this.workInProgress.size}, arr:${this.nmrOfArrivedObjects}, dep:${this.nmrOfDepartedObjects}}`;
-    return str;
   }
 }
 
@@ -554,8 +549,8 @@ oes.createProcessingStationResourcePools = function () {
   for (const nodeName of nodeNames) {
     const node = sim.scenario.networkNodes[nodeName];
     if (node instanceof pROCESSINGnODE && Number.isInteger( node.processingCapacity)) {
-      node.resourceRoles[nodeName +"ProcStation"].resourcePool =
-          new rESOURCEpOOL({name: nodeName +"ProcStation" , size: node.processingCapacity});
+      node.resourceRoles[nodeName +"-ProcStation"].resourcePool =
+          new rESOURCEpOOL({name: nodeName +"-ProcStation" , size: node.processingCapacity});
     }
   }
 }
@@ -568,13 +563,12 @@ oes.createProcessingStationResourcePools = function () {
 oes.setupProcNetStatistics = function () {
   for (const nodeName of Object.keys( sim.model.networkNodes)) {
     const node = sim.model.networkNodes[nodeName];
-    // PN entry node
-    if (node.typeName === "EntryNode") {
+    if (node.typeName === "ArrivalEventNode" || node.typeName === "EntryNode") {
       const nodeStat = sim.stat.networkNodes[nodeName] = Object.create(null)
       nodeStat.nmrOfArrivedObjects = 0;
     }
     // PN exit node
-    if (node.typeName === "ExitNode") {
+    if (node.typeName === "DepartureEventNode" || node.typeName === "ExitNode") {
       const nodeStat = sim.stat.networkNodes[nodeName] = Object.create(null)
       nodeStat.nmrOfDepartedObjects = 0;
       nodeStat.cumulativeTimeInSystem = 0;
@@ -588,11 +582,11 @@ oes.initializeProcNetStatistics = function () {
   // per network node
   for (const nodeName of Object.keys( sim.scenario.networkNodes)) {
     const node = sim.scenario.networkNodes[nodeName];
-    if (node instanceof eNTRYnODE) {
+    if (node instanceof aRRIVALeVENTnODE) {
       const nodeStat = sim.stat.networkNodes[nodeName];
       nodeStat.nmrOfArrivedObjects = 0;
     }
-    if (node instanceof eXITnODE) {
+    if (node instanceof dEPARTUREeVENTnODE) {
       const nodeStat = sim.stat.networkNodes[nodeName];
       nodeStat.nmrOfDepartedObjects = 0;
       nodeStat.cumulativeTimeInSystem = 0;
@@ -605,7 +599,7 @@ oes.initializeProcNetStatistics = function () {
 oes.computeFinalProcNetStatistics = function () {
   for (const nodeName of Object.keys( sim.scenario.networkNodes)) {
     const node = sim.scenario.networkNodes[nodeName];
-    if (node instanceof eXITnODE) {
+    if (node instanceof dEPARTUREeVENTnODE) {
       const nodeStat = sim.stat.networkNodes[nodeName];
       // compute throughput time (mean time in system)
       nodeStat.throughputTime = math.round( nodeStat.cumulativeTimeInSystem / nodeStat.nmrOfDepartedObjects,
@@ -645,7 +639,7 @@ oes.checkProcNetConstraints = function (params) {
   // PNC2: if a proc. node has a proc. end event, its input queue must be non-empty
   evts = sim.FEL.getEventsOfType("pROCESSINGaCTIVITYeND");
   evts.forEach( function (procEndEvt) {
-    var pN = procEndEvt.processingNode, inpQ = pN.inputBuffer;
+    var pN = procEndEvt.node, inpQ = pN.inputBuffer;
     if (inpQ.length === 0 || !inpQ[0]) {
       msg = "At step "+ sim.step +" "+ (params && params.add ? params.add : "") +
           ", the proc. node "+ (pN.name||pN.id) +" has an empty input queue.";

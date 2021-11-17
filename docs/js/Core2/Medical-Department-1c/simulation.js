@@ -20,8 +20,8 @@ sim.scenario.setupInitialState = function () {
       d2 = new Doctor({id: 2, name:"d2", status: rESOURCEsTATUS.AVAILABLE}),
       d3 = new Doctor({id: 3, name:"d3", status: rESOURCEsTATUS.AVAILABLE});
   // Initialize the individual resource pool "doctors"
-  sim.resourcePools["doctors"].clear();
-  sim.resourcePools["doctors"].availResources.push( d1, d2, d3);
+  sim.scenario.resourcePools["doctors"].clear();
+  sim.scenario.resourcePools["doctors"].availResources.push( d1, d2, d3);
   // Schedule initial events
   sim.FEL.add( new PatientArrival({occTime: 1}));
 };

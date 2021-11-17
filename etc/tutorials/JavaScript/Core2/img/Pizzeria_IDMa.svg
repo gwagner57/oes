@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg class="st9" width="4.4286in" height="3.4736in" color-interpolation-filters="sRGB" version="1.1" viewBox="0 0 318.86 250.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/"><metadata><rdf:RDF><cc:Work rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/><dc:title/></cc:Work></rdf:RDF></metadata>
+<svg class="st10" width="4.4286in" height="3.4736in" color-interpolation-filters="sRGB" version="1.1" viewBox="0 0 318.86 250.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/"><metadata><rdf:RDF><cc:Work rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/><dc:title/></cc:Work></rdf:RDF></metadata>
 	<v:documentProperties v:langID="1033" v:viewMarkup="false"/>
 
 	<style type="text/css">
@@ -12,7 +12,8 @@
 		.st6 {stroke:#000000;stroke-dasharray:5.25,3.75;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.75}
 		.st7 {fill:#ffffff;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.24}
 		.st8 {font-size:1em}
-		.st9 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+		.st9 {fill:none;stroke:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.75}
+		.st10 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
 	]]>
 	</style>
 
@@ -57,7 +58,7 @@
 				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
 				<v:textRect width="86.72" height="12.6142" cx="43.3588" cy="249.594"/>
 				<rect class="st1" y="243.29" width="86.717" height="12.614"/>
-				<text class="st2" x="1" y="251.49001" v:langID="1031"><v:paragraph/><v:tabList/>status : ResourceStatusEL</text>			</g>
+				<text class="st2" x="1" y="251.49001" v:langID="1033"><v:paragraph/><v:tabList/>status : ResourceStatusEL</text>			</g>
 			<g transform="translate(0 -12.614)" v:groupContext="shape" v:mID="9">
 				<title>Name</title>
 				<desc>«object type» OrderTaker</desc>
@@ -107,7 +108,7 @@
 				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
 				<v:textRect width="85.64" height="12.6142" cx="42.8175" cy="249.594"/>
 				<rect class="st1" y="243.29" width="85.635" height="12.614"/>
-				<text class="st2" x="1" y="251.49001" v:langID="1031"><v:paragraph/><v:tabList/>status : ResourceStatusEL</text>			</g>
+				<text class="st2" x="1" y="251.49001" v:langID="1033"><v:paragraph/><v:tabList/>status : ResourceStatusEL</text>			</g>
 			<g transform="translate(0 -12.614)" v:groupContext="shape" v:mID="18">
 				<title>Name</title>
 				<desc>«object type» PizzaMaker</desc>
@@ -227,12 +228,12 @@
 				<v:ud v:nameU="BeginAngle" v:val="VT0(-1.5747368380575):32"/>
 				<v:ud v:nameU="EndAngle" v:val="VT0(3.137652142327):32"/>
 				<v:ud v:nameU="UMLPresOption1" v:val="VT0(514):26"/>
-				<v:ud v:nameU="UMLSuppressOption" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLSuppressOption" v:val="VT0(2):26"/>
 				<v:ud v:nameU="Navigability" v:val="VT0(0):26"/>
 				<v:ud v:nameU="UMLVersion" v:val="VT0(2):26"/>
 				<v:ud v:nameU="DX1" v:val="VT0(-8.548247504514E-005):1"/>
 				<v:ud v:nameU="DY1" v:val="VT0(-0.021693132413617):24"/>
-				<v:ud v:nameU="DX3" v:val="VT0(-0.021693132413611):1"/>
+				<v:ud v:nameU="DX3" v:val="VT0(-0.021693132413604):1"/>
 				<v:ud v:nameU="DY3" v:val="VT0(8.548247504736E-005):24"/>
 				<v:ud v:nameU="visDescription" v:val="VT4(Represents an association between two classifiers.)"/>
 				<v:ud v:nameU="visVersion" v:val="VT0(14):26"/>
@@ -253,12 +254,12 @@
 			<g transform="translate(-22.332 45.649)" v:groupContext="shape" v:mID="65">
 				<title>end2_name</title>
 			</g>
-			<g transform="rotate(135 -14.846 260.22)" v:groupContext="shape" v:mID="66">
+			<g transform="rotate(120 -16.303 258.4)" v:groupContext="shape" v:mID="66">
 				<title>end2_mp</title>
-				<desc>*</desc>
+				<desc>0..1</desc>
 				<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-				<v:textRect width="13.8" height="17.6036" cx="6.89835" cy="247.099"/>
-				<text class="st2" x="4.9099998" y="249.5" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>*</text>			</g>
+				<v:textRect width="21.97" height="17.6036" cx="10.9805" cy="247.099"/>
+			</g>
 			<g v:groupContext="groupContent" v:mID="62">
 				<path class="st5" d="m0 255.9v22.93h-28.96"/>
 			</g>
@@ -347,12 +348,12 @@
 			<g transform="translate(-86.038 45.245)" v:groupContext="shape" v:mID="79">
 				<title>end2_name</title>
 			</g>
-			<g transform="rotate(135 -46.627 246.82)" v:groupContext="shape" v:mID="80">
+			<g transform="translate(-86.02 17.462)" v:groupContext="shape" v:mID="80">
 				<title>end2_mp</title>
-				<desc>*</desc>
+				<desc>0..1</desc>
 				<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-				<v:textRect width="13.8" height="17.6036" cx="6.89835" cy="247.099"/>
-				<text class="st2" x="4.9099998" y="249.5" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>*</text>			</g>
+				<v:textRect width="21.97" height="17.6036" cx="10.9805" cy="247.099"/>
+				<text class="st2" x="4.9099998" y="249.5" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>0..1</text>			</g>
 			<g v:groupContext="groupContent" v:mID="76">
 				<path class="st5" d="m0 255.9v22.54h-94.65"/>
 			</g>
@@ -445,7 +446,7 @@
 				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
 				<v:textRect width="85.04" height="12.6142" cx="42.5197" cy="249.594"/>
 				<rect class="st1" y="243.29" width="85.039" height="12.614"/>
-				<text class="st2" x="1" y="251.49001" v:langID="1031"><v:paragraph/><v:tabList/>status : ResourceStatusEL</text>			</g>
+				<text class="st2" x="1" y="251.49001" v:langID="1033"><v:paragraph/><v:tabList/>status : ResourceStatusEL</text>			</g>
 			<g transform="translate(0 -12.614)" v:groupContext="shape" v:mID="130">
 				<title>Name</title>
 				<desc>«object type» Scooter</desc>
@@ -491,12 +492,12 @@
 			<g transform="translate(-88.258 29.86)" v:groupContext="shape" v:mID="140">
 				<title>end2_name</title>
 			</g>
-			<g transform="rotate(135 -44.548 238.67)" v:groupContext="shape" v:mID="141">
+			<g transform="translate(-88.236 2.078)" v:groupContext="shape" v:mID="141">
 				<title>end2_mp</title>
-				<desc>*</desc>
+				<desc>0..1</desc>
 				<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-				<v:textRect width="13.8" height="17.6036" cx="6.89835" cy="247.099"/>
-				<text class="st2" x="4.9099998" y="249.5" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>*</text>			</g>
+				<v:textRect width="21.97" height="17.6036" cx="10.9805" cy="247.099"/>
+				<text class="st2" x="4.9099998" y="249.5" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>0..1</text>			</g>
 			<g v:groupContext="groupContent" v:mID="137">
 				<path class="st5" d="m0 262.92h-10.63v0.13h-85.61"/>
 			</g>
@@ -539,7 +540,7 @@
 				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
 				<v:textRect width="85.04" height="12.6142" cx="42.5197" cy="249.594"/>
 				<rect class="st1" y="243.29" width="85.039" height="12.614"/>
-				<text class="st2" x="1" y="251.49001" v:langID="1031"><v:paragraph/><v:tabList/>status : ResourceStatusEL</text>			</g>
+				<text class="st2" x="1" y="251.49001" v:langID="1033"><v:paragraph/><v:tabList/>status : ResourceStatusEL</text>			</g>
 			<g transform="translate(0 -12.614)" v:groupContext="shape" v:mID="27">
 				<title>Name</title>
 				<desc>«object type» Oven</desc>
@@ -585,12 +586,12 @@
 			<g transform="translate(-144.21 14.371)" v:groupContext="shape" v:mID="41">
 				<title>end2_name</title>
 			</g>
-			<g transform="rotate(135 -65.997 219.4)" v:groupContext="shape" v:mID="42">
+			<g transform="translate(-126.03 14.398)" v:groupContext="shape" v:mID="42">
 				<title>end2_mp</title>
-				<desc>*</desc>
+				<desc>0..1</desc>
 				<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-				<v:textRect width="13.8" height="17.6036" cx="6.89835" cy="247.099"/>
-				<text class="st2" x="4.9099998" y="249.5" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>*</text>			</g>
+				<v:textRect width="21.97" height="17.6036" cx="10.9805" cy="247.099"/>
+				<text class="st2" x="4.9099998" y="249.5" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>0..1</text>			</g>
 			<g v:groupContext="groupContent" v:mID="38">
 				<path class="st5" d="m0 254.32h-131.1v-11.01"/>
 			</g>
@@ -642,7 +643,7 @@
 				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
 				<v:textRect width="79.56" height="30.8035" cx="39.7772" cy="240.499"/>
 				<rect class="st1" y="225.1" width="79.554" height="30.803"/>
-				<text class="st2" x="1" y="233.3" v:langID="1031"><v:paragraph/><v:tabList/>AVAILABLE<v:newlineChar/><tspan class="st8" x="1" dy="1.2em">BUSY<v:newlineChar/></tspan><tspan class="st8" x="1" dy="1.2em">OUT</tspan>_OF_ORDER</text>			</g>
+				<text class="st2" x="1" y="233.3" v:langID="1033"><v:paragraph/><v:tabList/>AVAILABLE<v:newlineChar/><tspan class="st8" x="1" dy="1.2em" v:langID="1031">BUSY<v:newlineChar/></tspan><tspan class="st8" x="1" dy="1.2em" v:langID="1031">OUT</tspan><tspan class="st8" v:langID="1031">_</tspan><tspan class="st8" v:langID="1031">OF</tspan><tspan class="st8" v:langID="1031">_</tspan><tspan class="st8" v:langID="1031">ORDER</tspan></text>			</g>
 			<g transform="translate(0 -30.804)" v:groupContext="shape" v:mID="147">
 				<title>Name</title>
 				<desc>«enumeration» OES::ResourceStatusEL</desc>
@@ -651,5 +652,12 @@
 				<rect class="st1" y="234.7" width="79.554" height="21.204"/>
 				<text class="st2" x="14.52" y="242.89999" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>«enumeration»<v:newlineChar/><tspan class="st8" x="1.91" dy="1.2em">OES</tspan>::<tspan class="st3">ResourceStatusEL</tspan></text>			</g>
 		</g>
+		<g transform="translate(141.69 -127.62)" v:groupContext="shape" v:mID="148">
+			<title>Sheet.148</title>
+			<desc>0..1</desc>
+			<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
+			<v:textRect width="17.01" height="9.92126" cx="8.50394" cy="250.941"/>
+			<rect class="st9" y="245.98" width="17.008" height="9.9213"/>
+			<text class="st2" x="2.4300001" y="253.34" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>0..1</text>		</g>
 	</g>
 </svg>

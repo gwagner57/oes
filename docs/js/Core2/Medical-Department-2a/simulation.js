@@ -21,10 +21,10 @@ sim.scenario.setupInitialState = function () {
       n1 = new EcgTechnician({id: 11, name:"n1", status: rESOURCEsTATUS.AVAILABLE}),
       n2 = new EcgTechnician({id: 12, name:"n2", status: rESOURCEsTATUS.AVAILABLE});
   // Initialize the individual resource pools
-  sim.resourcePools["doctors"].availResources.push( d1, d2, d3);
-  sim.resourcePools["nurses"].availResources.push( n1, n2);
+  sim.scenario.resourcePools["doctors"].availResources.push( d1, d2, d3);
+  sim.scenario.resourcePools["nurses"].availResources.push( n1, n2);
   // Initialize the count pools
-  sim.resourcePools["rooms"].available = 3;
+  sim.scenario.resourcePools["rooms"].available = 3;
   // Schedule initial events
   sim.FEL.add( new PatientArrival({occTime: 1}));
 }
@@ -41,10 +41,10 @@ sim.scenarios[1] = {
         n1 = new EcgTechnician({id: 11, name:"n1", status: rESOURCEsTATUS.AVAILABLE}),
         n2 = new EcgTechnician({id: 12, name:"n2", status: rESOURCEsTATUS.AVAILABLE});
     // Initialize the individual resource pools
-    sim.resourcePools["doctors"].availResources.push( d1, d2, d3);
-    sim.resourcePools["nurses"].availResources.push( n1, n2);
+    sim.scenario.resourcePools["doctors"].availResources.push( d1, d2, d3);
+    sim.scenario.resourcePools["nurses"].availResources.push( n1, n2);
     // Initialize the count pools
-    sim.resourcePools["rooms"].available = 4;
+    sim.scenario.resourcePools["rooms"].available = 4;
     // Schedule initial events
     sim.FEL.add( new PatientArrival({occTime: 1}));
   }

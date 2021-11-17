@@ -27,10 +27,10 @@ sim.scenario.setupInitialState = function () {
       n6 = new EcgTechnician({id: 16, name:"n6", status: rESOURCEsTATUS.AVAILABLE}),
       n7 = new EcgTechnician({id: 17, name:"n7", status: rESOURCEsTATUS.AVAILABLE});
   // Initialize the individual resource pools
-  sim.resourcePools["doctors"].availResources.push( d1, d2, d3);
-  sim.resourcePools["nurses"].availResources.push( n1, n2, n3, n4, n5, n6, n7);
+  sim.scenario.resourcePools["doctors"].availResources.push( d1, d2, d3);
+  sim.scenario.resourcePools["nurses"].availResources.push( n1, n2, n3, n4, n5, n6, n7);
   // Initialize the count pools
-  sim.resourcePools["rooms"].available = 4;
+  sim.scenario.resourcePools["rooms"].available = 4;
   // Schedule initial events
   sim.FEL.add( new PatientArrival({occTime: 1}));
 }

@@ -26,7 +26,7 @@ sim.scenario.idCounter = 11;  // start value of auto IDs
 sim.scenario.setupInitialState = function () {
   // Create initial objects
   const sd1 = new ServiceDesk({id: 1, name:"sd1", status: rESOURCEsTATUS.AVAILABLE});
-  sim.resourcePools["serviceDesks"].availResources.push( sd1);
+  sim.scenario.resourcePools["serviceDesks"].availResources.push( sd1);
 }
 /*******************************************************
  Alternative Scenarios
