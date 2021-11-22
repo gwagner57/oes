@@ -562,6 +562,7 @@ class aCTIVITYeND extends eVENT {
           resourceRoles = node?.resourceRoles ?? AT.resourceRoles,
           resRoleNames = Object.keys( resourceRoles),
           followupEvents=[];
+    let namesOfSharedResRoles=[];
     // if there is an onActivityEnd procedure, execute it
     if (typeof acty.onActivityEnd === "function") {
       followupEvents.push(...acty.onActivityEnd());
@@ -624,6 +625,7 @@ class aCTIVITYeND extends eVENT {
             }
           }
         }
+        namesOfSharedResRoles = succActy.resRoleNamesSharedWithPredActivity;
         // start or enqueue a successor activity according to the AN model
         // are all successor activity resources already allocated (since included in activity resources)?
         if (succResRoleNames.every( rn => resRoleNames.includes( rn))) {
@@ -634,7 +636,7 @@ class aCTIVITYeND extends eVENT {
         }
       }
       // release all non-transferred resources of acty
-      acty.releaseResources( succActy?.resRoleNamesSharedWithPredActivity);
+      acty.releaseResources( namesOfSharedResRoles);
       // if there are still planned activities in the task queue
       if (node.tasks.length > 0) {
         // if available, allocate required resources and start next activity
@@ -672,14 +674,14 @@ class aCTIVITYeND extends eVENT {
 * as the lower-cased type name suffixed by "{Evt|Act}Node"
 **********************************************************/
 oes.getNodeNameFromTypeName = function (typeName) {
-  const suffix = sim.model.eventTypes.includes( typeName) ? "ENode" : "ANode";
+  const suffix = sim.model.eventTypes.includes( typeName) ? "EvtNode" : "Node";
   return typeName.charAt(0).toLowerCase() + typeName.slice(1) + suffix;
 };
 oes.getNodeNameFromEvtTypeName = function (evtTypeName) {
-  return evtTypeName.charAt(0).toLowerCase() + evtTypeName.slice(1) + "ENode";
+  return evtTypeName.charAt(0).toLowerCase() + evtTypeName.slice(1) + "EvtNode";
 };
 oes.getNodeNameFromActTypeName = function (actTypeName) {
-  return actTypeName.charAt(0).toLowerCase() + actTypeName.slice(1) + "ANode";
+  return actTypeName.charAt(0).toLowerCase() + actTypeName.slice(1) + "Node";
 };
 /*********************************************************************
  * Create resource pools for AN activity nodes and PN processing nodes
