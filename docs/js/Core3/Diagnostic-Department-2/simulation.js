@@ -55,14 +55,31 @@ sim.scenario.setupInitialState = function () {
 /*******************************************************
  Alternative Scenarios
  ********************************************************/
-/*
 sim.scenarios[1] = {
   scenarioNo: 1,
-  title: "Scenario with 5 rooms",
+  title: "Deterministic scenario",
   setupInitialState: function () {
+    const d1 = new Doctor({id: 1, name:"d1", status: rESOURCEsTATUS.AVAILABLE}),
+        d2 = new Doctor({id: 2, name:"d2", status: rESOURCEsTATUS.AVAILABLE}),
+        d3 = new Doctor({id: 3, name:"d3", status: rESOURCEsTATUS.AVAILABLE}),
+        et1 = new EcgTechnician({id: 11, name:"et1", status: rESOURCEsTATUS.AVAILABLE}),
+        et2 = new EcgTechnician({id: 12, name:"et2", status: rESOURCEsTATUS.AVAILABLE}),
+        et3 = new EcgTechnician({id: 13, name:"et3", status: rESOURCEsTATUS.AVAILABLE});
+    // Initialize the individual resource pools
+    sim.scenario.resourcePools["doctors"].availResources.push( d1, d2, d3);
+    sim.scenario.resourcePools["ecgTechnicians"].availResources.push( et1, et2, et3);
+    // Initialize the count pools
+    sim.scenario.resourcePools["ecgSpots"].available = 3;
+    sim.scenario.resourcePools["ecgMachines"].available = 3;
+    sim.scenario.resourcePools["usBeds"].available = 3;
+    // make the model deterministic
+    delete sim.scenario.networkNodes["patientArrival"].eventRate;
+    // notice that recurrence and duration are defined for nodes as event/activity nodes
+    sim.scenario.networkNodes["patientArrival"].eventRecurrence = () => 3;
+    sim.scenario.networkNodes["performECG"].duration = () => 7;
+    sim.scenario.networkNodes["performUsScan"].duration = () => 10;
   }
 };
-*/
 /*******************************************************
  Statistics variables
 ********************************************************/

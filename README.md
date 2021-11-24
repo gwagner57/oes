@@ -5,7 +5,7 @@ which is a *Discrete Event Simulation* paradigm combining object-oriented modeli
 
 For simplicity, all of these simulators have a minimalistic user interface.
 
-The minimal version of an Object Event Simulator is *OES Core 0* with about 220 lines of code in JavaScript,
+The minimal version of an OES simulator is *OES Core 0* with about 220 lines of code in JavaScript,
 supporting models with (global) model variables and functions, object types, event types, and simple simulation experiments. 
 
 The simulators OES Core 1-4 incrementally extend OES Core 0 by adding further features:
@@ -22,7 +22,7 @@ the simulator can automatically compute (a) throughput, (b) queue length, (c) cy
 
 4. OES Core 4 adds the concept of *agents*.
 
-You can run OESjs Core simulation examples from [the project website](https://gwagner57.github.io/oes/).
+You can run OESjs Core simulation examples from the [project website](https://gwagner57.github.io/oes/).
 
 ## OES Core 0
 

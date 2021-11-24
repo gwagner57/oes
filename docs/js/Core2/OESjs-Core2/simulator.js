@@ -62,36 +62,9 @@ sim.initializeSimulator = function () {
     }
     // create a map for resource pools (assuming there are no explicit process owners)
     sim.scenario.resourcePools = Object.create(null);
-    // construct the implicitly defined AN model
     if (Object.keys( sim.model.networkNodes).length === 0) {
-      // construct the event nodes of the implicitly defined AN model
-      for (const evtTypeName of sim.model.eventTypes) {
-        const ET = sim.Classes[evtTypeName];
-        // the AN node name is the lower-cased type name suffixed by "{Evt|Act}Node"
-        const nodeName = oes.getNodeNameFromEvtTypeName( evtTypeName);
-        sim.model.networkNodes[nodeName] = {name: nodeName, typeName:"eVENTnODE", eventTypeName: evtTypeName};
-        if (ET.successorNode) {
-          sim.model.networkNodes[nodeName].successorNodeName =
-              oes.getNodeNameFromActTypeName( ET.successorNode);
-        }
-      }
-      // construct the activity nodes of the implicitly defined AN model
-      for (const actTypeName of sim.model.activityTypes) {
-        const AT = sim.Classes[actTypeName];
-        AT.resourceRoles ??= Object.create(null);  // make sure AT.resourceRoles is defined
-        // the AN node name is the lower-cased type name suffixed by "{E|A}Node"
-        const nodeName = oes.getNodeNameFromActTypeName( actTypeName);
-        const node = sim.model.networkNodes[nodeName] =
-            {name: nodeName, typeName:"aCTIVITYnODE", activityTypeName: actTypeName};
-        if (AT.waitingTimeout) node.waitingTimeout = AT.waitingTimeout;
-        if (AT.successorNode) {
-          if (typeof AT.successorNode === "string") {
-            node.successorNodeName = oes.getNodeNameFromActTypeName( AT.successorNode);
-          } else if (typeof AT.successorNode === "function") {
-            node.successorNodeExpr = AT.successorNode;
-          }
-        }
-      }
+      // construct the implicitly defined AN model
+      oes.constructImplicitlyDefinedActNet();
       sim.model.isAN = true;
     } else {  // networkNodes have been defined in simulation.js
       const nodeNames = Object.keys( sim.model.networkNodes);
@@ -161,7 +134,7 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
 
   /***START AN/PN extensions AFTER-setupInitialState ********************/
   if (sim.model.isAN || sim.model.isPN) {
-    //oes.initializeActNetScenario();
+    //TODO: oes.initializeActNetScenario();
     // complete count pool settings
     for (const poolName of Object.keys( sim.scenario.resourcePools)) {
       const resPool = sim.scenario.resourcePools[poolName];
@@ -172,16 +145,14 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
         resPool.available = resPool.size;
       }
     }
+    oes.scheduleInitialNetworkEvents();
     oes.initializeActNetStatistics();
     if (sim.model.isPN) {
       oes.initializeProcNetStatistics();
-      oes.scheduleInitialArrivalEvents();  // in sim.scenario.networkNodes
     }
-  }
-  /***END AN/PN extensions AFTER-setupInitialState *********************/
-
-  // schedule initial (exogenous) events if no initial event has been scheduled
-  if (sim.FEL.isEmpty()) {
+    /***END AN/PN extensions AFTER-setupInitialState *********************/
+  } else if (sim.FEL.isEmpty()) {
+    // schedule initial (exogenous) events if no initial event has been scheduled
     for (const evtTypeName of sim.model.eventTypes) {
       const ET = sim.Classes[evtTypeName];
       if (ET.recurrence || ET.eventRate) {

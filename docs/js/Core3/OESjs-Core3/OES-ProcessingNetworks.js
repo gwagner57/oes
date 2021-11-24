@@ -237,7 +237,7 @@ class pROCESSINGaCTIVITYsTART extends aCTIVITYsTART {
     const decPl = oes.defaults.simLogDecimalPlaces,
         acty = this.plannedActivity, AT = acty.constructor,
         resRoles = acty.node.resourceRoles,
-        evtName = acty.node.name +"ProcStart-"+ acty.processingObject.id;
+        evtName = acty.node.name +"Start-"+ acty.processingObject.id;
     var evtStr="", slotListStr="";
     for (const resRoleName of Object.keys( resRoles)) {
       if (resRoleName !== acty.node.name +"-ProcStation" && resRoles[resRoleName].range) {
@@ -333,7 +333,7 @@ class pROCESSINGaCTIVITYeND extends aCTIVITYeND {
     const decPl = oes.defaults.simLogDecimalPlaces,
         acty = this.activity,
         resRoles = acty.node.resourceRoles,
-        evtName = acty.node.name +"ProcEnd-"+ acty.processingObject.id;
+        evtName = acty.node.name +"End-"+ acty.processingObject.id;
     var evtStr="", slotListStr="";
     for (const resRoleName of Object.keys( resRoles)) {
       if (resRoleName !== acty.node.name +"-ProcStation" && resRoles[resRoleName].range) {
@@ -525,19 +525,6 @@ class eXITnODE extends dEPARTUREeVENTnODE {
     super({id, name});
     // a position in space
     if (position) this.position = position;
-  }
-}
-/*******************************************************
- * Schedule initial Arrival events
- ********************************************************/
-oes.scheduleInitialArrivalEvents = function () {
-  const nodeNames = Object.keys( sim.scenario.networkNodes);
-  for (const nodeName of nodeNames) {
-    const node = sim.scenario.networkNodes[nodeName];
-    if (node instanceof aRRIVALeVENTnODE || node instanceof eNTRYnODE) {
-      const nullEvt = new aRRIVAL({occTime: 0, node});
-      sim.FEL.add( new aRRIVAL({delay: nullEvt.recurrence(), node}));
-    }
   }
 }
 /**********************************************************************

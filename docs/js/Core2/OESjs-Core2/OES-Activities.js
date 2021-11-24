@@ -625,6 +625,7 @@ class aCTIVITYeND extends eVENT {
             }
           }
         }
+        // assign variable for passing the list of shared resource roles
         namesOfSharedResRoles = succActy.resRoleNamesSharedWithPredActivity;
         // start or enqueue a successor activity according to the AN model
         // are all successor activity resources already allocated (since included in activity resources)?
@@ -682,6 +683,39 @@ oes.getNodeNameFromEvtTypeName = function (evtTypeName) {
 };
 oes.getNodeNameFromActTypeName = function (actTypeName) {
   return actTypeName.charAt(0).toLowerCase() + actTypeName.slice(1) + "Node";
+};
+/*********************************************************
+ * Construct the implicitly defined AN
+ **********************************************************/
+oes.constructImplicitlyDefinedActNet = function () {
+  // construct the event nodes of the implicitly defined AN model
+  for (const evtTypeName of sim.model.eventTypes) {
+    const ET = sim.Classes[evtTypeName];
+    // the AN node name is the lower-cased type name suffixed by "{Evt|Act}Node"
+    const nodeName = oes.getNodeNameFromEvtTypeName( evtTypeName);
+    sim.model.networkNodes[nodeName] = {name: nodeName, typeName:"eVENTnODE", eventTypeName: evtTypeName};
+    if (ET.successorNode) {
+      sim.model.networkNodes[nodeName].successorNodeName =
+          oes.getNodeNameFromActTypeName( ET.successorNode);
+    }
+  }
+  // construct the activity nodes of the implicitly defined AN model
+  for (const actTypeName of sim.model.activityTypes) {
+    const AT = sim.Classes[actTypeName];
+    AT.resourceRoles ??= Object.create(null);  // make sure AT.resourceRoles is defined
+    // the AN node name is the lower-cased type name suffixed by "{E|A}Node"
+    const nodeName = oes.getNodeNameFromActTypeName( actTypeName);
+    const node = sim.model.networkNodes[nodeName] =
+        {name: nodeName, typeName:"aCTIVITYnODE", activityTypeName: actTypeName};
+    if (AT.waitingTimeout) node.waitingTimeout = AT.waitingTimeout;
+    if (AT.successorNode) {
+      if (typeof AT.successorNode === "string") {
+        node.successorNodeName = oes.getNodeNameFromActTypeName( AT.successorNode);
+      } else if (typeof AT.successorNode === "function") {
+        node.successorNodeExpr = AT.successorNode;
+      }
+    }
+  }
 };
 /*********************************************************************
  * Create resource pools for AN activity nodes and PN processing nodes
@@ -783,7 +817,7 @@ oes.setupActNetScenario = function () {
   }
 };
 /*******************************************************
- * Setup/initialize AN scenario
+ * Initialize AN scenario
  ********************************************************/
 oes.initializeActNetScenario = function () {
   const nodeNames = Object.keys( sim.model.networkNodes);
@@ -815,6 +849,33 @@ oes.initializeActNetScenario = function () {
     }
   }
 };
+/*******************************************************
+ * Schedule initial events in ANs/PNs
+ ********************************************************/
+oes.scheduleInitialNetworkEvents = function () {
+  const nodeNames = Object.keys( sim.scenario.networkNodes);
+  for (const nodeName of nodeNames) {
+    const node = sim.scenario.networkNodes[nodeName];
+    if (sim.model.isPN) {
+      if (node instanceof aRRIVALeVENTnODE) {  // includes the case of entry nodes
+        // create auxiliary null event with occurrence time 0
+        const nullEvt = new aRRIVAL({occTime: 0, node});
+        //...for being able to invoke the recurrence function
+        sim.FEL.add(new aRRIVAL({delay: nullEvt.recurrence(), node}));
+      }
+    } else if (node instanceof eVENTnODE) {
+      const ET = sim.Classes[node.eventTypeName];
+      if (node.eventRate) {
+        sim.FEL.add( new ET({delay: rand.exponential( node.eventRate), node}));
+      } else if (typeof node.eventRecurrence === "function") {
+        sim.FEL.add( new ET({delay: node.eventRecurrence(), node}));
+      } else if (ET.recurrence || ET.eventRate) {
+        sim.FEL.add( new ET({node}));
+      }
+      //TODO: also support initial/recurrent activities
+    }
+  }
+}
 /*******************************************************
  * Set up the generic AN ex-post statistics
  ********************************************************/
