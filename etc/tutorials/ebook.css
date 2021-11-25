@@ -370,7 +370,7 @@ div.role-book-title-div h1.role-book-title {
 /* id value ending with "subtitle" */
 div[id$="subtitle"] {
     font-size: 1.5em;
-    margin-top: -2.33em;
+    /* margin-top: -2.33em; */
     margin-bottom: 1.33em;
 }
 /* id value ending with "authors" */
