@@ -114,11 +114,15 @@
   src="../ServiceDesk0_EG.svg" width="360" /></div></figure><p>Event Graphs
   have originally been proposed by L. Schruben (<a
   href="https://dl.acm.org/citation.cfm?id=358460">1983</a>). Their visual
-  syntax has been improved and harmonized with BPMN in (<a
-  href="https://oxygen.informatik.tu-cottbus.de/publications/wagner/SummerSim19-ExtendedEventGraphs.pdf">Wagner
-  2019</a>).</p><p>The following table shows the two event rules defined by
-  the above Event Graph, expressed in pseudo-code.</p><table border="1"
-      style="border-spacing:3px;width:100%;">
+  syntax has been improved and harmonized with the business process modeling
+  language <em>BPMN</em> in the <em>Discrete Event Process Modeling Notation
+  (DPMN)</em> proposed by Wagner (<a
+  href="https://articles.jsime.org/1/1/Modeling-for-Simulation-Part-I">2018</a>)
+  and more thoroughly described in the book <a
+  href="https://sim4edu.com/reading/des-engineering/">Discrete Event
+  Simulation Engineering</a>.</p><p>The following table shows the two event
+  rules defined by the above Event Graph, expressed in pseudo-code.</p><table
+      border="1" style="border-spacing:3px;width:100%;">
       <thead>
         <tr>
           <td style="text-align:center;"><p><b>ON (event type)</b></p></td>
@@ -177,12 +181,10 @@ IF queueLength &gt; 0 THEN
   change patterns for objects that are affected by events of that
   type.</p><figure><figcaption>A process design model in the form of a DPMN
   Process Diagram</figcaption><div><img alt="???"
-  src="../ServiceDesk-1_PDM.svg" width="600" /></div></figure><p>DPMN has been
-  proposed by Wagner (<a
-  href="https://articles.jsime.org/1/1/Modeling-for-Simulation-Part-I">2018</a>).</p><p>The
-  following table shows the two event rules defined by the DPMN diagram, which
-  now account for the fact that both types of events occur at a particular
-  service desk that is referenced by the event expression parameter
+  src="../ServiceDesk-1_PDM.svg" width="600" /></div></figure><p>The following
+  table shows the two event rules defined by the DPMN diagram, which now
+  account for the fact that both types of events occur at a particular service
+  desk that is referenced by the event expression parameter
   <i>sd</i>.</p><table border="1" style="border-spacing:3px;width:100%;">
       <thead>
         <tr>

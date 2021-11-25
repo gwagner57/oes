@@ -297,6 +297,7 @@ section section section section h3,
 section section section h3,
 section section h3,
 section h3,
+section > details > summary,
 h3 {
     font-size: 1.17em;
     line-height: 1.14;
@@ -313,6 +314,7 @@ section section section section h4,
 section section section h4,
 section section h4,
 section h4,
+section > details > details > summary,
 h4 {
     font-size: 1.08em;
     line-height: 1.23;

@@ -28,7 +28,7 @@ sim.model.f.<strong>serviceTime</strong> = function () {
   else if ( r &lt; 80) return 3;    // probability 0.50
   else return 4;                 // probability 0.20
 };</pre><p>You can <a
-  href="https://gwagner57.github.io/oes/js/Core1/Service-Desk-0/index.html"
+  href="https://gwagner57.github.io/oes/js/Core0/Service-Desk-0/index.html"
   target="_top">run this Service-Desk-0 model</a> from the project's GitHub
   website. An example of a run of this model is shown in the following
   simulation log: </p><table border="1">
@@ -392,8 +392,8 @@ ServiceDesk.<b>labels</b> = {"queueLength":"qLen"};  // for the log</pre><p>Noti
   a property has a <code>label</code> (defined by the class-level (map-valued)
   property <code>labels</code>), it is shown in the simulation log.</p><p>You
   can <a
-  href="https://gwagner57.github.io/oes/js/Core1/Service-Desk-1/index.html"
-  target="_top">run this <i>simulation</i> model</a> from the project's GitHub
+  href="https://gwagner57.github.io/oes/js/Core0/Service-Desk-1/index.html"
+  target="_top">run this simulation model</a> from the project's GitHub
   website.</p></section><section><h4>2.2.3. Event Types</h4><p>In OES, there
   is a distinction between two kinds of events:</p><ol>
       <li>events that are <em>caused</em> by other event occurrences during a
@@ -669,8 +669,8 @@ var service1Duration = stream1.exponential( 0.5);
 var service2Duration = stream2.exponential( 1.5);</pre><blockquote
   class="role-warning"><p>Avoid using JavaScript's built-in
   <code>Math.random</code> in simulation code. Always use
-  <code>rand.uniform</code>, or one of the other sampling
-  functions from the <kbd>rand.js</kbd> library described above, for
-  generating random numbers.</p><p>Otherwise, using a random seed does not 
-  guarantee reproducible simulation runs!</p></blockquote></section></body>
+  <code>rand.uniform</code>, or one of the other sampling functions from the
+  <kbd>rand.js</kbd> library described above, for generating random
+  numbers.</p><p>Otherwise, using a random seed does not guarantee
+  reproducible simulation runs!</p></blockquote></section></body>
 </html>
