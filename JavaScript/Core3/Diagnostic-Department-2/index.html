@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+ <meta charset="utf-8">
+ <title>Diagnostic-Department-2</title>
+ <meta name="viewport" content="width=device-width, initial-scale = 1.0" />
+ <link href="../../../css/index.css" rel="stylesheet" />
+ <script src="../lib/math.js"></script>
+ <script src="../lib/util.js"></script>
+ <script src="../lib/idb5.js"></script>
+ <script src="../OESjs-Core3/simulatorUI.js"></script>
+ <script>
+      // Create initial objects/maps/arrays
+      const sim = Object.create(null); // instead of {}
+      sim.model = Object.create(null);
+      sim.model.v = Object.create(null); // model variables
+      sim.model.p = Object.create(null); // model parameters
+      sim.scenario = Object.create(null);
+      sim.scenarios = [];
+      sim.stat = Object.create(null);
+      sim.experimentTypes = [];
+ </script>
+ <script src="simulation.js"></script>
+</head>
+<body>
+ <div><small>An <em><a href="https://gwagner57.github.io/oes/">Object Event Simulation (OES)</a></em> example model.
+  You can download and inspect its code from the <a href="https://github.com/gwagner57/oes/tree/master/docs/js/Core3">OES
+  GitHub repo</a>.</small></div>
+ <figure class="right"><img alt="Process Design Model" src="img/CPM.svg" width="700" /></figure>
+ <h1>Diagnostic-Department-2 <a href="description.html">Read more...</a></h1>
+ <p id="copyright">© 2021 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
+     Brandenburg University of Technology, Germany.</p>
+ <p>Like in <a href="../Diagnostic-Department-1/index.html">Diagnostic-Department-1</a>, the two primary business
+  activities modeled are "perform electrocardiography (ECG)" and "perform ultrasound scan (US)", but now also
+  the activities of patients walking to the ECG room and then to the US room are taken into consideration.
+  While in Diagnostic-Department-1 "perform ECG" and "perform US" are modeled as two processing nodes ("servers")
+  that subsume all secondary activities as implicit factors, we now model all relevant activities
+  explicitly, no longer using processing nodes, but rather <em>processing activity nodes</em>.</p>
+ <p>Notice the special resource role association end (a dot with a bar) at the resource object type rectangle "ECG spot".
+  It represents <em>deferred resource de-allocation</em>, implying that the ECG spot of a "perform ECG" activity is not
+  released when the activity ends, but only when the follow-up activity "walk patient to US bed" starts.</p>
+ <p id="scenarioDescription">The default scenario has 3 ECG spots in the ECG room, 3 US beds in the US room,
+  3 ECG technicians (with IDs 1-3), 3 ECG machines, and 3 doctors (with IDs 11&ndash;13).</p>
+ <form id="run">
+     <div><label>Select scenario: <select name="selScen"></select></label></div>
+     <div><button type="button" onclick="run()">Run</button> <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>
+     <div><label>Simulation log <input name="log" type="checkbox"/></label></div>
+     <div style="display: none"><label>Store exper. results <input name="storeExpRes" type="checkbox"/></label>
+         <button type="button" onclick="exportExperResults()">Export exper. results</button> </div>
+ </form>
+ <table style="display: none">
+     <caption>Simulation Log</caption>
+     <thead>
+     <tr><th>Step</th><th>Time</th><th>Current Events</th><th>System State</th><th>Future Events</th></tr>
+     </thead>
+     <tbody id="simLog"></tbody>
+ </table>
+ <p id="simInfo"></p>
+ <p id="execInfo"></p>
+ <script src="../OESjs-Core3/index.js"></script>
+</body>
+</html>
+
