@@ -41,6 +41,12 @@ onmessage = function (e) {
           scenario.durationInCpuTime = sim.scenario.durationInCpuTime;
         }
       }
+      // copy ID counter from base scenario if not provided
+      if (!scenario.idCounter) {
+        if (sim.scenario.idCounter) {
+          scenario.idCounter = sim.scenario.idCounter;
+        }
+      }
       sim.scenario = scenario;
     }
     if (e.data.simToRun === "0") {
