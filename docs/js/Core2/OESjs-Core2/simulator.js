@@ -164,8 +164,19 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
 /*******************************************************************
  * Assign model parameters with experiment parameter values ********
  *******************************************************************/
+sim.schedule = function (e) {
+  var events;
+  if (!Array.isArray(e)) events = [e];
+  else events = e;
+  for (const evt of events) {
+    sim.FEL.add( evt);
+  }
+}
+/*******************************************************************
+ * Assign model parameters with experiment parameter values ********
+ *******************************************************************/
 sim.assignModelParameters = function (expParSlots) {
-  for (let parName of Object.keys( sim.model.p)) {
+  for (const parName of Object.keys( sim.model.p)) {
     sim.model.p[parName] = expParSlots[parName];
   }
 }

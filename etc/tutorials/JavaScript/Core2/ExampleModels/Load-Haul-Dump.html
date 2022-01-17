@@ -135,21 +135,21 @@
   <p>In the information design model, we need to define a <i>status</i>
   attribute for all resource object types, such as <i>Truck</i> and
   <i>WheelLoader</i>, and a duration function, typically representing a random
-  variable, for each activity type:</p><figure><figcaption>An information
-  design model defining object, event and activity types.</figcaption><img
-  alt="???" src="../img/LoadHaulDump_IDM.svg" width="500" /></figure><p>Notice
-  how functions representing random variables, like the <code>duration</code>
-  function of all activity types, are marked with the keyword (or UML
-  'stereotype') «rv» standing for "random variable". These random variable
-  functions sample from a probability distribution function (PDF), which is
-  symbolically indicated with expressions like Tri(30,50,40) standing for the
-  triangular PDF with lower and upper bounds 30 and 50, and a median of 40.
-  </p><p>Each activity type is associated with <i>Truck</i> or
-  <i>WheelLoader</i> as their resource role(s), indicated with the association
-  end stereotype «rr» standing for "resource role".</p></details><details
-  open="open"><summary>Process Design Model</summary><p>A process design
-  model, in the form of a DPMN process diagram as shown below, is derived from
-  a conceptual process model by</p><ol>
+  variable, for each activity type:</p><figure><figcaption
+  id="figLoadHaulDumpIDM">An information design model for the Load-Haul-Dump
+  system.</figcaption><img alt="???" src="../img/LoadHaulDump_IDM.svg"
+  width="500" /></figure><p>Notice how functions representing random
+  variables, like the <code>duration</code> function of all activity types,
+  are marked with the keyword (or UML 'stereotype') «rv» standing for "random
+  variable". These random variable functions sample from a probability
+  distribution function (PDF), which is symbolically indicated with
+  expressions like Tri(30,50,40) standing for the triangular PDF with lower
+  and upper bounds 30 and 50, and a median of 40. </p><p>Each activity type is
+  associated with <i>Truck</i> or <i>WheelLoader</i> as their resource
+  role(s), indicated with the association end stereotype «rr» standing for
+  "resource role".</p></details><details open="open"><summary>Process Design
+  Model</summary><p>A process design model, in the form of a DPMN process
+  diagram as shown below, is derived from a conceptual process model by</p><ol>
       <li>Abstracting away from items that are not design-relevant.</li>
 
       <li>Defining event variables, if needed.</li>

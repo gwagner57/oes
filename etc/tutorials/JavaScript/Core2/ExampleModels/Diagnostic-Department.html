@@ -305,43 +305,38 @@
   title="Object Event">OE</abbr> class design model, such as resource roles
   (in particular, performer roles can be displayed in the form of
   <em>Lanes</em>) and resource multiplicity constraints. The following model
-  shows an enriched version of <a
-  href="#figMakeAndDeliverPizzaPDM1"></a>:</p><p>Such an enriched <abbr
+  shows an enriched version of :</p><p>Such an enriched <abbr
   title="Discrete Event Process Modeling Notation">DPMN</abbr> process design
   model includes all computational details needed for an implementation
   without a separate explicit <abbr title="Object Event">OE</abbr> class
   design model. In fact, such a process model implicitly defines a
   corresponding class model. For instance, the enriched <abbr
-  title="Discrete Event Process Modeling Notation">DPMN</abbr> model of <a
-  href="#figMakeAndDeliverPizzaPDM2"></a> implicitly defines the <abbr
-  title="Object Event">OE</abbr> class model of <a
-  href="#figMakeAndDeliverPizzaIDM"></a> above.</p><p>The notation for
-  defining performer roles in <em>Lanes</em> consists of a performer role name
-  (such as <i>pizzaMakers</i>) and and an object type name (such as
-  <i>PizzaMaker</i>) denoting its range, separated by a colon. When the
-  performer role name is appended by a multiplicity expression in brackets, as
-  in <i>pizzaMakers[2]</i>, this denotes a resource multiplicity constraint
-  (stating that exactly 2 pizzaMakers are required). When only a performer
-  type prefixed with a colon (such as <i>:OrderTaker</i>) is provided, this
-  means that the implicit performer role name is obtained by lowercasing the
-  performer type name (as in <i>orderTaker:OrderTaker</i>).</p>The notation
-  for defining a non-performer resource role, such as <i>oven:Oven</i>,
-  consists of a named object rectangle, such as the <i>:Oven</i> rectangle in
-  <a href="#figMakeAndDeliverPizzaPDM2"></a>, attached to an activity
+  title="Discrete Event Process Modeling Notation">DPMN</abbr> model of
+  implicitly defines the <abbr title="Object Event">OE</abbr> class model of
+  above.</p><p>The notation for defining performer roles in <em>Lanes</em>
+  consists of a performer role name (such as <i>pizzaMakers</i>) and and an
+  object type name (such as <i>PizzaMaker</i>) denoting its range, separated
+  by a colon. When the performer role name is appended by a multiplicity
+  expression in brackets, as in <i>pizzaMakers[2]</i>, this denotes a resource
+  multiplicity constraint (stating that exactly 2 pizzaMakers are required).
+  When only a performer type prefixed with a colon (such as
+  <i>:OrderTaker</i>) is provided, this means that the implicit performer role
+  name is obtained by lowercasing the performer type name (as in
+  <i>orderTaker:OrderTaker</i>).</p>The notation for defining a non-performer
+  resource role, such as <i>oven:Oven</i>, consists of a named object
+  rectangle, such as the <i>:Oven</i> rectangle in , attached to an activity
   rectangle by means of a connection line with a small filled square
   representing a resource link, such as the line between the <i>MakePizza</i>
-  activity rectangle and the <i>:Oven</i> object rectangle in <a
-  href="#figMakeAndDeliverPizzaPDM2"></a>.<p>Notice that the model of <a
-  href="#figMakeAndDeliverPizzaPDM2"></a> does not include any element
-  representing a resource pool. It is assumed that for any organizational
-  position described in the underlying <abbr title="Object Event">OE</abbr>
-  class model, the organization under consideration has a corresponding
-  resource pool. By default , each resource role of an activity type is
-  associated with a resource pool having the same (yet pluralized) name, such
-  that its resources are instances of a corresponding resource role type,
-  which is an organizational position in the case of human resources.
-  </p><p>Combined with its underlying <abbr title="Object Event">OE</abbr>
-  class design model, a <abbr
+  activity rectangle and the <i>:Oven</i> object rectangle in .<p>Notice that
+  the model of does not include any element representing a resource pool. It
+  is assumed that for any organizational position described in the underlying
+  <abbr title="Object Event">OE</abbr> class model, the organization under
+  consideration has a corresponding resource pool. By default , each resource
+  role of an activity type is associated with a resource pool having the same
+  (yet pluralized) name, such that its resources are instances of a
+  corresponding resource role type, which is an organizational position in the
+  case of human resources. </p><p>Combined with its underlying <abbr
+  title="Object Event">OE</abbr> class design model, a <abbr
   title="Discrete Event Process Modeling Notation">DPMN</abbr> process design
   model provides a computationally complete specification of a simulation
   model.</p></details></details></body>

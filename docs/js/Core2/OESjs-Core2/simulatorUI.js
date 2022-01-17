@@ -32,8 +32,8 @@ oes.ui.logSimulationStep = function (simLogTableEl, step, time, currEvtsStr, obj
  Display the standalone scenario statistics
  ********************************************************/
 oes.ui.showStatistics = function (stat) {
-  const decPl = oes.defaults.expostStatDecimalPlaces,
-        nmrOfPredefStatSlots = "includeTimeouts" in stat ? 2 : 1;
+  const decPl = oes.defaults.expostStatDecimalPlaces;
+  var isAN=false, isPN=false, nmrOfPredefStatSlots=0;
 
   function createActyNodeStatTableHead()  {
     const nodeStat = oes.ui.nodeStat;
@@ -54,6 +54,15 @@ oes.ui.showStatistics = function (stat) {
     return "nmrOfDepartedObjects" in nodeStat;
   }
 
+  if (Array.isArray( stat.networkNodes) && Object.keys( stat.networkNodes).length > 0) {
+    if (Object.keys(stat.networkNodes).some(
+        nodeName => isEntryNodeStat(stat.networkNodes[nodeName]))) {
+      isPN = true;
+    } else {
+      isAN = true;
+    }
+    nmrOfPredefStatSlots = "includeTimeouts" in stat ? 2 : 1;
+  }
   // create table for user-defined statistics
   if (Object.keys( stat).length > nmrOfPredefStatSlots) {
     const usrStatTblElem = document.createElement("table"),
@@ -70,9 +79,7 @@ oes.ui.showStatistics = function (stat) {
     document.getElementById("simInfo").insertAdjacentElement(
         "afterend", usrStatTblElem);
   }
-  if (Object.keys( stat.networkNodes).length > 0) {
-    const isPN = Object.keys( stat.networkNodes).some(
-        nodeName => isEntryNodeStat( stat.networkNodes[nodeName]));
+  if (isAN || isPN) {
     if (isPN) {
       // create table for PN statistics per entry node
       const entryNodeStatTblElem = document.createElement("table"),
@@ -94,9 +101,8 @@ oes.ui.showStatistics = function (stat) {
     const actyNodeStatTblElem = document.createElement("table");
     const tbodyEl = actyNodeStatTblElem.createTBody();
     actyNodeStatTblElem.id = "activityNodeStatisticsTbl";
-    rowEl = tbodyEl.insertRow();
-    rowEl.innerHTML = `<tr><th>${isPN ? "Processing":"Activity"} node</th>`+ perNodeStatTblHeadElemsString +
-        "<th>resource utilization</th></tr>";
+    tbodyEl.insertRow().innerHTML = `<tr><th>${isPN ? "Processing":"Activity"} node</th>`+
+        perNodeStatTblHeadElemsString + "<th>resource utilization</th></tr>";
     for (const nodeName of Object.keys( stat.networkNodes)) {
       const nodeStat = stat.networkNodes[nodeName];
       if ("resUtil" in nodeStat) {

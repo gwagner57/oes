@@ -14,7 +14,7 @@ sim.model.timeUnit = "days";
 sim.model.objectTypes = ["SingleProductShop"];
 sim.model.eventTypes = ["DailyDemand", "Delivery"];
 // Model parameters
-sim.model.p.reviewPolicy = "continuous";  // "continuous" or "periodic"
+sim.model.p.reviewPolicy = "periodic";  // "continuous" or "periodic"
 sim.model.p.targetInventory = 100;
 sim.model.p.reorderInterval = 3;
 /*******************************************************
@@ -51,20 +51,21 @@ sim.model.computeFinalStatistics = function () {
 sim.experimentTypes[0] = {
   id: 0,
   title: `Simple experiment with 10 replications, each running for ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}`,
-  nmrOfReplications: 10,
-  seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012]
+  nmrOfReplications: 50,
+  //seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012]
 };
 sim.experimentTypes[1] = {
   id: 1,
-  title: "Parameter variation experiment for exploring reorderInterval and targetInventory",
-  nmrOfReplications: 10,
-  seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012],
+  title: "Parameter variation experiment for exploring combinations of reorderInterval, targetInventory and reviewPolicy",
+  nmrOfReplications: 50,
+  //seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012],
   parameterDefs: [
-    {name:"reviewPolicy", values:["periodic"]},
+    {name:"reviewPolicy", values:["continuous","periodic"]},
     {name:"reorderInterval", values:[2,3,4]},
     {name:"targetInventory", startValue:80, endValue:100, stepSize:10},
   ]
 };
+/*
 sim.experimentTypes[2] = {
   id: 2,
   title: "Parameter variation experiment for comparing policies",
@@ -74,5 +75,6 @@ sim.experimentTypes[2] = {
     {name:"reviewPolicy", values:["continuous","periodic"]}
   ]
 };
+*/
 // Define sim.experimentType for avoiding selection in user interface
 //sim.experimentType = sim.experimentTypes[0];

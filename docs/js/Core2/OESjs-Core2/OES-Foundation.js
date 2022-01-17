@@ -44,6 +44,7 @@ class oBJECT {
         decPl = oes.defaults.simLogDecimalPlaces,
         i=0, valStr="";
     for (const prop of Object.keys( this)) {
+      if (!Class.labels || !Class.labels[prop]) continue;
       var propLabel = (Class.labels && Class.labels[prop]) ? Class.labels[prop] : "",
           val = this[prop];
       if (typeof val === "number" && !Number.isInteger( val)) {

@@ -132,7 +132,7 @@ function run() {
       if (!sim.experimentType) sim.experimentType = sim.experimentTypes[parseInt(choice)-1];
       simInfoEl.textContent = sim.experimentType.title;
     }
-  }
+  } else choice = "0";
   // Hide UI elements
   formEl.style.display = "none";  // hide selection form
   data = {simToRun: choice,
@@ -180,6 +180,7 @@ if (sim.scenarios.length > 0) {
   if (!sim.scenarios[0]) sim.scenarios[0] = sim.scenario;
 } else {
   selScenEl.parentElement.style.display = "none";
+  selExpEl.style.display = "none";
 }
 if (sim.experimentType) run();  // pre-set experiment (in simulation.js)
 else setupUI();  // let the user choose

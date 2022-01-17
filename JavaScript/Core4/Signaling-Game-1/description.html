@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+    <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+    <title>BlindJumper-1 Object Event Simulation Description</title>
+    <meta content="width=device-width, initial-scale = 1.0" name="viewport" />
+    <meta content="en" http-equiv="Content-Language" />
+    <meta content="A service queue model (one service and one queue) with two statistics: maximum queue length and service utilization. For simplicity, the model uses abstract (discrete) time and abstracts away from individual customers and from the composition of the queue, which is only represented in terms of its length. The model includes one object type: ServiceDesk, and two event types: CustomerArrival and CustomerDeparture. Both the random time variable for the recurrence of customer arrival events and the random time variable for modeling the duration of services are discrete."
+          name="description" />
+    <link href="../oesjs1/description.css" rel="stylesheet" />
+    <script src="metadata.js"></script>
+    <script src="../oesjs1/description.js"></script>
+  </head>
+<body onload="oes.ui.setupDescription()">
+ <div id="frontMatter">
+    <h1><span>The Blind Jumper: Emerging Semantics through Reinforcement Learning</span> <a href="index.html">Back to simulation</a></h1>
+     <p>A simulation of a signaling reinforcement learning process, in which two agents learn to communicate with each other via signals.</p>
+  <p><strong>Classification tags</strong>: DES, next-event time progression, Reinforcement Learning</p>
+  <figure class="right"><img src="media/img/theme-image.png" alt="" width="207" height="269" /></figure>
+  <section id="shortDescription"></section>
+  <section>
+   <h2>See also</h2>
+   <ul>
+    <li><p>Wilensky, U. 2016. NetLogo Signaling Game model. <a href="http://ccl.northwestern.edu/netlogo/models/SignalingGame"> http://ccl.northwestern.edu/netlogo/models/SignalingGame</a>. Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.</p></li>
+    <li><p>Skyrms, B. 2006. Signals. Presidential Address, Philosophy of Science Association. <a href="http://www.socsci.uci.edu/~bskyrms/bio/other/Presidential%20Address.pdf"> http://www.socsci.uci.edu/~bskyrms/bio/other/Presidential%20Address.pdf</a>, accessed 2022-01-05.</p></li>
+  </section>  
+ </div>
+
+<!--
+ <section class="mbd collapsed"><h1><span>►</span>Simulation Design Model <sup class="expl-req">?</sup></h1>
+   <div id="expl-DM" class="expl"></div>
+
+   <section><h1>Information Design Model <sup class="expl-req">?</sup></h1>
+     <div id="expl-IDM" class="expl"></div>
+
+     <p>The random variation of the lead time between a replenishment order and the corresponding delivery
+       is modeled by a random variable with a uniform probability distribution between 1 and 3 days.
+       The inventory is modelled as an object with three attributes: <code>productQuantityInStock</code>,
+       <code>reorderPoint</code> and <code>targetInventory</code>. For simplicity, the model does not create
+       replenishment order events, but instead it only schedules corresponding delivery events.</p>
+      <p>Consequently, we model just one object type: <b><code>SingleProductShop</code></b>, with three attributes
+         <code>quantityInStock</code> (NonNegativeInteger),  <code>reorderPoint</code> (NonNegativeInteger), 
+		 and <code>targetInventory</code> (PositiveInteger). In addition, we model two event types:</p>
+     <ul>
+       <li><b><code>DailyDemand</code></b> as an exogeneous event type with one attribute: <code>quantity</code> (PositiveInteger),
+         and with the random variable function <code>sampleQuantity</code> and, as an exogeneous event type, 
+		 with a <code>recurrence</code> function.</li>
+       <li><b><code>Delivery</code></b> as a caused event type with one attribute: <code>quantity</code> (PositiveInteger),
+         and with the random variable function <code>sampleLeadTime</code>.</li>
+     </ul>
+     <figure>
+       <img src="media/img/IDM.svg" width="600"/>
+       <figcaption>An information design model describing object types and event types.</figcaption>
+     </figure>
+	 <p>When the design model is implemented with an object-oriented programming language or framework, 
+	  the participation associations between <code>DailyDemand</code> and <code>SingleProductShop</code>, as well as 
+	  between <code>Delivery</code> and <code>SingleProductShop</code>,	are represented with the corresponding
+    reference properties <code>shop</code> and <code>receiver</code>. This is also the case when using the Object Event
+	  Simulation (OES) framework <i>OESjs</i> available from <a href="https://sim4edu.com">Sim4edu</a>, 
+	  where all object types are derived from the pre-defined OES category <code>oBJECT</code> 
+	  and all event types are derived from the pre-defined OES category <code>eVENT</code>, 
+	  as shown in the following diagram:</p>
+     <figure>
+       <img src="media/img/IDM-OO.svg" width="600"/>
+       <figcaption>An OES class model showing the pre-defined types <code>oBJECT</code> and <code>eVENT</code>.</figcaption>
+     </figure>
+   </section>
+   <section><h1>Process Design Model <sup class="expl-req">?</sup></h1>
+     <div id="expl-PDM" class="expl"></div>
+
+     <table>
+       <caption>Event rule design table.</caption>
+       <thead>
+       <tr>
+         <td>ON (event type)</td><td>DO (event routine)</td>
+       </tr>
+       </thead>
+       <tbody style="font-size: smaller">
+       <tr>
+         <td>DailyDemand( demQuant) @ t</td>
+         <td>
+<pre>IF demQuant &lt;= shop.quantityInStock
+THEN
+  IF shop.quantityInStock − demQuant &lt; shop.reorderPoint AND
+       shop.quantityInStock > shop.reorderPoint
+  THEN
+    SET ordQuant TO shop.targetInventory −
+          shop.quantityInStock - demQuant
+    SCHEDULE Delivery( ordQuant) @ t + sampleLeadTime()
+  DECREMENT shop.quantityInStock BY demQuant
+ELSE (if demQuant > shop.quantityInStock)
+  INCREMENT shop.lostSales BY demQuant − shop.quantityInStock
+  SET shop.quantityInStock TO 0</pre>
+         </td>
+       </tr>
+       <tr>
+         <td>Delivery( delQuant) @ t</td>
+         <td><pre>INCREMENT shop.quantityInStock BY delQuant</pre></td>
+       </tr>
+       </tbody>
+     </table>
+     <figure>
+       <img src="media/img/DailyDemand_RDM.svg" width="600"/>
+       <figcaption>A rule design model for the event type <code>DailyDemand</code>.</figcaption>
+     </figure>
+     <figure>
+       <img src="media/img/Delivery_RDM.svg" width="300"/>
+       <figcaption>A rule design model for the event type <code>Delivery</code>.</figcaption>
+     </figure>
+   </section>
+ </section
+ -->
+</body>
+</html>
+
