@@ -68,7 +68,7 @@ class rEINFORCEMENTlEARNINGaGENT extends aGENT {
 class pERCEPTIONeVENT extends eVENT {
   constructor({occTime, delay, percept, perceiver}) {
     super({occTime, delay});
-    this.percept = percept;  // string or expression (JS object)
+    if (percept) this.percept = percept;  // string or expression (JS object)
     // id or object reference
     this.perceiver = typeof perceiver === "object" ? perceiver : sim.objects[perceiver];
   }
@@ -132,7 +132,7 @@ class rEINFORCEMENTlEARNINGaCTION extends aCTION {
 class mESSAGEeVENT extends eVENT {
   constructor({occTime, delay, message, sender, receiver}) {
     super({occTime, delay});
-    this.message = message;  // string or expression (JS object)
+    if (message) this.message = message;  // string or expression (JS object)
     // id or object reference
     this.sender = typeof this.sender === "string" ?
         sim.objects[this.sender] : sender;

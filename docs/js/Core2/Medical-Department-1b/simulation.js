@@ -18,7 +18,7 @@ sim.scenario.setupInitialState = function () {
   // Initialize the count pool "doctors"
   sim.scenario.resourcePools["doctors"].available = 3;
   // Schedule initial events
-  sim.FEL.add( new PatientArrival({occTime: 1}));
+  sim.FEL.add( new NewCase({occTime: 1}));
 }
 /*******************************************************
  Statistics variables

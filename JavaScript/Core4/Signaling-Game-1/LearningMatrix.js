@@ -1,5 +1,8 @@
 /***
- * A learning matrix as a simple type of RL decision function
+ * A learning matrix as a simple type of RL decision function with three signature methods:
+ * getActionNo( stateTypeNo)            :  the (training-data-based) decision function
+ * learnSuccess( stateTypeNo, actionNo) :  the success training method
+ * learnFailure( stateTypeNo, actionNo) :  the failure training method
  */
 class LearningMatrix extends Array {
   constructor( m, learningSensitivity) {

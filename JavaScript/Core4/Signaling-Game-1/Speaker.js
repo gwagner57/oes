@@ -10,13 +10,12 @@ class Speaker extends rEINFORCEMENTlEARNINGaGENT {
     case "barrier":
       const stateTypeNo = percept.length,   // 1,2,3
             actionNo = this.learnFunction.getActionNo( stateTypeNo),  // 1,2,3
-            lengthSignal = "ABC".charAt( actionNo - 1),   // "A","B","C"
-            message = {type:"SIGNAL", value: lengthSignal};
+            lengthSignal = "ABC".charAt( actionNo - 1);   // "A","B","C"
       // save stateType/action pair for later update of the learning function
       this.currentStateTypeNo = stateTypeNo;
       this.chosenActionNo = actionNo;
       // create follow-up event
-      sim.schedule( new mESSAGEeVENT({ message, sender:this, receiver: this.jumper}));
+      sim.schedule( new SendJumpLengthSignal({ lengthSignal, sender:this, receiver: this.jumper}));
       break;
     }
   }

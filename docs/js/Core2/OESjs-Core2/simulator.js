@@ -145,7 +145,8 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
         resPool.available = resPool.size;
       }
     }
-    oes.scheduleInitialNetworkEvents();
+    // schedule initial events, if no initial event has been scheduled
+    if (sim.FEL.isEmpty()) oes.scheduleInitialNetworkEvents();
     oes.initializeActNetStatistics();
     if (sim.model.isPN) {
       oes.initializeProcNetStatistics();
@@ -295,12 +296,11 @@ sim.runStandaloneScenario = function (createLog) {
  ********************************************************/
 sim.runExperiment = async function () {
   var exp = sim.experimentType, expRun = Object.create(null),
-      compositeStatVarNames = ["nodes"],
-      simpleStatVarNames = [];
+      compositeStatVarNames = ["nodes"];
   // set up user-defined statistics variables
   sim.model.setupStatistics();
   // create a list of the names of simple statistics variables
-  simpleStatVarNames = Object.keys( sim.stat).filter(
+  const simpleStatVarNames = Object.keys( sim.stat).filter(
       varName => !compositeStatVarNames.includes( varName));
 
   async function runSimpleExperiment() {

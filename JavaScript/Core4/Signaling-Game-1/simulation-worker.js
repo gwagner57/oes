@@ -5,21 +5,26 @@ self.importScripts("../lib/seedrandom.min.js", "../lib/rand.js", "../lib/util.js
 self.importScripts("../OESjs-Core4/OES-Foundation.js", "../OESjs-Core4/OES-Activities.js",
     "../OESjs-Core4/OES-Agents.js", "../OESjs-Core4/simulator.js");
 // load simulation-example-specific code
-self.importScripts("LearningMatrix.js","simulation.js");
+self.importScripts("simulation.js");
+if (sim.model.otherCodeFiles) {
+  for (const ocf of sim.model.otherCodeFiles) {
+    self.importScripts( ocf + ".js");
+  }
+}
 if (sim.model.objectTypes) {
-  sim.model.objectTypes.forEach( function (objT) {
+  for (const objT of sim.model.objectTypes) {
     self.importScripts( objT + ".js");
-  });
+  }
 }
 if (sim.model.eventTypes) {
-  sim.model.eventTypes.forEach( function (evtT) {
+  for (const evtT of sim.model.eventTypes) {
     self.importScripts( evtT + ".js");
-  });
+  }
 }
 if (sim.model.activityTypes) {
-  sim.model.activityTypes.forEach( function (actT) {
+  for (const actT of sim.model.activityTypes) {
     self.importScripts( actT + ".js");
-  });
+  }
 }
 // start simulation on message from main thread
 onmessage = function (e) {

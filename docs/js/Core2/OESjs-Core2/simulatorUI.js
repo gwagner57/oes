@@ -54,9 +54,9 @@ oes.ui.showStatistics = function (stat) {
     return "nmrOfDepartedObjects" in nodeStat;
   }
 
-  if (Array.isArray( stat.networkNodes) && Object.keys( stat.networkNodes).length > 0) {
+  if (typeof stat.networkNodes === "object" && Object.keys( stat.networkNodes).length > 0) {
     if (Object.keys(stat.networkNodes).some(
-        nodeName => isEntryNodeStat(stat.networkNodes[nodeName]))) {
+        nodeName => isEntryNodeStat( stat.networkNodes[nodeName]))) {
       isPN = true;
     } else {
       isAN = true;
@@ -66,9 +66,10 @@ oes.ui.showStatistics = function (stat) {
   // create table for user-defined statistics
   if (Object.keys( stat).length > nmrOfPredefStatSlots) {
     const usrStatTblElem = document.createElement("table"),
-          tbodyEl = usrStatTblElem.createTBody();
+          tbodyEl = usrStatTblElem.createTBody(),
+          captionEl = usrStatTblElem.createCaption();
     usrStatTblElem.id = "userDefinedStatisticsTbl";
-    usrStatTblElem.innerHTML = '<caption>User-defined statistics</caption>';
+    captionEl.textContent = "User-defined statistics";
     for (const varName of Object.keys( stat)) {
       // skip pre-defined statistics (collection) variables
       if (["networkNodes","resUtil","includeTimeouts"].includes( varName)) continue;

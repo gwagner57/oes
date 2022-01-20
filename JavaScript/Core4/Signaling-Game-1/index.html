@@ -29,21 +29,22 @@
 <div><small>An <em><a href="https://gwagner57.github.io/oes/">Object Event Simulation (OES)</a></em> example model.
  You can download and inspect its code from the <a href="https://github.com/gwagner57/oes/tree/master/docs/js/Core2">OES
   GitHub repo</a>.</small></div>
-<figure class="right"><img alt="Process Design Model" src="img/CPM.svg" width="500" /></figure>
 <h1>Signaling-Game-1 <!--<a href="description.html">Read more...</a>--></h1>
 <p id="copyright">© 2022 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
  Brandenburg University of Technology, Germany.</p>
+<figure class="left"><img alt="Speaker and Blind Jumper" src="img/theme-image.png" width="124" height="117" /></figure>
 <p>In this simulation of a signaling reinforcement learning (RL) process, two agents learn to communicate
- with each other via signals. One of the two agents (the "jumper") is not able to see the size of a barrier
+ with each other via signals. One of the two agents (the blind "jumper") is not able to see the size of a barrier
  over which he has to jump, while the other agent (the "speaker") is able to see the size of the barrier
  and tries to communicate the jump length to the jumper. However, the two agents do not speak a common language,
  so both agents first have to learn which signal communicates which jump length. Both of them can perceive the
  success or failure of a jump (a jump fails if it is too short or too long), and then update their signalling,
  resp. signal interpretation, function, accordingly.</p>
+<figure class="right"><img alt="Process Design Model" src="img/CPM.svg" width="400" /></figure>
 <p>This RL process model is described by the DPMN process diagram to the right.
- There are two RL agents: a <i>Speaker</i> and a <i>Jumper</i>. Each RL round begins with a <i>StartOver</i> event,
+ There are two RL agents: a <i>Speaker</i> and a (blind) <i>Jumper</i>. Each RL round begins with a <i>StartOver</i> event,
  which triggers a <i>PerceiveBarrier</i> perception event at the <i>Speaker</i>, which causes the <i>Speaker</i>
- to create a <i>SendJumpLengthSignal</i> message event leading to an invocation of the <i>Jumper</i>'s <i>receive</i> method,
+ to create a <i>SendJumpLengthSignal</i> message event leading to an invocation of the jumper's <i>receive</i> method,
  which creates a <i>Jump</i> action event.</p>
 <h2 id="scenarioTitle">Default scenario</h2>
 <p id="scenarioDescription"></p>
@@ -71,6 +72,6 @@
  <tbody></tbody>
 </table>
 <p id="execInfo"></p>
-<script src="../OESjs-Core4/index.js"></script></body>
+<script src="../OESjs-Core4/index.js"></script>
 </body>
 </html>

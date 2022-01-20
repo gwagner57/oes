@@ -6,8 +6,8 @@ class Jumper extends rEINFORCEMENTlEARNINGaGENT {
   }
   receive( msg, sender) {
     switch (msg.type) {
-    case "SIGNAL":
-      const lengthSignal = msg.value,  // "A","B","C"
+    case "JumpLengthSignal":
+      const lengthSignal = msg.lengthSignal,  // "A","B","C"
             stateTypeNo = {"A":1,"B":2,"C":3}[lengthSignal],  // map "A","B","C" to 1,2,3
             actionNo = this.learnFunction.getActionNo( stateTypeNo),  // 1,2,3,4
             jumpLength = actionNo;  // 1,2,3,4
