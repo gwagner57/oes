@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+ <meta charset="UTF-8"/>
+ <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+ <title>Four-Stage-Supply-Chain-1 Discrete Event Simulation Example</title>
+ <meta name="viewport" content="width=device-width, initial-scale = 1.0" />
+ <meta name="description"
+       content="In this scenario, there is an agent (the 'jumper') that is not able to see the size of the barrier over which he has to jump, and there is another agent (the 'speaker') that is able to see the size of the barrier and tries to communicate the right jump length to the jumper. However, the jumper and the speaker do not speak the same language, so both agents first have to learn which signal communicates which jump length. Both agents can perceive the success or failure of a jump (a jump fails if it is too short or too long), and then update their signalling function, resp. signal interpretation function, accordingly."/>
+ <link href="../index.css" rel="stylesheet" />
+ <script src="../lib/math.js"></script>
+ <script src="../lib/util.js"></script>
+ <script src="../lib/idb5.js"></script>
+ <script src="../OESjs-Core4/simulatorUI.js"></script>
+ <script>/*<![CDATA[*/
+ // Create initial objects/maps/arrays
+ const sim = Object.create(null); // instead of {}
+ sim.model = Object.create(null);
+ sim.model.v = Object.create(null); // model variables
+ sim.model.p = Object.create(null); // model parameters
+ sim.scenario = Object.create(null);
+ sim.scenarios = [];
+ sim.stat = Object.create(null);
+ sim.experimentTypes = [];
+ /*]]>*/</script>
+ <script src="simulation.js"></script>
+</head>
+<body>
+<div><small>An <em><a href="https://gwagner57.github.io/oes/">Object Event Simulation (OES)</a></em> example model.
+ You can download and inspect its code from the <a href="https://github.com/gwagner57/oes/tree/master/docs/js/Core2">OES
+  GitHub repo</a>.</small></div>
+<h1>Four-Stage-Supply-Chain-1 <a href="description.html">Read more...</a></h1>
+<p id="copyright">© 2022 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
+ Brandenburg University of Technology, Germany.</p>
+
+<section id="modelDescription">
+ <figure class="right"><img alt="Process Design Model" src="img/CPM.svg" width="550" /></figure>
+ <p>A four stage single-product supply chain (SC) consists of a retailer, a wholesaler, a distributor and a factory.</p>
+ <p>While the factory is a top SC node, which only receives orders from and ships the ordered items to its downstream node,
+  all others also receive deliveries from and send orders to their upstream nodes.</p>
+ <p>Each SC node is modeled as an agent that reacts to</p>
+ <ol>
+  <li>the message event "receive order",</li>
+  <li>the perception event "perceive reception of items" (delivery) and</li>
+  <li>the time event "end of week",</li>
+ </ol>
+ <p>and performs</p>
+ <ol>
+  <li>the message action "send order" and</li>
+  <li>the action "ship items".</li>
+ </ol>
+</section>
+
+<h2 id="scenarioTitle">Default scenario</h2>
+<p id="scenarioDescription"></p>
+<form id="run">
+ <div><label>Select scenario: <select name="selScen" onchange="onChangeOfScenSelect()"></select></label></div>
+ <div><button onclick="run()" type="button">Run</button>
+  <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>
+ <div><label>Simulation log <input name="log" type="checkbox" /></label></div>
+ <div style="display: none"><label>Store exper. results <input name="storeExpRes" type="checkbox" /></label>
+  <button onclick="exportExperResults()" type="button">Export exper. results</button>
+ </div>
+</form>
+<table style="display: none">
+ <caption>Simulation Log</caption>
+ <thead>
+ <tr>
+  <th>Step</th><th>Time</th><th>Current Events</th><th>System State</th><th>Future Events</th>
+ </tr>
+ </thead>
+ <tbody id="simLog"></tbody>
+</table>
+<p id="simInfo"></p>
+<table id="statisticsTbl">
+ <caption></caption>
+ <tbody></tbody>
+</table>
+<p id="execInfo"></p>
+<script src="../OESjs-Core4/index.js"></script>
+</body>
+</html>

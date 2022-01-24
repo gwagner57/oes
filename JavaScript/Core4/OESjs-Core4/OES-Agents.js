@@ -20,9 +20,11 @@ class aGENT extends oBJECT {
     if (objects) this.objects = objects;
     // a map of references to the agents that form the agent's contacts
     if (contacts) this.contacts = contacts;
+    // add each new object to Map of simulation agents
+    sim.agents.set( this.id, this);
   }
   // receive a generic Tell message with a triple statement
-  receiveTell( statement, sender) {
+  onReceiveTell(statement, sender) {
     if (sender.hasPerfectInformation) {
       this.objects[statement.objId][statement.propName] = statement.value;
     }
@@ -73,7 +75,7 @@ class pERCEPTIONeVENT extends eVENT {
     this.perceiver = typeof perceiver === "object" ? perceiver : sim.objects[perceiver];
   }
   onEvent() {
-    this.perceiver.perceive( this.percept);
+    this.perceiver.onPerceive( this.percept);
     return [];
   }
 }
@@ -146,3 +148,19 @@ class mESSAGEeVENT extends eVENT {
 }
 mESSAGEeVENT.labels = {"message":"msg"};
 
+/**
+ * Time events are processed by the simulator by invoking the onTimeEvent method
+ * of all agents.
+ */
+class tIMEeVENT extends eVENT {
+  constructor({occTime, delay, type}) {
+    super({occTime, delay});
+    this.type = type;  // string
+  }
+  onEvent() {
+    for (const agt of sim.agents.values()) {
+      agt.onTimeEvent( this);
+    }
+    return [];
+  }
+}

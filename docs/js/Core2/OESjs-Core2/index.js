@@ -4,9 +4,10 @@ const formEl = document.forms["run"],
     logCheckboxEl = formEl["log"],
     storeExpResCheckboxEl = formEl["storeExpRes"],
     selExpEl = formEl["selExp"],
-    simLogTableEl = document.getElementById("simLog"),
+    modelDescriptionEl = document.getElementById("modelDescription"),
     scenarioTitleEl = document.getElementById("scenarioTitle"),
     scenarioDescriptionEl = document.getElementById("scenarioDescription"),
+    simLogTableEl = document.getElementById("simLog"),
     simInfoEl = document.getElementById("simInfo"),
     execInfoEl = document.getElementById("execInfo");
 function setupUI() {
@@ -135,6 +136,8 @@ function run() {
   } else choice = "0";
   // Hide UI elements
   formEl.style.display = "none";  // hide selection form
+  modelDescriptionEl.style.display = "none";
+  scenarioDescriptionEl.style.display = "none";
   data = {simToRun: choice,
       createLog: logCheckboxEl.checked,
       storeExpRes: storeExpResCheckboxEl.checked};

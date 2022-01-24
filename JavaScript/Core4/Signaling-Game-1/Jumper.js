@@ -4,7 +4,7 @@ class Jumper extends rEINFORCEMENTlEARNINGaGENT {
     super({id, name, learnFunction: new LearningMatrix( learnMatrix)});
     this.position = position;
   }
-  receive( msg, sender) {
+  onReceive( msg, sender) {
     switch (msg.type) {
     case "JumpLengthSignal":
       const lengthSignal = msg.lengthSignal,  // "A","B","C"

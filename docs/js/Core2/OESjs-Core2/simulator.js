@@ -89,6 +89,11 @@ sim.initializeSimulator = function () {
     oes.setupActNetStatistics();
     if (sim.model.isPN) oes.setupProcNetStatistics();
   }
+  /***********************************************************
+   *** Agent extensions **************************************
+   ***********************************************************/
+  // initialize the Map of all objects (accessible by ID)
+  sim.agents = new Map();
 }
 /*******************************************************************
  * Initialize a (standalone or experiment) scenario simulation run *
@@ -121,16 +126,26 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   // reset model-specific statistics
   if (sim.model.setupStatistics) sim.model.setupStatistics();
 
+  /***START Agent extensions BEFORE-setupInitialState ********************/
+  sim.agents.clear();
+  /*** END Agent extensions BEFORE-setupInitialState *********************/
   /***START AN/PN extensions BEFORE-setupInitialState ********************/
   if (sim.model.isAN || sim.model.isPN) {
     oes.initializeResourcePools();
     oes.setupActNetScenario();
     if (sim.model.isPN) oes.createProcessingStationResourcePools();
   }
-  /***END AN/PN extensions BEFORE-setupInitialState *********************/
+  /*** END AN/PN extensions BEFORE-setupInitialState *********************/
 
   // set up initial state
   if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
+
+  // create populations per class
+  for (const o of sim.objects.values()) {
+    const className = o.constructor.name;
+    if (!className in sim.Classes) sim.Classes[className] = {instances:{}};
+    sim.Classes[className].instances[o.id] = o;
+  }
 
   /***START AN/PN extensions AFTER-setupInitialState ********************/
   if (sim.model.isAN || sim.model.isPN) {

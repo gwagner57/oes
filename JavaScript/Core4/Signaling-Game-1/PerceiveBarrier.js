@@ -6,7 +6,7 @@ class PerceiveBarrier extends pERCEPTIONeVENT {
   onEvent() {
     const followupEvents=[],
           percept = {type:"barrier", length: this.length};
-    this.perceiver.perceive( percept);
+    this.perceiver.onPerceive( percept);
     return followupEvents;
   }
 }

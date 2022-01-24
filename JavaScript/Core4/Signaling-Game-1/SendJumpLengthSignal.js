@@ -6,7 +6,7 @@ class SendJumpLengthSignal extends mESSAGEeVENT {
   onEvent() {
     const followupEvents=[],
           message = {type:"JumpLengthSignal", lengthSignal: this.lengthSignal};
-    this.receiver.receive( message, this.sender);
+    this.receiver.onReceive( message, this.sender);
     return followupEvents;
   }
 }

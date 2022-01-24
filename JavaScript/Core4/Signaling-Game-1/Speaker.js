@@ -5,7 +5,7 @@ class Speaker extends rEINFORCEMENTlEARNINGaGENT {
     // id or object reference
     this.jumper = typeof jumper === "object" ? jumper : sim.objects[jumper];
   }
-  perceive( percept) {
+  onPerceive( percept) {
     switch (percept.type) {
     case "barrier":
       const stateTypeNo = percept.length,   // 1,2,3

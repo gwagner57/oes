@@ -39,10 +39,11 @@ class oBJECT {
   }
   // overwrite/improve the standard toString method
   toString() {
-    var Class = this.constructor,
-        str = Class.name + `-${this.id}{ `,
-        decPl = oes.defaults.simLogDecimalPlaces,
-        i=0, valStr="";
+    const Class = this.constructor,
+          decPl = oes.defaults.simLogDecimalPlaces;
+    var i=0, valStr="", str="";
+    if (this.name) str = `${this.name}{ `;
+    else str = (Class.labels?.className || Class.name) + `-${this.id}{ `;
     for (const prop of Object.keys( this)) {
       if (!Class.labels || !Class.labels[prop]) continue;
       var propLabel = (Class.labels && Class.labels[prop]) ? Class.labels[prop] : "",
@@ -52,7 +53,8 @@ class oBJECT {
       } else if (Array.isArray( val)) {
         valStr = "["+ val.map( v => v.id).toString() +"]";
       } else if (typeof val === "object") {
-        valStr = "{"+ val.toString() +"}";
+        if (val instanceof oBJECT) valStr = String( val.id);
+        else valStr = "{"+ val.toString() +"}";
       } else valStr = JSON.stringify( val);
       if (propLabel && val !== undefined) {
         str += (i>0 ? ", " : "") + propLabel +":"+ valStr;
@@ -95,14 +97,17 @@ class eVENT {
   }
   // overwrite/improve the standard toString method
   toString() {
-    var eventTypeName = this.constructor.name,
-        slotListStr="", i=0, evtStr="",
-        decPl = oes.defaults.simLogDecimalPlaces;
+    const Class = this.constructor,
+          eventTypeName = Class.labels?.className || Class.name,
+          decPl = oes.defaults.simLogDecimalPlaces;
+    var slotListStr="", i=0, evtStr="", valStr="";
     Object.keys( this).forEach( function (prop) {
-      var propLabel = (this.constructor.labels && this.constructor.labels[prop]) ?
-          this.constructor.labels[prop] : "";
-      if (propLabel && this[prop] !== undefined) {
-        slotListStr += (i>0 ? ", " : "") + propLabel +": "+ JSON.stringify( this[prop]);
+      const propLabel = (Class.labels && Class.labels[prop]) ? Class.labels[prop] : "",
+            val = this[prop];
+      if (propLabel && val !== undefined) {
+        if (val instanceof oBJECT) valStr = String( val.id);
+        else valStr = JSON.stringify( val);
+        slotListStr += (i>0 ? ", " : "") + propLabel +": "+ valStr;
         i = i+1;
       }
     }, this);
