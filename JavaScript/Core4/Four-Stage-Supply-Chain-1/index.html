@@ -40,13 +40,13 @@
   all others also receive deliveries from and send orders to their upstream nodes.</p>
  <p>Each SC node is modeled as an agent that reacts to</p>
  <ol>
-  <li>the message event "receive order",</li>
+  <li>the in-message event "receive order",</li>
   <li>the perception event "perceive reception of items" (delivery) and</li>
   <li>the time event "end of week",</li>
  </ol>
  <p>and performs</p>
  <ol>
-  <li>the message action "send order" and</li>
+  <li>the out-message action "send order" and</li>
   <li>the action "ship items".</li>
  </ol>
 </section>
@@ -78,5 +78,6 @@
 </table>
 <p id="execInfo"></p>
 <script src="../OESjs-Core4/index.js"></script>
+<script src="../lib/chartist.js" async="async"></script>
 </body>
 </html>

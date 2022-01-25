@@ -33,6 +33,7 @@ oes.ui.logSimulationStep = function (simLogTableEl, step, time, currEvtsStr, obj
  ********************************************************/
 oes.ui.showStatistics = function (stat) {
   const decPl = oes.defaults.expostStatDecimalPlaces;
+  const showTimeSeries = "showTimeSeries" in sim.model && Object.keys( sim.model.showTimeSeries).length > 0;
   var isAN=false, isPN=false, nmrOfPredefStatSlots=0;
 
   function createActyNodeStatTableHead()  {
@@ -166,42 +167,40 @@ oes.ui.showStatistics = function (stat) {
       document.getElementById("execInfo").insertAdjacentElement("beforebegin", exitNodeStatTblElem);
     }
   }
-  /* show resource utilization statistics
-  if (Object.keys( stat.resUtil).length > 0) {
-    let rowEl = tbodyEl.insertRow();
-    let cellEl = rowEl.insertCell();
-    cellEl.colSpan = 2;
-    cellEl.textContent = "Resource Utilization";
-    Object.keys( stat.resUtil).forEach( function (actTypeName) {
-      var resUtilMap = stat.resUtil[actTypeName];
-      var activityTypeLabel = cLASS[actTypeName].label || actTypeName,
-          columnLabel = oes.isProcNetModel() ? " (% busy | % blocked)" : " (% busy)";
-      let rowEl = tbodyEl.insertRow();
-      rowEl.insertCell().textContent = actTypeName;
-      rowEl.insertCell().textContent = JSON.stringify( resUtilMap);
-      /*
-      document.forms["expost-statistics"].appendChild(
-          dom.createElement("h3", {content: i18n.t(activityTypeLabel) + columnLabel})
-      );
-      Object.keys( sim.stat.resUtil[actTypeName]).forEach( function (objIdStr) {
-        //console.log(objIdStr +": "+ sim.stat.resUtil[actT][objIdStr]/sim.time);
-        var objName = sim.objects[objIdStr].name || objIdStr,
-            contEl = dom.createElement("div", {classValues:"I-O-field"}),
-            resUtilInfo = sim.stat.resUtil[actTypeName][objIdStr],
-            cumResUtil = typeof resUtilInfo === "object" ? resUtilInfo.busy : resUtilInfo,
-            resUtil = Math.round( cumResUtil / sim.scenario.simulationEndTime * 10000) / 100,
-            resInfoText = numFmt.format( resUtil) +" %", resBlockTime=0;
-        if (typeof resUtilInfo === "object" && resUtilInfo.blocked !== undefined) {
-          resBlockTime = Math.round( resUtilInfo.blocked / sim.scenario.simulationEndTime * 10000) / 100;
-          resInfoText += " | "+ numFmt.format( resBlockTime) +" %";
-        }
-        contEl.appendChild( dom.createLabeledOutputField({ name: objIdStr,
-          labelText: objName, value: resInfoText}));
-        document.forms["expost-statistics"].appendChild( contEl);
-      });
-    });
+  if (showTimeSeries) {
+    const timeSeriesChartContainerEl = document.createElement("div");
+    timeSeriesChartContainerEl.id = "time-series-chart";
+    document.getElementById("simInfo").insertAdjacentElement(
+        "afterend", timeSeriesChartContainerEl);
+    const chart = new Chartist.Line("#time-series-chart", {
+          labels: dataT,
+          series: chartSeries
+        }, {
+          showPoint: false,
+          lineSmooth: true,
+          width: "90%", height: "400px",
+          axisX: {
+            labelInterpolationFnc: function ( value, index ) {
+              const interval = parseInt( dataT.length / 10 );
+              return index % interval === 0 ? value : null;
+            }
+          },
+          axisY: {
+            //offset: 60,
+            /*
+            labelInterpolationFnc: function ( value ) {
+              return value.toFixed( 2 );
+            }
+            */
+          },
+          plugins: [
+            // display chart legend
+            Chartist.plugins.legend({
+              legendNames: legendLabels
+            })
+          ]}
+    );
   }
-  */
 }
 /*********************************************************************
  Show the results of a simple experiment

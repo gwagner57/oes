@@ -23,7 +23,9 @@
   href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
   Brandenburg University of Technology, Germany.</p> <figure
   class="right"><img alt="" src="../../../img/Load-Truck-Scenario.svg"
-  width="400" /></figure> <section id="shortDescription">A haul service
+  width="400" /></figure></div>
+
+  <section id="shortDescription">A haul service
   company accepts requests for hauling large quantities of earth from a
   loading site to a dump site, using dump trucks and wheel
   loaders.</section><p>You can inspect the model's <a
@@ -320,6 +322,7 @@ Load.<b>successorActivity</b> = "Haul";</pre><p>Notice that the state change
   <i>GoBackToLoadingSite</i> as a function returning either "Load" or "GoHome"
   in the following way:</p><pre>GoBackToLoadingSite.<b>successorActivity</b> = function () {
   return sim.model.v.nmrOfLoads &gt; 0 ? "Load":"GoHome";
-}</pre></details></details></div> <p><a href="index.html">Back to
+}</pre></details></details>
+    <p><a href="index.html">Back to
   simulation</a></p></body>
 </html>

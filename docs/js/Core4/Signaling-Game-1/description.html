@@ -2,30 +2,67 @@
 <html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="UTF-8" />
-    <meta content="IE=edge" http-equiv="X-UA-Compatible" />
     <title>BlindJumper-1 Object Event Simulation Description</title>
     <meta content="width=device-width, initial-scale = 1.0" name="viewport" />
     <meta content="en" http-equiv="Content-Language" />
-    <meta content="A service queue model (one service and one queue) with two statistics: maximum queue length and service utilization. For simplicity, the model uses abstract (discrete) time and abstracts away from individual customers and from the composition of the queue, which is only represented in terms of its length. The model includes one object type: ServiceDesk, and two event types: CustomerArrival and CustomerDeparture. Both the random time variable for the recurrence of customer arrival events and the random time variable for modeling the duration of services are discrete."
+    <meta content="A simulation of a signaling reinforcement learning process, in which two agents learn to communicate with each other via signals."
           name="description" />
-    <link href="../oesjs1/description.css" rel="stylesheet" />
-    <script src="metadata.js"></script>
-    <script src="../oesjs1/description.js"></script>
+    <link href="../../../css/description.css" rel="stylesheet" />
   </head>
-<body onload="oes.ui.setupDescription()">
- <div id="frontMatter">
-    <h1><span>The Blind Jumper: Emerging Semantics through Reinforcement Learning</span> <a href="index.html">Back to simulation</a></h1>
-     <p>A simulation of a signaling reinforcement learning process, in which two agents learn to communicate with each other via signals.</p>
-  <p><strong>Classification tags</strong>: DES, next-event time progression, Reinforcement Learning</p>
-  <figure class="right"><img src="media/img/theme-image.png" alt="" width="207" height="269" /></figure>
-  <section id="shortDescription"></section>
-  <section>
-   <h2>See also</h2>
+  <body>
+  <div id="frontMatter"><h1><span>Signaling-Game-1 Model Description</span> <a href="index.html">Back to simulation</a></h1>
+
+      <p id="copyright">© 2022 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
+          Brandenburg University of Technology, Germany.</p>
+      <figure class="right"><img alt="" src="" width="400" /></figure>
+  <p>A simulation of a signaling <em>reinforcement learning</em> process, in which two agents learn to communicate
+      with each other via signals.</p>
+
+  <p>You can inspect the model's <a href="https://github.com/gwagner57/oes/tree/master/docs/js/Core4/Signaling-Game-1">OESjs
+          code</a> on the OES GitHub repo.</p>
+  </div>
+
+  <section><h2>System Narrative</h2>
+  <p>In this simulation of a signaling reinforcement learning (RL) process, two agents learn to communicate
+      with each other via signals. One of the two agents (the blind "jumper") is not able to see the size of a barrier
+      over which he has to jump, while the other agent (the "speaker") is able to see the size of the barrier
+      and tries to communicate the jump length to the jumper. However, the two agents do not speak a common language,
+      so both agents first have to learn which signal communicates which jump length. Both of them can perceive the
+      success or failure of a jump (a jump fails if it is too short or too long), and then update their signalling,
+      resp. signal interpretation, function, accordingly.</p>
+  </section>
+  <section><h2>Model Description</h2>
+   <p>The model defines two agent types: <i>Speaker</i> and <i>Jumper</i>, one object type: <i>Barrier</i>, and four event types:
+     the periodic time event type <i>StartOver</i>, the perception event type <i>PerceiveBarrier</i>, the message
+       event type <i>SendJumpLengthSignal</i> and the action type <i>Jump</i>.
+       The simulation of learning by trial and failure is based on repeated rounds of event sequences of the form
+       <i>StartOver</i>→<i>PerceiveBarrier</i>→<i>SendJumpLengthSignal</i>→<i>Jump</i>. The function to be learned
+       is expressed as a probability matrix where the row index, representing the current (information) state type,
+       is mapped to a column index, representing an action option, by choosing the column with the maximal cell value.</p>
+      <p>After perceiving the current length of the barrier in a <i>PerceiveBarrier</i> event, the speaker tries to
+          communicate this information to the blind jumper using a symbol from his symbol set {A, B, C} chosen with his
+          learning function/matrix.</p>
+      <p>Then, for taking a decision on the length of the next <i>Jump</i>, the jumper maps the received symbol to a
+          possible jump length (1-4) using his learning function/matrix and then jumps. Subsequently, both the speaker
+          and the jumper update their learning functions/matrices: when the jump was a success, they increase the
+          probability of their signalling choice, resp. signal interpretation choice, while they decrease it when
+          the jump was a failure. </p>
+      <p>Finally, a <i>StartOver</i> event occurs, resetting the jumper's position and modifying the length of the barrier. </p>
+      <p>The simulated learning process goes on until the two learning functions/matrices become stable. This means
+          that the two agents were able to find a common language that allows communicating the barrier length.</p>
+      <p>Remarkably, the <em>Blind Jumper</em> by Peter Fleissner and Gregor Fleissner is a minimal model for
+          teaching/­learning/­illustrating <em>multi-agent reinforcement learning</em>.</p>
+   <p>Based on <a href="http://peter.fleissner.org/petergre/documents/blinderspringer.html">Beyond the Chinese Room: The Blind Jumper</a> -
+      Self-Organised Semantics and Pragmatics on the Computer. By Peter Fleissner and Gregor Fleissner (in German).
+      In W. Hofkirchner (Ed.), Information und Selbstorganisation - Annäherungen an eine vereinheitlichte Theorie der Information,
+      StudienVerlag, Innsbruck/Wien, pp. 325-340, 1998.</p>
+  </section>
+  <section><h2>See also</h2>
    <ul>
     <li><p>Wilensky, U. 2016. NetLogo Signaling Game model. <a href="http://ccl.northwestern.edu/netlogo/models/SignalingGame"> http://ccl.northwestern.edu/netlogo/models/SignalingGame</a>. Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.</p></li>
     <li><p>Skyrms, B. 2006. Signals. Presidential Address, Philosophy of Science Association. <a href="http://www.socsci.uci.edu/~bskyrms/bio/other/Presidential%20Address.pdf"> http://www.socsci.uci.edu/~bskyrms/bio/other/Presidential%20Address.pdf</a>, accessed 2022-01-05.</p></li>
+   </ul>
   </section>  
- </div>
 
 <!--
  <section class="mbd collapsed"><h1><span>►</span>Simulation Design Model <sup class="expl-req">?</sup></h1>

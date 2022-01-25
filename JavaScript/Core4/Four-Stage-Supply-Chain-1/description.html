@@ -14,17 +14,35 @@
   
   <p id="copyright">© 2022 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
   Brandenburg University of Technology, Germany.</p> 
-  <figure class="right"><img alt="" src="" width="400" /></figure> 
-  
-  <section id="shortDescription">A four stage supply chain consists of a retailer, a wholesaler,
-      a distributor and a factory.</section>
+  <figure class="right"><img alt="" src="" width="400" /></figure>
+
+  <p>A four stage supply chain consists of a retailer, a wholesaler, a distributor and a factory.</p>
   
   <p>You can inspect the model's <a href="https://github.com/gwagner57/oes/tree/master/docs/js/Core4/Four-Stage-Supply-Chain-1">OESjs
       code</a> on the OES GitHub repo.</p>
-  
+  </div>
+
   <details><summary>Conceptual Model</summary>
+    <p style="font-size: smaller">A <dfn>conceptual model</dfn>, also called <em>domain model</em>, describes the real-world
+     <em>system under investigation</em> by identifying the relevant types of objects and events,
+     and describing their dynamics, allowing to understand what's going on in the real system. It does not
+     describe any software/design artifact.</p>
 
   <details><summary>Conceptual Information Model</summary>
+   <div style="font-size: smaller">
+    <p>A <dfn>conceptual information model</dfn> describes the subject matter vocabulary used, e.g.,
+     in the system narrative, in a semi-formal way. Such a vocabulary essentially consists of names for</p>
+    <ul>
+     <li><strong>types</strong>, corresponding to <em>classes</em> in OO modeling, or <em>unary predicates</em>
+      in formal logic,</li>
+     <li><strong>properties</strong> corresponding to <em>binary predicates</em> in formal logic,</li>
+     <li><strong>associations</strong> corresponding to <em>n-ary predicates</em> (with <em>n</em> > 1) in formal logic.</li>
+    </ul>
+    <p>The main categories of types are <em>object types</em> and <em>event types</em>. A simple form of conceptual
+     information model is obtained by providing a list of each of them, while a more elaborated model, preferably
+     in the form of a UML class diagram, also defines properties and associations, including the <strong>participation</strong>
+     of objects (of certain types) in events (of certain types).</p>
+   </div>
   <p>The potentially relevant object types are:</p>
   <ol>
       <li>top supply chain nodes (like the factory)</li>
@@ -164,8 +182,7 @@ Truck.<b>capacity</b> = 15;  // m3</pre>
 
   </details>
  </details>
- </div> 
- 
+
    <section><h2>See also...</h2>
    <ul>
    <li><a href="https://beergame.org/">beergame.org</a></li>
