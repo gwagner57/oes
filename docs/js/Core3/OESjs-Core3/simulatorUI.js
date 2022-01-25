@@ -32,8 +32,8 @@ oes.ui.logSimulationStep = function (simLogTableEl, step, time, currEvtsStr, obj
  Display the standalone scenario statistics
  ********************************************************/
 oes.ui.showStatistics = function (stat) {
-  const decPl = oes.defaults.expostStatDecimalPlaces,
-        nmrOfPredefStatSlots = "includeTimeouts" in stat ? 2 : 1;
+  const decPl = oes.defaults.expostStatDecimalPlaces;
+  var isAN=false, isPN=false, nmrOfPredefStatSlots=0;
 
   function createActyNodeStatTableHead()  {
     const nodeStat = oes.ui.nodeStat;
@@ -54,15 +54,26 @@ oes.ui.showStatistics = function (stat) {
     return "nmrOfDepartedObjects" in nodeStat;
   }
 
-  // create table for user-defined statistics
+  if (typeof stat.networkNodes === "object" && Object.keys( stat.networkNodes).length > 0) {
+    if (Object.keys(stat.networkNodes).some(
+        nodeName => isEntryNodeStat( stat.networkNodes[nodeName]))) {
+      isPN = true;
+    } else {
+      isAN = true;
+    }
+    nmrOfPredefStatSlots = "includeTimeouts" in stat ? 2 : 1;
+  }
+  if ("table" in stat) nmrOfPredefStatSlots++;
+  // create two column table for user-defined statistics
   if (Object.keys( stat).length > nmrOfPredefStatSlots) {
     const usrStatTblElem = document.createElement("table"),
-          tbodyEl = usrStatTblElem.createTBody();
+          tbodyEl = usrStatTblElem.createTBody(),
+          captionEl = usrStatTblElem.createCaption();
     usrStatTblElem.id = "userDefinedStatisticsTbl";
-    usrStatTblElem.innerHTML = '<caption>User-defined statistics</caption>';
+    captionEl.textContent = "User-defined statistics";
     for (const varName of Object.keys( stat)) {
       // skip pre-defined statistics (collection) variables
-      if (["networkNodes","resUtil","includeTimeouts"].includes( varName)) continue;
+      if (["table","networkNodes","resUtil","includeTimeouts"].includes( varName)) continue;
       const rowEl = tbodyEl.insertRow();  // create new table row
       rowEl.insertCell().textContent = varName;
       rowEl.insertCell().textContent = math.round( stat[varName], decPl);
@@ -70,9 +81,31 @@ oes.ui.showStatistics = function (stat) {
     document.getElementById("simInfo").insertAdjacentElement(
         "afterend", usrStatTblElem);
   }
-  if (Object.keys( stat.networkNodes).length > 0) {
-    const isPN = Object.keys( stat.networkNodes).some(
-        nodeName => isEntryNodeStat( stat.networkNodes[nodeName]));
+  // create table filled with object attribute values
+  if (stat.table) {
+    const objTblElem = document.createElement("table"),
+          tbodyEl = objTblElem.createTBody(),
+          captionEl = objTblElem.createCaption();
+    objTblElem.id = "objectsStatisticsTbl";
+    captionEl.textContent = stat.table.name || "Object statistics";
+    for (const row of stat.table.rows) {
+      const rowEl = tbodyEl.insertRow();  // create new table row
+      for (const cell of row) {
+        if (cell === row[0]) {  // row heading
+          rowEl.insertCell().textContent = cell;
+        } else {
+          if (row === stat.table.rows[0]) {  // column headings
+            rowEl.insertCell().textContent = cell;
+          } else {
+            rowEl.insertCell().textContent = math.round( cell, decPl);
+          }
+        }
+      }
+    }
+    document.getElementById("simInfo").insertAdjacentElement(
+        "afterend", objTblElem);
+  }
+  if (isAN || isPN) {
     if (isPN) {
       // create table for PN statistics per entry node
       const entryNodeStatTblElem = document.createElement("table"),
@@ -94,9 +127,8 @@ oes.ui.showStatistics = function (stat) {
     const actyNodeStatTblElem = document.createElement("table");
     const tbodyEl = actyNodeStatTblElem.createTBody();
     actyNodeStatTblElem.id = "activityNodeStatisticsTbl";
-    rowEl = tbodyEl.insertRow();
-    rowEl.innerHTML = `<tr><th>${isPN ? "Processing":"Activity"} node</th>`+ perNodeStatTblHeadElemsString +
-        "<th>resource utilization</th></tr>";
+    tbodyEl.insertRow().innerHTML = `<tr><th>${isPN ? "Processing":"Activity"} node</th>`+
+        perNodeStatTblHeadElemsString + "<th>resource utilization</th></tr>";
     for (const nodeName of Object.keys( stat.networkNodes)) {
       const nodeStat = stat.networkNodes[nodeName];
       if ("resUtil" in nodeStat) {

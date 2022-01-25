@@ -89,6 +89,11 @@ sim.initializeSimulator = function () {
     oes.setupActNetStatistics();
     if (sim.model.isPN) oes.setupProcNetStatistics();
   }
+  /***********************************************************
+   *** Agent extensions **************************************
+   ***********************************************************/
+  // initialize the Map of all objects (accessible by ID)
+  sim.agents = new Map();
 }
 /*******************************************************************
  * Initialize a (standalone or experiment) scenario simulation run *
@@ -121,16 +126,26 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   // reset model-specific statistics
   if (sim.model.setupStatistics) sim.model.setupStatistics();
 
+  /***START Agent extensions BEFORE-setupInitialState ********************/
+  sim.agents.clear();
+  /*** END Agent extensions BEFORE-setupInitialState *********************/
   /***START AN/PN extensions BEFORE-setupInitialState ********************/
   if (sim.model.isAN || sim.model.isPN) {
     oes.initializeResourcePools();
     oes.setupActNetScenario();
     if (sim.model.isPN) oes.createProcessingStationResourcePools();
   }
-  /***END AN/PN extensions BEFORE-setupInitialState *********************/
+  /*** END AN/PN extensions BEFORE-setupInitialState *********************/
 
   // set up initial state
   if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
+
+  // create populations per class
+  for (const o of sim.objects.values()) {
+    const className = o.constructor.name;
+    sim.Classes[className] = {instances:{}};
+    sim.Classes[className].instances[o.id] = o;
+  }
 
   /***START AN/PN extensions AFTER-setupInitialState ********************/
   if (sim.model.isAN || sim.model.isPN) {
@@ -145,7 +160,8 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
         resPool.available = resPool.size;
       }
     }
-    oes.scheduleInitialNetworkEvents();
+    // schedule initial events, if no initial event has been scheduled
+    if (sim.FEL.isEmpty()) oes.scheduleInitialNetworkEvents();
     oes.initializeActNetStatistics();
     if (sim.model.isPN) {
       oes.initializeProcNetStatistics();
@@ -164,8 +180,19 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
 /*******************************************************************
  * Assign model parameters with experiment parameter values ********
  *******************************************************************/
+sim.schedule = function (e) {
+  var events;
+  if (!Array.isArray(e)) events = [e];
+  else events = e;
+  for (const evt of events) {
+    sim.FEL.add( evt);
+  }
+}
+/*******************************************************************
+ * Assign model parameters with experiment parameter values ********
+ *******************************************************************/
 sim.assignModelParameters = function (expParSlots) {
-  for (let parName of Object.keys( sim.model.p)) {
+  for (const parName of Object.keys( sim.model.p)) {
     sim.model.p[parName] = expParSlots[parName];
   }
 }
@@ -284,12 +311,11 @@ sim.runStandaloneScenario = function (createLog) {
  ********************************************************/
 sim.runExperiment = async function () {
   var exp = sim.experimentType, expRun = Object.create(null),
-      compositeStatVarNames = ["nodes"],
-      simpleStatVarNames = [];
+      compositeStatVarNames = ["nodes"];
   // set up user-defined statistics variables
   sim.model.setupStatistics();
   // create a list of the names of simple statistics variables
-  simpleStatVarNames = Object.keys( sim.stat).filter(
+  const simpleStatVarNames = Object.keys( sim.stat).filter(
       varName => !compositeStatVarNames.includes( varName));
 
   async function runSimpleExperiment() {
