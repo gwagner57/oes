@@ -23,6 +23,7 @@ oes.defaults = {
   nextMomentDeltaT: 0.01,
   expostStatDecimalPlaces: 2,
   simLogDecimalPlaces: 2,
+  timeSeriesCompressionRate: 1,  // number of array values to be compressed into one value
   showResPoolsInLog: false
 };
 

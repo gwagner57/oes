@@ -110,20 +110,10 @@ body > header {
   margin-bottom: 1em;
 }
 
-h1 {
-  margin-top: 0.67em;
+main > h1 {
+  margin-top: 1.33em;
   margin-bottom: 0.33em;
   text-align: center;
-}
-@media only screen and (min-width: 800px) {
-  #supertitle {
-      font-size: 15em;
-	  line-height: 0.9
-  }
-  h1 {
-    margin-top: 0.67em;
-    margin-bottom: 0.33em;
-  }
 }
 
 p.indented {

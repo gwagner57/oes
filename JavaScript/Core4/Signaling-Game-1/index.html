@@ -42,7 +42,7 @@
  resp. signal interpretation, function, accordingly.</p>
 <figure class="right"><img alt="Process Design Model" src="img/CPM.svg" width="400" /></figure>
 <p>This RL process model is described by the DPMN process diagram to the right.
- There are two RL agents: a <i>Speaker</i> and a (blind) <i>Jumper</i>. Each RL round begins with a <i>StartOver</i> event,
+ There are two RL agents: a <i>Speaker</i> and a (blind) <i>Jumper</i>. Each RL round begins with a <i>StartOver</i> time event,
  which triggers a <i>PerceiveBarrier</i> perception event at the <i>Speaker</i>, which causes the <i>Speaker</i>
  to create a <i>SendJumpLengthSignal</i> message event leading to an invocation of the jumper's <i>receive</i> method,
  which creates a <i>Jump</i> action event.</p>

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * This library file contains the elements of the OES Agents package
- * @copyright Copyright 2021 Gerd Wagner, BTU (Germany)
+ * @copyright Copyright 2022 Gerd Wagner, BTU (Germany)
  * @license The MIT License (MIT)
  * @author Gerd Wagner
  ******************************************************************************/
@@ -20,15 +20,17 @@ class aGENT extends oBJECT {
     if (objects) this.objects = objects;
     // a map of references to the agents that form the agent's contacts
     if (contacts) this.contacts = contacts;
-    // add each new object to Map of simulation agents
+    // add each new agent to the Map of simulation agents
     sim.agents.set( this.id, this);
   }
   // receive a generic Tell message with a triple statement
+  /*
   onReceiveTell(statement, sender) {
     if (sender.hasPerfectInformation) {
       this.objects[statement.objId][statement.propName] = statement.value;
     }
   }
+  */
   // overwrite/improve the standard toString method
   /*
   toString() {
@@ -37,8 +39,8 @@ class aGENT extends oBJECT {
   */
 }
 /**
- * Reinforcement learning agents have a learning matrix representing their
- * decision function and two methods: learnSuccess and learnFailure
+ * Reinforcement learning agents have a learned decision function and two
+ * training methods: learnSuccess and learnFailure
  */
 class rEINFORCEMENTlEARNINGaGENT extends aGENT {
   constructor({id, name, hasPerfectInformation=true, objects, contacts, learnFunction}) {

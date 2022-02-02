@@ -489,7 +489,7 @@ class dEPARTURE extends eVENT {
         this.occTime - procObj.arrivalTime;
     // invoke onDeparture event rule method
     if (typeof this.node.onDeparture === "function") {
-      followupEvents = this.node.onDeparture();
+      followupEvents = this.node.onDeparture( this.processingObject);
     }
     // remove processing object from simulation
     sim.objects.delete( procObj.id);
@@ -509,8 +509,9 @@ class dEPARTURE extends eVENT {
  * (2) "cumulativeTimeInSystem" for adding up the times in system of all departed objects.
  */
 class dEPARTUREeVENTnODE extends eVENTnODE {
-  constructor({id, name}) {
+  constructor({id, name, onDeparture}) {
     super({id, name, eventTypeName:"dEPARTURE"});
+    if (onDeparture) this.onDeparture = onDeparture;
     this.nmrOfDepartedObjects = 0;
     this.cumulativeTimeInSystem = 0;
   }
@@ -521,8 +522,8 @@ class dEPARTUREeVENTnODE extends eVENTnODE {
  * event type, possibly with an "onDeparture" event rule method.
  */
 class eXITnODE extends dEPARTUREeVENTnODE {
-  constructor({id, name, position}) {
-    super({id, name});
+  constructor({id, name, onDeparture, position}) {
+    super({id, name, onDeparture});
     // a position in space
     if (position) this.position = position;
   }

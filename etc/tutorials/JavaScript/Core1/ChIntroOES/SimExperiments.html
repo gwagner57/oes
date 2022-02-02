@@ -31,21 +31,203 @@
 };</pre><p>Running this simple experiment means running the underlying
   scenario 10 times, each time with another random seed, as specified by the
   list of seeds. The resulting statistics are composed of the statistics for
-  each replication complemented with a summary statistics listing averages,
-  standard deviations, min/max values and confidence intervals.</p><p>When no
-  seeds are defined, the experiment is run with implicit random seeds using
-  JavaScript's built-in random number generator, which implies that experiment
-  runs are not reproducible.</p></section><section><h4>2.6.2. Parameter
-  Variation Experiments</h4><p>A parameter variation experiment is defined
-  with (1) a number of <em>replications</em>, (2) a list of <em>seed
-  values</em> (one for each replication), and (3) one or more experiment
-  parameters. </p><p>An experiment parameter must have the same name as the
-  model parameter to which it refers. It defines a set of values for this
-  model variable, either using a <code>values</code> field or a combination of
-  a <code>startValue</code> and <code>endValue</code> field (and
-  <code>stepSize</code> for a non-default increment value) as in the following
-  example.</p><p>The following code shows an example of a parameter variation
-  experiment definition (on top of the <a
+  each replication complemented with summary statistics listing averages,
+  standard deviations, min/max values and 95% confidence intervals, as shown
+  in the following example:</p><table border="1" style="overflow-x: auto;">
+      <thead>
+        <tr>
+          <th colspan="4">Experiment Results</th>
+        </tr>
+
+        <tr>
+          <th rowspan="2">Replication</th>
+
+          <th colspan="3">Statistics</th>
+        </tr>
+
+        <tr>
+          <th>arrivedCustomers</th>
+
+          <th>departedCustomers</th>
+
+          <th>maxQueueLength</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>1</td>
+
+          <td>285</td>
+
+          <td>283</td>
+
+          <td>7</td>
+        </tr>
+
+        <tr>
+          <td>2</td>
+
+          <td>274</td>
+
+          <td>274</td>
+
+          <td>6</td>
+        </tr>
+
+        <tr>
+          <td>3</td>
+
+          <td>285</td>
+
+          <td>285</td>
+
+          <td>4</td>
+        </tr>
+
+        <tr>
+          <td>4</td>
+
+          <td>287</td>
+
+          <td>286</td>
+
+          <td>5</td>
+        </tr>
+
+        <tr>
+          <td>5</td>
+
+          <td>284</td>
+
+          <td>284</td>
+
+          <td>6</td>
+        </tr>
+
+        <tr>
+          <td>6</td>
+
+          <td>300</td>
+
+          <td>299</td>
+
+          <td>4</td>
+        </tr>
+
+        <tr>
+          <td>7</td>
+
+          <td>288</td>
+
+          <td>286</td>
+
+          <td>5</td>
+        </tr>
+
+        <tr>
+          <td>8</td>
+
+          <td>286</td>
+
+          <td>284</td>
+
+          <td>4</td>
+        </tr>
+
+        <tr>
+          <td>9</td>
+
+          <td>286</td>
+
+          <td>285</td>
+
+          <td>4</td>
+        </tr>
+
+        <tr>
+          <td>10</td>
+
+          <td>295</td>
+
+          <td>293</td>
+
+          <td>6</td>
+        </tr>
+
+        <tr>
+          <td>Average</td>
+
+          <td>287</td>
+
+          <td>285.9</td>
+
+          <td>5.1</td>
+        </tr>
+
+        <tr>
+          <td>Std.dev.</td>
+
+          <td>6.848</td>
+
+          <td>6.506</td>
+
+          <td>1.101</td>
+        </tr>
+
+        <tr>
+          <td>Minimum</td>
+
+          <td>274</td>
+
+          <td>274</td>
+
+          <td>4</td>
+        </tr>
+
+        <tr>
+          <td>Maximum</td>
+
+          <td>300</td>
+
+          <td>299</td>
+
+          <td>7</td>
+        </tr>
+
+        <tr>
+          <td>CI Lower</td>
+
+          <td>282.9</td>
+
+          <td>281.9</td>
+
+          <td>4.4</td>
+        </tr>
+
+        <tr>
+          <td>CI Upper</td>
+
+          <td>291</td>
+
+          <td>289.6</td>
+
+          <td>5.7</td>
+        </tr>
+      </tbody>
+    </table><p>When no seeds are defined, the experiment is run with implicit
+  random seeds using JavaScript's built-in random number generator, which
+  implies that experiment runs are not
+  reproducible.</p></section><section><h4>2.6.2. Parameter Variation
+  Experiments</h4><p>A parameter variation experiment is defined with (1) a
+  number of <em>replications</em>, (2) a list of <em>seed values</em> (one for
+  each replication), and (3) one or more experiment parameters. </p><p>An
+  experiment parameter must have the same name as the model parameter to which
+  it refers. It defines a set of values for this model parameter, either using
+  a <code>values</code> field or a combination of a <code>startValue</code>
+  and <code>endValue</code> field (and <code>stepSize</code> for a non-default
+  increment value) as in the following example.</p><p>The following code shows
+  an example of a parameter variation experiment definition (on top of the <a
   href="https://gwagner57.github.io/oes/js/Core1/Inventory-Management/index.html">Inventory-Management</a>
   simulation model):</p><pre class="role-listing-1">sim.experimentTypes[1] = {
   id: 1,
@@ -207,5 +389,5 @@
   has to go to Application/Storage/IndexedDB.</p><p>The experiment statistics
   database consists of three tables containing data about (1) experiment runs,
   (2) experiment scenarios, and (3) experiment scenario runs, which can be
-  exported to a CSV file. </p><section></section></section></body>
+  exported to a CSV file. </p></section></body>
 </html>

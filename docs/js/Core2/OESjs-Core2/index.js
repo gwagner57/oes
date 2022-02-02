@@ -137,7 +137,7 @@ function run() {
   // Hide UI elements
   formEl.style.display = "none";  // hide selection form
   if (modelDescriptionEl) modelDescriptionEl.style.display = "none";
-  scenarioDescriptionEl.style.display = "none";
+  if (scenarioDescriptionEl) scenarioDescriptionEl.style.display = "none";
   data = {simToRun: choice,
       createLog: logCheckboxEl.checked,
       storeExpRes: storeExpResCheckboxEl.checked};

@@ -1,0 +1,38 @@
+body {
+    color: black;
+    background-color: #f8f8f8;
+    font: 1rem 'Arial', sans-serif;
+    line-height: 1.2;  
+    max-width: 60em;
+    margin: 1em auto;
+    padding: 8px;
+}
+h1 > a {
+    margin-left: 1em;
+    font-size: 50%
+}
+#copyright {
+  font-size: 80%;
+}
+table {
+    border: thin solid black;
+    /* margin: 1em auto; */
+    border-collapse: collapse;
+    empty-cells: show;
+}
+table td, table th {
+    border: thin solid black;
+    padding: 0.2em;
+}
+figure {
+    margin: 1em auto;
+    text-align: center;
+}
+figure.right {
+    float: right;
+    margin-left: 1em;
+    margin-bottom: 1em;
+}
+form > div {
+    margin-bottom: 1em;
+}

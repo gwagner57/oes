@@ -26,8 +26,8 @@ sim.initializeSimulator = function () {
   } else {
     if (sim.model.OnEachTimeStep) sim.timeIncrement = 1;  // default
   }
-  // make sure these lists are defined
-  sim.model.objectTypes ??= [];  // ES 2020
+  // make sure these lists are defined (using ES 2020 syntax)
+  sim.model.objectTypes ??= [];
   sim.model.eventTypes ??= [];
   // initialize the Map of all objects (accessible by ID)
   sim.objects = new Map();
@@ -38,13 +38,13 @@ sim.initializeSimulator = function () {
   // initialize the className->Class map
   sim.Classes = Object.create(null);
   // Make object classes accessible via their object type name
-  sim.model.objectTypes.forEach( function (objTypeName) {
+  for (const objTypeName of sim.model.objectTypes) {
     sim.Classes[objTypeName] = util.getClass( objTypeName);
-  });
+  }
   // Make event classes accessible via their event type name
-  sim.model.eventTypes.forEach( function (evtTypeName) {
+  for (const evtTypeName of sim.model.eventTypes) {
     sim.Classes[evtTypeName] = util.getClass( evtTypeName);
-  });
+  }
   // Assign scenarioNo = 0 to default scenario
   sim.scenario.scenarioNo ??= 0;
   sim.scenario.title ??= "Default scenario";
@@ -92,13 +92,22 @@ sim.initializeSimulator = function () {
   /***********************************************************
    *** Agent extensions **************************************
    ***********************************************************/
-  // initialize the Map of all objects (accessible by ID)
-  sim.agents = new Map();
+  if (Array.isArray( sim.model.agentTypes)) {
+    // initialize the Map of all agents (accessible by ID)
+    sim.agents = new Map();
+    // Make agent classes accessible via their agent type name
+    for (const agtTypeName of sim.model.agentTypes) {
+      sim.Classes[agtTypeName] = util.getClass( agtTypeName);
+    }
+    sim.model.agentBased = true;
+  }
 }
 /*******************************************************************
  * Initialize a (standalone or experiment) scenario simulation run *
  *******************************************************************/
 sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
+  const showTimeSeries = "showTimeSeries" in sim.model &&
+      Object.keys( sim.model.showTimeSeries).length > 0;
   // clear initial state data structures
   sim.objects.clear();
   sim.FEL.clear();
@@ -125,9 +134,20 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   if (expParSlots) sim.assignModelParameters( expParSlots);
   // reset model-specific statistics
   if (sim.model.setupStatistics) sim.model.setupStatistics();
+  // (re)set the timeSeries statistics variable
+  if (showTimeSeries) {
+    sim.stat.timeSeries = Object.create( null);
+    for (const statVarName of Object.keys( sim.model.showTimeSeries)) {
+      sim.stat.timeSeries[statVarName] = [];
+      if (!sim.timeIncrement) {
+        sim.stat.timeSeries[statVarName][0][sim.step] = sim.time;
+        sim.stat.timeSeries[statVarName][1][sim.step] = v;
+      }
+    }
+  }
 
   /***START Agent extensions BEFORE-setupInitialState ********************/
-  sim.agents.clear();
+  if (sim.model.agentBased) sim.agents.clear();
   /*** END Agent extensions BEFORE-setupInitialState *********************/
   /***START AN/PN extensions BEFORE-setupInitialState ********************/
   if (sim.model.isAN || sim.model.isPN) {
@@ -143,7 +163,7 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   // create populations per class
   for (const o of sim.objects.values()) {
     const className = o.constructor.name;
-    sim.Classes[className] = {instances:{}};
+    sim.Classes[className].instances = Object.create(null);
     sim.Classes[className].instances[o.id] = o;
   }
 
@@ -178,7 +198,7 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   }
 };
 /*******************************************************************
- * Assign model parameters with experiment parameter values ********
+ * Schedule an event or a list of events ***************************
  *******************************************************************/
 sim.schedule = function (e) {
   var events;
@@ -283,6 +303,30 @@ sim.runScenario = function (createLog) {
         }
       }
     }
+    // check if any time series has to be stored/returned
+    if (sim.stat.timeSeries) {
+      /*
+      if (!statVar.timeSeriesScalingFactor) v = sim.stat[varName];
+      else v = sim.stat[varName] * statVar.timeSeriesScalingFactor;
+      */
+      if (sim.timeIncrement) {
+        for (const statVarName of Object.keys( sim.stat.timeSeries)) {
+          sim.stat.timeSeries[statVarName].push( sim.stat[statVarName]);
+        }
+        /*
+        if (oes.stat.timeSeriesCompressionSteps > 1
+            && sim.step % oes.stat.timeSeriesCompressionSteps === 0) {
+          oes.stat.compressTimeSeries( sim.stat.timeSeries[varName]);
+        }
+        */
+      } else {  // next-event time progression
+        for (const statVarName of Object.keys( sim.stat.timeSeries)) {
+          sim.stat.timeSeries[varName][0][sim.step] = sim.time;
+          // TODO: how to interpolate for implementing time series compression
+          sim.stat.timeSeries[varName][1][sim.step] = v;
+        }
+      }
+    }
     if (createLog) sendLogMsg( nextEvents);  // log initial state
     // end simulation if no time increment and no more events
     if (!sim.timeIncrement && sim.FEL.isEmpty()) break;
@@ -335,7 +379,7 @@ sim.runExperiment = async function () {
         enqueuedActivities:[], startedActivities:[], completedActivities:[],
         queueLength:{max:[]}, waitingTime:{max:[]}, cycleTime:{max:[]}
       };
-      if (typeof AT.waitingTimeout === "function") {
+      if (AT && typeof AT.waitingTimeout === "function") {
         exp.replicStat.nodes[nodeName].waitingTimeouts = [];
       }
       //exp.replicStat.nodes[nodeName].resUtil = Object.create(null);
@@ -356,7 +400,7 @@ sim.runExperiment = async function () {
               statPerNode = sim.stat.networkNodes[nodeName];
         const AT = sim.Classes[sim.model.networkNodes[nodeName].activityTypeName];
         replStatPerNode.enqueuedActivities[k] = statPerNode.enqueuedActivities;
-        if (typeof AT.waitingTimeout === "function") {
+        if (AT && typeof AT.waitingTimeout === "function") {
           replStatPerNode.waitingTimeouts[k] = statPerNode.waitingTimeouts;
         }
         replStatPerNode.startedActivities[k] = statPerNode.startedActivities;

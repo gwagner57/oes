@@ -4,7 +4,8 @@
 sim.model.name = "Signalling-Game-1";
 sim.model.time = "discrete"; // implies using only discrete random variables
 
-sim.model.objectTypes = ["Barrier", "Speaker", "Jumper"];
+sim.model.objectTypes = ["Barrier"];
+sim.model.agentTypes = ["Speaker", "Jumper"];
 sim.model.eventTypes = ["StartOver", "PerceiveBarrier", "SendJumpLengthSignal", "Jump"];
 // a class for the (training-data-based) learning function
 sim.model.otherCodeFiles = ["LearningMatrix"];

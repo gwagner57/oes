@@ -16,6 +16,11 @@ if (sim.model.objectTypes) {
     self.importScripts( objT + ".js");
   }
 }
+if (sim.model.agentTypes) {
+  for (const agtT of sim.model.agentTypes) {
+    self.importScripts( agtT + ".js");
+  }
+}
 if (sim.model.eventTypes) {
   for (const evtT of sim.model.eventTypes) {
     self.importScripts( evtT + ".js");

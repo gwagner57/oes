@@ -5,7 +5,7 @@ sim.model.name = "Four-Stage-Supply-Chain-1";
 sim.model.time = "discrete";  // implies using only discrete random variables
 sim.model.timeUnit = "D"  // days
 
-sim.model.objectTypes = ["AbstractSupplyChainNode","NonTopSupplyChainNode",
+sim.model.agentTypes = ["AbstractSupplyChainNode","NonTopSupplyChainNode",
     "IntermediateSupplyChainNode","TopSupplyChainNode"];
 sim.model.eventTypes = ["EndOfWeek","EndCustomerDemand","PurchaseOrder",
     "ShipItems","PerceiveInDelivery"];
