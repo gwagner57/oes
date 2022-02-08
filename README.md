@@ -22,7 +22,7 @@ the simulator can automatically compute (a) throughput, (b) queue length, (c) cy
 
 4. OES Core 4 adds the concept of *agents*.
 
-You can run OESjs Core simulation examples from the [project website](https://gwagner57.github.io/oes/).
+You can run OESjs Core simulation examples from the [project website](https://sim4edu.com/oesjs/).
 
 ## OES Core 0
 

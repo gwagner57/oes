@@ -1,30 +1,30 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <meta charset="UTF-8"/>
- <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-  <title>OES JavaScript Core 1 Simulator</title>
-  <meta name="viewport" content="width=device-width, initial-scale = 1.0" />
+ <meta charset="UTF-8"/>
+ <title>OES JavaScript Core 1 Simulator</title>
+ <meta name="viewport" content="width=device-width, initial-scale = 1.0" />
  <meta name="description"
        content="The OESjs Core 1 simulator implements an architecture for Object Event Simulation (OES), extending the OESjs Core 0 simulator by adding fixed-increment time progression, a seedable random number generator, a set of sampling functions from various probability distributions (uniform, triangular, normal, exponential, etc.), multiple scenarios per model, multiple experiment types per model, model parameters, parameter variation experiments, as well as persistent storage and export of experiment results."/>
-
- <link rel="icon" type="image/png" href="img/favicon32px.png" sizes="32x32"/>
- <link rel="icon" type="image/png" href="img/favicon16px.png" sizes="16x16"/>
- 
+ <link rel="icon" href="../../favicon.svg"/>
  <link rel="stylesheet" type="text/css" href="../../css/normalize.css" />
+ <link rel="stylesheet" type="text/css" href="../../css/basic-styles.css" />
+ <link rel="stylesheet" type="text/css" href="../../css/area-page.css" />
  <link rel="stylesheet" type="text/css" href="../../css/prio-menu.css" />
- <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+ <link rel="stylesheet" type="text/css" href="../../css/media-queries.css" />
 </head>
 <body>
- <header>
+ <header><img id="logo" src="../../img/sim4edu.svg" alt="Simulation for Education (sim4edu) logo" height="50" />
   <div id="navigation" class="priority-nav">
    <nav id="menu">
     <ul id="menu-closed">
      <li><a href="../../index.html">Home</a></li>
-     <li><a href="../../architectures.html">Simulator Architectures</a></li>
-     <li><a href="../../examples.html">Simulation Examples</a></li>
-     <li><a href="../index.html">JavaScript</a></li>
-     <li><a href="../../Python/index.html">Python</a></li>
+     <li><a href="../../explain">Explain</a></li>
+     <li><a href="../../simulations">Simulations</a></li>
+     <li><a href="../../reading">Tutorials/Articles</a></li>
+     <li><a href="../../OESjs">OESjs</a></li>
+     <li><a href="../../downloads">Downloads</a></li>
+     <li><a href="../../faq" title="Frequently Asked Questions">FAQ</a></li>
      <li><a href="#menu-closed">&#215;</a></li>
      <li><a href="#menu">&#9776;</a></li>
     </ul>
@@ -39,13 +39,11 @@
    parameter variation experiments, as well as persistent storage and export of experiment results.</p>
   <p><a href="tutorial.html">Tutorial</a></p>
   <h2>Simulation Examples</h2>
-   <nav>
-    <ul>
-     <li><a href="Service-Desk-2/index.html">Service-Desk-2</a>: a model with two event types (<i>CustomerArrival</i> and <i>CustomerDeparture</i>) and two object types (<i>ServiceDesk</i> and <i>Customer</i>). The waiting line is explicitly represented as a queue of individual customer objects.</li>
-     <li><a href="Inventory-Management/index.html">Inventory-Management</a>: a model with two event types (<i>DailyDemand</i> and <i>Delivery</i>) and one object type (<i>SingleProductShop</i>). This example also offers two parameter variation experiments.</li>
-     <li><a href="Workstation-1/index.html">Workstation-1</a>: a model with three event types (<i>PartArrival</i>, <i>ProcessingStart</i> and <i>ProcessingEnd</i>) and one object type (<i>WorkStation</i>).</li>
-    </ul>
-   </nav>
+  <ul>
+   <li><a href="Service-Desk-2/index.html">Service-Desk-2</a>: a model with two event types (<i>CustomerArrival</i> and <i>CustomerDeparture</i>) and two object types (<i>ServiceDesk</i> and <i>Customer</i>). The waiting line is explicitly represented as a queue of individual customer objects.</li>
+   <li><a href="Inventory-Management/index.html">Inventory-Management</a>: a model with two event types (<i>DailyDemand</i> and <i>Delivery</i>) and one object type (<i>SingleProductShop</i>). This example also offers two parameter variation experiments.</li>
+   <li><a href="Workstation-1/index.html">Workstation-1</a>: a model with three event types (<i>PartArrival</i>, <i>ProcessingStart</i> and <i>ProcessingEnd</i>) and one object type (<i>WorkStation</i>).</li>
+  </ul>
   <h3>Credits</h3>
   <p>OESjs Core 1 is using:</p>
   <ul>
@@ -57,4 +55,5 @@
   <footer>
    <p>© 2020-21 G. Wagner (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>), Brandenburg University of Technology, Germany</p>
  </footer>
+</body>
 </html>

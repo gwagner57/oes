@@ -62,135 +62,139 @@
   participation associations, can be visually described in a conceptual
   information model in the form of a UML class diagram, as shown
   below.</p>
+<!--
   <figure><figcaption>A conceptual information model describing
   object, event and activity types.</figcaption><img alt="???"
   src="img/CIM.svg" width="700" /></figure>
-  
+-->
   </details>
   
   <details><summary>Conceptual Process Model</summary>
   <p></p>
-  <figure><img
-  alt="A DPMN diagram showing a conceptual process model" src="img/CPM.svg"
-  width="600" /></figure>
-  </details>
- </details>
- 
- <details><summary>Simulation Design</summary>
- 
-  <details><summary>Information Design Model</summary>
-  
-   <figure><figcaption>An information design model defining object,
-  event and activity types.</figcaption><img alt="???" src="img/IDM.svg"
-  width="600" /></figure>
-  
-   </details>
-   <details><summary>Process Design Model</summary>
-    <p></p>
-	<figure><figcaption>A computationally complete
-  process design for the Load-Haul-Dump business process.</figcaption><img
-  alt="???" src="img/PDM.svg"
-  width="700" /></figure>
-   </details>
-  </details>
-  
-  <details><summary>Implementation with OESjs</summary>
-  
-   <details><summary>Implementing the Information Design Model</summary>
+<!--
+        <figure><img alt="A DPMN diagram showing a conceptual process model" src="img/CPM.svg"
+        width="600" /></figure>
+-->
+        </details>
+       </details>
 
-   <p>For implementing the information design model, we have to
-  code all object types and event types specified in the model
-  in the form of classes.</p>
-  <figure class="right"><img alt="???" src="img/Truck_IDM.svg" width="300" /></figure>
-  <p>The <code>Truck</code> object class can be coded with OESjs-Core2 in the following way:</p>
-  
-  <pre>class <b>Truck</b> extends oBJECT {
-  constructor({ id, name, <b>status</b>}) {
-    super( id, name);  // invoke the oBJECT constructor
-    <b>this.status</b> = status;
-  }
-}
-// a class-level attribute
-Truck.<b>capacity</b> = 15;  // m3</pre>
+       <details><summary>Simulation Design</summary>
 
-  <p>All object classes inherit an <code>id</code> attribute and a <code>name</code> attribute from the
-  pre-defined OES foundation class <code>oBJECT</code>.</p>
-  
-  <p>The <i>WheelLoader</i> object class is coded in the same way as <i>Truck</i>.</p>
-  
-  <figure class="right"><img alt="HaulRequest event class" src="img/HaulRequest_IDM.svg" width="180" /></figure>
-  
-  <p>The <code>HaulRequest</code> event class can be coded in the following way:</p>
-  
-  <pre>class <b>HaulRequest</b> extends eVENT {
-  constructor({ occTime, delay, <b>quantity</b>}) {
-    super({occTime, delay});
-    <b>this.quantity</b> = quantity;
-  }
-  onEvent() {
-    ...
-  }
-}</pre>
+        <details><summary>Information Design Model</summary>
 
-  <p>All event classes inherit an <code>occTime</code> attribute and a
-  <code>delay</code> attribute from the pre-defined OES foundation class
-  <code>eVENT</code>. Any event in OES can be created either with a value for
-  the attribute <code>occTime</code> (standing for <em>occurrence time</em>)
-  or with a value for the attribute <code>delay</code>. In the latter case,
-  the event's occurrence time is automatically derived by adding the value of
-  <code>delay</code> to the current simulation time. In addition, the
-  <i>HaulRequest</i> event class has a property <code>quantity</code> for
-  specifying the quantity to be hauled.. </p><p>The <code>onEvent</code>
-  method of the <i>HaulRequest</i> event class is not part of the information
-  design model. Rather, it is implementing an event rule specified in the
-  process design model. Consequently, it will be discussed below.</p>
-  
-  </details>
-  
-  <details open="open"><summary>Implementing the Process Design Model</summary>
-  
-  <p>A DPMN process design model can be decomposed into a set of event rule design
-  models, one for each type of event specified in the design model. Starting
-  with the <code>HaulRequest</code> event rule design model, we show how the
-  event rules specified by each of these event rule design models can be coded
-  in the form of an <code>onEvent</code> method.</p>
-  
-  <figure><figcaption>A design model for the <code>HaulRequest</code> event rule.</figcaption>
-   <img src="img/HaulRequest_RDM.svg" width="300" /></figure>
-   
-   <p>In the following <code>HaulRequest</code> event rule method <code>onEvent</code>, all
-  available trucks are allocated to the current haul request, and, after
-  computing the number of loads, for each of the allocated trucks a new
-  <code>GoToLoadingSite</code> activity is started:</p>
-  
-  <pre>class <b>HaulRequest</b> extends eVENT {
-  ...
-  <b>onEvent</b>() {
-    const followupEvents=[],
-          allocatedTrucks = sim.resourcePools["trucks"].<b>allocateAll</b>();
-    // assign model variable
-    sim.model.v.<b>nmrOfLoads</b> = Math.ceil( this.quantity / Truck.capacity);
-    for (const t of allocatedTrucks) {
-      const goActy = <b>new GoToLoadingSite</b>();
-      // assign truck as required resource
-      goActy.truck = t;
-      // start GoToLoadingSite activity
-      followupEvents.push( <b>new aCTIVITYsTART</b>({plannedActivity: goActy}));
-    }
-    return followupEvents;
-  }
-}</pre>
+         <figure><figcaption>An information design model defining object,
+        event and activity types.</figcaption><img alt="???" src="img/IDM.svg"
+        width="600" /></figure>
 
-  </details>
- </details>
+         </details>
+         <details><summary>Process Design Model</summary>
+<!--
+          <figure><figcaption>A computationally complete
+        process design for the Load-Haul-Dump business process.</figcaption>
+           <img alt="???" src="img/PDM.svg" width="700" /></figure>
+-->
+         </details>
+        </details>
 
-   <section><h2>See also...</h2>
-   <ul>
-   <li><a href="https://beergame.org/">beergame.org</a></li>
-   <li><a href="https://en.wikipedia.org/wiki/Beer_distribution_game">Wikipedia article</a></li>
-   </ul>
-   </section>
+        <details><summary>Implementation with OESjs</summary>
 
- <p><a href="index.html">Back to simulation</a></p>
-</body>
-</html>
+         <details><summary>Implementing the Information Design Model</summary>
+
+         <p>For implementing the information design model, we have to
+        code all object types and event types specified in the model
+        in the form of classes.</p>
+<!--
+        <figure class="right"><img alt="???" src="img/Truck_IDM.svg" width="300" /></figure>
+-->
+        <p>The <code>Truck</code> object class can be coded with OESjs-Core2 in the following way:</p>
+
+        <pre>class <b>Truck</b> extends oBJECT {
+        constructor({ id, name, <b>status</b>}) {
+          super( id, name);  // invoke the oBJECT constructor
+          <b>this.status</b> = status;
+        }
+      }
+      // a class-level attribute
+      Truck.<b>capacity</b> = 15;  // m3</pre>
+
+        <p>All object classes inherit an <code>id</code> attribute and a <code>name</code> attribute from the
+        pre-defined OES foundation class <code>oBJECT</code>.</p>
+
+        <p>The <i>WheelLoader</i> object class is coded in the same way as <i>Truck</i>.</p>
+<!--
+        <figure class="right"><img alt="HaulRequest event class" src="img/HaulRequest_IDM.svg" width="180" /></figure>
+-->
+        <p>The <code>HaulRequest</code> event class can be coded in the following way:</p>
+
+        <pre>class <b>HaulRequest</b> extends eVENT {
+        constructor({ occTime, delay, <b>quantity</b>}) {
+          super({occTime, delay});
+          <b>this.quantity</b> = quantity;
+        }
+        onEvent() {
+          ...
+        }
+      }</pre>
+
+        <p>All event classes inherit an <code>occTime</code> attribute and a
+        <code>delay</code> attribute from the pre-defined OES foundation class
+        <code>eVENT</code>. Any event in OES can be created either with a value for
+        the attribute <code>occTime</code> (standing for <em>occurrence time</em>)
+        or with a value for the attribute <code>delay</code>. In the latter case,
+        the event's occurrence time is automatically derived by adding the value of
+        <code>delay</code> to the current simulation time. In addition, the
+        <i>HaulRequest</i> event class has a property <code>quantity</code> for
+        specifying the quantity to be hauled.. </p><p>The <code>onEvent</code>
+        method of the <i>HaulRequest</i> event class is not part of the information
+        design model. Rather, it is implementing an event rule specified in the
+        process design model. Consequently, it will be discussed below.</p>
+
+        </details>
+
+        <details open="open"><summary>Implementing the Process Design Model</summary>
+
+        <p>A DPMN process design model can be decomposed into a set of event rule design
+        models, one for each type of event specified in the design model. Starting
+        with the <code>HaulRequest</code> event rule design model, we show how the
+        event rules specified by each of these event rule design models can be coded
+        in the form of an <code>onEvent</code> method.</p>
+<!--
+        <figure><figcaption>A design model for the <code>HaulRequest</code> event rule.</figcaption>
+         <img src="img/HaulRequest_RDM.svg" width="300" /></figure>
+-->
+         <p>In the following <code>HaulRequest</code> event rule method <code>onEvent</code>, all
+        available trucks are allocated to the current haul request, and, after
+        computing the number of loads, for each of the allocated trucks a new
+        <code>GoToLoadingSite</code> activity is started:</p>
+
+        <pre>class <b>HaulRequest</b> extends eVENT {
+        ...
+        <b>onEvent</b>() {
+          const followupEvents=[],
+                allocatedTrucks = sim.resourcePools["trucks"].<b>allocateAll</b>();
+          // assign model variable
+          sim.model.v.<b>nmrOfLoads</b> = Math.ceil( this.quantity / Truck.capacity);
+          for (const t of allocatedTrucks) {
+            const goActy = <b>new GoToLoadingSite</b>();
+            // assign truck as required resource
+            goActy.truck = t;
+            // start GoToLoadingSite activity
+            followupEvents.push( <b>new aCTIVITYsTART</b>({plannedActivity: goActy}));
+          }
+          return followupEvents;
+        }
+      }</pre>
+
+        </details>
+       </details>
+
+         <section><h2>See also...</h2>
+         <ul>
+         <li><a href="https://beergame.org/">beergame.org</a></li>
+         <li><a href="https://en.wikipedia.org/wiki/Beer_distribution_game">Wikipedia article</a></li>
+         </ul>
+         </section>
+
+       <p><a href="index.html">Back to simulation</a></p>
+      </body>
+      </html>

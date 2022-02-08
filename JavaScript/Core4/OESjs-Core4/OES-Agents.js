@@ -23,6 +23,11 @@ class aGENT extends oBJECT {
     // add each new agent to the Map of simulation agents
     sim.agents.set( this.id, this);
   }
+  broadcast( message) {
+    if (typeof this.contacts === "object") {
+      this.objects[statement.objId][statement.propName] = statement.value;
+    }
+  }
   // receive a generic Tell message with a triple statement
   /*
   onReceiveTell(statement, sender) {
