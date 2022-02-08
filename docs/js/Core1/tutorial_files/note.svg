@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="0.333in" height="0.333in" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 10240 10240" xmlns:xlink="http://www.w3.org/1999/xlink">
-	<title>note_pinned icon</title>
-	<desc>note_pinned icon from the IconExperience.com O-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
-	<path id="curve2" fill="#EDC87E" d="M1280 8960l5230 0c353,0 656,-126 905,-375l1170 -1170c249,-249 375,-553 375,-905l0 -5230 -5792 0c21,103 32,210 32,320 0,110 -11,217 -32,320l5152 0 0 4160c0,176 -144,320 -320,320l-1600 0 0 1600c0,176 -144,320 -320,320l-4160 0 0 -5152 0 0c-104,21 -211,32 -320,32 -110,0 -217,-11 -320,-32l0 5792zm5758 -903l1018 -1018c-19,1 -38,2 -57,2l-960 0 0 960c0,19 -1,38 -2,57z"/>
-	<path id="curve1" fill="#4D82B8" d="M2414 2978l641 521c55,14 99,22 126,22 187,0 339,-152 339,-339 0,-28 -11,-76 -30,-136l-512 -630c-137,232 -332,426 -564,564z"/>
-	<path id="curve0" fill="#4D82B8" d="M1600 320c707,0 1280,573 1280,1280 0,707 -573,1280 -1280,1280 -707,0 -1280,-573 -1280,-1280 0,-707 573,-1280 1280,-1280zm134 742l0 0c-29,114 -110,198 -223,230 -106,30 -189,114 -220,220 -32,113 -116,194 -230,223l0 0c-114,28 -226,-3 -308,-88 -82,-84 -110,-197 -78,-310 91,-318 341,-569 660,-660 113,-32 226,-4 310,78 84,82 116,194 88,308z"/>
-</svg>
