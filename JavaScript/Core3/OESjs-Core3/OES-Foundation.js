@@ -1,1 +1,1 @@
-D:/Repos/OES/docs/js/Core2/OESjs-Core2/OES-Foundation.js
+D:/repos/OES/JavaScript/Core2/OESjs-Core2/OES-Foundation.js

@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg class="st14" width="4.995in" height="2.4217in" color-interpolation-filters="sRGB" version="1.1" viewBox="0 0 359.64 174.36" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" xmlns:xlink="http://www.w3.org/1999/xlink"><metadata><rdf:RDF><cc:Work rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/><dc:title/></cc:Work></rdf:RDF></metadata>
+	<v:documentProperties v:langID="1033" v:viewMarkup="false"/>
+
+	<style type="text/css">
+	<![CDATA[
+		.st1 {fill:#ffffff;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.72}
+		.st2 {fill:#000000;font-family:Calibri;font-size:0.666664em}
+		.st3 {font-size:1em;text-decoration:underline}
+		.st4 {font-size:1em;font-weight:bold}
+		.st5 {fill:#ffffff;stroke:#595959;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.72}
+		.st6 {fill:#595959;font-family:Calibri;font-size:0.666664em}
+		.st7 {font-size:1em}
+		.st8 {stroke:#595959;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.48}
+		.st9 {fill:#ffffff;stroke:#595959;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.75}
+		.st10 {marker-end:url(#mrkr1-162);stroke:#595959;stroke-dasharray:3.36,2.4;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.48}
+		.st11 {fill:#595959;fill-opacity:1;stroke:#595959;stroke-opacity:1;stroke-width:0.10810810810811}
+		.st12 {fill:#ffffff;stroke:none;stroke-linecap:butt;stroke-width:7.2}
+		.st13 {stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.48}
+		.st14 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+	]]>
+	</style>
+
+	<defs id="Markers">
+		<g id="lend1">
+			<path d="m1-1-1 1 1 1" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+		</g>
+		<marker id="mrkr1-162" class="st11" overflow="visible" orient="auto" v:arrowSize="4" v:arrowType="1">
+			<use transform="scale(-9.25)" width="100%" height="100%" xlink:href="#lend1"/>
+		</marker>
+	</defs>
+	<g transform="translate(-.36028 -5.2955)" v:groupContext="foregroundPage" v:index="1" v:mID="0">
+		<title>Page-1</title>
+		<v:pageProperties v:drawingScale="0.0393701" v:drawingUnits="24" v:pageScale="0.0393701" v:shadowOffsetX="8.50394" v:shadowOffsetY="-8.50394"/>
+		<g transform="translate(1.1804 -64.537)" v:groupContext="group" v:mID="2">
+			<v:userDefs>
+				<v:ud v:nameU="UMLSuppressOption" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLTemplate" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLVersion" v:val="VT0(2):26"/>
+				<v:ud v:nameU="UMLShapeType" v:val="VT0(20):26"/>
+				<v:ud v:nameU="UMLObjectGUID" v:val="VT4({85515AC7-F0A3-437E-BE28-E089533A01CE})"/>
+				<v:ud v:nameU="UMLError" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLAutoLockTextEdit" v:val="VT0(1):26"/>
+				<v:ud v:nameU="UMLPresOption1" v:val="VT0(51):26"/>
+				<v:ud v:nameU="UMLPresOption2" v:val="VT0(0):26"/>
+				<v:ud v:nameU="DefaultWidth" v:val="VT0(1.6105075273129):1"/>
+				<v:ud v:nameU="EnsureWidthOK" v:val="VT0(1.6105075273129):1"/>
+				<v:ud v:nameU="visDescription" v:val="VT4(Represents a descriptor for a set of objects with similar structure, behavior and relationships.)"/>
+				<v:ud v:nameU="visVersion" v:val="VT0(14):26"/>
+			</v:userDefs>
+			<title>Class</title>
+			<g transform="rotate(180 29.764 168.41)" v:groupContext="shape" v:mID="3">
+				<title>Sheet.3</title>
+			</g>
+			<g transform="rotate(180 29.764 168.41)" v:groupContext="shape" v:mID="4">
+				<title>Sheet.4</title>
+			</g>
+			<g transform="rotate(180 29.764 168.41)" v:groupContext="shape" v:mID="5">
+				<title>Sheet.5</title>
+			</g>
+			<g transform="rotate(161.56 31.648 173.24)" v:groupContext="shape" v:mID="6">
+				<title>Sheet.6</title>
+			</g>
+			<g v:groupContext="shape" v:mID="7">
+				<title>Operations</title>
+				<desc>«rv» duration() : Decimal {U(5,10)}</desc>
+				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+				<v:textRect width="119.06" height="12.6142" cx="59.5276" cy="173.712"/>
+				<rect class="st1" y="167.4" width="119.06" height="12.614"/>
+				<text class="st2" x="1" y="175.60001" v:langID="1031"><v:paragraph/><v:tabList/><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">«rv» duration</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">() : </tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">Decimal </tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">{</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">U</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">(</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">5</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">,</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">10</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">)</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">}</tspan></text>			</g>
+			<g transform="translate(0 -12.614)" v:groupContext="shape" v:mID="8">
+				<title>Attributes</title>
+				<desc>tasks : Queue&lt;Examination&gt;</desc>
+				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+				<v:textRect width="119.06" height="12.6142" cx="59.5276" cy="173.712"/>
+				<rect class="st1" y="167.4" width="119.06" height="12.614"/>
+				<text class="st2" x="1" y="175.60001" v:langID="1031"><v:paragraph/><v:tabList/><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">tasks </tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">: </tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">Queue</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">&lt;</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">Examination</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">&gt;</tspan></text>			</g>
+			<g transform="translate(0 -25.228)" v:groupContext="shape" v:mID="9">
+				<title>Name</title>
+				<desc>«activity type» Examination</desc>
+				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197"/>
+				<v:textRect width="119.06" height="21.2035" cx="59.5276" cy="169.417"/>
+				<path class="st1" d="m0 180.02h119.06v-21.2h-119.06z"/>
+				<text class="st2" x="35.540001" y="167.02" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>«activity type»<v:newlineChar/><tspan class="st4" x="38.740002" dy="1.2em">Examination</tspan></text>			</g>
+			<g transform="translate(83.055 -40.628)" v:groupContext="shape" v:mID="10">
+				<title>Parameters</title>
+			</g>
+		</g>
+		<g transform="translate(.72 -122.31)" v:groupContext="group" v:mID="25">
+			<v:userDefs>
+				<v:ud v:nameU="UMLSuppressOption" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLTemplate" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLVersion" v:val="VT0(2):26"/>
+				<v:ud v:nameU="UMLShapeType" v:val="VT0(20):26"/>
+				<v:ud v:nameU="UMLObjectGUID" v:val="VT4({CA824A68-37D0-40E9-8A18-1F02C9222E2A})"/>
+				<v:ud v:nameU="UMLError" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLAutoLockTextEdit" v:val="VT0(1):26"/>
+				<v:ud v:nameU="UMLPresOption1" v:val="VT0(51):26"/>
+				<v:ud v:nameU="UMLPresOption2" v:val="VT0(0):26"/>
+				<v:ud v:nameU="DefaultWidth" v:val="VT0(1.7483592424008):1"/>
+				<v:ud v:nameU="EnsureWidthOK" v:val="VT0(1.7483592424008):1"/>
+				<v:ud v:nameU="visDescription" v:val="VT4(Represents a descriptor for a set of objects with similar structure, behavior and relationships.)"/>
+				<v:ud v:nameU="visVersion" v:val="VT0(14):26"/>
+			</v:userDefs>
+			<title>Class.67</title>
+			<g transform="rotate(180 32.315 168.41)" v:groupContext="shape" v:mID="26">
+				<title>Sheet.26</title>
+			</g>
+			<g transform="rotate(180 32.315 168.41)" v:groupContext="shape" v:mID="27">
+				<title>Sheet.27</title>
+			</g>
+			<g transform="rotate(180 32.315 168.41)" v:groupContext="shape" v:mID="28">
+				<title>Sheet.28</title>
+			</g>
+			<g transform="rotate(165.96 33.744 172.39)" v:groupContext="shape" v:mID="29">
+				<title>Sheet.29</title>
+			</g>
+			<g v:groupContext="shape" v:mID="30">
+				<title>Operations</title>
+				<desc>«rv» recurrence() : Decimal {Exp(0.3)}</desc>
+				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+				<v:textRect width="129.26" height="12.6142" cx="64.6299" cy="173.712"/>
+				<rect class="st1" y="167.4" width="129.26" height="12.614"/>
+				<text class="st2" x="1" y="175.60001" v:langID="1031"><v:paragraph/><v:tabList/><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">«rv» recurrence</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">() : </tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">Decimal </tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">{</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">Exp</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">(</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">0</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">.</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">3</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">)</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">}</tspan></text>			</g>
+			<g transform="translate(0 -12.614)" v:groupContext="shape" v:mID="31">
+				<title>Attributes</title>
+				<rect class="st1" y="167.4" width="129.26" height="12.614"/>
+			</g>
+			<g transform="translate(0 -25.228)" v:groupContext="shape" v:mID="32">
+				<title>Name</title>
+				<desc>«event type» NewCase</desc>
+				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197"/>
+				<v:textRect width="129.26" height="21.2035" cx="64.6299" cy="169.417"/>
+				<path class="st1" d="m0 180.02h129.26v-21.2h-129.26z"/>
+				<text class="st2" x="43.16" y="167.02" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>«event type»<v:newlineChar/><tspan class="st4" x="49.299999" dy="1.2em">NewCase</tspan></text>			</g>
+			<g transform="translate(93.26 -40.628)" v:groupContext="shape" v:mID="33">
+				<title>Parameters</title>
+			</g>
+		</g>
+		<g transform="translate(254.31 -138.2)" v:groupContext="group" v:mID="39">
+			<v:userDefs>
+				<v:ud v:nameU="UMLSuppressOption" v:val="VT0(24):26"/>
+				<v:ud v:nameU="UMLTemplate" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLVersion" v:val="VT0(2):26"/>
+				<v:ud v:nameU="UMLShapeType" v:val="VT0(20):26"/>
+				<v:ud v:nameU="UMLObjectGUID" v:val="VT4({48C6C50D-712E-4720-962D-9E21ABDE66E2})"/>
+				<v:ud v:nameU="UMLError" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLAutoLockTextEdit" v:val="VT0(1):26"/>
+				<v:ud v:nameU="UMLPresOption1" v:val="VT0(51):26"/>
+				<v:ud v:nameU="UMLPresOption2" v:val="VT0(0):26"/>
+				<v:ud v:nameU="DefaultWidth" v:val="VT0(0.92127565475434):1"/>
+				<v:ud v:nameU="EnsureWidthOK" v:val="VT0(0.92127565475434):1"/>
+				<v:ud v:nameU="visDescription" v:val="VT4(Represents a descriptor for a set of objects with similar structure, behavior and relationships.)"/>
+				<v:ud v:nameU="visVersion" v:val="VT0(14):26"/>
+			</v:userDefs>
+			<title>Class.39</title>
+			<g transform="rotate(180 16.583 173.25)" v:groupContext="shape" v:mID="40">
+				<title>Sheet.40</title>
+			</g>
+			<g transform="rotate(180 16.583 173.25)" v:groupContext="shape" v:mID="41">
+				<title>Sheet.41</title>
+			</g>
+			<g transform="rotate(180 16.583 173.25)" v:groupContext="shape" v:mID="42">
+				<title>Sheet.42</title>
+			</g>
+			<g transform="rotate(165.96 17.416 175.29)" v:groupContext="shape" v:mID="43">
+				<title>Sheet.43</title>
+			</g>
+			<g v:groupContext="shape" v:mID="44">
+				<title>Operations</title>
+			</g>
+			<g v:groupContext="shape" v:mID="45">
+				<title>Attributes</title>
+				<desc>name : String</desc>
+				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+				<v:textRect width="66.34" height="12.6142" cx="33.1659" cy="173.712"/>
+				<rect class="st5" y="167.4" width="66.332" height="12.614"/>
+				<text class="st2" x="1" y="175.60001" v:langID="1031"><v:paragraph/><v:tabList/>name : String</text>			</g>
+			<g transform="translate(0 -12.614)" v:groupContext="shape" v:mID="46">
+				<title>Name</title>
+				<desc>OES::ResourcePool</desc>
+				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197"/>
+				<v:textRect width="66.34" height="14.4567" cx="33.1659" cy="172.791"/>
+				<path class="st5" d="m0 180.02h66.33v-14.46h-66.33z"/>
+				<text class="st6" x="1.91" y="175.19" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>OES::<tspan class="st4">ResourcePool</tspan></text>			</g>
+			<g transform="translate(30.332 -23.687)" v:groupContext="shape" v:mID="47">
+				<title>Parameters</title>
+			</g>
+		</g>
+		<g transform="translate(224.06 -64.093)" v:groupContext="group" v:mID="48">
+			<v:userDefs>
+				<v:ud v:nameU="UMLSuppressOption" v:val="VT0(16):26"/>
+				<v:ud v:nameU="UMLTemplate" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLVersion" v:val="VT0(2):26"/>
+				<v:ud v:nameU="UMLShapeType" v:val="VT0(20):26"/>
+				<v:ud v:nameU="UMLObjectGUID" v:val="VT4({07E01AD1-5F62-4175-BCA7-FA9BB4A40F08})"/>
+				<v:ud v:nameU="UMLError" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLAutoLockTextEdit" v:val="VT0(1):26"/>
+				<v:ud v:nameU="UMLPresOption1" v:val="VT0(51):26"/>
+				<v:ud v:nameU="UMLPresOption2" v:val="VT0(0):26"/>
+				<v:ud v:nameU="DefaultWidth" v:val="VT0(1.7618060502622):1"/>
+				<v:ud v:nameU="EnsureWidthOK" v:val="VT0(1.7618060502622):1"/>
+				<v:ud v:nameU="visDescription" v:val="VT4(Represents a descriptor for a set of objects with similar structure, behavior and relationships.)"/>
+				<v:ud v:nameU="visVersion" v:val="VT0(14):26"/>
+			</v:userDefs>
+			<title>Class.48</title>
+			<g transform="rotate(180 31.712 165.55)" v:groupContext="shape" v:mID="49">
+				<title>Sheet.49</title>
+			</g>
+			<g transform="rotate(180 31.712 165.55)" v:groupContext="shape" v:mID="50">
+				<title>Sheet.50</title>
+			</g>
+			<g transform="rotate(180 31.712 165.55)" v:groupContext="shape" v:mID="51">
+				<title>Sheet.51</title>
+			</g>
+			<g transform="rotate(165.96 33.494 169.45)" v:groupContext="shape" v:mID="52">
+				<title>Sheet.52</title>
+			</g>
+			<g v:groupContext="shape" v:mID="53">
+				<title>Operations</title>
+				<desc>isAvailable(in card : Integer) : Boolean allocate(in card : I...</desc>
+				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+				<v:textRect width="126.86" height="30.8035" cx="63.425" cy="164.617"/>
+				<rect class="st5" y="149.22" width="126.85" height="30.803"/>
+				<text class="st2" x="1" y="157.42" v:langID="1031"><v:paragraph/><v:tabList/>isAvailable(in card : Integer) : Boolean<v:newlineChar/><tspan class="st7" x="1" dy="1.2em">allocate</tspan>(in card : Integer)<v:newlineChar/><tspan class="st7" x="1" dy="1.2em">release</tspan>(in card : Integer)</text>			</g>
+			<g transform="translate(0 -30.804)" v:groupContext="shape" v:mID="54">
+				<title>Attributes</title>
+				<desc>available : Integer</desc>
+				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+				<v:textRect width="126.86" height="12.6142" cx="63.425" cy="173.712"/>
+				<rect class="st5" y="167.4" width="126.85" height="12.614"/>
+				<text class="st2" x="1" y="175.60001" v:langID="1031"><v:paragraph/><v:tabList/>available : Integer</text>			</g>
+			<g transform="translate(0 -43.418)" v:groupContext="shape" v:mID="55">
+				<title>Name</title>
+				<desc>OES::CountPool</desc>
+				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197"/>
+				<v:textRect width="126.86" height="14.4567" cx="63.425" cy="172.791"/>
+				<path class="st5" d="m0 180.02h126.85v-14.46h-126.85z"/>
+				<text class="st6" x="37.860001" y="175.19" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>OES::CountPool</text>			</g>
+			<g transform="translate(90.85 -50.64)" v:groupContext="shape" v:mID="56">
+				<title>Parameters</title>
+			</g>
+		</g>
+		<g transform="translate(280.39 -138.2)" v:groupContext="group" v:mID="57">
+			<v:userDefs>
+				<v:ud v:nameU="UMLShapeType" v:val="VT0(22):26"/>
+				<v:ud v:nameU="UMLObjectGUID" v:val="VT4({5A36C447-CEDE-4812-8F1F-5A81EB0D5C91})"/>
+				<v:ud v:nameU="UMLError" v:val="VT0(0):26"/>
+				<v:ud v:nameU="BeginAngle" v:val="VT0(1.5707963267949):32"/>
+				<v:ud v:nameU="DX1" v:val="VT0(0):1"/>
+				<v:ud v:nameU="UMLPresOption1" v:val="VT0(2):26"/>
+				<v:ud v:nameU="UMLVersion" v:val="VT0(2):26"/>
+				<v:ud v:nameU="DY1" v:val="VT0(-0.013523622047244):24"/>
+				<v:ud v:nameU="visDescription" v:val="VT4(Indicates a classification relationship between a more general and a more specific element.)"/>
+				<v:ud v:nameU="visVersion" v:val="VT0(14):26"/>
+			</v:userDefs>
+			<title>Generalization</title>
+			<g transform="translate(7.2,24.8)" v:groupContext="shape" v:mID="58">
+				<title>Discriminator</title>
+			</g>
+			<g v:groupContext="groupContent" v:mID="57">
+				<path class="st8" d="m7.09 180.02v16.23"/>
+				<path class="st9" d="m1.46 189.02h11.25l-5.62-9z"/>
+			</g>
+		</g>
+		<g transform="translate(241.98 -5.52)" v:groupContext="group" v:mID="11">
+			<v:userDefs>
+				<v:ud v:nameU="UMLSuppressOption" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLVersion" v:val="VT0(2):26"/>
+				<v:ud v:nameU="UMLAutoLockTextEdit" v:val="VT0(1):26"/>
+				<v:ud v:nameU="UMLShapeType" v:val="VT0(51):26"/>
+				<v:ud v:nameU="UMLObjectGUID" v:val="VT4({40C3719F-0EAF-4CE3-BBEE-030DAC9DA4AC})"/>
+				<v:ud v:nameU="UMLError" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLPresOption1" v:val="VT0(19):26"/>
+				<v:ud v:nameU="UMLPresOption2" v:val="VT0(1024):26"/>
+				<v:ud v:nameU="DefaultWidth" v:val="VT0(1.1851039323422):1"/>
+				<v:ud v:nameU="EnsureWidthOK" v:val="VT0(1.1851039323422):1"/>
+				<v:ud v:nameU="visDescription" v:val="VT4(Represents an instance of a class.)"/>
+				<v:ud v:nameU="visVersion" v:val="VT0(14):26"/>
+			</v:userDefs>
+			<title>Object</title>
+			<g v:groupContext="shape" v:mID="12">
+				<title>Attributes</title>
+				<desc>name : String = doctors available : Integer = 3</desc>
+				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+				<v:textRect width="85.33" height="21.2035" cx="42.6637" cy="169.417"/>
+				<rect class="st1" y="158.82" width="85.327" height="21.204"/>
+				<text class="st2" x="1" y="167.02" v:langID="1031"><v:paragraph/><v:tabList/>name : String = doctors<v:newlineChar/><tspan class="st7" x="1" dy="1.2em">available </tspan>: Integer = 3</text>			</g>
+			<g transform="translate(0 -21.204)" v:groupContext="shape" v:mID="13">
+				<title>Name</title>
+				<desc>doctors : OES::CountPool</desc>
+				<v:userDefs>
+					<v:ud v:nameU="HeightRatio" v:val="VT0(0.6496062992126):24"/>
+				</v:userDefs>
+				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197"/>
+				<v:textRect width="85.33" height="14.4567" cx="42.6637" cy="172.791"/>
+				<rect class="st1" y="165.56" width="85.327" height="14.457"/>
+				<text class="st2" x="1.91" y="175.19" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">doctors </tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">: </tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">OES</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">::</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">CountPool</tspan></text>			</g>
+		</g>
+		<g transform="translate(142.82 -129.1)" v:groupContext="group" v:mID="14">
+			<v:userDefs>
+				<v:ud v:nameU="UMLSuppressOption" v:val="VT0(24):26"/>
+				<v:ud v:nameU="UMLTemplate" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLVersion" v:val="VT0(2):26"/>
+				<v:ud v:nameU="UMLShapeType" v:val="VT0(20):26"/>
+				<v:ud v:nameU="UMLObjectGUID" v:val="VT4({9E92F91C-D57F-46BD-B482-90A7165D4B59})"/>
+				<v:ud v:nameU="UMLError" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLAutoLockTextEdit" v:val="VT0(1):26"/>
+				<v:ud v:nameU="UMLPresOption1" v:val="VT0(179):26"/>
+				<v:ud v:nameU="UMLPresOption2" v:val="VT0(0):26"/>
+				<v:ud v:nameU="DefaultWidth" v:val="VT0(0.92089418502778):1"/>
+				<v:ud v:nameU="EnsureWidthOK" v:val="VT0(0.92089418502778):1"/>
+				<v:ud v:nameU="visDescription" v:val="VT4(Represents a descriptor for a set of objects with similar structure, behavior and relationships.)"/>
+				<v:ud v:nameU="visVersion" v:val="VT0(14):26"/>
+			</v:userDefs>
+			<title>Class.14</title>
+			<g transform="rotate(180 16.576 168.7)" v:groupContext="shape" v:mID="15">
+				<title>Sheet.15</title>
+			</g>
+			<g transform="rotate(180 16.576 168.7)" v:groupContext="shape" v:mID="16">
+				<title>Sheet.16</title>
+			</g>
+			<g transform="rotate(180 16.576 168.7)" v:groupContext="shape" v:mID="17">
+				<title>Sheet.17</title>
+			</g>
+			<g transform="rotate(153.44 19.247 172.62)" v:groupContext="shape" v:mID="18">
+				<title>Sheet.18</title>
+			</g>
+			<g v:groupContext="shape" v:mID="19">
+				<title>Operations</title>
+			</g>
+			<g v:groupContext="shape" v:mID="20">
+				<title>Attributes</title>
+				<desc>name[1] : String card[1] : Integer range[0..1] : String</desc>
+				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+				<v:textRect width="66.31" height="30.8035" cx="33.1522" cy="164.617"/>
+				<rect class="st5" y="149.22" width="66.304" height="30.803"/>
+				<text class="st2" x="1" y="157.42" v:langID="1031"><v:paragraph/><v:tabList/>name[1] : String<v:newlineChar/><tspan class="st7" x="1" dy="1.2em">card</tspan>[1] : Integer<v:newlineChar/><tspan class="st7" x="1" dy="1.2em">range</tspan>[0..1] : String</text>			</g>
+			<g transform="translate(0 -30.804)" v:groupContext="shape" v:mID="21">
+				<title>Name</title>
+				<desc>OES::ResourceRole</desc>
+				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197"/>
+				<v:textRect width="66.31" height="14.4567" cx="33.1522" cy="172.791"/>
+				<path class="st5" d="m0 180.02h66.3v-14.46h-66.3z"/>
+				<text class="st6" x="1.91" y="175.19" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>OES::<tspan class="st4">ResourceRole</tspan></text>			</g>
+			<g transform="translate(30.304 -39.603)" v:groupContext="shape" v:mID="22">
+				<title>Parameters</title>
+			</g>
+		</g>
+		<g transform="translate(209.12 -144.64)" v:groupContext="group" v:mID="23">
+			<v:userDefs>
+				<v:ud v:nameU="UMLShapeType" v:val="VT0(23):26"/>
+				<v:ud v:nameU="UMLObjectGUID" v:val="VT4({ABE2661C-6860-4137-A0D8-050D794A2B4C})"/>
+				<v:ud v:nameU="UMLError" v:val="VT0(0):26"/>
+				<v:ud v:nameU="BeginAngle" v:val="VT0(0):32"/>
+				<v:ud v:nameU="EndAngle" v:val="VT0(0):32"/>
+				<v:ud v:nameU="UMLPresOption1" v:val="VT0(512):26"/>
+				<v:ud v:nameU="UMLSuppressOption" v:val="VT0(0):26"/>
+				<v:ud v:nameU="Navigability" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLVersion" v:val="VT0(2):26"/>
+				<v:ud v:nameU="DX1" v:val="VT0(0.018830285518916):1"/>
+				<v:ud v:nameU="DY1" v:val="VT0(0):24"/>
+				<v:ud v:nameU="DX3" v:val="VT0(0.01883028551892):1"/>
+				<v:ud v:nameU="DY3" v:val="VT0(0):24"/>
+				<v:ud v:nameU="visDescription" v:val="VT4(Represents an association between two classifiers.)"/>
+				<v:ud v:nameU="visVersion" v:val="VT0(14):26"/>
+			</v:userDefs>
+			<title>Binary Association</title>
+			<g transform="translate(6.447 -12.178)" v:groupContext="shape" v:mID="24">
+				<title>end1_name</title>
+			</g>
+			<g transform="translate(6.447 15.608)" v:groupContext="shape" v:mID="34">
+				<title>end1_mp</title>
+				<desc>*</desc>
+				<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+				<v:textRect width="13.8" height="17.6036" cx="6.89835" cy="171.217"/>
+				<text class="st6" x="4.9099998" y="173.62" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>*</text>			</g>
+			<g transform="translate(30.746 -12.178)" v:groupContext="shape" v:mID="35">
+				<title>end2_name</title>
+			</g>
+			<g transform="translate(24.879 15.608)" v:groupContext="shape" v:mID="36">
+				<title>end2_mp</title>
+				<desc>1</desc>
+				<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+				<v:textRect width="13.87" height="17.6036" cx="6.9335" cy="171.217"/>
+				<text class="st6" x="4.9099998" y="173.62" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>1</text>			</g>
+			<g v:groupContext="groupContent" v:mID="23">
+				<path class="st8" d="m0 172.93h45.19"/>
+			</g>
+		</g>
+		<g transform="translate(129.66 -.72)" v:groupContext="group" v:mID="37">
+			<v:userDefs>
+				<v:ud v:nameU="UMLSuppressOption" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLVersion" v:val="VT0(2):26"/>
+				<v:ud v:nameU="UMLAutoLockTextEdit" v:val="VT0(1):26"/>
+				<v:ud v:nameU="UMLShapeType" v:val="VT0(51):26"/>
+				<v:ud v:nameU="UMLObjectGUID" v:val="VT4({EF1C606E-772B-4D9F-B126-FE22661E9B7B})"/>
+				<v:ud v:nameU="UMLError" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLPresOption1" v:val="VT0(19):26"/>
+				<v:ud v:nameU="UMLPresOption2" v:val="VT0(1024):26"/>
+				<v:ud v:nameU="DefaultWidth" v:val="VT0(1.2864985856625):1"/>
+				<v:ud v:nameU="EnsureWidthOK" v:val="VT0(1.2864985856625):1"/>
+				<v:ud v:nameU="visDescription" v:val="VT4(Represents an instance of a class.)"/>
+				<v:ud v:nameU="visVersion" v:val="VT0(14):26"/>
+			</v:userDefs>
+			<title>Object.37</title>
+			<g v:groupContext="shape" v:mID="38">
+				<title>Attributes</title>
+				<desc>name : String = doctor card : Integer = 1 range : String</desc>
+				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+				<v:textRect width="92.63" height="30.8035" cx="46.3139" cy="164.617"/>
+				<rect class="st1" y="149.22" width="92.628" height="30.803"/>
+				<text class="st2" x="1" y="157.42" v:langID="1031"><v:paragraph/><v:tabList/>name : String = doctor<v:newlineChar/><tspan class="st7" x="1" dy="1.2em">card </tspan>: Integer = 1<v:newlineChar/><tspan class="st7" x="1" dy="1.2em">range </tspan>: String</text>			</g>
+			<g transform="translate(0 -30.804)" v:groupContext="shape" v:mID="59">
+				<title>Name</title>
+				<desc>doctor : OES::ResourceRole</desc>
+				<v:userDefs>
+					<v:ud v:nameU="HeightRatio" v:val="VT0(0.6496062992126):24"/>
+				</v:userDefs>
+				<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197"/>
+				<v:textRect width="92.63" height="14.4567" cx="46.3139" cy="172.791"/>
+				<rect class="st1" y="165.56" width="92.628" height="14.457"/>
+				<text class="st2" x="1.91" y="175.19" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">doctor </tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">: </tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">OES</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">::</tspan><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">ResourceRole</tspan></text>			</g>
+		</g>
+		<g transform="translate(183.06 -45.98)" v:groupContext="shape" v:mID="60">
+			<title>Dependency</title>
+			<desc>«instance»</desc>
+			<v:userDefs>
+				<v:ud v:nameU="UMLShapeType" v:val="VT0(31):26"/>
+				<v:ud v:nameU="UMLError" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLObjectGUID" v:val="VT4({288A1CE9-823F-46FB-8CD2-E07C53CEF026})"/>
+				<v:ud v:nameU="UMLPresOption1" v:val="VT0(2):26"/>
+				<v:ud v:nameU="UMLVersion" v:val="VT0(2):26"/>
+				<v:ud v:nameU="visDescription" v:val="VT4(Indicates a semantic relationship between two model elements.)"/>
+				<v:ud v:nameU="visVersion" v:val="VT0(14):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect width="45.26" height="17.6036" cx="-6.75255" cy="122.457"/>
+			<path class="st10" d="m-7.09 180.02v-83.12"/>
+			<rect class="st12" x="-24.473" y="117.66" width="35.441" height="9.5998" v:rectContext="textBkgnd"/>
+			<text class="st6" x="-24.469999" y="124.86" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>«instance»</text>		</g>
+		<g transform="translate(60.708 -64.537)" v:groupContext="group" v:mID="66">
+			<v:userDefs>
+				<v:ud v:nameU="UMLShapeType" v:val="VT0(34):26"/>
+				<v:ud v:nameU="UMLObjectGUID" v:val="VT4({BBE4F6A5-CD04-4E2C-A4EF-9DF9CE6E23B7})"/>
+				<v:ud v:nameU="UMLError" v:val="VT0(0):26"/>
+				<v:ud v:nameU="BeginAngle" v:val="VT0(-1.5707963267949):32"/>
+				<v:ud v:nameU="EndAngle" v:val="VT0(-6.7409695536261E-015):32"/>
+				<v:ud v:nameU="UMLPresOption1" v:val="VT0(1024):26"/>
+				<v:ud v:nameU="UMLSuppressOption" v:val="VT0(0):26"/>
+				<v:ud v:nameU="Navigability" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLVersion" v:val="VT0(2):26"/>
+				<v:ud v:nameU="DX1" v:val="VT0(1.1102230246252E-016):1"/>
+				<v:ud v:nameU="DY1" v:val="VT0(-0.041174456277846):24"/>
+				<v:ud v:nameU="DX3" v:val="VT0(0.041174456277878):1"/>
+				<v:ud v:nameU="DY3" v:val="VT0(-2.7755575615629E-016):24"/>
+				<v:ud v:nameU="visDescription" v:val="VT4(Represents a link between two objects.)"/>
+				<v:ud v:nameU="visVersion" v:val="VT0(14):26"/>
+			</v:userDefs>
+			<title>Link.66</title>
+			<g transform="translate(5.0912 25.656)" v:groupContext="shape" v:mID="67">
+				<title>end1_name</title>
+			</g>
+			<g transform="translate(-13.091 25.656)" v:groupContext="shape" v:mID="68">
+				<title>end1_mp</title>
+			</g>
+			<g transform="translate(8.2279 24.781)" v:groupContext="shape" v:mID="69">
+				<title>end2_name</title>
+				<desc>resourceRole</desc>
+				<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+				<v:textRect width="52.67" height="17.6036" cx="26.3316" cy="171.217"/>
+				<text class="st2" x="4.9099998" y="173.62" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/><tspan class="st3" text-decoration="underline" style="text-decoration-line:underline">resourceRole</tspan></text>			</g>
+			<g transform="translate(52.891 52.563)" v:groupContext="shape" v:mID="70">
+				<title>end2_mp</title>
+			</g>
+			<g v:groupContext="groupContent" v:mID="66">
+				<path class="st13" d="m0 180.02v29.87h68.95"/>
+			</g>
+		</g>
+		<g transform="translate(327.31 -14.435)" v:groupContext="shape" v:mID="71">
+			<title>Dependency.71</title>
+			<desc>«instance»</desc>
+			<v:userDefs>
+				<v:ud v:nameU="UMLShapeType" v:val="VT0(31):26"/>
+				<v:ud v:nameU="UMLError" v:val="VT0(0):26"/>
+				<v:ud v:nameU="UMLObjectGUID" v:val="VT4({E79ADFF3-AB1C-4135-BDE5-EE6E65E53FBE})"/>
+				<v:ud v:nameU="UMLPresOption1" v:val="VT0(2):26"/>
+				<v:ud v:nameU="UMLVersion" v:val="VT0(2):26"/>
+				<v:ud v:nameU="visDescription" v:val="VT4(Indicates a semantic relationship between two model elements.)"/>
+				<v:ud v:nameU="visVersion" v:val="VT0(14):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect width="45.26" height="17.6036" cx="11.2418" cy="143.752"/>
+			<path class="st10" d="m0 180.02h32.45v-64.13h-8.85"/>
+			<rect class="st12" x="-6.4785" y="138.95" width="35.441" height="9.5998" v:rectContext="textBkgnd"/>
+			<text class="st6" x="-6.48" y="146.14999" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>«instance»</text>		</g>
+	</g>
+</svg>

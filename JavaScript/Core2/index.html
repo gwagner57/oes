@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+ <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <title>OES JavaScript Core 2 Simulator</title>
+  <meta name="viewport" content="width=device-width, initial-scale = 1.0" />
+ <meta name="description"
+       content="The OESjs Core 2 simulator implements an architecture for Object Event Simulation (OES), extending the OESjs Core 1 simulator by adding support for activities, which may be resource-constrained."/>
+
+ <link rel="icon" type="image/png" href="img/favicon32px.png" sizes="32x32"/>
+ <link rel="icon" type="image/png" href="img/favicon16px.png" sizes="16x16"/>
+ 
+ <link rel="stylesheet" type="text/css" href="../../css/normalize.css" />
+ <link rel="stylesheet" type="text/css" href="../../css/prio-menu.css" />
+ <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+</head>
+<body>
+ <header>
+  <div id="navigation" class="priority-nav">
+   <nav id="menu">
+    <ul id="menu-closed">
+     <li><a href="../../index.html">Home</a></li>
+     <li><a href="../../architectures.html">Simulator Architectures</a></li>
+     <li><a href="../../examples.html">Simulation Examples</a></li>
+     <li><a href="../index.html">JavaScript</a></li>
+     <li><a href="../../Python/index.html">Python</a></li>
+     <li><a href="#menu-closed">&#215;</a></li>
+     <li><a href="#menu">&#9776;</a></li>
+    </ul>
+   </nav>
+  </div>
+ </header>
+ <main>
+  <h1>OES JavaScript Core 2 Simulator</h1>
+  <p>The OESjs Core 2 simulator implements an architecture for Object Event Simulation (OES) that extends the OESjs Core 1 simulator by adding 
+   support for activities, which may be resource-constrained.</p>
+  <p>The Activities extension includes the following additional code (files): (1) OES-Activities.js in the OESjs-Core2 folder, 
+   (2) the sim.stat.initialize function in OESjs-Core2/simulator.js, (3) an extension of the oes.ui.showStatistics function in OESjs-Core2/simulatorUI.js</p>
+  <p><a href="tutorial.html">Tutorial</a></p>
+  <h2>Simulation Examples</h2>
+   <nav>
+    <ul>
+     <li><h3><a href="Pizza-Service-1/index.html">Pizza-Service-1</a></h3></li>
+     <li><h3><a href="Pizza-Service-2/index.html">Pizza-Service-2</a></h3></li>
+     <li><h3><a href="Make-and-Deliver-Pizza-AN-1/index.html">Make-and-Deliver-Pizza-AN-1</a></h3></li>
+     <li><h3><a href="Load-Haul-Dump-1/index.html">Load-Haul-Dump-1</a></h3></li>
+     <li><h3><a href="Medical-Department-1a/index.html">Medical-Department-1a</a></h3>
+      <p>This example explicitly models the resource management of doctors with the help of a counter variable
+       for available doctors in the form of an attribute <code>nmrOfAvailableDoctors</code>, and the operations
+       <code>isDoctorAvailable()</code>, <code>allocateDoctor()</code> and <code>releaseDoctor()</code>, in the
+       <code>MedicalDepartment</code> class.</p></li>
+     <li><h3><a href="Medical-Department-1b/index.html">Medical-Department-1b</a></h3>
+      <p>This model is essentially the same as Medical-Department-1a, except that it uses the generic resource management
+       logic that is built into OES Core 2. The resource pool <code>doctors</code> is modeled as a count pool,
+       which abstracts away from individual resources and only counts them.</p></li>
+     <li><h3><a href="Medical-Department-1c/index.html">Medical-Department-1c</a></h3>
+      <p>In this model, the resource pool <code>doctors</code> is modeled as an individual resource pool
+       instead of a count pool. This allows making the model more realistic, for instance, by assigning an
+       individual work schedule to each doctor defining her availability.</p></li>
+     <li><h3><a href="Medical-Department-2a/index.html">Medical-Department-2a</a></h3>
+      <p>This model includes two activity types: <i>WalkToRoom</i> activities require a <i>room</i> and are performed by
+       a <i>nurse</i>, while <i>Examination</i> activities also require a <i>room</i> and are performed by a <i>doctor</i>.
+       The resource pools <i>nurses</i> and <i>doctors</i> are modeled as individual resource pools,
+       while the resource pool <i>rooms</i>, which is used by both <i>WalkToRoom</i> and <i>Examination</i> activities,
+       is modeled as a count pool.</p></li>
+     <li><h3><a href="Medical-Department-2b/index.html">Medical-Department-2b</a></h3>
+      <p>This model is the same as Medical-Department-2a, except that <i>Examination</i> activities require a <i>room</i>,
+       two <i>nurses</i> and a <i>doctor</i>.</p></li>
+    </ul>
+   </nav>
+  <h3>Credits</h3>
+  <p>OESjs Core 2 is using:</p>
+  <ul>
+   <li>David Bau's seedable random number generator <a href="https://github.com/davidbau/seedrandom">seedrandom</a>.</li>
+   <li>Jake Archibald's IndexedDB library <a href="https://github.com/jakearchibald/idb">IDB</a> for storing experiment data.</li>
+  </ul>
+    
+ </main>
+  <footer>
+   <p>© 2020-21 G. Wagner (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>), Brandenburg University of Technology, Germany</p>
+ </footer>
+</html>
