@@ -19,7 +19,7 @@ class NonTopSupplyChainNode extends AbstractSupplyChainNode {
     // the accumulated inventory costs of this node
     this.accumulatedInventoryCosts = 0;
   }
-  onPerceive(percept) {
+  onPerceive( percept) {
     switch (percept.type) {
     case "InDelivery":
       this.stockQuantity += percept.quantity;

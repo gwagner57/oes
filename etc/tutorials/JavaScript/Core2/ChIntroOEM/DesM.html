@@ -39,7 +39,7 @@
   examinations is modeled as a random variable with a uniform distribution
   having lower bound 5 and upper bound 9.</p><section><h5>The
   Medical-Department-1a design model</h5><p>In the <a
-  href="https://gwagner57.github.io/oes/js/Core2/Medical-Department-1a/index.html">Medical-Department-1a</a>
+  href="https://sim4edu.com/oesjs/core2/Medical-Department-1a/index.html">Medical-Department-1a</a>
   information design model, instead of using the built-in generic resource
   management logic, we explicitly model the resource management of doctors
   with the help of a counter variable for available doctors in the form of an
@@ -97,7 +97,7 @@
       </tbody>
     </table></section><section id="sectMedDepDM1b"><h5>The
   Medical-Department-1b design model</h5><p>In the <a
-  href="https://gwagner57.github.io/oes/js/Core2/Medical-Department-1b/index.html">Medical-Department-1b</a>
+  href="https://sim4edu.com/oesjs/core2/Medical-Department-1b/index.html">Medical-Department-1b</a>
   <em>information design</em> model we make two simplifications: </p><ol>
       <li>We drop the object type <i>MedicalDepartment</i>; since we only need
       to model one medical department as the process owner, we can leave it
@@ -150,9 +150,9 @@ Examination.<b>resourceRoles</b> = {
       management, we can discard them altogether.</li>
     </ol><p>In the resulting DPMN diagram, the event type <i>NewCase</i> is
   connected to the activity type <i>Examination</i> with a
-  <em>Resource-Dependent Activity Start</em> arrow:</p><figure><div><img
+  <em>Resource-Dependent Activity Scheduling</em> arrow:</p><figure><div><img
   src="../img/MedDep_CPM1-PDM1b.svg" width="300" /></div></figure><p>Using a
-  <em>Resource-Dependent Activity Start</em> arrow from <i>NewCase</i> to
+  <em>Resource-Dependent Activity Scheduling</em> arrow from <i>NewCase</i> to
   <i>Examination</i> implies that upon a <i>NewCase</i> event a new planned
   <i>Examination</i> activity is enqueued by the simulator, if the required
   resources are not available; otherwise, a new <i>Examination</i> activity is
@@ -170,7 +170,7 @@ Examination.<b>resourceRoles</b> = {
   follow-up events for <i>NewCase</i> events by enqueuing a planned
   examination activity in the following way </p><pre>Examination.<b>tasks</b>.<b>enqueue</b>( new Examination())</pre></section><section><h5>The
   Medical-Department-1c design model</h5><p>In the <a
-  href="https://gwagner57.github.io/oes/js/Core2/Medical-Department-1c/index.html">Medical-Department-1c</a>
+  href="https://sim4edu.com/oesjs/core2/Medical-Department-1c/index.html">Medical-Department-1c</a>
   design model, the resource pool <i>doctors</i> is modeled as an individual
   resource pool instead of a count pool. This allows making the model more
   realistic, for instance, by assigning an individual work schedule to each
@@ -200,7 +200,7 @@ Examination.<b>resourceRoles</b> = {
   width="300" /></div></figure></section></section><section
   id="sectDesignModel4ExtCM"><h4>1.2.2. A design model based on the extended
   conceptual model</h4><p>In the <a
-  href="https://gwagner57.github.io/oes/js/Core2/Medical-Department-2a/index.html">Medical-Department-2a</a>
+  href="https://sim4edu.com/oesjs/core2/Medical-Department-2a/index.html">Medical-Department-2a</a>
   design model, we model two activity types: <i>WalkToRoom</i> activities
   involve a <i>room</i> and are performed by a <i>nurse</i>, while
   <i>Examination</i> activities involve a <i>room</i> and are performed by a
@@ -219,7 +219,7 @@ Examination.<b>resourceRoles</b> = {
   it is an option to show the performer roles with the help of corresponding
   Lanes: </p><figure><div><img src="../img/MedDep_CPM2-PDM1b.svg"
   width="400" /></div></figure><p>In OESjs-Core2, the two
-  <em>Resource-Dependent Activity Start</em> arrows between <i>NewCase</i> and
+  <em>Resource-Dependent Activity Scheduling</em> arrows between <i>NewCase</i> and
   <i>WalkToRoom</i>, as well as between <i>WalkToRoom</i> and
   <i>Examination</i> are coded as</p><pre>NewCase.<b>successorActivity</b> = "WalkToRoom";</pre><p>in
   the file <kbd>NewCase.js</kbd>, and as </p><pre>WalkToRoom.<b>successorActivity</b> = "Examination";</pre><p>in

@@ -2,16 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
  <meta charset="UTF-8"/>
- <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
  <title>Four-Stage-Supply-Chain-1 Discrete Event Simulation Example</title>
  <meta name="viewport" content="width=device-width, initial-scale = 1.0" />
+ <link href="https://sim4edu.com/oesjs/core4/Four-Stage-Supply-Chain-1" rel="canonical" />
  <meta name="description"
-       content="In this scenario, there is an agent (the 'jumper') that is not able to see the size of the barrier over which he has to jump, and there is another agent (the 'speaker') that is able to see the size of the barrier and tries to communicate the right jump length to the jumper. However, the jumper and the speaker do not speak the same language, so both agents first have to learn which signal communicates which jump length. Both agents can perceive the success or failure of a jump (a jump fails if it is too short or too long), and then update their signalling function, resp. signal interpretation function, accordingly."/>
+       content="A four stage single-product supply chain consists of a retailer, a wholesaler, a distributor and a factory."/>
  <link href="../index.css" rel="stylesheet" />
  <script src="../lib/math.js"></script>
  <script src="../lib/util.js"></script>
  <script src="../lib/idb5.js"></script>
- <script src="../OESjs-Core4/simulatorUI.js"></script>
+ <script src="../oesjs-core4/simulatorUI.js"></script>
  <script>/*<![CDATA[*/
  // Create initial objects/maps/arrays
  const sim = Object.create(null); // instead of {}
@@ -32,7 +32,6 @@
 <h1>Four-Stage-Supply-Chain-1 (Beer Game) <a href="description.html">Read more...</a></h1>
 <p id="copyright">© 2022 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
  Brandenburg University of Technology, Germany.</p>
-
 <section id="modelDescription">
  <figure class="right" style="margin-top:-3em"><img alt="Process Design Model" src="img/CPM.svg" width="550" /></figure>
  <p>A four stage single-product supply chain (SC) consists of a retailer, a wholesaler, a distributor and a factory.</p>
@@ -77,7 +76,7 @@
  <tbody></tbody>
 </table>
 <p id="execInfo"></p>
-<script src="../OESjs-Core4/index.js"></script>
+<script src="../oesjs-core4/index.js"></script>
 <script src="../lib/chartist.js" async="async"></script>
 </body>
 </html>

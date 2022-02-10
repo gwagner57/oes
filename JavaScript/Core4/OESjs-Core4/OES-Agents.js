@@ -9,23 +9,55 @@
  *** Agents Package ***********************************************************
  ******************************************************************************/
 /**
- * Agents are objects that are able to receive messages sent by other agents
- * and perceive their environment (its objects and events).
+ * Agents are objects that are able to
+ * - receive messages sent by other agents by reacting to in-message events
+ * - perceive their environment (its objects and events) by reacting to perception events
+ * - send messages to other agents by scheduling out-message events
+ * - perform actions by scheduling action events
+ * An agent may have information about certain objects and agents.
  */
 class aGENT extends oBJECT {
-  constructor({id, name, hasPerfectInformation=true, objects, contacts}) {
+  constructor({id, name, hasPerfectInformation=true, objects, agents}) {
     super( id, name);
     this.hasPerfectInformation = hasPerfectInformation;
     // a map of references to the objects that the agent knows
-    if (objects) this.objects = objects;
-    // a map of references to the agents that form the agent's contacts
-    if (contacts) this.contacts = contacts;
+    if (objects) {  // array or map
+      if (Array.isArray( objects)) {
+        this.objects = Object.create( null);
+        for (const o of objects) {
+          if (!(o instanceof oBJECT)) throw `Invalid object ${JSON.stringify(o)} provided for constructing aGENT`;
+          this.objects[o.id] = o;
+        }
+      } else if (typeof objects === "object") {
+        this.objects = objects;
+      } else throw `Invalid objects argument provided for constructing aGENT: ${JSON.stringify(objects)}`;
+    }
+    // a map of references to the agents that the agent knows
+    if (agents) {  // array or map
+      if (Array.isArray( agents)) {
+        this.agents = Object.create( null);
+        for (const a of agents) {
+          if (!(a instanceof aGENT)) throw `Invalid agent ${JSON.stringify(a)} provided for constructing aGENT`;
+          this.agents[a.id] = a;
+        }
+      } else if (typeof agents === "object") {
+        this.agents = agents;
+      } else throw `Invalid agents argument provided for constructing aGENT: ${JSON.stringify(agents)}`;
+    }
     // add each new agent to the Map of simulation agents
     sim.agents.set( this.id, this);
   }
+  // convenience method
+  send( message, receiver) {
+    sim.schedule( new mESSAGEeVENT({message, sender:this, receiver}));
+  }
   broadcast( message) {
-    if (typeof this.contacts === "object") {
-      this.objects[statement.objId][statement.propName] = statement.value;
+    if (typeof this.agents === "object") {  // a map
+      const receivers = [];
+      for (const agt of Object.values( this.agents)) {
+        receivers.push( agt);
+      }
+      sim.schedule( new mESSAGEeVENT({message, sender:this, receivers}));
     }
   }
   // receive a generic Tell message with a triple statement
@@ -48,8 +80,8 @@ class aGENT extends oBJECT {
  * training methods: learnSuccess and learnFailure
  */
 class rEINFORCEMENTlEARNINGaGENT extends aGENT {
-  constructor({id, name, hasPerfectInformation=true, objects, contacts, learnFunction}) {
-    super({id, name, hasPerfectInformation, objects, contacts});
+  constructor({id, name, hasPerfectInformation=true, objects, agents, learnFunction}) {
+    super({id, name, hasPerfectInformation, objects, agents});
     this.learnFunction = learnFunction;
     this.currentStateTypeNo = 0;  // the state type number of the current RL action choice
     this.chosenActionNo = 0;  // the action number of the current RL action choice
@@ -135,21 +167,34 @@ class rEINFORCEMENTlEARNINGaCTION extends aCTION {
   }
 }
 /**
- * Perception events are processed by the simulator by invoking the perceiver's
- * perceive method.
+ * Message events are processed by the simulator by invoking the receivers'
+ * receive method.
  */
 class mESSAGEeVENT extends eVENT {
-  constructor({occTime, delay, message, sender, receiver}) {
+  constructor({occTime, delay, message, sender, receiver, receivers}) {
     super({occTime, delay});
     if (message) this.message = message;  // string or expression (JS object)
     // id or object reference
-    this.sender = typeof this.sender === "string" ?
-        sim.objects[this.sender] : sender;
-    this.receiver = typeof this.receiver === "string" ?
-        sim.objects[this.receiver] : receiver;
+    this.sender = Number.isInteger( sender) || typeof sender === "string" ?
+        sim.agents[sender] : sender;
+    if (receiver) {
+      this.receiver = Number.isInteger( receiver) || typeof receiver === "string" ?
+          sim.agents[receiver] : receiver;
+    } else if (Array.isArray( receivers)) {
+      this.receivers = [];
+      for (const r of receivers) {
+        this.receivers.push( Number.isInteger(r) || typeof r === "string" ? sim.agents[r] : r);
+      }
+    } else throw `Cannot construct mESSAGEeVENT without receiver(s)`
   }
   onEvent() {
-    this.receiver.receive( this.message, this.sender);
+    if (this.receiver) {
+      this.receiver.receive( this.message, this.sender);
+    } else {
+      for (const r of this.receivers) {
+        this.r.receive( this.message, this.sender);
+      }
+    }
     return [];
   }
 }
