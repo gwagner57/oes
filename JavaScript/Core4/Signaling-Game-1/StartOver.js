@@ -26,4 +26,4 @@ class StartOver extends eVENT {
     return 4;
   }
 }
-StartOver.counter = 1;  // counting the initial event at 1
+StartOver.counter = 1;  // counting the initial event at time 1

@@ -5,7 +5,7 @@ sim.model.name = "Four-Stage-Supply-Chain-1";
 sim.model.time = "discrete";  // implies using only discrete random variables
 sim.model.timeUnit = "D"  // days
 
-sim.model.agentTypes = ["AbstractSupplyChainNode","NonTopSupplyChainNode",
+sim.model.agentTypes = ["AbstractSupplyChainNode","BottomSupplyChainNode",
     "IntermediateSupplyChainNode","TopSupplyChainNode"];
 sim.model.eventTypes = ["EndOfWeek","EndCustomerDemand","PurchaseOrder",
     "ShipItems","PerceiveInDelivery"];
@@ -23,7 +23,7 @@ sim.model.p.safetyStock = 2;
 sim.scenario.durationInSimTime = 50 * 7;
 sim.scenario.description = "Default scenario";
 sim.scenario.setupInitialState = function(){
-  const retailer = new NonTopSupplyChainNode({id: 1, name:"retailer",
+  const retailer = new BottomSupplyChainNode({id: 1, name:"retailer",
             stockQuantity: 8}),
         distributor = new IntermediateSupplyChainNode({id: 2, name:"distributor",
             downStreamNode: retailer, stockQuantity: 8}),
@@ -44,7 +44,9 @@ sim.scenario.setupInitialState = function(){
  ********************************************************/
 sim.model.setupStatistics = function () {
   sim.model.showTimeSeries = {
-    "retailer inventory": {objectId:1, attribute:"stockQuantity"}
+    "retailer inventory": {objectId:1, attribute:"stockQuantity"},
+    "distributor inventory": {objectId:2, attribute:"stockQuantity"},
+    "wholesaler inventory": {objectId:3, attribute:"stockQuantity"},
   }
 };
 
@@ -57,7 +59,7 @@ sim.model.computeFinalStatistics = function () {
   //const population = sim.Classes[tableDef.objectTypeName].instances;
   for (const obj of sim.objects.values()) {
     const row=[];
-    if (obj instanceof NonTopSupplyChainNode) {
+    if (obj instanceof BottomSupplyChainNode || obj instanceof IntermediateSupplyChainNode) {
       if (row0.length === 0) {  // create column headings
         row0.push("");  // leftmost column
         for (const attr of tableDef.attributes) {

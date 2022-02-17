@@ -106,8 +106,6 @@ sim.initializeSimulator = function () {
  * Initialize a (standalone or experiment) scenario simulation run *
  *******************************************************************/
 sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
-  const showTimeSeries = "showTimeSeries" in sim.model &&
-      Object.keys( sim.model.showTimeSeries).length > 0;
   // clear initial state data structures
   sim.objects.clear();
   sim.FEL.clear();
@@ -135,13 +133,14 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   // reset model-specific statistics
   if (sim.model.setupStatistics) sim.model.setupStatistics();
   // (re)set the timeSeries statistics variable
-  if (showTimeSeries) {
+  if ("showTimeSeries" in sim.model &&
+      Object.keys( sim.model.showTimeSeries).length > 0) {
     sim.stat.timeSeries = Object.create( null);
-    for (const statVarName of Object.keys( sim.model.showTimeSeries)) {
-      sim.stat.timeSeries[statVarName] = [];
+    for (const tmSerLbl of Object.keys( sim.model.showTimeSeries)) {
+      sim.stat.timeSeries[tmSerLbl] = [];
       if (!sim.timeIncrement) {
-        sim.stat.timeSeries[statVarName][0][sim.step] = sim.time;
-        sim.stat.timeSeries[statVarName][1][sim.step] = v;
+        sim.stat.timeSeries[tmSerLbl][0] = [];
+        sim.stat.timeSeries[tmSerLbl][1] = [];
       }
     }
   }
@@ -306,14 +305,22 @@ sim.runScenario = function (createLog) {
       }
     }
     // check if any time series has to be stored/returned
-    if (sim.stat.timeSeries) {
+    if ("timeSeries" in sim.stat) {
       /*
       if (!statVar.timeSeriesScalingFactor) v = sim.stat[varName];
       else v = sim.stat[varName] * statVar.timeSeriesScalingFactor;
       */
       if (sim.timeIncrement) {
-        for (const statVarName of Object.keys( sim.stat.timeSeries)) {
-          sim.stat.timeSeries[statVarName].push( sim.stat[statVarName]);
+        // for all time series defined
+        for (const tmSerLbl of Object.keys( sim.stat.timeSeries)) {
+          const tmSerVarDef = sim.model.showTimeSeries[tmSerLbl];
+          let val=0;
+          if ("objectId" in tmSerVarDef) {
+            val = sim.objects[tmSerVarDef.objectId][tmSerVarDef.attribute];
+          } else if ("statisticsVariable" in tmSerVarDef) {
+            val = sim.stat[tmSerVarDef.statisticsVariable];
+          }
+          sim.stat.timeSeries[tmSerLbl].push( val);
         }
         /*
         if (oes.stat.timeSeriesCompressionSteps > 1
@@ -322,10 +329,18 @@ sim.runScenario = function (createLog) {
         }
         */
       } else {  // next-event time progression
-        for (const statVarName of Object.keys( sim.stat.timeSeries)) {
-          sim.stat.timeSeries[varName][0][sim.step] = sim.time;
+        for (const tmSerLbl of Object.keys( sim.stat.timeSeries)) {
+          const tmSerVarDef = sim.model.showTimeSeries[tmSerLbl];
+          let val=0;
+          sim.stat.timeSeries[tmSerLbl][0].push( sim.time);
           // TODO: how to interpolate for implementing time series compression
-          sim.stat.timeSeries[varName][1][sim.step] = v;
+          if ("objectId" in tmSerVarDef) {
+            const obj = sim.objects.get( tmSerVarDef.objectId);
+            val = obj[tmSerVarDef.attribute];
+          } else if ("statisticsVariable" in tmSerVarDef) {
+            val = sim.stat[tmSerVarDef.statisticsVariable];
+          }
+          sim.stat.timeSeries[tmSerLbl][1].push( val);
         }
       }
     }

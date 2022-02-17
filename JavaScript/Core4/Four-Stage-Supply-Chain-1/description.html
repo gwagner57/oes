@@ -7,7 +7,7 @@
     <meta content="en" http-equiv="Content-Language" />
     <meta content="A simulation of a four stage supply chain consisting of a retailer, a wholesaler,
       a distributor and a factory." name="description" />
-    <link href="../description.css" rel="stylesheet" />
+    <link href="../css/description.css" rel="stylesheet" />
   </head>
   <body>
   <div id="frontMatter"><h1><span>Four-Stage-Supply-Chain-1 Model Description</span> <a href="index.html">Back to simulation</a></h1>
@@ -62,139 +62,154 @@
   participation associations, can be visually described in a conceptual
   information model in the form of a UML class diagram, as shown
   below.</p>
-<!--
   <figure><figcaption>A conceptual information model describing
   object, event and activity types.</figcaption><img alt="???"
   src="img/CIM.svg" width="700" /></figure>
--->
   </details>
   
   <details><summary>Conceptual Process Model</summary>
-  <p></p>
+   <p></p>
+   <figure><img alt="A DPMN diagram showing a conceptual process model" src="img/CPM.svg" width="600" /></figure>
+  </details>
+ </details>
+
 <!--
-        <figure><img alt="A DPMN diagram showing a conceptual process model" src="img/CPM.svg"
-        width="600" /></figure>
--->
-        </details>
-       </details>
+   <details><summary>Simulation Design</summary>
 
-       <details><summary>Simulation Design</summary>
-
-        <details><summary>Information Design Model</summary>
-
-         <figure><figcaption>An information design model defining object,
-        event and activity types.</figcaption><img alt="???" src="img/IDM.svg"
-        width="600" /></figure>
-
-         </details>
-         <details><summary>Process Design Model</summary>
-<!--
-          <figure><figcaption>A computationally complete
-        process design for the Load-Haul-Dump business process.</figcaption>
-           <img alt="???" src="img/PDM.svg" width="700" /></figure>
--->
+    <details><summary>Information Design Model</summary>
+     <figure><figcaption>An information design model defining object, event and activity types.</figcaption>
+         <img alt="???" src="img/IDM.svg" width="600" /></figure>
+    </details>
+    <details><summary>Process Design Model</summary>
+            <figure><figcaption>A computationally complete
+          process design for the Load-Haul-Dump business process.</figcaption>
+             <img alt="???" src="img/PDM.svg" width="700" /></figure>
          </details>
         </details>
+  -->
 
-        <details><summary>Implementation with OESjs</summary>
-
-         <details><summary>Implementing the Information Design Model</summary>
-
-         <p>For implementing the information design model, we have to
+ <details><summary>Implementation with OESjs</summary>
+  <details><summary>Implementing the Information Design Model</summary>
+   <p>For implementing the information design model, we have to
         code all object types and event types specified in the model
         in the form of classes.</p>
 <!--
         <figure class="right"><img alt="???" src="img/Truck_IDM.svg" width="300" /></figure>
 -->
-        <p>The <code>Truck</code> object class can be coded with OESjs-Core2 in the following way:</p>
+        <p>The agent class <code>AbstractSupplyChainNode</code> can be coded with OESjs-Core4 in the following way:</p>
 
-        <pre>class <b>Truck</b> extends oBJECT {
-        constructor({ id, name, <b>status</b>}) {
-          super( id, name);  // invoke the oBJECT constructor
-          <b>this.status</b> = status;
-        }
-      }
-      // a class-level attribute
-      Truck.<b>capacity</b> = 15;  // m3</pre>
+<pre>class <b>AbstractSupplyChainNode</b> extends aGENT {
+  constructor({ id, name, stockQuantity, safetyStock=3, backorderQuantity=0}) {
+    super({id, name});
+    if (stockQuantity !== undefined) this.stockQuantity = stockQuantity;
+    // extra inventory beyond the expected lead time demand
+    if (safetyStock !== undefined) this.safetyStock = safetyStock;
+    // orders of previous cycles that aren't fulfilled yet
+    if (backorderQuantity !== undefined) this.backorderQuantity = backorderQuantity;
+    // the quantity ordered last time by the downstream customer from this node
+    this.lastSalesOrderQuantity = 0;
+    // the accumulated inventory costs of this node
+    this.accumulatedInventoryCosts = 0;
+  }
+  <b>onReceiveOrder</b>( quantity) {
+    // store order quantity for later processing
+    this.lastSalesOrderQuantity = quantity;
+  }
+  // not used by TopSupplyChainNode
+  <b>onPerceive</b>( percept) {
+    switch (percept.type) {
+      case "InDelivery":
+        this.stockQuantity += percept.quantity;
+        break;
+    }
+  }
+  // overwritten by TopSupplyChainNode
+  <b>onTimeEvent</b>( e) {
+    switch (e.type) {
+    case "EndOfWeek":
+      ...
+    }
+  }
+}</pre>
 
-        <p>All object classes inherit an <code>id</code> attribute and a <code>name</code> attribute from the
-        pre-defined OES foundation class <code>oBJECT</code>.</p>
+        <p>All agent classes inherit an <code>id</code> attribute and a <code>name</code> attribute from the
+        pre-defined OES foundation class <code>aGENT</code>.</p>
+<p>The <code>onTimeEvent</code> method of the class <code>AbstractSupplyChainNode</code> contains most of the model logic:</p>
 
-        <p>The <i>WheelLoader</i> object class is coded in the same way as <i>Truck</i>.</p>
-<!--
-        <figure class="right"><img alt="HaulRequest event class" src="img/HaulRequest_IDM.svg" width="180" /></figure>
--->
-        <p>The <code>HaulRequest</code> event class can be coded in the following way:</p>
-
-        <pre>class <b>HaulRequest</b> extends eVENT {
-        constructor({ occTime, delay, <b>quantity</b>}) {
-          super({occTime, delay});
-          <b>this.quantity</b> = quantity;
-        }
-        onEvent() {
-          ...
-        }
-      }</pre>
-
-        <p>All event classes inherit an <code>occTime</code> attribute and a
-        <code>delay</code> attribute from the pre-defined OES foundation class
-        <code>eVENT</code>. Any event in OES can be created either with a value for
-        the attribute <code>occTime</code> (standing for <em>occurrence time</em>)
-        or with a value for the attribute <code>delay</code>. In the latter case,
-        the event's occurrence time is automatically derived by adding the value of
-        <code>delay</code> to the current simulation time. In addition, the
-        <i>HaulRequest</i> event class has a property <code>quantity</code> for
-        specifying the quantity to be hauled.. </p><p>The <code>onEvent</code>
-        method of the <i>HaulRequest</i> event class is not part of the information
-        design model. Rather, it is implementing an event rule specified in the
-        process design model. Consequently, it will be discussed below.</p>
-
-        </details>
-
-        <details open="open"><summary>Implementing the Process Design Model</summary>
-
-        <p>A DPMN process design model can be decomposed into a set of event rule design
-        models, one for each type of event specified in the design model. Starting
-        with the <code>HaulRequest</code> event rule design model, we show how the
-        event rules specified by each of these event rule design models can be coded
-        in the form of an <code>onEvent</code> method.</p>
-<!--
-        <figure><figcaption>A design model for the <code>HaulRequest</code> event rule.</figcaption>
-         <img src="img/HaulRequest_RDM.svg" width="300" /></figure>
--->
-         <p>In the following <code>HaulRequest</code> event rule method <code>onEvent</code>, all
-        available trucks are allocated to the current haul request, and, after
-        computing the number of loads, for each of the allocated trucks a new
-        <code>GoToLoadingSite</code> activity is started:</p>
-
-        <pre>class <b>HaulRequest</b> extends eVENT {
-        ...
-        <b>onEvent</b>() {
-          const followupEvents=[],
-                allocatedTrucks = sim.resourcePools["trucks"].<b>allocateAll</b>();
-          // assign model variable
-          sim.model.v.<b>nmrOfLoads</b> = Math.ceil( this.quantity / Truck.capacity);
-          for (const t of allocatedTrucks) {
-            const goActy = <b>new GoToLoadingSite</b>();
-            // assign truck as required resource
-            goActy.truck = t;
-            // start GoToLoadingSite activity
-            followupEvents.push( <b>new aCTIVITYsTART</b>({plannedActivity: goActy}));
+<pre>  onTimeEvent( e) {
+    switch (e.type) {
+      case "EndOfWeek":
+        /********************************************************
+         *** ship items to downstream node or end customer ******
+         ********************************************************/
+        const stockQuantityAtStartOfWeek = this.stockQuantity;
+        let deliveryQuantity = 0, stockoutCosts = 0;
+        if (this.stockQuantity < this.lastSalesOrderQuantity + this.backorderQuantity) {
+          // not enough stock quantity for fulfilling the sum of order and backorder quantity
+          deliveryQuantity = this.stockQuantity;
+          if (this.lastSalesOrderQuantity > this.stockQuantity) {
+            const newBackorderQuantity = this.lastSalesOrderQuantity - this.stockQuantity;
+            stockoutCosts = newBackorderQuantity * sim.model.p.stockoutCostsPerUnit;
+            // increment backorder quantity
+            this.backorderQuantity += newBackorderQuantity;
+          } else if (this.stockQuantity > this.lastSalesOrderQuantity) {
+            // decrement backorder quantity
+            this.backorderQuantity -= this.stockQuantity - this.lastSalesOrderQuantity;
           }
-          return followupEvents;
+          // stock quantity is reset to zero
+          this.stockQuantity = 0;
+        } else {  // enough stock quantity for fulfilling the sum of order and backorder quantity
+          deliveryQuantity = this.lastSalesOrderQuantity + this.backorderQuantity;
+          // decrement stock quantity
+          this.stockQuantity -= deliveryQuantity;
+          // backorder quantity is reset to zero
+          this.backorderQuantity = 0;
         }
-      }</pre>
+        // only ship non-zero quantities
+        if (deliveryQuantity > 0) {
+          sim.schedule( new ShipItems({quantity: deliveryQuantity, performer: this}));
+        }
+        /***********************************************
+         *** Send purchase order to upstream node ******
+         ***********************************************/
+        let orderQuantity = 0;
+        // Try to keep the inventory as big as the latest order received by this node (plus a bit extra quantity)
+        if (this.stockQuantity > 0) {
+          orderQuantity = Math.max( this.lastSalesOrderQuantity -
+              this.stockQuantity + this.safetyStock, 0);
+        } else {
+          orderQuantity = this.lastSalesOrderQuantity + this.safetyStock;
+        }
+        //TODO: DELETE this.lastPuchaseOrderQuantity = orderQuantity;
+        // only place orders with values greater than zero
+        if (orderQuantity > 0) {
+          sim.schedule( new PurchaseOrder({ quantity: orderQuantity,
+            sender: this, receiver: this.upStreamNode}));
+        }
+        /***********************************************
+         *** Calculate inventory costs *****************
+         ***********************************************/
+            // the average inventory is the stock quantity at the beginning of the week plus the stock quantity
+            // at the end of the week divided by two
+        const averageStockQuantity = (stockQuantityAtStartOfWeek + this.stockQuantity) / 2,
+            totalHoldingCostsPerWeek = averageStockQuantity * sim.model.p.holdingCostsPerUnitPerWeek;
+        this.accumulatedInventoryCosts = totalHoldingCostsPerWeek + stockoutCosts;
+        break;
+    }
+  }
+</pre>
 
-        </details>
-       </details>
 
-         <section><h2>See also...</h2>
-         <ul>
-         <li><a href="https://beergame.org/">beergame.org</a></li>
-         <li><a href="https://en.wikipedia.org/wiki/Beer_distribution_game">Wikipedia article</a></li>
-         </ul>
-         </section>
+    </details>
+   </details>
 
-       <p><a href="index.html">Back to simulation</a></p>
-      </body>
-      </html>
+   <section><h2>See also...</h2>
+    <ul>
+     <li><a href="https://beergame.org/">beergame.org</a></li>
+     <li><a href="https://en.wikipedia.org/wiki/Beer_distribution_game">Wikipedia article</a></li>
+    </ul>
+   </section>
+
+   <p><a href="index.html">Back to simulation</a></p>
+</body>
+</html>

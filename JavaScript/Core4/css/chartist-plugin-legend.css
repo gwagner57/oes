@@ -1,0 +1,55 @@
+.ct-legend[class=^""] {
+  clear: both;
+  display: inline-block;
+}
+.ct-series-0 {
+  color: red;
+}
+
+.ct-series-1 {
+  color: purple;
+}
+
+.ct-series-2 {
+  color: fuchsia;
+}
+
+.ct-series-3 {
+  color: green;
+}
+
+.ct-series-4 {
+  color: lime;
+}
+
+.ct-series-5 {
+  color: olive;
+}
+
+.ct-series-6 {
+  color: orange;
+}
+
+.ct-series-7 {
+  color: navy;
+}
+
+.ct-series-8 {
+  color: blue;
+}
+
+.ct-series-9 {
+  color: #dda458;
+}
+
+.ct-series-10 {
+  color: #eacf7d;
+}
+
+.ct-series-11 {
+  color: #86797d;
+}
+
+.ct-series-12 {
+  color: #b2c326;
+}

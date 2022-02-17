@@ -4,10 +4,9 @@ class PerceiveBarrier extends pERCEPTIONeVENT {
     this.length = length;
   }
   onEvent() {
-    const followupEvents=[],
-          percept = {type:"barrier", length: this.length};
+    const percept = {type:"barrier", length: this.length};
     this.perceiver.onPerceive( percept);
-    return followupEvents;
+    return [];  // no follow-up events
   }
 }
 PerceiveBarrier.labels = {"length":"len"};

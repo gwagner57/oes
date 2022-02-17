@@ -29,11 +29,11 @@ oes.ui.logSimulationStep = function (simLogTableEl, step, time, currEvtsStr, obj
   rowEl.insertCell().textContent = futEvtsStr;
 }
 /*******************************************************
- Display the standalone scenario statistics
+ Display the standalone scenario run statistics
  ********************************************************/
 oes.ui.showStatistics = function (stat) {
   const decPl = oes.defaults.expostStatDecimalPlaces;
-  const showTimeSeries = "showTimeSeries" in sim.model && Object.keys( sim.model.showTimeSeries).length > 0;
+  const showTimeSeries = "timeSeries" in stat;
   var isAN=false, isPN=false, nmrOfPredefStatSlots=0;
 
   function createActyNodeStatTableHead()  {
@@ -65,6 +65,7 @@ oes.ui.showStatistics = function (stat) {
     nmrOfPredefStatSlots = "includeTimeouts" in stat ? 2 : 1;
   }
   if ("table" in stat) nmrOfPredefStatSlots++;
+  if ("timeSeries" in stat) nmrOfPredefStatSlots++;
   // create two column table for user-defined statistics
   if (Object.keys( stat).length > nmrOfPredefStatSlots) {
     const usrStatTblElem = document.createElement("table"),
@@ -74,7 +75,7 @@ oes.ui.showStatistics = function (stat) {
     captionEl.textContent = "User-defined statistics";
     for (const varName of Object.keys( stat)) {
       // skip pre-defined statistics (collection) variables
-      if (["table","networkNodes","resUtil","includeTimeouts"].includes( varName)) continue;
+      if (["table","networkNodes","resUtil","includeTimeouts","timeSeries"].includes( varName)) continue;
       const rowEl = tbodyEl.insertRow();  // create new table row
       rowEl.insertCell().textContent = varName;
       rowEl.insertCell().textContent = math.round( stat[varName], decPl);
@@ -83,7 +84,7 @@ oes.ui.showStatistics = function (stat) {
         "afterend", usrStatTblElem);
   }
   // create table filled with object attribute values
-  if (stat.table) {
+  if ("table" in stat) {
     const objTblElem = document.createElement("table"),
           tbodyEl = objTblElem.createTBody(),
           captionEl = objTblElem.createCaption();
@@ -172,6 +173,27 @@ oes.ui.showStatistics = function (stat) {
     timeSeriesChartContainerEl.id = "time-series-chart";
     document.getElementById("simInfo").insertAdjacentElement(
         "afterend", timeSeriesChartContainerEl);
+    const timeSeriesLabels = Object.keys( stat.timeSeries),
+          firstTmSerLbl = timeSeriesLabels[0],
+          firstTmSer = stat.timeSeries[firstTmSerLbl];
+    const legendLabels=[], chartSeries=[];
+    let dataT = [];
+    if (Array.isArray( firstTmSer[0])) {  // next-event time progression
+      dataT = firstTmSer[0];  // time series timepoints
+    } else {  // fixed-increment time progression
+      for (let i=0; i < firstTmSer.length; i++) {
+        dataT.push(i * sim.timeIncrement);
+      }
+    }
+    for (const tmSerLbl of timeSeriesLabels) {
+      legendLabels.push( tmSerLbl);
+      if (sim.timeIncrement) {  // fixed-increment time progression
+        dataY = stat.timeSeries[tmSerLbl];
+      } else {  // next-event time progression
+        dataY = stat.timeSeries[tmSerLbl][1];
+      }
+      chartSeries.push({name: tmSerLbl, data: dataY});
+    }
     const chart = new Chartist.Line("#time-series-chart", {
           labels: dataT,
           series: chartSeries

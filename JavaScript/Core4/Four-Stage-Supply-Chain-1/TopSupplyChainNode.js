@@ -14,9 +14,9 @@ class TopSupplyChainNode extends AbstractSupplyChainNode {
       /***********************************************
        *** make shipment to downstream node **********
        ***********************************************/
+      // deliver all that has been ordered
       const deliveryQuantity = this.lastSalesOrderQuantity;
       if (deliveryQuantity > 0) {
-        // the delay accounts for the production lag
         sim.schedule( new ShipItems({quantity: deliveryQuantity, performer: this}));
       }
       break;
