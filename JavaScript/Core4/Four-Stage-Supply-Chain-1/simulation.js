@@ -20,15 +20,15 @@ sim.model.p.safetyStock = 2;
 /*******************************************************
  Default Scenario
  ********************************************************/
-sim.scenario.durationInSimTime = 50 * 7;
+sim.scenario.durationInSimTime = 100 * 7;
 sim.scenario.description = "Default scenario";
 sim.scenario.setupInitialState = function(){
   const retailer = new BottomSupplyChainNode({id: 1, name:"retailer",
-            stockQuantity: 8}),
+            stockQuantity: 8, safetyStock: 3}),
         distributor = new IntermediateSupplyChainNode({id: 2, name:"distributor",
-            downStreamNode: retailer, stockQuantity: 8}),
+            downStreamNode: retailer, stockQuantity: 8, safetyStock: 4}),
         wholesaler = new IntermediateSupplyChainNode({id: 3, name:"wholesaler",
-            downStreamNode: distributor, stockQuantity: 8}),
+            downStreamNode: distributor, stockQuantity: 8, safetyStock: 5}),
         factory = new TopSupplyChainNode({id: 4, name:"factory",
             downStreamNode: wholesaler});
   retailer.upStreamNode = distributor;

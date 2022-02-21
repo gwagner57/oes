@@ -4,7 +4,7 @@
  * This applies to all nodes of a supply chain, except the end customer.
  */
 class AbstractSupplyChainNode extends aGENT {
-  constructor({ id, name, stockQuantity, safetyStock=3, backorderQuantity=0}) {
+  constructor({ id, name, stockQuantity, safetyStock=5, backorderQuantity=0}) {
     super({id, name});
     if (stockQuantity !== undefined) this.stockQuantity = stockQuantity;
     // extra inventory beyond the expected lead time demand
@@ -68,17 +68,18 @@ class AbstractSupplyChainNode extends aGENT {
         let orderQuantity = 0;
         // Try to keep the inventory as big as the latest order received by this node (plus a bit extra quantity)
         if (this.stockQuantity > 0) {
-          orderQuantity = Math.max( this.lastSalesOrderQuantity -
-              this.stockQuantity + this.safetyStock, 0);
+          orderQuantity = Math.max( this.lastSalesOrderQuantity + this.safetyStock -
+              this.stockQuantity, 0);
         } else {
           orderQuantity = this.lastSalesOrderQuantity + this.safetyStock;
         }
-        //TODO: DELETE this.lastPuchaseOrderQuantity = orderQuantity;
         // only place orders with values greater than zero
         if (orderQuantity > 0) {
           sim.schedule( new PurchaseOrder({ quantity: orderQuantity,
             sender: this, receiver: this.upStreamNode}));
         }
+        // reset the variable lastSalesOrderQuantity
+        this.lastSalesOrderQuantity = 0;
         /***********************************************
          *** Calculate inventory costs *****************
          ***********************************************/

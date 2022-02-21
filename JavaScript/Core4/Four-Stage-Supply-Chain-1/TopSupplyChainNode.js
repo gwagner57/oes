@@ -18,6 +18,7 @@ class TopSupplyChainNode extends AbstractSupplyChainNode {
       const deliveryQuantity = this.lastSalesOrderQuantity;
       if (deliveryQuantity > 0) {
         sim.schedule( new ShipItems({quantity: deliveryQuantity, performer: this}));
+        this.lastSalesOrderQuantity = 0;
       }
       break;
     }

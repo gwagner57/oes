@@ -13,6 +13,23 @@ const util = {
       selEl.add( el, null);
     }
   },
+  // the progress indication is indeterminate if there is no value
+  createProgressBarEl( title, value) {
+    const progressContainerEl = document.createElement("div"),
+        progressEl = document.createElement("progress"),
+        progressLabelEl = document.createElement("label"),
+        progressInfoEl = document.createElement("p");
+    progressEl.id = "progress";
+    // values between 0 and 1
+    if (value !== undefined) progressEl.value = value;  // initial value
+    progressLabelEl.for = "progress";
+    progressLabelEl.textContent = title;
+    progressContainerEl.id = "progress-container";
+    progressContainerEl.appendChild( progressLabelEl);
+    progressContainerEl.appendChild( progressEl);
+    progressContainerEl.appendChild( progressInfoEl);
+    return progressContainerEl
+  },
   /*******************************************************************************
    * Generate a file from text
    * @param {string} filename - Name of the file
