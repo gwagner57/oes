@@ -138,7 +138,10 @@ function run() {
   formEl.style.display = "none";  // hide selection form
   if (modelDescriptionEl) modelDescriptionEl.style.display = "none";
   if (scenarioDescriptionEl) scenarioDescriptionEl.style.display = "none";
-  document.body.appendChild( util.createProgressBarEl("Loading the simulation code..."));
+
+  const nmrOfScriptFilesToLoad = 3 + sim.model.objectTypes.length +
+      sim.model.eventTypes.length + sim.model.activityTypes.length;
+  document.body.appendChild( util.createProgressBarEl(`Loading ${nmrOfScriptFilesToLoad} script files ...`));
 
   data = {simToRun: choice,
       createLog: logCheckboxEl.checked,
@@ -146,8 +149,9 @@ function run() {
   if (sim.scenarios.length > 0) {
     data.scenarioNo = parseInt( selScenEl.value)
   }
+
   // store start time of simulation/experiment run
-  const simStartTime = (new Date()).getTime();
+  const startWorkerTime = (new Date()).getTime();
   // set up the simulation worker
   const worker = new Worker("simulation-worker.js");
   // start the simulation in the worker thread
@@ -165,13 +169,14 @@ function run() {
       if (e.data.expScenNo !== undefined) {  // parameter variation experiment
         oes.ui.showResultsFromParVarExpScenarioRun( e.data, statisticsTableEl);
       } else { // standalone simulation run or simple experiment
-        let executionTime = (new Date()).getTime() - simStartTime;
-        // Show execution time
-        execInfoEl.textContent = `Execution time: ${executionTime} ms`;
+        const loadTime = e.data.loadEndTime - startWorkerTime,
+              executionTime = (new Date()).getTime() - e.data.loadEndTime;
+        // Show loading time and execution time
+        execInfoEl.textContent = `Script files loading time: ${loadTime} ms, simulation execution time: ${executionTime} ms`;
         if (e.data.statistics) {  // statistics from standalone simulation run
           let duration = "";
           if (sim.scenario.durationInSimTime) duration = `${sim.scenario.durationInSimTime} ${sim.model.timeUnit}`;
-          else duration = `${Math.ceil( e.data.endTime)} ${sim.model.timeUnit}`;
+          else duration = `${Math.ceil( e.data.endSimTime)} ${sim.model.timeUnit}`;
           simInfoEl.textContent = `Standalone simulation run with a simulation time/duration of ${duration}.`;
           oes.ui.showStatistics( e.data.statistics);
         } else if (e.data.simpleExperiment) {

@@ -1,29 +1,35 @@
 "use strict";
-// load general framework code
+/*
 self.importScripts("../lib/seedrandom.min.js", "../lib/rand.js", "../lib/util.js",
     "../lib/math.js", "../lib/idb5.js", "../lib/EventList.js", "../lib/eNUMERATION.js");
 self.importScripts("../OESjs-Core2/OES-Foundation.js", "../OESjs-Core2/OES-Activities.js",
     "../OESjs-Core2/simulator.js");
+*/
+// load general framework code
+self.importScripts("../lib/library-files.js");
+self.importScripts("../OESjs-Core2/core2-oes.js");
+
 // load simulation-example-specific code
 self.importScripts("simulation.js");
 if (sim.model.objectTypes) {
-  sim.model.objectTypes.forEach( function (objT) {
+  for (const objT of sim.model.objectTypes) {
     self.importScripts( objT + ".js");
-  });
+  }
 }
 if (sim.model.eventTypes) {
-  sim.model.eventTypes.forEach( function (evtT) {
+  for (const evtT of sim.model.eventTypes) {
     self.importScripts( evtT + ".js");
-  });
+  }
 }
 if (sim.model.activityTypes) {
-  sim.model.activityTypes.forEach( function (actT) {
+  for (const actT of sim.model.activityTypes) {
     self.importScripts( actT + ".js");
-  });
+  }
 }
 // start simulation on message from main thread
 onmessage = function (e) {
   var scenario={};
+  sim.loadEndTime = (new Date()).getTime();
   if (sim.experimentType) {
     // when experimentType has been set, run it
     sim.runExperiment( sim.experimentType);

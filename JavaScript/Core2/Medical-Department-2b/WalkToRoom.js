@@ -7,7 +7,7 @@ class WalkToRoom extends aCTIVITY {
 // A walk to a room requires a room and a nurse
 WalkToRoom.resourceRoles = {
   // implying an individual pool with default name "nurses"
-  "nurse": {range: EcgTechnician},
+  "nurse": {range: Nurse},
   // implying a count pool, see below for its name (countPoolName="rooms")
   "room": {card:1}
 }

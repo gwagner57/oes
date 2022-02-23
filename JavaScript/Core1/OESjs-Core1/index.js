@@ -147,8 +147,11 @@ function run() {
   if (sim.scenarios.length > 0) {
     data.scenarioNo = parseInt( selScenEl.value)
   }
+  const nmrOfScriptFilesToLoad = 4 + sim.model.objectTypes.length + sim.model.eventTypes.length;
+  document.body.appendChild( util.createProgressBarEl(`Loading ${nmrOfScriptFilesToLoad} script files ...`));
+
   // store start time of simulation/experiment run
-  const simStartTime = (new Date()).getTime();
+  const startWorkerTime = (new Date()).getTime();
   // set up the simulation worker
   const worker = new Worker("simulation-worker.js");
   // start the simulation in the worker thread
@@ -159,16 +162,22 @@ function run() {
       simLogTableEl.parentElement.style.display = "block";
       oes.ui.logSimulationStep( simLogTableEl, e.data.step, e.data.time,
           e.data.currEvtsStr, e.data.objectsStr, e.data.futEvtsStr);
-    } else if (e.data.expScenNo !== undefined) {  // parameter variation experiment
-      oes.ui.showResultsFromParVarExpScenarioRun( e.data, statisticsTableEl);
     } else {
-      let simEndTime = (new Date()).getTime() - simStartTime;
-      // Show execution time
-      execInfoEl.textContent = `Execution time: ${simEndTime} ms`;
-      if (e.data.statistics) {  // statistics from standalone scenario run
-        oes.ui.showStatistics( e.data.statistics, statisticsTableEl);
-      } else if (e.data.simpleExperiment) {
-        oes.ui.showSimpleExpResults( e.data.simpleExperiment, statisticsTableEl);
+      if (document.getElementById("progress-container")) {
+        document.getElementById("progress-container").remove();
+      }
+      if (e.data.expScenNo !== undefined) {  // parameter variation experiment
+        oes.ui.showResultsFromParVarExpScenarioRun( e.data, statisticsTableEl);
+      } else {
+        const loadTime = e.data.loadEndTime - startWorkerTime,
+            executionTime = (new Date()).getTime() - e.data.loadEndTime;
+        // Show loading time and execution time
+        execInfoEl.textContent = `Script files loading time: ${loadTime} ms, simulation execution time: ${executionTime} ms`;
+        if (e.data.statistics) {  // statistics from standalone scenario run
+          oes.ui.showStatistics( e.data.statistics, statisticsTableEl);
+        } else if (e.data.simpleExperiment) {
+          oes.ui.showSimpleExpResults( e.data.simpleExperiment, statisticsTableEl);
+        }
       }
     }
   }

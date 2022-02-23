@@ -287,9 +287,9 @@ sim.runScenario = function (createLog) {
       // test if e is an exogenous event
       if (EventClass.recurrence || e.recurrence || EventClass.eventRate) {
         if ("createNextEvent" in e) {
-          /* test if this generic approach for maxNmrOfEvents is computationally cheap enough
+          /* is this generic approach for maxNmrOfEvents computationally cheap enough?
           let nextEvt=null;
-          const maxNmrOfEvents = EventClass.maxNmrOfEvents || e.node?.maxNmrOfEvents;
+          const maxNmrOfEvents = e.node?.maxNmrOfEvents || EventClass.maxNmrOfEvents;
           if (maxNmrOfEvents) {
             const nmrOfEvents = e.node?.nmrOfEvents;
             if (nmrOfEvents && nmrOfEvents < maxNmrOfEvents) nextEvt = e.createNextEvent();
@@ -310,17 +310,21 @@ sim.runScenario = function (createLog) {
       if (!statVar.timeSeriesScalingFactor) v = sim.stat[varName];
       else v = sim.stat[varName] * statVar.timeSeriesScalingFactor;
       */
-      if (sim.timeIncrement) {
-        // for all time series defined
-        for (const tmSerLbl of Object.keys( sim.stat.timeSeries)) {
-          const tmSerVarDef = sim.model.showTimeSeries[tmSerLbl];
-          let val=0;
-          if ("objectId" in tmSerVarDef) {
-            val = sim.objects[tmSerVarDef.objectId][tmSerVarDef.attribute];
-          } else if ("statisticsVariable" in tmSerVarDef) {
-            val = sim.stat[tmSerVarDef.statisticsVariable];
-          }
+      for (const tmSerLbl of Object.keys( sim.stat.timeSeries)) {
+        const tmSerVarDef = sim.model.showTimeSeries[tmSerLbl];
+        let val=0;
+        // TODO: how to interpolate for implementing time series compression
+        if ("objectId" in tmSerVarDef) {
+          const obj = sim.objects.get( tmSerVarDef.objectId);
+          val = obj[tmSerVarDef.attribute];
+        } else if ("statisticsVariable" in tmSerVarDef) {
+          val = sim.stat[tmSerVarDef.statisticsVariable];
+        }
+        if (sim.timeIncrement) {  // fixed increment time progression
           sim.stat.timeSeries[tmSerLbl].push( val);
+        } else {  // next-event time progression
+          sim.stat.timeSeries[tmSerLbl][0].push( sim.time);
+          sim.stat.timeSeries[tmSerLbl][1].push( val);
         }
         /*
         if (oes.stat.timeSeriesCompressionSteps > 1
@@ -328,20 +332,6 @@ sim.runScenario = function (createLog) {
           oes.stat.compressTimeSeries( sim.stat.timeSeries[varName]);
         }
         */
-      } else {  // next-event time progression
-        for (const tmSerLbl of Object.keys( sim.stat.timeSeries)) {
-          const tmSerVarDef = sim.model.showTimeSeries[tmSerLbl];
-          let val=0;
-          sim.stat.timeSeries[tmSerLbl][0].push( sim.time);
-          // TODO: how to interpolate for implementing time series compression
-          if ("objectId" in tmSerVarDef) {
-            const obj = sim.objects.get( tmSerVarDef.objectId);
-            val = obj[tmSerVarDef.attribute];
-          } else if ("statisticsVariable" in tmSerVarDef) {
-            val = sim.stat[tmSerVarDef.statisticsVariable];
-          }
-          sim.stat.timeSeries[tmSerLbl][1].push( val);
-        }
       }
     }
     if (createLog) sendLogMsg( nextEvents);  // log initial state
@@ -365,7 +355,8 @@ sim.runStandaloneScenario = function (createLog) {
   else sim.initializeScenarioRun({seed: sim.scenario.randomSeed});
   sim.runScenario( createLog);
   // send statistics to main thread
-  self.postMessage({statistics: sim.stat, endTime: sim.time});
+  self.postMessage({statistics: sim.stat, endSimTime: sim.time,
+    loadEndTime: sim.loadEndTime});
 }
 /*******************************************************
  Run an Experiment (in a JS worker)

@@ -9,7 +9,7 @@ Examination.resourceRoles = {
   // implying an individual pool with default name "doctors"
   "doctor": {range: Doctor}, // by default card=1
   // implying an individual pool with default name "nurses"
-  "nurse": {range: EcgTechnician, card:2},
+  "nurse": {range: Nurse, card:2},
   // implying a count pool with default name "rooms" like with {countPoolName:"rooms"}
   "room": {card:1}
 }

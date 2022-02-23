@@ -24,6 +24,7 @@ if (sim.model.activityTypes) {
 // start simulation on message from main thread
 onmessage = function (e) {
   var scenario={};
+  sim.loadEndTime = (new Date()).getTime();
   if (sim.experimentType) {
     // when experimentType has been set, run it
     sim.runExperiment( sim.experimentType);

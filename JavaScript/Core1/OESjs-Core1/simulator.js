@@ -153,6 +153,8 @@ sim.runStandaloneScenario = function (createLog) {
   if (!sim.scenario.randomSeed) sim.initializeScenarioRun();
   else sim.initializeScenarioRun({seed: sim.scenario.randomSeed});
   sim.runScenario( createLog);
+  // send statistics to main thread
+  self.postMessage({statistics: sim.stat, endSimTime: sim.time, loadEndTime: sim.loadEndTime});
 }
 /*******************************************************
  Run an Experiment (in a JS worker)
