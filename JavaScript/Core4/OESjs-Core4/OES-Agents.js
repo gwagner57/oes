@@ -20,37 +20,69 @@ class aGENT extends oBJECT {
   constructor({id, name, hasPerfectInformation=true, objects, agents}) {
     super( id, name);
     this.hasPerfectInformation = hasPerfectInformation;
-    // a map of references to the objects that the agent knows
-    if (objects) {  // array or map
-      if (Array.isArray( objects)) {
-        this.objects = Object.create( null);
-        for (const o of objects) {
-          if (!(o instanceof oBJECT)) throw `Invalid object ${JSON.stringify(o)} provided for constructing aGENT`;
-          this.objects[o.id] = o;
-        }
-      } else if (typeof objects === "object") {
-        this.objects = objects;
-      } else throw `Invalid objects argument provided for constructing aGENT: ${JSON.stringify(objects)}`;
+    if (this.hasPerfectInformation) {  // the agent knows all objects and agents
+      this.objects = sim.objects;
+      this.agents = sim.agents;
+    } else {  // incomplete and possibly incorrect information
+      // a map of references to the objects that the agent knows
+      if (objects) {  // array or map
+        if (Array.isArray( objects)) {
+          this.objects = Object.create( null);
+          for (const o of objects) {
+            if (!(o instanceof oBJECT)) throw `Invalid object ${JSON.stringify(o)} provided for constructing aGENT`;
+            this.objects[o.id] = o;
+          }
+        } else if (typeof objects === "object") {
+          this.objects = objects;
+        } else throw `Invalid objects argument provided for constructing aGENT: ${JSON.stringify(objects)}`;
+      }
+      // a map of references to the agents that the agent knows
+      if (agents) {  // array or map
+        if (Array.isArray( agents)) {
+          this.agents = Object.create( null);
+          for (const a of agents) {
+            if (!(a instanceof aGENT)) throw `Invalid agent ${JSON.stringify(a)} provided for constructing aGENT`;
+            this.agents[a.id] = a;
+          }
+        } else if (typeof agents === "object") {
+          this.agents = agents;
+        } else throw `Invalid agents argument provided for constructing aGENT: ${JSON.stringify(agents)}`;
+      }
     }
-    // a map of references to the agents that the agent knows
-    if (agents) {  // array or map
-      if (Array.isArray( agents)) {
-        this.agents = Object.create( null);
-        for (const a of agents) {
-          if (!(a instanceof aGENT)) throw `Invalid agent ${JSON.stringify(a)} provided for constructing aGENT`;
-          this.agents[a.id] = a;
-        }
-      } else if (typeof agents === "object") {
-        this.agents = agents;
-      } else throw `Invalid agents argument provided for constructing aGENT: ${JSON.stringify(agents)}`;
+    if (sim.config.roundBasedAgentExecution) {
+      this.roundBasedExecution = true;  // set execution mode flag
+      this.inMessageEventBuffer = [];
+      this.perceptionBuffer = [];
+      this.globalTimeEventBuffer = [];
     }
     // add each new agent to the Map of simulation agents
     sim.agents.set( this.id, this);
+  }
+  // abstract methods (to be implemented in subclasses)
+  onReceive( message, sender) {}
+  onPerceive( percept) {}
+  onTimeEvent( e) {}
+
+  // execute agent for current simulation step
+  executeStep() {
+    for (const msgEvtRec of this.inMessageEventBuffer) {
+      this.onReceive( msgEvtRec.message, msgEvtRec.sender) ;
+    }
+    this.inMessageEventBuffer.length = 0;  // delete buffer
+    for (const percept of this.perceptionBuffer) {
+      this.onPerceive( percept);
+    }
+    this.perceptionBuffer.length = 0;  // delete buffer
+    for (const tmEvt of this.globalTimeEventBuffer) {
+      this.onTimeEvent( tmEvt);
+    }
+    this.globalTimeEventBuffer.length = 0;  // delete buffer
   }
   // convenience method
   send( message, receiver) {
     sim.schedule( new mESSAGEeVENT({message, sender:this, receiver}));
   }
+  // convenience method
   broadcast( message) {
     if (typeof this.agents === "object") {  // a map
       const receivers = [];
@@ -111,11 +143,11 @@ class pERCEPTIONeVENT extends eVENT {
     super({occTime, delay});
     if (percept) this.percept = percept;  // string or expression (JS object)
     // id or object reference
-    this.perceiver = typeof perceiver === "object" ? perceiver : sim.objects[perceiver];
+    this.perceiver = typeof perceiver === "object" ? perceiver : sim.objects.get( perceiver);
   }
   onEvent() {
     this.perceiver.onPerceive( this.percept);
-    return [];
+    return [];  // no follow-up events
   }
 }
 pERCEPTIONeVENT.labels = {"percept":"perc"};
@@ -128,12 +160,12 @@ class aCTION extends eVENT {
   constructor({occTime, delay, performer, action}) {
     super({occTime, delay});
     // id or object reference
-    this.performer = typeof performer === "object" ? performer : sim.objects[performer];
+    this.performer = typeof performer === "object" ? performer : sim.objects.get( performer);
     if (action) this.action = action;  // string or expression (JS object)
   }
   onEvent() {
     this.performer.perform( this.action);
-    return [];
+    return [];  // no follow-up events
   }
 }
 aCTION.labels = {"action":"act"};
@@ -163,7 +195,7 @@ class rEINFORCEMENTlEARNINGaCTION extends aCTION {
         agt.learnFailure();
       }
     }
-    return [];
+    return [];  // no follow-up events
   }
 }
 /**
@@ -189,13 +221,15 @@ class mESSAGEeVENT extends eVENT {
   }
   onEvent() {
     if (this.receiver) {
-      this.receiver.receive( this.message, this.sender);
-    } else {
+      this.receiver.onReceive( this.message, this.sender);
+    } else if (Array.isArray( this.receivers)) {
       for (const r of this.receivers) {
-        this.r.receive( this.message, this.sender);
+        this.r.onReceive( this.message, this.sender);
       }
+    } else {
+      console.error(`Message event without receiver(s): ${this}`)
     }
-    return [];
+    return [];  // no follow-up events
   }
 }
 mESSAGEeVENT.labels = {"message":"msg"};
@@ -213,6 +247,6 @@ class tIMEeVENT extends eVENT {
     for (const agt of sim.agents.values()) {
       agt.onTimeEvent( this);
     }
-    return [];
+    return [];  // no follow-up events
   }
 }

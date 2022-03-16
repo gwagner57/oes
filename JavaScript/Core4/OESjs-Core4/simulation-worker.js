@@ -2,18 +2,27 @@
 /*
 self.importScripts("../lib/seedrandom.min.js", "../lib/rand.js", "../lib/util.js",
     "../lib/math.js", "../lib/idb5.js", "../lib/EventList.js", "../lib/eNUMERATION.js");
-self.importScripts("../OESjs-Core2/OES-Foundation.js", "../OESjs-Core2/OES-Activities.js",
-    "../OESjs-Core2/simulator.js");
+self.importScripts("../OESjs-Core4/OES-Foundation.js", "../OESjs-Core4/OES-Activities.js",
+    "../OESjs-Core4/OES-Agents.js", "../OESjs-Core4/simulator.js");
 */
 // load general framework code
 self.importScripts("../lib/library-files.js");
-self.importScripts("../oesjs-core2/core2-oes.js");
-
+self.importScripts("../oesjs-core4/core4-oes.js");
 // load simulation-example-specific code
 self.importScripts("simulation.js");
+if (sim.model.otherCodeFiles) {
+  for (const ocf of sim.model.otherCodeFiles) {
+    self.importScripts( ocf + ".js");
+  }
+}
 if (sim.model.objectTypes) {
   for (const objT of sim.model.objectTypes) {
     self.importScripts( objT + ".js");
+  }
+}
+if (sim.model.agentTypes) {
+  for (const agtT of sim.model.agentTypes) {
+    self.importScripts( agtT + ".js");
   }
 }
 if (sim.model.eventTypes) {

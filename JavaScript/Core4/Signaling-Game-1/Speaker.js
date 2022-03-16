@@ -3,7 +3,7 @@ class Speaker extends rEINFORCEMENTlEARNINGaGENT {
         [0.33, 0.33, 0.33], [0.33, 0.33, 0.33]]}) {
     super({id, name, learnFunction: new LearningMatrix( learnMatrix)});
     // id or object reference
-    this.jumper = typeof jumper === "object" ? jumper : sim.objects[jumper];
+    this.jumper = typeof jumper === "object" ? jumper : sim.objects.get( jumper);
   }
   onPerceive( percept) {
     switch (percept.type) {

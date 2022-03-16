@@ -8,7 +8,7 @@ class BottomSupplyChainNode extends AbstractSupplyChainNode {
     if (upStreamNode) {
       // object reference or ID
       this.upStreamNode = typeof upStreamNode === "object" ?
-          upStreamNode : sim.objects[upStreamNode];
+          upStreamNode : sim.objects.get( upStreamNode);
     }
   }
 }

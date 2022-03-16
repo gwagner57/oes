@@ -17,6 +17,9 @@ sim.model.p.stockoutCostsPerUnit = 1;  // in USD or EUR
 // extra inventory beyond the expected lead time demand
 sim.model.p.safetyStock = 2;
 
+// interleaved or round-based agent execution?
+sim.config.roundBasedAgentExecution = true;
+
 /*******************************************************
  Default Scenario
  ********************************************************/

@@ -31,6 +31,8 @@ sim.initializeSimulator = function () {
   sim.model.eventTypes ??= [];
   // initialize the Map of all objects (accessible by ID)
   sim.objects = new Map();
+  // initialize the Map of all objects (accessible by name)
+  sim.namedObjects = new Map();
   // initialize the Future Events List
   sim.FEL = new EventList();
   // initialize the map of statistics variables
@@ -108,6 +110,7 @@ sim.initializeSimulator = function () {
 sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   // clear initial state data structures
   sim.objects.clear();
+  sim.namedObjects.clear();
   sim.FEL.clear();
   sim.ongoingActivities = Object.create( null);  // a map of all ongoing activities accessible by ID
   sim.step = 0;  // simulation loop step counter
@@ -193,7 +196,7 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
     for (const evtTypeName of sim.model.eventTypes) {
       const ET = sim.Classes[evtTypeName];
       if (ET.recurrence || ET.eventRate) {
-        sim.FEL.add( new ET());
+        sim.schedule( new ET());
       }
     }
   }
@@ -202,12 +205,8 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
  * Schedule an event or a list of events ***************************
  *******************************************************************/
 sim.schedule = function (e) {
-  var events;
-  if (!Array.isArray(e)) events = [e];
-  else events = e;
-  for (const evt of events) {
-    sim.FEL.add( evt);
-  }
+  if (!Array.isArray(e)) sim.FEL.add( e);
+  else for (const evt of e) {sim.FEL.add( evt);}
 }
 /*******************************************************************
  * Assign model parameters with experiment parameter values ********
@@ -267,15 +266,12 @@ sim.runScenario = function (createLog) {
     for (const e of nextEvents) {
       // apply event rule
       const followUpEvents = typeof e.onEvent === "function" ? e.onEvent() : [];
-      // schedule follow-up events
-      for (const f of followUpEvents) {
-        sim.FEL.add( f);
-      }
-      const EventClass = e.constructor;
+      sim.schedule( followUpEvents);
 
+      const EventClass = e.constructor;
       /**** AN/PN extension START ****/
-      // handle AN event nodes with a successor node
-      if (EventClass.name !== "aRRIVAL" && e.node?.successorNode) {  //TODO: refactor such that a PN item does not occur in AN code
+      // handle event nodes with a successor node
+      if (e.node?.successorNode && EventClass.name !== "aRRIVAL") {
         const successorNode = e.node.successorNode,
               SuccAT = sim.Classes[successorNode.activityTypeName],
               succActy = new SuccAT({node: successorNode});
@@ -283,6 +279,16 @@ sim.runScenario = function (createLog) {
         succActy.startOrEnqueue();
       }
       /**** AN/PN extension END ****/
+
+      /**** ABS extension START ****/
+      if (sim.config.roundBasedAgentExecution) {
+        for (const agt of sim.agents.values()) {
+          agt.roundBasedExecution = false;
+          agt.executeStep();
+          agt.roundBasedExecution = true;
+        }
+      }
+      /**** ABS extension END ****/
 
       // test if e is an exogenous event
       if (EventClass.recurrence || e.recurrence || EventClass.eventRate) {
@@ -298,9 +304,9 @@ sim.runScenario = function (createLog) {
           }
           */
           const nextEvt = e.createNextEvent();
-          if (nextEvt) sim.FEL.add( nextEvt);
+          if (nextEvt) sim.schedule( nextEvt);
         } else {
-          sim.FEL.add( new EventClass());
+          sim.schedule( new EventClass());
         }
       }
     }

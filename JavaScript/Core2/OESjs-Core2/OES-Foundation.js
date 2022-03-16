@@ -18,6 +18,8 @@ sim.scenarios = [];  // list of alternative scenarios
 sim.stat = Object.create(null); // map of statistics variables
 sim.experimentTypes = [];
 
+sim.config = Object.create(null);
+
 var oes = Object.create(null);  // cannot be const, since also defined in simulatorUI.js
 oes.defaults = {
   nextMomentDeltaT: 0.01,
@@ -34,9 +36,13 @@ oes.defaults = {
 class oBJECT {
   constructor( id, name) {
     this.id = id || sim.idCounter++;
-    if (name) this.name = name;  // optional
-    // add each new object to Map of simulation objects
-    sim.objects.set( this.id, this);
+    // add each new object to the Map of simulation objects by ID
+    sim.objects.set( id, this);
+    if (name) {  // name is optional
+      this.name = name;
+      // also add to the Map of simulation objects by name
+      sim.namedObjects.set( name, this);
+    }
   }
   // overwrite/improve the standard toString method
   toString() {

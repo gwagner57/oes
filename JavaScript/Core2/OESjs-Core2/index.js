@@ -139,8 +139,11 @@ function run() {
   if (modelDescriptionEl) modelDescriptionEl.style.display = "none";
   if (scenarioDescriptionEl) scenarioDescriptionEl.style.display = "none";
 
-  const nmrOfScriptFilesToLoad = 3 + sim.model.objectTypes.length +
-      sim.model.eventTypes.length + sim.model.activityTypes.length;
+  let nmrOfScriptFilesToLoad = 3; // lib + framework + simulation.js
+  if (Array.isArray(sim.model.objectTypes)) nmrOfScriptFilesToLoad += sim.model.objectTypes.length;
+  if (Array.isArray(sim.model.eventTypes)) nmrOfScriptFilesToLoad += sim.model.eventTypes.length;
+  if (Array.isArray(sim.model.activityTypes)) nmrOfScriptFilesToLoad += sim.model.activityTypes.length;
+  if (Array.isArray(sim.model.agentTypes)) nmrOfScriptFilesToLoad += sim.model.agentTypes.length;
   document.body.appendChild( util.createProgressBarEl(`Loading ${nmrOfScriptFilesToLoad} script files ...`));
 
   data = {simToRun: choice,

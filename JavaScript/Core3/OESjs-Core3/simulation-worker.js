@@ -1,30 +1,29 @@
 "use strict";
+// load general framework code
 /*
 self.importScripts("../lib/seedrandom.min.js", "../lib/rand.js", "../lib/util.js",
     "../lib/math.js", "../lib/idb5.js", "../lib/EventList.js", "../lib/eNUMERATION.js");
-self.importScripts("../OESjs-Core2/OES-Foundation.js", "../OESjs-Core2/OES-Activities.js",
-    "../OESjs-Core2/simulator.js");
+self.importScripts("../OESjs-Core3/OES-Foundation.js", "../OESjs-Core3/OES-Activities.js",
+    "../OESjs-Core3/OES-ProcessingNetworks.js", "../OESjs-Core3/simulator.js");
 */
-// load general framework code
 self.importScripts("../lib/library-files.js");
-self.importScripts("../oesjs-core2/core2-oes.js");
-
+self.importScripts("../oesjs-core3/core3-oes.js");
 // load simulation-example-specific code
 self.importScripts("simulation.js");
 if (sim.model.objectTypes) {
-  for (const objT of sim.model.objectTypes) {
+  sim.model.objectTypes.forEach( function (objT) {
     self.importScripts( objT + ".js");
-  }
+  });
 }
 if (sim.model.eventTypes) {
-  for (const evtT of sim.model.eventTypes) {
+  sim.model.eventTypes.forEach( function (evtT) {
     self.importScripts( evtT + ".js");
-  }
+  });
 }
 if (sim.model.activityTypes) {
-  for (const actT of sim.model.activityTypes) {
+  sim.model.activityTypes.forEach( function (actT) {
     self.importScripts( actT + ".js");
-  }
+  });
 }
 // start simulation on message from main thread
 onmessage = function (e) {
@@ -45,6 +44,12 @@ onmessage = function (e) {
           scenario.durationInSimSteps = sim.scenario.durationInSimSteps;
         } else if (sim.scenario.durationInCpuTime) {
           scenario.durationInCpuTime = sim.scenario.durationInCpuTime;
+        }
+      }
+      // copy ID counter from base scenario if not provided
+      if (!scenario.idCounter) {
+        if (sim.scenario.idCounter) {
+          scenario.idCounter = sim.scenario.idCounter;
         }
       }
       sim.scenario = scenario;

@@ -19,6 +19,8 @@ sim.initializeSimulator = async function () {
   }
   // A map of all objects (accessible by ID)
   sim.objects = new Map();
+  // initialize the Map of all objects (accessible by name)
+  sim.namedObjects = new Map();
   // The Future Events List
   sim.FEL = new EventList();
   // Create map for statistics variables
@@ -26,6 +28,13 @@ sim.initializeSimulator = async function () {
   // Assign scenarioNo = 0 to default scenario
   if (sim.scenario.scenarioNo === undefined) sim.scenario.scenarioNo = 0;
   if (!sim.scenario.title) sim.scenario.title = "Default scenario";
+}
+/*******************************************************************
+ * Schedule an event or a list of events ***************************
+ *******************************************************************/
+sim.schedule = function (e) {
+  if (!Array.isArray(e)) sim.FEL.add( e);
+  else for (const evt of e) {sim.FEL.add( evt);}
 }
 /*******************************************************************
  * Assign model parameters with experiment parameter values ********
@@ -41,6 +50,7 @@ sim.assignModelParameters = function (expParSlots) {
 sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   // clear initial state data structures
   sim.objects.clear();
+  sim.namedObjects.clear();
   sim.FEL.clear();
   //sim.ongoingActivities = Object.create( null);  // a map of all ongoing activities accessible by ID
   sim.step = 0;  // simulation loop step counter

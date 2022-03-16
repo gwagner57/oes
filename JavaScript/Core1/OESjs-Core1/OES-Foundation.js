@@ -32,9 +32,13 @@ oes.defaults = {
 class oBJECT {
   constructor( id, name) {
     this.id = id || sim.idCounter++;
-    this.name = name;  // optional
     // add each new object to list of simulation objects
-    sim.objects.set( this.id, this);
+    sim.objects.set( id, this);
+    if (name) {  // name is optional
+      this.name = name;
+      // also add to the Map of simulation objects by name
+      sim.namedObjects.set( name, this);
+    }
   }
   // overwrite/improve the standard toString method
   toString() {

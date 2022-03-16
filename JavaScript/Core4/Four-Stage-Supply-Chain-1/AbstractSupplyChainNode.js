@@ -16,21 +16,37 @@ class AbstractSupplyChainNode extends aGENT {
     // the accumulated inventory costs of this node
     this.accumulatedInventoryCosts = 0;
   }
-  onReceiveOrder( quantity) {
-    // store order quantity for later processing
-    this.lastSalesOrderQuantity = quantity;
+  onReceive( message, sender) {
+    if (this.roundBasedExecution) {  // round-based agent execution
+      this.inMessageEventBuffer.push( {message, sender});
+    } else {  // interleaved agent execution or agent step execution
+      switch (message.type) {
+      case "Order":
+        // store order quantity for later processing
+        this.lastSalesOrderQuantity = message.quantity;
+        break;
+      }
+    }
   }
   // not used by TopSupplyChainNode
   onPerceive( percept) {
-    switch (percept.type) {
+    if (this.roundBasedExecution) {  // round-based agent execution
+      this.perceptionBuffer.push( percept);
+    } else {  // interleaved agent execution or agent step execution
+      switch (percept.type) {
       case "InDelivery":
+        // increment stockQuantity
         this.stockQuantity += percept.quantity;
         break;
+      }
     }
   }
   // overwritten by TopSupplyChainNode
   onTimeEvent( e) {
-    switch (e.type) {
+    if (this.roundBasedExecution) {  // round-based agent execution
+      this.globalTimeEventBuffer.push( e);
+    } else {  // interleaved agent execution or agent step execution
+      switch (e.type) {
       case "EndOfWeek":
         /********************************************************
          *** ship items to downstream node or end customer ******
@@ -60,23 +76,29 @@ class AbstractSupplyChainNode extends aGENT {
         }
         // only ship non-zero quantities
         if (deliveryQuantity > 0) {
-          sim.schedule( new ShipItems({quantity: deliveryQuantity, performer: this}));
+          sim.schedule(new ShipItems({quantity: deliveryQuantity, performer: this}));
         }
         /***********************************************
          *** Send purchase order to upstream node ******
          ***********************************************/
         let orderQuantity = 0;
-        // Try to keep the inventory as big as the latest order received by this node (plus a bit extra quantity)
-        if (this.stockQuantity > 0) {
-          orderQuantity = Math.max( this.lastSalesOrderQuantity + this.safetyStock -
-              this.stockQuantity, 0);
+        if (this.id === 0) {  //TODO: now deactivated by ID=0, delete later
+          orderQuantity = window.prompt(`Inventory: ${this.stockQuantity}, last order quantity: ${this.lastSalesOrderQuantity}`);
         } else {
-          orderQuantity = this.lastSalesOrderQuantity + this.safetyStock;
+          // Try to keep the inventory as big as the latest order received by this node (plus a bit extra quantity)
+          if (this.stockQuantity > 0) {
+            orderQuantity = Math.max(this.lastSalesOrderQuantity + this.safetyStock -
+                this.stockQuantity, 0);
+          } else {
+            orderQuantity = this.lastSalesOrderQuantity + this.safetyStock;
+          }
         }
         // only place orders with values greater than zero
         if (orderQuantity > 0) {
-          sim.schedule( new PurchaseOrder({ quantity: orderQuantity,
-            sender: this, receiver: this.upStreamNode}));
+          sim.schedule(new PurchaseOrder({
+            quantity: orderQuantity,
+            sender: this, receiver: this.upStreamNode
+          }));
         }
         // reset the variable lastSalesOrderQuantity
         this.lastSalesOrderQuantity = 0;
@@ -89,6 +111,7 @@ class AbstractSupplyChainNode extends aGENT {
             totalHoldingCostsPerWeek = averageStockQuantity * sim.model.p.holdingCostsPerUnitPerWeek;
         this.accumulatedInventoryCosts = totalHoldingCostsPerWeek + stockoutCosts;
         break;
+      }
     }
   }
 }

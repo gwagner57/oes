@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lemonade-Stand-1 Discrete Event Simulation Example</title>
+    <meta content="width=device-width, initial-scale = 1.0" name="viewport" />
+    <link href="https://sim4edu.com/oesjs/core1/lemonade-stand-1/" rel="canonical" />
+    <meta name="description" content="A simulation of a lemonade seller that makes lemonade in pitchers and sells it in paper cups at a stand in a street market."/>
+    <link href="../css/index.css" rel="stylesheet" />
+    <script src="../lib/math.js"></script>
+    <script src="../lib/util.js"></script>
+    <script src="../lib/idb5.js"></script>
+    <script src="../oesjs-core1/simulatorUI.js"></script>
+    <script>/*<![CDATA[*/
+   // Create initial objects/maps/arrays
+   const sim = Object.create(null); // instead of {}
+   sim.model = Object.create(null);
+   sim.model.v = Object.create(null); // model variables
+   sim.model.p = Object.create(null); // model parameters
+   sim.scenario = Object.create(null);
+   sim.scenarios = [];
+   sim.stat = Object.create(null);
+   sim.experimentTypes = [];
+ /*]]>*/</script>
+    <script src="simulation.js"></script>
+  </head>
+  <body>
+  <div><small>An <em><a href="https://gwagner57.github.io/oes/">Object Event Simulation (OES)</a></em> example model.
+   You can download and inspect its code from the <a href="https://github.com/gwagner57/oes/tree/master/JavaScript/Core1">OES
+   GitHub repo</a>.</small></div>
+  <!--
+  <figure class="right"><img alt="Process Design Model" src="img/PDM.svg" width="600" /></figure>
+  -->
+  <h1>Lemonade-Stand-1 <a href="description.html">Read more...</a><br/>
+      <span class="subheading">A Model of a Manufacturing Company in a Monopoly Market</span></h1>
+  <p id="copyright">© 2022 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
+   Brandenburg University of Technology, Germany.</p>
+  <p>A lemonade seller makes lemonade in pitchers and sells it in paper cups at a stand in a street market.
+   Each day consists of the following process steps and phases:</p>
+  <ol>
+   <li>The day starts with making planning decisions (demand forecasting, production planning and sales price planning)
+    and purchasing the required input materials (lemons, sugar, etc.).</li>
+   <li>Some time later, the ordered input materials are delivered, the planned quantity of lemonade is produced and the stand is opened.</li>
+   <li>Then, customers arrive randomly and order a cup of lemonade. As long as there is still lemonade in stock, customer orders are served.</li>
+   <li>At the end of the day, the lemonade stand is closed and the remaining lemonade and expired input items are dumped.</li>
+  </ol>
+  <h2 id="scenarioTitle">Default scenario</h2>
+  <p id="scenarioDescription">The default scenario runs for 40 days.</p>
+  <form id="run">
+   <div><label>Select scenario: <select name="selScen" onchange="onChangeOfScenSelect()"></select></label></div>
+   <div><button onclick="run()" type="button">Run</button>
+     <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>
+   <div><label>Simulation log <input name="log" type="checkbox" /></label></div>
+   <div style="display: none"><label>Store exper. results <input name="storeExpRes" type="checkbox" /></label>
+    <button onclick="exportExperResults()" type="button">Export exper. results</button>
+   </div>
+  </form>
+  <table style="display: none">
+      <caption>Simulation Log</caption>
+      <thead>
+        <tr>
+          <th>Step</th><th>Time</th><th>Current Events</th><th>System State</th><th>Future Events</th>
+        </tr>
+      </thead>
+      <tbody id="simLog"></tbody>
+  </table>
+  <p id="simInfo"></p>
+  <table id="statisticsTbl">
+   <caption></caption>
+   <tbody></tbody>
+  </table>
+  <p id="execInfo"></p>
+  <script src="../oesjs-core1/index.js"></script>
+</body>
+</html>

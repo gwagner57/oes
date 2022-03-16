@@ -6,21 +6,25 @@ class TopSupplyChainNode extends AbstractSupplyChainNode {
     super({id, name, downStreamNode});
     // object reference or ID
     this.downStreamNode = typeof downStreamNode === "object" ?
-        downStreamNode : sim.objects[downStreamNode];
+        downStreamNode : sim.objects.get( downStreamNode);
   }
   onTimeEvent( e) {
-    switch (e.type) {
-    case "EndOfWeek":
-      /***********************************************
-       *** make shipment to downstream node **********
-       ***********************************************/
-      // deliver all that has been ordered
-      const deliveryQuantity = this.lastSalesOrderQuantity;
-      if (deliveryQuantity > 0) {
-        sim.schedule( new ShipItems({quantity: deliveryQuantity, performer: this}));
-        this.lastSalesOrderQuantity = 0;
+    if (this.roundBasedExecution) {  // round-based agent execution
+      this.globalTimeEventBuffer.push( e);
+    } else {  // interleaved agent execution or agent step execution
+      switch (e.type) {
+      case "EndOfWeek":
+        /***********************************************
+         *** make shipment to downstream node **********
+         ***********************************************/
+        // deliver all that has been ordered
+        const deliveryQuantity = this.lastSalesOrderQuantity;
+        if (deliveryQuantity > 0) {
+          sim.schedule(new ShipItems({quantity: deliveryQuantity, performer: this}));
+          this.lastSalesOrderQuantity = 0;
+        }
+        break;
       }
-      break;
     }
   }
 }

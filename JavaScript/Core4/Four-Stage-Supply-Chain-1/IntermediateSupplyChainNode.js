@@ -9,11 +9,11 @@ class IntermediateSupplyChainNode extends AbstractSupplyChainNode {
     if (upStreamNode) {
       // object reference or ID
       this.upStreamNode = typeof upStreamNode === "object" ?
-          upStreamNode : sim.objects[upStreamNode];
+          upStreamNode : sim.objects.get( upStreamNode);
     }
     // object reference or ID
     this.downStreamNode = typeof downStreamNode === "object" ?
-        downStreamNode : sim.objects[downStreamNode];
+        downStreamNode : sim.objects.get( downStreamNode);
   }
 }
 IntermediateSupplyChainNode.labels = {className:"Node",

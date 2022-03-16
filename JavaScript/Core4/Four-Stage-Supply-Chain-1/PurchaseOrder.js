@@ -1,10 +1,10 @@
 class PurchaseOrder extends mESSAGEeVENT {
   constructor({ occTime, delay, quantity, sender, receiver}) {
     super({occTime, delay, sender, receiver});
-    this.quantity = quantity;
+    this.message = {type:"Order", quantity};
   }
   onEvent() {
-    this.receiver.onReceiveOrder( this.quantity);
+    this.receiver.onReceive( this.message, this.sender);
     return [];  // no follow-up events
   }
 }
