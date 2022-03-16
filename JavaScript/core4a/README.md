@@ -1,6 +1,6 @@
 You need to copy, or symlink, the "lib" folder from Core2 to Core4.
 
-Also, the "OESjs-Core4" folder requires copies/symlinks of/to the following files from OES/doc/js/Core2/OESjs-Core2:
+Also, the "oesjs-core4a" folder requires copies/symlinks of/to the following files from OES/doc/js/Core2/OESjs-Core2:
 
 * index.js
 * OES-Activities.js
