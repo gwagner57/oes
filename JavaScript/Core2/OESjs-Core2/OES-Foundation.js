@@ -47,13 +47,16 @@ class oBJECT {
   // overwrite/improve the standard toString method
   toString() {
     const Class = this.constructor,
+          labels = Class.labels,
           decPl = oes.defaults.simLogDecimalPlaces;
     var i=0, valStr="", str="";
-    if (this.name) str = `${this.name}{ `;
-    else str = (Class.labels?.className || Class.name) + `-${this.id}{ `;
+    // suppress display, if class name is not specified in "labels"
+    if (!labels?.className) return "";
+    if (this.name) str = `${this.name}{ `;  // display object name
+    else str = (labels?.className || Class.name) + `-${this.id}{ `;
     for (const prop of Object.keys( this)) {
-      if (!Class.labels || !Class.labels[prop]) continue;
-      var propLabel = (Class.labels && Class.labels[prop]) ? Class.labels[prop] : "",
+      if (!labels || !labels[prop]) continue;
+      const propLabel = labels[prop],
           val = this[prop];
       if (typeof val === "number" && !Number.isInteger( val)) {
         valStr = String( math.round( val, decPl));
@@ -61,7 +64,7 @@ class oBJECT {
         valStr = "["+ val.map( v => v.id).toString() +"]";
       } else if (typeof val === "object") {
         if (val instanceof oBJECT) valStr = String( val.id);
-        else valStr = "{"+ val.toString() +"}";
+        else valStr = JSON.stringify( val); //"{"+ val.toString() +"}";
       } else valStr = JSON.stringify( val);
       if (propLabel && val !== undefined) {
         str += (i>0 ? ", " : "") + propLabel +":"+ valStr;
@@ -105,11 +108,12 @@ class eVENT {
   // overwrite/improve the standard toString method
   toString() {
     const Class = this.constructor,
-          eventTypeName = Class.labels?.className || Class.name,
+          labels = Class.labels,
+          eventTypeName = labels?.className || Class.name,
           decPl = oes.defaults.simLogDecimalPlaces;
     var slotListStr="", i=0, evtStr="", valStr="";
     Object.keys( this).forEach( function (prop) {
-      const propLabel = (Class.labels && Class.labels[prop]) ? Class.labels[prop] : "",
+      const propLabel = (labels && labels[prop]) ? labels[prop] : "",
             val = this[prop];
       if (propLabel && val !== undefined) {
         if (val instanceof oBJECT) valStr = String( val.id);

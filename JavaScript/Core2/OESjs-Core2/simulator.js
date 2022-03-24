@@ -240,12 +240,12 @@ sim.advanceSimulationTime = function () {
  ********************************************************/
 sim.runScenario = function (createLog) {
   function sendLogMsg( currEvts) {
+    // convert values() iterator to array
     let objStr = [...sim.objects.values()].map( el => el.toString()).join("|");
     if (oes.defaults.showResPoolsInLog) {
       objStr += " // "+ Object.values( sim.scenario.resourcePools).toString();
     }
     postMessage({ step: sim.step, time: sim.time,
-      // convert values() iterator to array
       objectsStr: objStr,
       currEvtsStr: currEvts.map( el => el.toString()).join("|"),
       futEvtsStr: sim.FEL.toString()

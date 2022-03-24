@@ -7,7 +7,7 @@ sim.model.timeUnit = "h";
 
 sim.model.otherCodeFiles = ["../lib/RingBuffer"];
 sim.model.objectTypes = ["SingleProductCompany", "ItemType", "InputItemType", "OutputItemType"];
-sim.model.eventTypes = ["StartOfDay", "DailyDelivery", "DailyDemand", "EndOfDay"];
+sim.model.eventTypes = ["StartOfDay", "DailyDelivery", "DailyProduction", "DailyDemand", "EndOfDay"];
 
 /*******************************************************
  Default Scenario
@@ -15,56 +15,56 @@ sim.model.eventTypes = ["StartOfDay", "DailyDelivery", "DailyDemand", "EndOfDay"
 sim.scenario.durationInSimTime = 40*24;  // 40 days
 sim.scenario.description = "The default scenario runs for 40 days.";
 sim.scenario.setupInitialState = function () {
-  const oit = new OutputItemType({id:2, name: "Lemonade",
-    quantityUnit: "ltr",
-    supplyUnit: "cup",
-    quantityPerSupplyUnit: 0.25,  /// ltr
-    salesPrice: 2,  // e.g., USD
-    batchSize: 3.5,  // 1 pitcher = 3.5 liters
-    stockQuantity: 0,  // in quantityUnit
-    bomItemsPerBatch: {"Lemon": 3, "Water": 2.5, "IceCubes": 50, "Sugar": 0.3, "PaperCup": 1}
-  });
-  const ls = new SingleProductCompany({id:1, name: "LemonadeStand",
-    productType: oit,  // Lemonade
-    inputInventoryItemTypes: {
-      "Lemon": 0,  // pieces
-      "Water": 0,  // liters
-      "IceCubes": 0,  // pieces
-      "Sugar": 0,  // kilograms
-      "PaperCup": 0
-    },
-    liquidity: 100,
-    fixedCostPerDay: 50
-  });
   const iit1 = new InputItemType({id:3, name: "Lemon",
     quantityUnit: "pc",  // piece(s)
     supplyUnit: "bag",
-    quantityPerSupplyUnit: 5,  // pieces
-    purchasePrice: 2  // per box
+    quantityPerSupplyUnit: 5,  // pieces per bag
+    purchasePrice: 2,  // per bag
+    stockQuantity: 0
   });
   const iit2 = new InputItemType({id:4, name: "Water",
     quantityUnit: "ltr",
     supplyUnit: "bottle",
     quantityPerSupplyUnit: 1.5,  // litre
-    purchasePrice: 0.5  // per bottle
+    purchasePrice: 0.5,  // per bottle
+    stockQuantity: 0
   });
   const iit3 = new InputItemType({id:5, name: "IceCubes",
-    quantityUnit: "pc",
+    quantityUnit: "pc",  // piece(s)
     supplyUnit: "bag",
-    quantityPerSupplyUnit: 100,// pieces
-    purchasePrice: 2
+    quantityPerSupplyUnit: 100,  // pieces per bag
+    purchasePrice: 2,  // per bag
+    stockQuantity: 0
   });
   const iit4 = new InputItemType({id:6, name: "Sugar",
     quantityUnit: "kg",
     supplyUnit: "bag",
-    quantityPerSupplyUnit: 1,
-    purchasePrice: 1
+    quantityPerSupplyUnit: 1,  // kg per bag
+    purchasePrice: 1,  // for a bag
+    stockQuantity: 0
   });
   const iit5 = new InputItemType({id:7, name: "PaperCup",
     quantityUnit: "pc",
     supplyUnit: "box",
-    quantityPerSupplyUnit: 100,
-    purchasePrice: 2.5
+    quantityPerSupplyUnit: 100,  // pieces per box
+    purchasePrice: 2.5,  // for a box
+    stockQuantity: 0
+  });
+  const oit = new OutputItemType({id:2, name: "Lemonade",
+    quantityUnit: "ltr",
+    supplyUnit: "cup",
+    quantityPerSupplyUnit: 0.25,  /// in quantity units (ltr)
+    salesPrice: 1.5,  // e.g., USD
+    batchSize: 3.5,  // in quantity units (1 pitcher = 3.5 liters)
+    stockQuantity: 0,  // in quantity units
+    bomItemsPerBatch: {"Lemon": 3, "Water": 2.5, "IceCubes": 20, "Sugar": 0.3},
+    packItemsPerSupplyUnit: {"PaperCup": 1},
+    stockQuantity: 0
+  });
+  const ls = new SingleProductCompany({id:1, name: "LemonadeStand",
+    productType: oit,  // Lemonade
+    liquidity: 100,
+    fixedCostPerDay: 50
   });
   // Schedule initial events
   sim.schedule( new StartOfDay({occTime: 8, company: ls}));

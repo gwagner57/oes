@@ -10,8 +10,6 @@ class StartOfDay extends eVENT {
     const dailyDemandForecast = this.company.getDemandForecast();
     // plan today's production and create replenishment order
     const replOrder = this.company.planProductionQuantityAndReplenishmentOrder( dailyDemandForecast);
-    // plan today's sales price
-    this.company.planSalesPrice( dailyDemandForecast);
     // schedule delivery of entire replenishment order
     followupEvents.push( new DailyDelivery({
       delay: 2,  // 2 hours later

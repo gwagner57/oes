@@ -42,23 +42,31 @@ class oBJECT {
   }
   // overwrite/improve the standard toString method
   toString() {
-    var Class = this.constructor,
-        str = Class.name + `-${this.id}{ `,
-        decPl = oes.defaults.simLogDecimalPlaces,
-        i=0, valStr="";
-    Object.keys( this).forEach( function (prop) {
-      var propLabel = (Class.labels && Class.labels[prop]) ? Class.labels[prop] : "",
+    const Class = this.constructor,
+        labels = Class.labels,
+        decPl = oes.defaults.simLogDecimalPlaces;
+    var i=0, valStr="", str="";
+    // suppress display, if class name is not specified in "labels"
+    if (!labels?.className) return "";
+    if (this.name) str = `${this.name}{ `;  // display object name
+    else str = (labels?.className || Class.name) + `-${this.id}{ `;
+    for (const prop of Object.keys( this)) {
+      if (!labels || !labels[prop]) continue;
+      const propLabel = labels[prop],
           val = this[prop];
       if (typeof val === "number" && !Number.isInteger( val)) {
         valStr = String( math.round( val, decPl));
       } else if (Array.isArray( val)) {
         valStr = "["+ val.map( v => v.id).toString() +"]";
+      } else if (typeof val === "object") {
+        if (val instanceof oBJECT) valStr = String( val.id);
+        else valStr = JSON.stringify( val); //"{"+ val.toString() +"}";
       } else valStr = JSON.stringify( val);
       if (propLabel && val !== undefined) {
         str += (i>0 ? ", " : "") + propLabel +":"+ valStr;
         i = i+1;
       }
-    }, this);
+    }
     return str +"}";
   }
 }

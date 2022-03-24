@@ -4,3 +4,4 @@ class InputItemType extends ItemType {
     this.purchasePrice = purchasePrice;
   }
 }
+InputItemType.labels = {"className":"InItem", "stockQuantity":"qty"};

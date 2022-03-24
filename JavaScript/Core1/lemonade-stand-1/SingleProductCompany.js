@@ -1,10 +1,9 @@
 class SingleProductCompany extends oBJECT {
-  constructor({ id, name, productType, inputInventoryItemTypes, liquidity, fixedCostPerDay }) {
+  constructor({ id, name, productType, liquidity, fixedCostPerDay }) {
     super( id, name);
-    this.productType = typeof productType === "object" ?
-        productType : sim.objects.get( productType);
-    // a map of itemTypeName keys to quantity values like {"Lemon":5, ...}
-    this.inputInventoryItemTypes = inputInventoryItemTypes;
+    this.productType = typeof productType === "object" ? productType :
+        typeof productType === "string" ? sim.namedObjects.get( productType) :
+            sim.objects.get( productType);
     this.liquidity = liquidity;
     this.fixedCostPerDay = fixedCostPerDay;  // Includes labor cost and facilities cost
     //*** statistics variables ***
@@ -28,7 +27,8 @@ class SingleProductCompany extends oBJECT {
     }
     return demandForecast;
   }
-  computeBatchCost( bom) {  // "bom" maps input item IDs/names to qauntities
+  computeProductBatchCost() {  // "bom" maps input item IDs/names to quantities
+    const bom = this.productType.bomItemsPerBatch;
     var cost=0;
     for (const inpItemName of Object.keys( bom)) {
       const inpItem = sim.namedObjects.get( inpItemName);
@@ -36,60 +36,60 @@ class SingleProductCompany extends oBJECT {
     }
     return cost;
   }
-  computeReplenishmentOrder( planProdQty) {
-    var inpInvItems = this.inputInventoryItemTypes,
-        bom = this.productType.bomItemsPerBatch,
-        replenOrder={}, replenCost=0;
-    // compute replenishment order quantities
-    for (const inpItemName of Object.keys( bom)) {
-      const inpItem = sim.namedObjects.get( inpItemName),
-            requiredQty = planProdQty * bom[inpItemName],
-            orderQty = Math.max( requiredQty - inpInvItems[inpItemName], 0);
-      replenOrder[inpItemName] = Math.ceil( orderQty / inpItem.quantityPerSupplyUnit);
-      replenCost += replenOrder[inpItemName] * inpItem.purchasePrice;
-    }
-    replenOrder.cost = replenCost;
-    return replenOrder;
-  }
-  // plan production quantity in number of batches (e.g. pitchers)
+  /**
+   Plan production quantity in number of batches (e.g. pitchers)
+   */
   planProductionQuantityAndReplenishmentOrder( demandForecast) {
+    function computeReplenishmentOrder( prodType, planProdQty) {
+      const bom = prodType.bomItemsPerBatch,
+            packBom = prodType.packagingItemsPerSupplyUnit;
+      var replenOrder={}, replenCost=0;
+      // compute order quantities for production input replenishment
+      for (const itemName of Object.keys( bom)) {
+        const item = sim.namedObjects.get( itemName),
+            requiredQty = planProdQty * bom[itemName],
+            orderQty = Math.max( requiredQty - item.stockQuantity, 0);
+        // order quantities in supply units
+        replenOrder[itemName] = Math.ceil( orderQty / item.quantityPerSupplyUnit);
+        replenCost += replenOrder[itemName] * item.purchasePrice;
+      }
+      // compute order quantities for packaging materials replenishment
+      for (const itemName of Object.keys( packBom)) {
+        const item = sim.namedObjects.get( itemName),
+            requiredQty = (planProdQty * prodType.batchSize) / prodType.quantityPerSupplyUnit * packBom[itemName],
+            orderQty = Math.max( requiredQty - item.stockQuantity, 0);
+        // order quantities in supply units
+        replenOrder[itemName] = Math.ceil( orderQty / item.quantityPerSupplyUnit);
+        replenCost += replenOrder[itemName] * item.purchasePrice;
+      }
+      replenOrder.cost = replenCost;
+      return replenOrder;
+    }
     // in number of batches (e.g. pitchers)
     let planProdQty = Math.ceil( demandForecast * this.productType.quantityPerSupplyUnit /
             this.productType.batchSize);
     // compute replenishment order quantities and cost
-    let replenOrder = this.computeReplenishmentOrder( planProdQty);
+    let replenOrder = computeReplenishmentOrder( this.productType, planProdQty);
     // decrease planProdQty if required by budget constraints
     if (replenOrder.cost > this.liquidity) {
-      const batchCost = this.computeBatchCost( this.productType.bomItemsPerBatch);
+      const batchCost = this.computeProductBatchCost();
       planProdQty = Math.floor( this.liquidity / batchCost);
-      replenOrder = this.computeReplenishmentOrder( planProdQty);
+      replenOrder = computeReplenishmentOrder( this.productType, planProdQty);
     }
     this.productType.plannedProductionQuantity = planProdQty;
     return replenOrder;
   }
-  planSalesPrice( demandForecast) {
-    const expectedProfitRate = 0.1;
-    const batchVariableCosts = this.computeBatchCost( this.productType.bomItemsPerBatch);
-    const supplyUnitVariableCosts = batchVariableCosts / this.productType.batchSize *
-        this.productType.quantityPerSupplyUnit;
-    const supplyUnitCosts = supplyUnitVariableCosts +
-        this.fixedCostPerDay / demandForecast;
-    const price = supplyUnitCosts * (1 + expectedProfitRate);
-    this.productType.salesPrice = Math.round( 100 * price) / 100;
-  }
   performProduction() {
     const prodType = this.productType,
           bom = prodType.bomItemsPerBatch,
-          planProdQty = prodType.plannedProductionQuantity,
-          inpInvItems = this.inputInventoryItemTypes;
-    // subtract inputs from inventory
-    for (const itemId of Object.keys( bom)) {
-      const qty = inpInvItems[itemId] - bom[itemId] * planProdQty;
-      // round to 2 decimal places
-      inpInvItems[itemId] = Math.round( 100 * qty) / 100;
+          planProdQty = prodType.plannedProductionQuantity;
+    // subtract production inputs from inventory
+    for (const itemName of Object.keys( bom)) {
+      const item = sim.namedObjects.get( itemName);
+      item.stockQuantity -= bom[itemName] * planProdQty;
     }
-    // add product output to inventory
+    // put production output to inventory
     prodType.stockQuantity = planProdQty * prodType.batchSize;
   }
 }
-SingleProductCompany.labels = {"liquidity":"liq"};
+SingleProductCompany.labels = {"className":"SPC", "liquidity":"liq"};
