@@ -32,7 +32,7 @@ sim.model.networkNodes = {
  ********************************************************/
 sim.scenario.durationInSimTime = 5*60;
 sim.scenario.title = "Default scenario.";
-sim.scenario.description = "The default scenario has 2 order takers, 10 pizza makers, 5 ovens, and 20 delivery scooters.";
+sim.scenario.description = "The default scenario has 2 order takers, 6 pizza makers, 3 ovens, and 10 delivery scooters.";
 sim.scenario.setupInitialState = function () {
   const ot1 = new OrderTaker({id: 1, name:"ot1", status: rESOURCEsTATUS.AVAILABLE}),
       ot2 = new OrderTaker({id: 2, name:"ot2", status: rESOURCEsTATUS.AVAILABLE}),
@@ -57,7 +57,7 @@ sim.scenarios[1] = {
   title: "Model variant: pizza makers can also take orders",
   description: `<p>Based on the default scenario (with 2 order takers, 6 pizza makers, 
                  3 ovens, and 10 delivery scooters), in this model variant the 
-                 pizza makers are used as an <em>alternative resource pool</em> for order taking.
+                 pizza makers are used as an <em>alternate resource pool</em> for order taking.
                  This means that when all order takers are busy and a new order call comes in,
                  an available pizza maker can take the call.</p>`,
   setupInitialState: function () {

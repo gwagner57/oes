@@ -5,7 +5,7 @@ class Delivery extends eVENT {
     this.receiver = receiver;
   }
   onEvent() {
-    var followupEvents=[];
+    const followupEvents=[];
     this.receiver.stockQuantity += this.quantity;
     if (sim.model.p.reviewPolicy === "continuous") {
       // schedule another Delivery if stock level is not raised above reorder level

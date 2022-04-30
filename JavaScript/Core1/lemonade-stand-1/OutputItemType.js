@@ -12,5 +12,5 @@ class OutputItemType extends ItemType {
     this.plannedProductionQuantity = 0;  // in number of batches
   }
 }
-OutputItemType.labels = {"className":"OutItem", "salesPrice":"price", "stockQuantity":"qty",
+OutputItemType.labels = {"className":"OutItem", "stockQuantity":"qty",
     "plannedProductionQuantity":"planProdQty"};

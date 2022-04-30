@@ -97,7 +97,7 @@ class rESOURCEpOOL {
   }
   allocateAll() {
     if (this.availResources) {  // individual pool
-      let allocatedRes = [...this.availResources];
+      let allocatedRes = [...this.availResources];  // clone array
       for (const res of this.availResources) {
         res.status = rESOURCEsTATUS.BUSY;
         this.busyResources.push( res);
@@ -105,6 +105,19 @@ class rESOURCEpOOL {
       this.availResources.length = 0;
       return allocatedRes;
     } else this.available = 0;  // count pool
+  }
+  allocateById( id) {
+    const index = this.availResources.findIndex( res => res.id === id);
+    if (index >= 0) {
+      const allocatedRes = this.availResources[index];
+      allocatedRes.status = rESOURCEsTATUS.BUSY;
+      this.busyResources.push( allocatedRes);
+      // discard from availResources
+      this.availResources.splice( index, 1);
+      return allocatedRes;
+    } else {
+      return null;
+    }
   }
   allocate( card=1) {
     var rP=null;
@@ -201,7 +214,7 @@ class nODE extends oBJECT {
     // a map with node names as keys and conditions as values for OR/AND splitting
     if (successorNodeNames) this.successorNodeNames = successorNodeNames;
   }
-  getSuccessorNode() {
+  getSuccessorNode( acty) {
     //TODO: node.successorNodeNames may be a map from names to conditions for (X)OR/AND splitting
     let succNode = null;
     if (this.successorNode || this.successorNodeName || this.successorNodeExpr) {
@@ -210,7 +223,7 @@ class nODE extends oBJECT {
       } else if (typeof this.successorNodeName === "function") {
         succNode = sim.scenario.networkNodes[this.successorNodeName()];
       } else if (typeof this.successorNodeExpr === "function") {
-        const succActyTypeName = this.successorNodeExpr();
+        const succActyTypeName = this.successorNodeExpr( acty);
         const successorNodeName = oes.getNodeNameFromActTypeName(succActyTypeName);
         succNode = sim.scenario.networkNodes[successorNodeName];
       }
@@ -218,7 +231,7 @@ class nODE extends oBJECT {
     return succNode;
   }
   toString() {
-    return "";  // overwrite the default event serialization
+    return "";  // overwrite the default serialization
   }
 }
 /**
@@ -266,7 +279,7 @@ class eVENTnODE extends nODE {
  *
  * In simple cases, a model does not specify an AN explicitly, but only implicitly by
  * constructing exactly one node for each event type and activity type. In this case,
- * the nodes resource roles (including the performer) and duration are provided by the
+ * the node's resource roles (including the performer) and duration are provided by the
  * activity type.
  *
  * An activity node may have a "duration" attribute slot with a fixed value or a (random
@@ -357,7 +370,10 @@ class aCTIVITYnODE extends nODE {
     sim.FEL.add( new aCTIVITYsTART({plannedActivity: acty}));
   }
   toString() {
-    var str = this.name + `{ tasks:${this.tasks.length}}`;
+    var str="";
+    if (sim.Classes[this.activityTypeName].labels?.className) {
+      str = this.name + `{ tasks:${this.tasks.length}}`;
+    }
     return str;
   }
 }
@@ -606,7 +622,7 @@ class aCTIVITYeND extends eVENT {
     }
     // execute this code only for AN activity nodes, and not for PN nodes
     if (node.constructor === aCTIVITYnODE) {  // isDirectInstanceOf
-      const succNode = node.getSuccessorNode();
+      const succNode = node.getSuccessorNode( this.activity);
       if (succNode) {
         const SuccAT = sim.Classes[succNode.activityTypeName];
         const succActy = new SuccAT({node: succNode});

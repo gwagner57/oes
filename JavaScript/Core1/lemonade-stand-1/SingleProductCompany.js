@@ -19,11 +19,7 @@ class SingleProductCompany extends oBJECT {
     if (N < 3) {  // buffer still too empty
       demandForecast = DailyDemand.quantity();
     } else  {  // Simple Exponential Smoothing (SES) with simple moving average
-      for (let i=0; i < N; i++) {
-        const val = demandHistory[(demandHistory.first+i) % demandHistory.size];
-        sum += val;
-      }
-      demandForecast = Math.ceil( sum / N);
+      demandForecast = Math.ceil( demandHistory.getMovingAverage());
     }
     return demandForecast;
   }

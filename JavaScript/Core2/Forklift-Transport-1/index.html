@@ -2,15 +2,15 @@
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="UTF-8" />
-    <title>Lemonade-Stand-1 Discrete Event Simulation Example</title>
+    <title>Forklift-Transport-1</title>
     <meta content="width=device-width, initial-scale = 1.0" name="viewport" />
-    <link href="https://sim4edu.com/oesjs/core1/lemonade-stand-1/" rel="canonical" />
-    <meta name="description" content="A simulation of a lemonade seller that makes lemonade in pitchers and sells it in paper cups at a stand in a street market."/>
-    <link href="../css/index.css" rel="stylesheet" />
+    <link href="https://sim4edu.com/oesjs/core2/Forklift-Transport-1" rel="canonical" />
+    <meta name="description" content="A simulation about a forklift transport operation, hauling incoming products from an arrival area to a storage area."/>
+    <link href="../index.css" rel="stylesheet" />
     <script src="../lib/math.js"></script>
     <script src="../lib/util.js"></script>
     <script src="../lib/idb5.js"></script>
-    <script src="../oesjs-core1/simulatorUI.js"></script>
+    <script src="../oesjs-core2/simulatorUI.js"></script>
     <script>/*<![CDATA[*/
    // Create initial objects/maps/arrays
    const sim = Object.create(null); // instead of {}
@@ -24,29 +24,22 @@
  /*]]>*/</script>
     <script src="simulation.js"></script>
   </head>
+
   <body>
   <div><small>An <em><a href="https://gwagner57.github.io/oes/">Object Event Simulation (OES)</a></em> example model.
-   You can download and inspect its code from the <a href="https://github.com/gwagner57/oes/tree/master/JavaScript/Core1">OES
+   You can download and inspect its code from the <a href="https://github.com/gwagner57/oes/tree/master/JavaScript/Core2">OES
    GitHub repo</a>.</small></div>
-  <!--
-  <figure class="right"><img alt="Process Design Model" src="img/PDM.svg" width="600" /></figure>
-  -->
-  <h1>Lemonade-Stand-1 <a href="description.html">Read more...</a><br/>
-      <span class="subheading">A Discrete Event Simulation Model of a Manufacturing Company in a Monopoly Market</span></h1>
+  <figure class="right"><img alt="Process Design Model" src="img/CPM.svg" width="600" /></figure>
+  <h1>Forklift-Transport-1 <a href="description.html">Read more...</a></h1>
   <p id="copyright">© 2022 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
    Brandenburg University of Technology, Germany.</p>
-  <p>A lemonade seller makes lemonade in pitchers and sells it in paper cups at a stand in a street market.
-   Each day consists of the following process steps and phases:</p>
-  <ol>
-   <li>The day starts with making planning decisions (demand forecasting and production planning)
-    and purchasing the required input materials (lemons, sugar, etc.).</li>
-   <li>Some time later, the ordered input materials are delivered, the planned quantity of lemonade is produced and the stand is opened.</li>
-   <li>Then, customers arrive randomly and order a cup of lemonade. As long as there is still lemonade in stock,
-       customer orders are served.</li>
-   <li>At the end of the day, the lemonade stand is closed and the remaining lemonade and ice cubes are dumped.</li>
-  </ol>
+  <p>In a forklift transport operation, incoming products are hauled from an arrival area to a storage area.
+    This modeling problem has been posted by Noorjax Consulting as their
+      <a href="https://noorjax.com/2022/04/22/anylogic-contest-2/">AnyLogic Contest #2</a>.</p>
+  <p>Our (non-spatial) model for this problem, called <em>Forklift-Transport-1</em>, is described by the
+      DPMN process diagram to the right.</p>
   <h2 id="scenarioTitle">Default scenario</h2>
-  <p id="scenarioDescription">The default scenario runs for 40 days.</p>
+  <p id="scenarioDescription">The default scenario has 4 forklifts and 6 operators.</p>
   <form id="run">
    <div><label>Select scenario: <select name="selScen" onchange="onChangeOfScenSelect()"></select></label></div>
    <div><button onclick="run()" type="button">Run</button>
@@ -71,6 +64,5 @@
    <tbody></tbody>
   </table>
   <p id="execInfo"></p>
-  <script src="../oesjs-core1/index.js"></script>
-</body>
+  <script src="../oesjs-core2/index.js"></script></body>
 </html>

@@ -15,8 +15,9 @@ sim.model.objectTypes = ["SingleProductShop"];
 sim.model.eventTypes = ["DailyDemand", "Delivery"];
 // Model parameters
 sim.model.p.reviewPolicy = "periodic";  // "continuous" or "periodic"
-sim.model.p.targetInventory = 100;
-sim.model.p.reorderInterval = 3;
+sim.model.p.reorderPoint = 50;  // used for continuous review policy
+sim.model.p.targetInventory = 80;  // used for continuous and periodic review policy
+sim.model.p.reorderInterval = 3;  // used for periodic review policy
 /*******************************************************
  Initial State
 ********************************************************/
@@ -25,8 +26,8 @@ sim.scenario.setupInitialState = function () {
   const tvShop = new SingleProductShop({
     id: 1,
     name:"TV Shop",
-    stockQuantity: 80,
-    reorderPoint: 50,
+    stockQuantity: 70,
+    reorderPoint: sim.model.p.reorderPoint,
     targetInventory: sim.model.p.targetInventory,
     reorderInterval: sim.model.p.reorderInterval
   });
@@ -37,6 +38,7 @@ sim.scenario.setupInitialState = function () {
  Statistics variables
 ********************************************************/
 sim.model.setupStatistics = function () {
+  sim.stat.totalSales = 0;
   sim.stat.nmrOfStockOuts = 0;
   sim.stat.lostSales = 0;
   sim.stat.serviceLevel = 0.0;
@@ -56,13 +58,14 @@ sim.experimentTypes[0] = {
 };
 sim.experimentTypes[1] = {
   id: 1,
-  title: "Parameter variation experiment for exploring combinations of reorderInterval, targetInventory and reviewPolicy",
+  title: "Parameter variation experiment for exploring combinations of reviewPolicy, reorderInterval, reorderPoint and targetInventory",
   nmrOfReplications: 50,
   //seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012],
   parameterDefs: [
     {name:"reviewPolicy", values:["continuous","periodic"]},
     {name:"reorderInterval", values:[2,3,4]},
     {name:"targetInventory", startValue:80, endValue:100, stepSize:10},
+    {name:"reorderPoint", startValue:40, endValue:60, stepSize:10},
   ]
 };
 /*

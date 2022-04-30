@@ -132,8 +132,6 @@ figure.right {
       <title>Special Issues in Activity-Based Modeling</title>
     </head>
 
-    <section href="ChActivityBasedModeling/Resources-out-of-order.html"/>
-
     <section href="ChActivityBasedModeling/Waiting-Timeouts.html"/>
 
     <section href="ChActivityBasedModeling/Admissible-Resources.html"/>

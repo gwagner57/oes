@@ -7,7 +7,7 @@ const jsBundle = function () {
 	//"OES-ProcessingNetworks.js", 
 	"OES-Agents.js", "simulator.js"
   ])
-    .pipe( concat('core4-oes.js'))
+    .pipe( concat('core4a-oes.js'))
     .pipe( dest('.'));
 };
 

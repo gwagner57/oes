@@ -76,10 +76,11 @@
     </ol><p>This creates only a small security risk because the important web
   security policy called "CORS" is only disabled for file URLs, but not for
   normal URLs.</p><p>For other browsers, like Chrome, you need to install a
-  local HTTP server and load your app's webpages from that local server, or
-  run them via WebStorm (which has a built-in local server), because the only
-  option for loading ES6 modules from the local file system in Chrome would be
-  to disable the CORS policy completely (see <a
+  local HTTP server and load your simulation's <i>index.html</i> file from
+  that local server, or run it via the JS development tool <em>WebStorm</em>
+  (which has a built-in local server), because the only option for loading JS
+  worker files from the local file system in Chrome would be to disable the
+  CORS policy completely (see <a
   href="https://windowsreport.com/browser-not-support-cross-origin/"
   target="_top">how to disable CORS in Chrome</a>), but that would create a
   severe security risk and is therefore not

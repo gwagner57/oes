@@ -13,8 +13,8 @@
   id="a2">Clker-Free-Vector-Images</a></small></figure><p>A haul service
   company accepts requests for hauling large quantities of earth from a
   loading site to a dump site, using dump trucks and wheel loaders.</p><p>You
-  can <a href="https://sim4edu.com/oesjs/core2/Load-Haul-Dump-1/">run
-  this model</a> from the OES GitHub website, or inspect its <a
+  can <a href="https://sim4edu.com/oesjs/core2/Load-Haul-Dump-1/">run this
+  model</a> from the Sim4edu website, or inspect its <a
   href="https://github.com/gwagner57/oes/tree/master/JavaScript/Core2/Load-Haul-Dump-1">OESjs
   code</a>.</p><blockquote class="role-note"><p>Our <em>Load-Haul-Dump</em>
   modeling problem is based on the chapter "Example Model 2: Earthmoving
@@ -73,8 +73,9 @@
   end at the class <em>wheel loaders</em>).</p></details><details
   open="open"><summary>Conceptual Process Model</summary><p>The involved types
   of events and activities can be related with each other via
-  <em>resource-dependent activity scheduling arrows</em> and <em>event scheduling
-  arrows</em>, as shown in the following DPMN process diagram:</p><figure><img
+  <em>resource-dependent activity scheduling arrows</em> and <em>event
+  scheduling arrows</em>, as shown in the following DPMN process
+  diagram:</p><figure><img
   alt="A DPMN diagram showing a conceptual process model"
   src="../img/LoadHaulDump_CPMa.svg" width="600" /></figure><p>Notice that
   there are three types of arrows in this DPMN diagram:</p><ol>
@@ -96,20 +97,20 @@
       loading site</em> activities, one for each truck and each wheel loader
       assigned to the job.</li>
 
-      <li>A <strong><em>Resource-Dependent Activity Scheduling</em></strong> arrow,
-      like the one between <em>go to loading site</em> and <em>load</em>
-      activities, means that as soon as an activity of the preceding activity
-      type has been completed, a new planned activity is added to the queue of
-      planned activities of the succeeding type (and started as soon as all
-      required resources are available).</li>
+      <li>A <strong><em>Resource-Dependent Activity Scheduling</em></strong>
+      arrow, like the one between <em>go to loading site</em> and
+      <em>load</em> activities, means that as soon as an activity of the
+      preceding activity type has been completed, a new planned activity is
+      added to the queue of planned activities of the succeeding type (and
+      started as soon as all required resources are available).</li>
     </ol><p>The model shows that when a haul request comes in, the haul
   service company deploys multiple trucks and wheel loaders to the loading
   site, each of them performing a <em>go to loading site</em> activity, as
   indicated by the double arrow between the <i>haul requests</i> event circle
   and the <em>go to loading site</em> activity rectangle. Each of these
   activities leads to enqueuing a new planned <em>load</em> activity, as
-  indicated by the <em>resource-dependent activity scheduling arrow</em> from the
-  <em>go to loading site</em> activity shape to the <em>load</em> activity
+  indicated by the <em>resource-dependent activity scheduling arrow</em> from
+  the <em>go to loading site</em> activity shape to the <em>load</em> activity
   shape. Such an enqueued (planned) activity is going to be dequeued and
   started as soon as the required resources become available. This means that
   as soon as a wheel loader is available, the next <em>load</em> activity is

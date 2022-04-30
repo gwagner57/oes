@@ -15,8 +15,8 @@
   with the number of incoming calls, and then customers grow impatient and
   hang up the phone without placing an order.</p><p>For getting a quick
   impression, you can <a
-  href="https://sim4edu.com/oesjs/core2/Make-and-Deliver-Pizza-AN-1/">run
-  this model</a> from the OES GitHub website, or inspect its <a
+  href="https://sim4edu.com/oesjs/core2/Make-and-Deliver-Pizza-AN-1/">run this
+  model</a> from the Sim4edu website, or inspect its <a
   href="https://github.com/gwagner57/oes/tree/master/JavaScript/Core2/Make-and-Deliver-Pizza-1">OESjs
   code</a>. </p><p>Since there is a high number of lost orders due to long
   waiting times in the first model, assigning different responsibilities to
@@ -266,22 +266,20 @@
   with its underlying <abbr title="Object Event">OE</abbr> class design model,
   a <abbr title="Discrete Event Process Modeling Notation">DPMN</abbr> process
   design model provides a computationally complete specification of a
-  simulation model.</p></details></details><details open="open"><summary>Model
+  simulation model that can be directly turned into
+  implementations.</p></details></details><details open="open"><summary>Model
   Variant: Orders May Also Be Taken by Pizza Makers</summary><p>For decreasing
   the number of lost orders due to long waiting times, it is advisable to
   charge pizza makers with taking orders whenever no order taker is available.
   In resource management terminology, the organizational position <i>pizza
   maker</i> is redefined by adding the performer role <i>order taker</i> to
-  its portfolio of organizational roles. </p><p>In a conceptual <abbr
+  its portfolio of organizational roles. </p><p>In an <abbr
   title="Object Event">OE</abbr> class diagram, this can be expressed by
   adding a subtyping arrow from <i>pizza makers</i> to <i>order takers</i>
   categorized as an <em><b>alternative resource subtyping</b></em> arrow with
   the stereotype «ar», as shown in the following diagram:</p><figure><img
   alt="conceptual information model describing object, event and activity types"
   src="../img/Pizzeria-AlternativeResourceSubtyping_IDM.svg"
-  width="450" /></figure><p>The <abbr title="Object Event">OE</abbr> class
-  design diagram is extended in the same way, by adding an <em>alternative
-  resource subtyping</em> arrow from <i>PizzaMaker</i> to
-  <i>OrderTaker</i>.</p><p>The DPMN process design model is not affected by
-  this change.</p></details></body>
+  width="450" /></figure><p>The DPMN process model is not affected by this
+  change.</p></details></body>
 </html>
