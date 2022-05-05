@@ -29,7 +29,23 @@ class ProductArrival extends eVENT {
         }
       }
     }
+    if (!product.isAssigned) {  // try allocating FL+op by preemption
+      const ongoingActivities = Object.keys( sim.ongoingActivities).map(
+                actID => sim.ongoingActivities[actID]),
+            preemptionCandidates = ongoingActivities.filter(
+                acty => acty.constructor === DriveForkliftHome);
+      for (const acty of preemptionCandidates) {
+        if (Forklift.canTakeProductTypes[acty.forklift.type].includes( this.productType)) {
+          // preempt this DriveForkliftHome activity and reallocate its resources to
+          // a newly scheduled DriveForkliftFromHomeToArrivalArea activity
+          acty.operator.assignedProduct = product;
+          product.isAssigned = true;
+          // aCTIVITY.preempt( acty, DriveForkliftFromHomeToArrivalArea, PreemptionModeEL.QUIT)
+        }
+      }
+      // WalkBackHome
+    }
     return followupEvents;
   }
 }
-ProductArrival.eventRate = 60/60; // 60 product arrivals per hour
+ProductArrival.eventRate = sim.model.p.arrivalRatePerHour / 60;  // rate per minute

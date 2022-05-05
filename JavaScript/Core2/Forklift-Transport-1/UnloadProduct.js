@@ -4,7 +4,7 @@ class UnloadProduct extends aCTIVITY {
     this.operator = operator;
     this.forklift = forklift;
   }
-  static duration() {return 0.5;}
+  static duration() {return 0.25;}
 
   onActivityEnd() {
     const followupEvents = [];
@@ -27,7 +27,6 @@ UnloadProduct.resourceRoles = {
 }
 UnloadProduct.PERFORMER = "operator";
 
-UnloadProduct.successorNode = function ( acty) {
-  if (acty.operator.assignedProduct) return "DriveForkliftBackToArrivalArea";
-  else return "DriveForkliftHome";
-};
+UnloadProduct.successorNode = acty => acty.operator.assignedProduct ?
+    "DriveForkliftBackToArrivalArea" : "DriveForkliftHome";
+

@@ -4,27 +4,27 @@ class DriveForkliftHome extends aCTIVITY {
     this.operator = operator;
     this.forklift = forklift;
   }
-  // driving a distance of 300 m with 2 m/s
-  static duration() {return rand.triangular( 2.5, 4, 3);}
+  static duration() {return rand.triangular( 0.5*DriveForkliftHome.meanTime,
+      2*DriveForkliftHome.meanTime, DriveForkliftHome.meanTime);}
 
   onActivityEnd() {
     const followupEvents = [];
     const availableForklifts = sim.scenario.resourcePools["forklifts"].availResources;
-    let forklift = this.forklift;
     // check if there are suitable products waiting
     let product = sim.namedObjects.get("arrivalArea").productBuffer.getUnassignedProductByType(
         Forklift.canTakeProductTypes[this.forklift.type]);
     if (!product) {
-      // de-allocate forklift
-      sim.scenario.resourcePools["forklifts"].release( this.forklift);
       // check if there are other suitable forklifts for waiting products
       for (const fl of availableForklifts) {
         product = sim.namedObjects.get("arrivalArea").productBuffer.getUnassignedProductByType(
             Forklift.canTakeProductTypes[fl.type]);
         if (product) {
+          // de-allocate current forklift
+          sim.scenario.resourcePools["forklifts"].release( this.forklift);
           // allocate new forklift
           sim.scenario.resourcePools["forklifts"].allocateById( fl.id);
-          forklift = fl;
+          // a trick for passing the forklift to next activity DriveForkliftFromHomeToArrivalArea
+          this.forklift = fl;
           break;
         }
       }
@@ -32,6 +32,7 @@ class DriveForkliftHome extends aCTIVITY {
     if (product) {
       this.operator.assignedProduct = product;
       product.isAssigned = true;
+      /*
       // drive forklift to arrival area
       followupEvents.push( new aCTIVITYsTART({
         plannedActivity: new DriveForkliftFromHomeToArrivalArea({ operator: this.operator,
@@ -41,6 +42,7 @@ class DriveForkliftHome extends aCTIVITY {
       followupEvents.push( new aCTIVITYsTART({
         plannedActivity: new WalkBackHome({ operator: this.operator})
       }));
+      */
     }
     return followupEvents;
   }
@@ -50,3 +52,8 @@ DriveForkliftHome.resourceRoles = {
   "forklift": {range: Forklift}
 }
 DriveForkliftHome.PERFORMER = "operator";
+
+DriveForkliftHome.meanTime = sim.model.p.distanceDestinationAreaToForkliftHome /
+    sim.model.p.forkliftSpeed / 60;  // in min
+DriveForkliftHome.successorNode = acty => acty.operator.assignedProduct ?
+    "DriveForkliftFromHomeToArrivalArea" : "WalkBackHome";

@@ -14,39 +14,31 @@
   <h1><span>Forklift-Transport-1 Model Description</span> <a href="index.html">Back to simulation</a></h1>
   <p id="copyright">© 2022 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
    Brandenburg University of Technology, Germany.</p>
-  <figure class="right"><img alt="" src="img/CPM.svg" width="400" /></figure>
+  <figure class="right"><img alt="" src="img/CPM.svg" width="500" /></figure>
  </div>
  <section id="shortDescription">
    <p>This modeling problem has been posted by Noorjax Consulting as their
      <a href="https://noorjax.com/2022/04/22/anylogic-contest-2/">AnyLogic Contest #2</a>.</p>
   <p>A common process in any warehouse is the transport of objects with the help of forklifts driven by operators.
-   In this type of process, operators are trained to handle different types of forklifts, which, in turn, are designed
+   In this type of process, operators are trained to handle certain types of forklifts, which, in turn, are designed
    to transport certain types of items.</p>
-   <p>The detailed process is as follows, in which there are 4 locations/areas of interest: the product arrival area,
-     the operators home location, the forklifts home location and the destination area.</p>
+   <p>There are 4 locations/areas of interest: the product arrival area, the operators' home location, the forklifts' home location 
+    and the destination area.</p>
+   <p>The process consists of the following steps:</p>
    <ol>
-    <li>Different types of products arrive at the product arrival location with a defined arrival rate.</li>
-     <li>When a product arrives, an idle operator must find a forklift to transport this product, walk towards the forklift,
-      and drive the forklift towards the product, pick it up and transport it to the destination location.</li>
-     <li>The chosen operator must be capable of operating this type of forklift. There are many operator types,
-       and each one of them is trained to operate a subset of these forklift types.</li>
-     <li>The chosen forklift must be capable of transporting this type of product. There are many forklift types,
-       and each one of them is built to transport a subset of these product types.</li>
-     <li>Upon arrival at the destination, the product should be dropped off (and it can be discarded) and something
-       natural should happen according to what we would expect to happen in real life, for example:
-       <ol>
-        <li>If there are no more pallets that can be transported with the current forklift at the arrival location,
-          the operator will drive the forklift towards the forklifts home location, where he must evaluate if there is
-          another type of load that he can transport using a different type of forklift:
-          <ol>
-           <li>If there is, the operator will grab the specific forklift and transport the product towards the
-             destination location</li>
-            <li>If there is not, the operator will walk back to the operator’s home location.</li>
-          </ol></li>
-         <li>If there are more products at the arrival location that can be transported with the same forklift,
-           the operator must remain on the current forklift and go to the arrival location to transport the product
-           to the destination location.</li>
-       </ol></li>
+    <li>During the day, different types of products arrive at the product arrival area.</li>
+    <li>When a product arrives, if a forklift that can transport this product and an operator that can handle it are available, 
+	  the operator receives the transport order and walks to the forklift home location, drives the forklift to the product arrival area, 
+	  loads the product, transports it to the destination area and unloads it.</li>
+    <li>Otherwise, the newly arrived product is stored in the arrival area, waiting to be transported.</li>
+    <li>After products have been unloaded at the destination area, if there are still products waiting to be transported with 
+	  the same type of forklift, operators drive their forklift back to the arrival area and take care of the next transport order.
+	  Otherwise, they drive the forklift to its home location, where they check if there is still a product waiting that he can 
+	  transported with one of the available forklifts:
+      <ol>
+       <li>If there is one, the operator grabs one of the suitable forklifts and takes care of the transport order.</li>
+       <li>If there is none, the operator walks back to the home location.</li>
+      </ol></li>
    </ol>
  </section>
   <p>You can inspect the model's <a href="https://github.com/gwagner57/oes/tree/master/JavaScript/Core2/Forklift-Transport-1">OESjs

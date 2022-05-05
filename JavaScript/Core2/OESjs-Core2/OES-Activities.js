@@ -214,21 +214,28 @@ class nODE extends oBJECT {
     // a map with node names as keys and conditions as values for OR/AND splitting
     if (successorNodeNames) this.successorNodeNames = successorNodeNames;
   }
-  getSuccessorNode( acty) {
-    //TODO: node.successorNodeNames may be a map from names to conditions for (X)OR/AND splitting
-    let succNode = null;
-    if (this.successorNode || this.successorNodeName || this.successorNodeExpr) {
-      if (this.successorNode) {
-        succNode = this.successorNode;
-      } else if (typeof this.successorNodeName === "function") {
-        succNode = sim.scenario.networkNodes[this.successorNodeName()];
+  // acty is the activity that has been currently executed at the node
+  getSuccessorNodes( acty) {
+    let succNodes = [];
+    if (this.successorNodeName || this.successorNodeExpr || this.successorNodeNames) {
+      if (typeof this.successorNodeName === "string") {
+        succNodes.push( sim.scenario.networkNodes[this.successorNodeName]);
       } else if (typeof this.successorNodeExpr === "function") {
         const succActyTypeName = this.successorNodeExpr( acty);
         const successorNodeName = oes.getNodeNameFromActTypeName(succActyTypeName);
-        succNode = sim.scenario.networkNodes[successorNodeName];
+        succNodes.push( sim.scenario.networkNodes[successorNodeName]);
+      } else if (typeof this.successorNodeNames === "object") {
+        // a map from names to conditions for (X)OR/AND splitting
+        for (const nodeName of Object.keys(this.successorNodeNames)) {
+          if (this.successorNodeNames[nodeName](acty)) {
+            if (sim.scenario.networkNodes[nodeName]) {
+              succNodes.push( sim.scenario.networkNodes[nodeName]);
+            }
+          }
+        }
       }
     }
-    return succNode;
+    return succNodes;
   }
   toString() {
     return "";  // overwrite the default serialization
@@ -448,8 +455,11 @@ class aCTIVITY extends eVENT {
           resRoleNames = Object.keys( resourceRoles);
     for (const resRoleName of resRoleNames) {
       const resRole = resourceRoles[resRoleName];
-      if (resRoleNamesSharedWithSuccActivity?.includes( resRoleName) ||
-          resRole.deferredRelease) continue;
+      /* reallocatedResourceRoles can be used in user-programmed successor activity scheduling
+         when no AT.successorNode is specified
+       */
+      if (resRoleNamesSharedWithSuccActivity?.includes( resRoleName) || resRole.deferredRelease ||
+          this.reallocatedResourceRoles?.includes( resRoleName)) continue;
       if (resRole.countPoolName) {
         // release the used number of count pool resources
         resRole.resourcePool.release( resRole.card);
@@ -622,12 +632,12 @@ class aCTIVITYeND extends eVENT {
     }
     // execute this code only for AN activity nodes, and not for PN nodes
     if (node.constructor === aCTIVITYnODE) {  // isDirectInstanceOf
-      const succNode = node.getSuccessorNode( this.activity);
-      if (succNode) {
-        const SuccAT = sim.Classes[succNode.activityTypeName];
-        const succActy = new SuccAT({node: succNode});
-        const succResRoles = succNode.resourceRoles ?? SuccAT.resourceRoles,
-              succResRoleNames = Object.keys( succResRoles);
+      const succNodes = node.getSuccessorNodes( this.activity);
+      for (const succNode of succNodes) {
+        const SuccAT = sim.Classes[succNode.activityTypeName],
+            succActy = new SuccAT({node: succNode}),
+            succResRoles = succNode.resourceRoles ?? SuccAT.resourceRoles,
+            succResRoleNames = Object.keys( succResRoles);
         // By default, keep (individual) resources that are shared between AT and SuccAT
         for (const resRoleName of resRoleNames) {
           if (succResRoles[resRoleName]) {  // shared resource role
@@ -707,24 +717,28 @@ oes.constructImplicitlyDefinedActNet = function () {
   // construct the event nodes of the implicitly defined AN model
   for (const evtTypeName of sim.model.eventTypes) {
     const ET = sim.Classes[evtTypeName];
-    // the AN node name is the lower-cased type name suffixed by "{Evt|Act}Node"
+    // the AN node name is the lower-cased type name suffixed by "Node"
     const nodeName = oes.getNodeNameFromEvtTypeName( evtTypeName);
-    sim.model.networkNodes[nodeName] = {name: nodeName, typeName:"eVENTnODE", eventTypeName: evtTypeName};
-    if (ET.successorNode) {
-      sim.model.networkNodes[nodeName].successorNodeName =
-          oes.getNodeNameFromActTypeName( ET.successorNode);
+    const node = sim.model.networkNodes[nodeName] =
+        {name: nodeName, typeName:"eVENTnODE", eventTypeName: evtTypeName};
+    if (ET.successorNode) {  // providing the name of a successor activity type
+      if (typeof ET.successorNode === "string") {
+        node.successorNodeName = oes.getNodeNameFromActTypeName( ET.successorNode);
+      } else if (typeof ET.successorNode === "function") {
+        node.successorNodeExpr = ET.successorNode;
+      }
     }
   }
   // construct the activity nodes of the implicitly defined AN model
   for (const actTypeName of sim.model.activityTypes) {
     const AT = sim.Classes[actTypeName];
     AT.resourceRoles ??= Object.create(null);  // make sure AT.resourceRoles is defined
-    // the AN node name is the lower-cased type name suffixed by "{E|A}Node"
+    // the AN node name is the lower-cased type name suffixed by "Node"
     const nodeName = oes.getNodeNameFromActTypeName( actTypeName);
     const node = sim.model.networkNodes[nodeName] =
         {name: nodeName, typeName:"aCTIVITYnODE", activityTypeName: actTypeName};
     if (AT.waitingTimeout) node.waitingTimeout = AT.waitingTimeout;
-    if (AT.successorNode) {
+    if (AT.successorNode) {  // providing the name of a successor activity type
       if (typeof AT.successorNode === "string") {
         node.successorNodeName = oes.getNodeNameFromActTypeName( AT.successorNode);
       } else if (typeof AT.successorNode === "function") {

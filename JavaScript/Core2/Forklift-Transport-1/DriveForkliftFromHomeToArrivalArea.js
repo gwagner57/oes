@@ -4,12 +4,15 @@ class DriveForkliftFromHomeToArrivalArea extends aCTIVITY {
     this.operator = operator;
     this.forklift = forklift;
   }
-  // driving a distance of 300 m with 2 m/s
-  static duration() {return rand.triangular( 2.5, 4, 3);}
+  static duration() {return rand.triangular( 0.5*DriveForkliftFromHomeToArrivalArea.meanTime,
+      2*DriveForkliftFromHomeToArrivalArea.meanTime, DriveForkliftFromHomeToArrivalArea.meanTime);}
 }
 DriveForkliftFromHomeToArrivalArea.resourceRoles = {
   "operator": {range: Operator},
   "forklift": {range: Forklift}
 }
 DriveForkliftFromHomeToArrivalArea.PERFORMER = "operator";
+
+DriveForkliftFromHomeToArrivalArea.meanTime = sim.model.p.distanceForkliftHomeToArrivalArea /
+    sim.model.p.forkliftSpeed / 60;  // in min
 DriveForkliftFromHomeToArrivalArea.successorNode = "LoadProduct";

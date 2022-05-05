@@ -4,22 +4,15 @@ class WalkToForklift extends aCTIVITY {
     this.operator = operator;
     this.forklift = forklift;
   }
-  static duration() {return rand.triangular( 1, 3, 1.5);}
-/*
-  onActivityEnd() {
-    const followupEvents = [];
-    // start DriveForkliftFromHomeToArrivalArea activity
-    followupEvents.push( new aCTIVITYsTART({
-      plannedActivity: new DriveForkliftFromHomeToArrivalArea({ operator: this.operator,
-        forklift: this.forklift, product: this.product})
-    }));
-    return followupEvents;
-  }
-*/
+  static duration() {return rand.triangular( 0.5*WalkToForklift.meanTime,
+      2*WalkToForklift.meanTime, WalkToForklift.meanTime);}
 }
 WalkToForklift.resourceRoles = {
   "operator": {range: Operator},
   "forklift": {range: Forklift}
 }
 WalkToForklift.PERFORMER = "operator";
+
+WalkToForklift.meanTime = sim.model.p.distanceOperatorHomeToForkliftHome /
+    sim.model.p.operatorSpeed / 60;  // in min
 WalkToForklift.successorNode = "DriveForkliftFromHomeToArrivalArea";

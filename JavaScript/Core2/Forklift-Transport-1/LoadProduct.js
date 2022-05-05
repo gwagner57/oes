@@ -4,7 +4,7 @@ class LoadProduct extends aCTIVITY {
     this.operator = operator;
     this.forklift = forklift;
   }
-  static duration() {return 0.5;}
+  static duration() {return 0.25;}
 
   onActivityEnd() {
     const followupEvents = [];

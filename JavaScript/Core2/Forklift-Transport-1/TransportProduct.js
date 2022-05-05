@@ -4,12 +4,15 @@ class TransportProduct extends aCTIVITY {
     this.operator = operator;
     this.forklift = forklift;
   }
-  // driving a distance of 600 m with 2 m/s
-  static duration() {return rand.triangular( 5, 7, 5.5);}
+  static duration() {return rand.triangular( 0.5*TransportProduct.meanTime,
+      2*TransportProduct.meanTime, TransportProduct.meanTime);}
 }
 TransportProduct.resourceRoles = {
   "operator": {range: Operator},
   "forklift": {range: Forklift}
 }
 TransportProduct.PERFORMER = "operator";
+
+TransportProduct.meanTime = sim.model.p.distanceArrivalToDestinationArea /
+    sim.model.p.forkliftSpeed / 60;  // in min
 TransportProduct.successorNode = "UnloadProduct";
