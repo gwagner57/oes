@@ -17,4 +17,4 @@ DriveForkliftBackToArrivalArea.meanTime = sim.model.p.distanceArrivalToDestinati
     sim.model.p.forkliftSpeed / 60;  // in min
 DriveForkliftBackToArrivalArea.successorNode = "LoadProduct";
 
-DriveForkliftBackToArrivalArea.labels = {"className":"DriveFlBackToArrival"};
+DriveForkliftBackToArrivalArea.labels = {"className":"DriveFlBacktoArrival"};

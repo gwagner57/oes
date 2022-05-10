@@ -2,7 +2,7 @@
 <html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
 <head>
  <meta charset="UTF-8" />
- <title>Forklift-Transport-1 Simulation Model Description</title>
+ <title>Forklift-Transport-2 Simulation Model Description</title>
  <meta content="width=device-width, initial-scale = 1.0" name="viewport" />
  <meta content="en" http-equiv="Content-Language" />
  <meta content="A simulation about a forklift transport operation where incoming products are hauled from an arrival area to a storage area."
@@ -11,7 +11,7 @@
 </head>
 <body>
  <div id="frontMatter">
-  <h1><span>Forklift-Transport-1 Model Description</span> <a href="index.html">Back to simulation</a></h1>
+  <h1><span>Forklift-Transport-2 Model Description</span> <a href="index.html">Back to simulation</a></h1>
   <p id="copyright">© 2022 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
    Brandenburg University of Technology, Germany.</p>
   <figure class="right"><img alt="" src="img/CPM.svg" width="500" /></figure>
@@ -41,7 +41,7 @@
       </ol></li>
    </ol>
  </section>
-  <p>You can inspect the model's <a href="https://github.com/gwagner57/oes/tree/master/JavaScript/Core2/Forklift-Transport-1">OESjs
+  <p>You can inspect the model's <a href="https://github.com/gwagner57/oes/tree/master/JavaScript/Core2/Forklift-Transport-2">OESjs
   code</a> on the OES GitHub repo.</p>
  <details><summary>Conceptual Model</summary>
   <p>A company's forklift transport operation has resource pools for forklifts (FLs) and their operators.
@@ -85,7 +85,9 @@
      as shown in the following DPMN process diagram:</p>
     <figure><img alt="A DPMN diagram showing a conceptual process model" src="img/CPM.svg" width="600" />
     </figure>
-    <p>Notice that no activity node in this model needs a task queue, since their required resources are already
+    <p>Notice how <em>Drive FL home</em> and <em>Walk back home</em> activities can be preempted when a new product arrives
+     and no suitable forklift/operator combination is available.</p>
+    <p>Notice also that no activity node in this model needs a task queue, since their required resources are already
      allocated by their predecessor node. Consequently, no <em>resource-dependent activity scheduling</em>
      arrows are used in the diagram.</p>
    </details>

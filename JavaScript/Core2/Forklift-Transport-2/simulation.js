@@ -46,7 +46,7 @@ sim.scenario.setupInitialState = function () {
  ********************************************************/
 sim.scenarios[1] = {
   scenarioNo: 1,
-  title: "Scenario with an arrival rate of 48 products per hour, 4 forklifts and 4 operators",
+  title: "Scenario with an arrival rate of 45 products per hour, 4 forklifts and 4 operators",
   description: ``,
   setupInitialState: function () {
     const a1 = new Area({id: 1, name:"arrivalArea"}),
@@ -63,7 +63,7 @@ sim.scenarios[1] = {
     sim.scenario.resourcePools["forklifts"].availResources.push( fl1, fl2, fl3, fl4);
     sim.scenario.resourcePools["operators"].availResources.push( op1, op2, op3, op4);
     // Decreased arrival rate
-    sim.model.p.arrivalRatePerHour = 48;
+    sim.model.p.arrivalRatePerHour = 45;
 
   }
 };

@@ -2,9 +2,9 @@
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
  <meta charset="UTF-8" />
- <title>Forklift-Transport-1</title>
+ <title>Forklift-Transport-2</title>
  <meta content="width=device-width, initial-scale = 1.0" name="viewport" />
- <link href="https://sim4edu.com/oesjs/core2/forklift-transport-1" rel="canonical" />
+ <link href="https://sim4edu.com/oesjs/core2/forklift-transport-2" rel="canonical" />
  <meta name="description" content="A simulation about a forklift transport operation, hauling incoming products from an arrival area
   to a storage area."/>
  <link href="../css/index.css" rel="stylesheet" />
@@ -29,7 +29,10 @@ sim.experimentTypes = [];
  <div><small>An <em><a href="https://gwagner57.github.io/oes/">Object Event Simulation (OES)</a></em> example model.
   You can download and inspect its code from the <a href="https://github.com/gwagner57/oes/tree/master/JavaScript/Core2">OES
   GitHub repo</a>.</small></div>
- <h1>Forklift-Transport-1 <a href="description.html">Read more...</a></h1>
+ <hgroup>
+  <h1>Forklift-Transport-2 <a href="description.html">Read more...</a></h1>
+  <h2>With Preemption of DriveForkliftHome and WalkBackHome Activities</h2>
+ </hgroup>
  <p id="copyright">© 2022 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
   Brandenburg University of Technology, Germany.</p>
  <section id="modelDescription">
@@ -38,12 +41,14 @@ sim.experimentTypes = [];
    destination area. There are different types of operators and each of them can only handle specific types of forklifts,
    which, in turn, can only transport specific types of products. This modeling problem has been posted by Noorjax Consulting
    as their <a href="https://noorjax.com/2022/04/22/anylogic-contest-2/">AnyLogic Contest #2</a>.</p>
-  <p>The <em>Forklift-Transport-1</em> model, which is described by the DPMN process diagram to the right showing an
-   <em>Activity Network</em>, solves this problem.
-   See also <a href="https://sim4edu.com/oesjs/core2/forklift-transport-2/">Forklift-Transport-2</a> for a superior solution.</p>
+  <p>The <em>Forklift-Transport-2</em> model, which is based on
+   <a href="https://sim4edu.com/oesjs/core2/forklift-transport-1/">Forklift-Transport-1</a>
+   and described by the DPMN process diagram to the right showing an <em>Activity Network</em>, solves this problem.
+   Notice how <em>Drive FL home</em> and <em>Walk back home</em> activities can be preempted when a new product arrives
+   and no suitable forklift/operator combination is available.</p>
  </section>
-  <h2 id="scenarioTitle">Default scenario</h2>
-  <p id="scenarioDescription">The default scenario has 4 forklifts and 6 operators.</p>
+ <h2 id="scenarioTitle">Default scenario</h2>
+ <p id="scenarioDescription">The default scenario has 4 forklifts and 6 operators.</p>
   <form id="run">
    <div><label>Select scenario: <select name="selScen" onchange="onChangeOfScenSelect()"></select></label></div>
    <div><button onclick="run()" type="button">Run</button>
@@ -68,6 +73,5 @@ sim.experimentTypes = [];
    <tbody></tbody>
   </table>
   <p id="execInfo"></p>
-  <script src="../oesjs-core2/index.js"></script>
-</body>
+  <script src="../oesjs-core2/index.js"></script></body>
 </html>

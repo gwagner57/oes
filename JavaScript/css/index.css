@@ -4,7 +4,7 @@ body {
     font: 1rem 'Arial', sans-serif;
     line-height: 1.2;  
     max-width: 60em;
-    margin: 1em auto;
+    margin: 0 auto;
     padding: 8px;
 }
 h1 {
@@ -21,7 +21,7 @@ h1 > a {
     font-size: 50%
 }
 #copyright {
-  font-size: 80%;
+  font-size: 85%;
 }
 table {
     border: thin solid black;

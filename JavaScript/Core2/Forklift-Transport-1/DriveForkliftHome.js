@@ -32,17 +32,6 @@ class DriveForkliftHome extends aCTIVITY {
     if (product) {
       this.operator.assignedProduct = product;
       product.isAssigned = true;
-      /*
-      // drive forklift to arrival area
-      followupEvents.push( new aCTIVITYsTART({
-        plannedActivity: new DriveForkliftFromHomeToArrivalArea({ operator: this.operator,
-          forklift})
-      }));
-    } else {  // walk back home
-      followupEvents.push( new aCTIVITYsTART({
-        plannedActivity: new WalkBackHome({ operator: this.operator})
-      }));
-      */
     }
     return followupEvents;
   }
@@ -56,4 +45,4 @@ DriveForkliftHome.PERFORMER = "operator";
 DriveForkliftHome.meanTime = sim.model.p.distanceDestinationAreaToForkliftHome /
     sim.model.p.forkliftSpeed / 60;  // in min
 DriveForkliftHome.successorNode = acty => acty.operator.assignedProduct ?
-    "DriveForkliftFromHomeToArrivalArea" : "WalkBackHome";
+    "DriveForkliftToArrivalArea" : "WalkBackHome";

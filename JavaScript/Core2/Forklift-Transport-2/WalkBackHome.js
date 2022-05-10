@@ -22,9 +22,8 @@ class WalkBackHome extends aCTIVITY {
         // start WalkToForklift activity
         followupEvents.push( new aCTIVITYsTART({
             plannedActivity: new WalkToForklift({ operator: this.operator, forklift: fl})}));
-        // record operator as transferred/re-allocated resource for preventing its automated
-        // de-allocation in the aCTIVITYeND event routine
-        this.namesOfTransferredResRoles = ["operator"];
+        // record operator as re-allocated
+        this.reallocatedResourceRoles = ["operator"];
         break;
       }
     }

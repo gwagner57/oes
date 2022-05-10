@@ -378,7 +378,7 @@ class aCTIVITYnODE extends nODE {
   }
   toString() {
     var str="";
-    if (sim.Classes[this.activityTypeName].labels?.className) {
+    if (sim.Classes[this.activityTypeName].labels?.showNodeObjects) {
       str = this.name + `{ tasks:${this.tasks.length}}`;
     }
     return str;
@@ -449,17 +449,13 @@ class aCTIVITY extends eVENT {
     this.node = node;
     if (enqueueTime) this.enqueueTime = enqueueTime;
   }
-  releaseResources( resRoleNamesSharedWithSuccActivity) {
+  releaseResources() {
     const node = this.node,
           resourceRoles = node?.resourceRoles ?? this.constructor.resourceRoles,
           resRoleNames = Object.keys( resourceRoles);
     for (const resRoleName of resRoleNames) {
       const resRole = resourceRoles[resRoleName];
-      /* reallocatedResourceRoles can be used in user-programmed successor activity scheduling
-         when no AT.successorNode is specified
-       */
-      if (resRoleNamesSharedWithSuccActivity?.includes( resRoleName) || resRole.deferredRelease ||
-          this.reallocatedResourceRoles?.includes( resRoleName)) continue;
+      if (this.namesOfTransferredResRoles?.includes( resRoleName) || resRole.deferredRelease) continue;
       if (resRole.countPoolName) {
         // release the used number of count pool resources
         resRole.resourcePool.release( resRole.card);
@@ -495,6 +491,40 @@ class aCTIVITY extends eVENT {
       }
     }
   }
+  // mode=1 represents the preemption mode PreemptionModeEL.ABORT
+  static preempt( acty, succActyOrSuccActyType, mode=1) {
+    var succActy=null, SuccActyType=null;
+    const namesOfTransferredResources=[];  // just for logging
+    if (!Object.keys( sim.ongoingActivities).includes( String(acty.id)))
+      throw `Attempt to preempt an activity (of type ${acty.constructor.name}) that is not ongoing at ${sim.time.toFixed(2)}`;
+    if (succActyOrSuccActyType instanceof aCTIVITY) {
+      succActy = succActyOrSuccActyType;
+    } else {
+      SuccActyType = succActyOrSuccActyType;
+      succActy = new SuccActyType();
+    }
+    const actyResRoles = Object.keys( acty.constructor.resourceRoles),
+          succActyResRoles = Object.keys( succActy.constructor.resourceRoles);
+    acty.namesOfTransferredResRoles = [];
+    for (const resRole of succActyResRoles) {
+      if (succActy[resRole]) continue;  // has already been allocated
+      if (actyResRoles.includes( resRole)) {
+        // transfer resource
+        succActy[resRole] = acty[resRole];
+        acty.namesOfTransferredResRoles.push( resRole);
+        namesOfTransferredResources.push( acty[resRole].name);
+      } else {
+        console.error(`Attempt to preempt an activity (of type ${acty.constructor.name}) that does not 
+provide all required resources for its successor activity (of type ${succActy.constructor.name}) at ${sim.time.toFixed(2)}`);
+      }
+    }
+    console.log(`Preemption: ${acty.constructor.name} at ${sim.time.toFixed(2)} with transferred resources ${namesOfTransferredResources}`);
+    acty.preempted = true;
+    // change the scheduled activity end event to occur immediately
+    sim.FEL.getActivityEndEvent(acty).occTime = sim.time + sim.nextMomentDeltaT;
+    // return the preemption successor activity
+    return new aCTIVITYsTART({plannedActivity: succActy});
+  }
 }
 // define the exponential PDF as the default duration random variable
 aCTIVITY.defaultDurationMean = 1;
@@ -511,7 +541,6 @@ aCTIVITY.defaultDuration = function () {
  * type names of those activities, in which the object is currently participating).
  */
 class aCTIVITYsTART extends eVENT {
-  // allow
   constructor({occTime, delay, plannedActivity}) {
     super({occTime, delay});
     this.plannedActivity = plannedActivity;
@@ -522,7 +551,6 @@ class aCTIVITYsTART extends eVENT {
           resourceRoles = node.resourceRoles,
           actyTypeName = node.activityTypeName || "ProcActy",  // the activity's type/class
           followupEvents=[];
-    // set  new activity
     acty.startTime = this.occTime;
     // update statistics
     sim.stat.networkNodes[node.name].startedActivities++;
@@ -556,12 +584,14 @@ class aCTIVITYsTART extends eVENT {
     return followupEvents;
   }
   toString() {
-    var decPl = oes.defaults.simLogDecimalPlaces,
-        acty = this.plannedActivity, AT = acty.constructor,
-        evtTypeName = (AT.shortLabel || AT.name) + "Start",
-        evtStr="", slotListStr="";
-    Object.keys( AT.resourceRoles).forEach( function (resRoleName) {
-      if (AT.resourceRoles[resRoleName].range) {
+    const decPl = oes.defaults.simLogDecimalPlaces,
+        acty = this.plannedActivity,
+        AT = acty.constructor,  // the activity's type/class
+        labels = AT.labels,
+        evtTypeName = (labels?.className || AT.name) + "End";
+    var evtStr = "", slotListStr = "";
+    for (const resRoleName of Object.keys( acty.node.resourceRoles)) {
+      if (acty.node.resourceRoles[resRoleName].range) {  // individual resource
         const resObj = acty[resRoleName];
         let resObjStr = "";
         if (Array.isArray( resObj)) {
@@ -571,7 +601,7 @@ class aCTIVITYsTART extends eVENT {
         }
         slotListStr += resObjStr +", ";
       }
-    });
+    }
     evtStr = slotListStr ? `${evtTypeName}{ ${slotListStr}}` : evtTypeName;
     return `${evtStr}@${math.round(this.occTime,decPl)}`;
   }
@@ -588,7 +618,6 @@ class aCTIVITYeND extends eVENT {
           resourceRoles = node?.resourceRoles ?? AT.resourceRoles,
           resRoleNames = Object.keys( resourceRoles),
           followupEvents=[];
-    let namesOfSharedResRoles=[];
     // if there is an onActivityEnd procedure, execute it
     if (typeof acty.onActivityEnd === "function") {
       followupEvents.push(...acty.onActivityEnd());
@@ -607,7 +636,8 @@ class aCTIVITYeND extends eVENT {
             waitingTimeStat = nodeStat.waitingTime,
             cycleTimeStat = nodeStat.cycleTime,
             resUtilPerNode = nodeStat.resUtil;
-      nodeStat.completedActivities++;
+      if (acty.preempted) nodeStat.preemptedActivities++;
+      else nodeStat.completedActivities++;
       const waitingTime = acty.enqueueTime ? acty.startTime - acty.enqueueTime : 0;
       //waitingTimeStat.total += waitingTime;
       if (waitingTimeStat.max < waitingTime) waitingTimeStat.max = waitingTime;
@@ -630,40 +660,44 @@ class aCTIVITYeND extends eVENT {
         }
       }
     }
-    // execute this code only for AN activity nodes, and not for PN nodes
     if (node.constructor === aCTIVITYnODE) {  // isDirectInstanceOf
-      const succNodes = node.getSuccessorNodes( this.activity);
-      for (const succNode of succNodes) {
-        const SuccAT = sim.Classes[succNode.activityTypeName],
-            succActy = new SuccAT({node: succNode}),
-            succResRoles = succNode.resourceRoles ?? SuccAT.resourceRoles,
-            succResRoleNames = Object.keys( succResRoles);
-        // By default, keep (individual) resources that are shared between AT and SuccAT
-        for (const resRoleName of resRoleNames) {
-          if (succResRoles[resRoleName]) {  // shared resource role
-            succActy.resRoleNamesSharedWithPredActivity ??= [];
-            succActy.resRoleNamesSharedWithPredActivity.push( resRoleName);
-            if (typeof acty[resRoleName] === "object") {
-              // transfer/re-allocate individual resource to successor activity
-              succActy[resRoleName] = acty[resRoleName];
-            } else {
-              succActy[resRoleName] = true;  // keep anonymous countpool resource
+      // [execute this code only for AN activity nodes, and not for PN nodes]
+      if (!acty.preempted) {
+        const succNodes = node.getSuccessorNodes( this.activity);
+        // schedule successor activities according to network structure
+        for (const succNode of succNodes) {
+          //TODO: make this work for multiple successor nodes
+          const SuccAT = sim.Classes[succNode.activityTypeName],
+              succActy = new SuccAT({node: succNode}),
+              succResRoles = succNode.resourceRoles ?? SuccAT.resourceRoles,
+              succResRoleNames = Object.keys( succResRoles);
+          // By default, keep (individual) resources that are shared between AT and SuccAT
+          for (const resRoleName of resRoleNames) {
+            if (succResRoles[resRoleName]) {  // shared resource role
+              succActy.resRoleNamesSharedWithPredActivity ??= [];
+              succActy.resRoleNamesSharedWithPredActivity.push( resRoleName);
+              if (typeof acty[resRoleName] === "object") {
+                // transfer/re-allocate individual resource to successor activity
+                succActy[resRoleName] = acty[resRoleName];
+              } else {
+                succActy[resRoleName] = true;  // keep anonymous countpool resource
+              }
             }
           }
-        }
-        // assign variable for passing the list of shared resource roles
-        namesOfSharedResRoles = succActy.resRoleNamesSharedWithPredActivity;
-        // start or enqueue a successor activity according to the AN model
-        // are all successor activity resources already allocated (since included in activity resources)?
-        if (succResRoleNames.every( rn => resRoleNames.includes( rn))) {
-          // start successor activity with transferred resources
-          followupEvents.push( new aCTIVITYsTART({plannedActivity: succActy}));
-        } else {  // start/enqueue successor activity
-          succActy.startOrEnqueue();
+          // assign attribute for passing the list of transferred resource roles
+          acty.namesOfTransferredResRoles = succActy.resRoleNamesSharedWithPredActivity;
+          // start or enqueue a successor activity according to the AN model
+          // are all successor activity resources already allocated (since included in activity resources)?
+          if (succResRoleNames.every( rn => resRoleNames.includes( rn))) {
+            // start successor activity with transferred resources
+            followupEvents.push( new aCTIVITYsTART({plannedActivity: succActy}));
+          } else {  // start/enqueue successor activity
+            succActy.startOrEnqueue();
+          }
         }
       }
       // release all non-transferred resources of acty
-      acty.releaseResources( namesOfSharedResRoles);
+      acty.releaseResources();
       // if there are still planned activities in the task queue
       if (node.tasks.length > 0) {
         // if available, allocate required resources and start next activity
@@ -673,13 +707,14 @@ class aCTIVITYeND extends eVENT {
     return followupEvents;
   }
   toString() {
-    var decPl = oes.defaults.simLogDecimalPlaces,
-        acty = this.activity,
-        AT = acty.constructor,  // the activity's type/class
-        eventTypeName = (AT.shortLabel || AT.name) + "End",
-        evtStr = "", slotListStr = "";
-    Object.keys( acty.node.resourceRoles).forEach(function (resRoleName) {
-      if (acty.node.resourceRoles[resRoleName].range) {
+    const decPl = oes.defaults.simLogDecimalPlaces,
+          acty = this.activity,
+          AT = acty.constructor,  // the activity's type/class
+          labels = AT.labels,
+          evtTypeName = (labels?.className || AT.name) + "End";
+    var evtStr = "", slotListStr = "";
+    for (const resRoleName of Object.keys( acty.node.resourceRoles)) {
+      if (acty.node.resourceRoles[resRoleName].range) {  // individual resource
         const resObj = acty[resRoleName];
         let resObjStr = "";
         if (Array.isArray( resObj)) {
@@ -689,9 +724,9 @@ class aCTIVITYeND extends eVENT {
         }
         slotListStr += resObjStr +", ";
       }
-    });
-    if (slotListStr) evtStr = `${eventTypeName}{ ${slotListStr}}`;
-    else evtStr = eventTypeName;
+    }
+    if (slotListStr) evtStr = `${evtTypeName}{ ${slotListStr}}`;
+    else evtStr = evtTypeName;
     return `${evtStr}@${math.round(this.occTime, decPl)}`;
   }
 }
@@ -950,6 +985,7 @@ oes.initializeActNetStatistics = function () {
       if (typeof node.waitingTimeout === "function") nodeStat.waitingTimeouts = 0;
       nodeStat.startedActivities = 0;
       nodeStat.completedActivities = 0;
+      nodeStat.preemptedActivities = 0;
       // generic queue length statistics
       //nodeStat.queueLength.avg = 0.0;
       nodeStat.queueLength.max = 0;

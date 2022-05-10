@@ -34,9 +34,10 @@ class EventList {
     return nextEvents;
   }
   containsEventOfType( evtType) {
-    return this.events.some( function (evt) {
-      return evt.constructor.Name === evtType;
-    });
+    return this.events.some( evt => evt.constructor.name === evtType);
+  }
+  getActivityEndEvent( acty) {
+    return this.events.find( evt => evt.constructor.name === "aCTIVITYeND" && evt.activity === acty);
   }
   toString() {
     var str="";
