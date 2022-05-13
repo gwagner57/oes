@@ -8,13 +8,13 @@ if (typeof oes !== "object") {
   };
 }
 oes.ui.nodeStat = {
-  enqu: {title:"enqueued activities"},
+  enqu: {title:"enqueued tasks"},
   tmout: {title:"number of waiting timeouts (reneging)"},
   start: {title:"started activities"},
-  compl: {title:"completed activities"},
+  compl: {title:"completed/preempted activities"},
   qLen: {title:"maximum queue length"},
-  wTime: {title:"maximum waiting time"},
-  cTime: {title:"maximum cycle time"}
+  wTime: {title:"average/maximum waiting time"},
+  cTime: {title:"average/maximum cycle time"}
 };
 /*******************************************************
  Create a simulation log entry (table row)
@@ -141,10 +141,13 @@ oes.ui.showStatistics = function (stat) {
           rowEl.insertCell().textContent = nodeStat.waitingTimeouts;
         }
         rowEl.insertCell().textContent = nodeStat.startedActivities;
-        rowEl.insertCell().textContent = nodeStat.completedActivities;
+        rowEl.insertCell().textContent = nodeStat.preemptedActivities ?
+            nodeStat.completedActivities +"/"+ nodeStat.preemptedActivities : nodeStat.completedActivities;
         rowEl.insertCell().textContent = nodeStat.queueLength.max;
-        rowEl.insertCell().textContent = math.round( nodeStat.waitingTime.max, decPl);
-        rowEl.insertCell().textContent = math.round( nodeStat.cycleTime.max, decPl);
+        rowEl.insertCell().textContent = math.round( nodeStat.waitingTime.avg, decPl) +"/"+
+            math.round( nodeStat.waitingTime.max, decPl);
+        rowEl.insertCell().textContent = math.round( nodeStat.cycleTime.avg, decPl) +"/"+
+            math.round( nodeStat.cycleTime.max, decPl);
         rowEl.insertCell().textContent = JSON.stringify( nodeStat.resUtil);
       }
     }

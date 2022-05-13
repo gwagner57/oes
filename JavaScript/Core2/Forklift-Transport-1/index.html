@@ -32,42 +32,51 @@ sim.experimentTypes = [];
  <h1>Forklift-Transport-1 <a href="description.html">Read more...</a></h1>
  <p id="copyright">© 2022 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
   Brandenburg University of Technology, Germany.</p>
- <section id="modelDescription">
+ <div id="modelDescription">
   <figure class="right"><img alt="Process Design Model" src="img/CPM.svg" width="600" /></figure>
   <p>In a forklift transport operation, incoming products of different types are hauled from an arrival area to a
    destination area. There are different types of operators and each of them can only handle specific types of forklifts,
    which, in turn, can only transport specific types of products. This modeling problem has been posted by Noorjax Consulting
    as their <a href="https://noorjax.com/2022/04/22/anylogic-contest-2/">AnyLogic Contest #2</a>.</p>
-  <p>The <em>Forklift-Transport-1</em> model, which is described by the DPMN process diagram to the right showing an
-   <em>Activity Network</em>, solves this problem.
-   See also <a href="https://sim4edu.com/oesjs/core2/forklift-transport-2/">Forklift-Transport-2</a> for a superior solution.</p>
- </section>
-  <h2 id="scenarioTitle">Default scenario</h2>
-  <p id="scenarioDescription">The default scenario has 4 forklifts and 6 operators.</p>
+  <p>The <em>Forklift-Transport-1</em> model, which is described by the <a href="https://sim4edu.com/reading/des-engineering/">DPMN</a>
+   <em>Activity Network</em> diagram to the right, solves this problem. See also
+   <a href="https://sim4edu.com/oesjs/core2/forklift-transport-2/">Forklift-Transport-2</a> for a superior solution.</p>
+ </div>
+ <h2 id="scenarioTitle">Default scenario</h2>
+ <div id="scenarioDescription">
+  <p>The default scenario has 4 forklifts and 6 operators.</p>
+ </div>
+ <div id="upfrontUI">
   <form id="run">
    <div><label>Select scenario: <select name="selScen" onchange="onChangeOfScenSelect()"></select></label></div>
    <div><button onclick="run()" type="button">Run</button>
-     <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>
+    <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>
    <div><label>Simulation log <input name="log" type="checkbox" /></label></div>
    <div style="display: none"><label>Store exper. results <input name="storeExpRes" type="checkbox" /></label>
     <button onclick="exportExperResults()" type="button">Export exper. results</button>
    </div>
   </form>
-  <table style="display: none">
-      <caption>Simulation Log</caption>
-      <thead>
-        <tr>
-          <th>Step</th><th>Time</th><th>Current Events</th><th>System State</th><th>Future Events</th>
-        </tr>
-      </thead>
-      <tbody id="simLog"></tbody>
-  </table>
-  <p id="simInfo"></p>
-  <table id="statisticsTbl">
-   <caption></caption>
-   <tbody></tbody>
-  </table>
-  <p id="execInfo"></p>
-  <script src="../oesjs-core2/index.js"></script>
+  <details id=""><summary>Model parameters</summary>
+   <table>
+    <tbody id="modelParamsTbl"></tbody>
+   </table>
+  </details>
+ </div>
+ <table style="display: none">
+  <caption>Simulation Log</caption>
+  <thead>
+   <tr>
+    <th>Step</th><th>Time</th><th>Current Events</th><th>System State</th><th>Future Events</th>
+   </tr>
+  </thead>
+  <tbody id="simLog"></tbody>
+ </table>
+ <p id="simInfo"></p>
+ <table id="statisticsTbl">
+  <caption></caption>
+  <tbody></tbody>
+ </table>
+ <p id="execInfo"></p>
+ <script src="../oesjs-core2/index.js"></script>
 </body>
 </html>

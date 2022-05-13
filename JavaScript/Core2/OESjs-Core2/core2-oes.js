@@ -18,6 +18,8 @@ sim.scenarios = [];  // list of alternative scenarios
 sim.stat = Object.create(null); // map of statistics variables
 sim.experimentTypes = [];
 
+sim.config = Object.create(null);
+
 var oes = Object.create(null);  // cannot be const, since also defined in simulatorUI.js
 oes.defaults = {
   nextMomentDeltaT: 0.01,
@@ -34,20 +36,27 @@ oes.defaults = {
 class oBJECT {
   constructor( id, name) {
     this.id = id || sim.idCounter++;
-    if (name) this.name = name;  // optional
-    // add each new object to Map of simulation objects
-    sim.objects.set( this.id, this);
+    // add each new object to the Map of simulation objects by ID
+    sim.objects.set( id, this);
+    if (name) {  // name is optional
+      this.name = name;
+      // also add to the Map of simulation objects by name
+      sim.namedObjects.set( name, this);
+    }
   }
   // overwrite/improve the standard toString method
   toString() {
     const Class = this.constructor,
+          labels = Class.labels,
           decPl = oes.defaults.simLogDecimalPlaces;
     var i=0, valStr="", str="";
-    if (this.name) str = `${this.name}{ `;
-    else str = (Class.labels?.className || Class.name) + `-${this.id}{ `;
+    // suppress display, if class name is not specified in "labels"
+    if (!labels?.className) return "";
+    if (this.name) str = `${this.name}{ `;  // display object name
+    else str = (labels?.className || Class.name) + `-${this.id}{ `;
     for (const prop of Object.keys( this)) {
-      if (!Class.labels || !Class.labels[prop]) continue;
-      var propLabel = (Class.labels && Class.labels[prop]) ? Class.labels[prop] : "",
+      if (!labels || !labels[prop]) continue;
+      const propLabel = labels[prop],
           val = this[prop];
       if (typeof val === "number" && !Number.isInteger( val)) {
         valStr = String( math.round( val, decPl));
@@ -55,7 +64,7 @@ class oBJECT {
         valStr = "["+ val.map( v => v.id).toString() +"]";
       } else if (typeof val === "object") {
         if (val instanceof oBJECT) valStr = String( val.id);
-        else valStr = "{"+ val.toString() +"}";
+        else valStr = JSON.stringify( val); //"{"+ val.toString() +"}";
       } else valStr = JSON.stringify( val);
       if (propLabel && val !== undefined) {
         str += (i>0 ? ", " : "") + propLabel +":"+ valStr;
@@ -99,11 +108,12 @@ class eVENT {
   // overwrite/improve the standard toString method
   toString() {
     const Class = this.constructor,
-          eventTypeName = Class.labels?.className || Class.name,
+          labels = Class.labels,
+          eventTypeName = labels?.className || Class.name,
           decPl = oes.defaults.simLogDecimalPlaces;
     var slotListStr="", i=0, evtStr="", valStr="";
     Object.keys( this).forEach( function (prop) {
-      const propLabel = (Class.labels && Class.labels[prop]) ? Class.labels[prop] : "",
+      const propLabel = (labels && labels[prop]) ? labels[prop] : "",
             val = this[prop];
       if (propLabel && val !== undefined) {
         if (val instanceof oBJECT) valStr = String( val.id);
@@ -281,7 +291,7 @@ class rESOURCEpOOL {
   }
   allocateAll() {
     if (this.availResources) {  // individual pool
-      let allocatedRes = [...this.availResources];
+      let allocatedRes = [...this.availResources];  // clone array
       for (const res of this.availResources) {
         res.status = rESOURCEsTATUS.BUSY;
         this.busyResources.push( res);
@@ -289,6 +299,19 @@ class rESOURCEpOOL {
       this.availResources.length = 0;
       return allocatedRes;
     } else this.available = 0;  // count pool
+  }
+  allocateById( id) {
+    const index = this.availResources.findIndex( res => res.id === id);
+    if (index >= 0) {
+      const allocatedRes = this.availResources[index];
+      allocatedRes.status = rESOURCEsTATUS.BUSY;
+      this.busyResources.push( allocatedRes);
+      // discard from availResources
+      this.availResources.splice( index, 1);
+      return allocatedRes;
+    } else {
+      return null;
+    }
   }
   allocate( card=1) {
     var rP=null;
@@ -385,24 +408,31 @@ class nODE extends oBJECT {
     // a map with node names as keys and conditions as values for OR/AND splitting
     if (successorNodeNames) this.successorNodeNames = successorNodeNames;
   }
-  getSuccessorNode() {
-    //TODO: node.successorNodeNames may be a map from names to conditions for (X)OR/AND splitting
-    let succNode = null;
-    if (this.successorNode || this.successorNodeName || this.successorNodeExpr) {
-      if (this.successorNode) {
-        succNode = this.successorNode;
-      } else if (typeof this.successorNodeName === "function") {
-        succNode = sim.scenario.networkNodes[this.successorNodeName()];
+  // acty is the activity that has been currently executed at the node
+  getSuccessorNodes( acty) {
+    let succNodes = [];
+    if (this.successorNodeName || this.successorNodeExpr || this.successorNodeNames) {
+      if (typeof this.successorNodeName === "string") {
+        succNodes.push( sim.scenario.networkNodes[this.successorNodeName]);
       } else if (typeof this.successorNodeExpr === "function") {
-        const succActyTypeName = this.successorNodeExpr();
+        const succActyTypeName = this.successorNodeExpr( acty);
         const successorNodeName = oes.getNodeNameFromActTypeName(succActyTypeName);
-        succNode = sim.scenario.networkNodes[successorNodeName];
+        succNodes.push( sim.scenario.networkNodes[successorNodeName]);
+      } else if (typeof this.successorNodeNames === "object") {
+        // a map from names to conditions for (X)OR/AND splitting
+        for (const nodeName of Object.keys(this.successorNodeNames)) {
+          if (this.successorNodeNames[nodeName](acty)) {
+            if (sim.scenario.networkNodes[nodeName]) {
+              succNodes.push( sim.scenario.networkNodes[nodeName]);
+            }
+          }
+        }
       }
     }
-    return succNode;
+    return succNodes;
   }
   toString() {
-    return "";  // overwrite the default event serialization
+    return "";  // overwrite the default serialization
   }
 }
 /**
@@ -450,7 +480,7 @@ class eVENTnODE extends nODE {
  *
  * In simple cases, a model does not specify an AN explicitly, but only implicitly by
  * constructing exactly one node for each event type and activity type. In this case,
- * the nodes resource roles (including the performer) and duration are provided by the
+ * the node's resource roles (including the performer) and duration are provided by the
  * activity type.
  *
  * An activity node may have a "duration" attribute slot with a fixed value or a (random
@@ -541,7 +571,10 @@ class aCTIVITYnODE extends nODE {
     sim.FEL.add( new aCTIVITYsTART({plannedActivity: acty}));
   }
   toString() {
-    var str = this.name + `{ tasks:${this.tasks.length}}`;
+    var str="";
+    if (sim.Classes[this.activityTypeName].labels?.showNodeObjects) {
+      str = this.name + `{ tasks:${this.tasks.length}}`;
+    }
     return str;
   }
 }
@@ -610,14 +643,13 @@ class aCTIVITY extends eVENT {
     this.node = node;
     if (enqueueTime) this.enqueueTime = enqueueTime;
   }
-  releaseResources( resRoleNamesSharedWithSuccActivity) {
+  releaseResources() {
     const node = this.node,
           resourceRoles = node?.resourceRoles ?? this.constructor.resourceRoles,
           resRoleNames = Object.keys( resourceRoles);
     for (const resRoleName of resRoleNames) {
       const resRole = resourceRoles[resRoleName];
-      if (resRoleNamesSharedWithSuccActivity?.includes( resRoleName) ||
-          resRole.deferredRelease) continue;
+      if (this.namesOfTransferredResRoles?.includes( resRoleName) || resRole.deferredRelease) continue;
       if (resRole.countPoolName) {
         // release the used number of count pool resources
         resRole.resourcePool.release( resRole.card);
@@ -653,6 +685,40 @@ class aCTIVITY extends eVENT {
       }
     }
   }
+  // mode=1 represents the preemption mode PreemptionModeEL.ABORT
+  static preempt( acty, succActyOrSuccActyType, mode=1) {
+    var succActy=null, SuccActyType=null;
+    const namesOfTransferredResources=[];  // just for logging
+    if (!Object.keys( sim.ongoingActivities).includes( String(acty.id)))
+      throw `Attempt to preempt an activity (of type ${acty.constructor.name}) that is not ongoing at ${sim.time.toFixed(2)}`;
+    if (succActyOrSuccActyType instanceof aCTIVITY) {
+      succActy = succActyOrSuccActyType;
+    } else {
+      SuccActyType = succActyOrSuccActyType;
+      succActy = new SuccActyType();
+    }
+    const actyResRoles = Object.keys( acty.constructor.resourceRoles),
+          succActyResRoles = Object.keys( succActy.constructor.resourceRoles);
+    acty.namesOfTransferredResRoles = [];
+    for (const resRole of succActyResRoles) {
+      if (succActy[resRole]) continue;  // has already been allocated
+      if (actyResRoles.includes( resRole)) {
+        // transfer resource
+        succActy[resRole] = acty[resRole];
+        acty.namesOfTransferredResRoles.push( resRole);
+        namesOfTransferredResources.push( acty[resRole].name);
+      } else {
+        console.error(`Attempt to preempt an activity (of type ${acty.constructor.name}) that does not 
+provide all required resources for its successor activity (of type ${succActy.constructor.name}) at ${sim.time.toFixed(2)}`);
+      }
+    }
+    console.log(`Preemption: ${acty.constructor.name} at ${sim.time.toFixed(2)} with transferred resources ${namesOfTransferredResources}`);
+    acty.preempted = true;
+    // change the scheduled activity end event to occur immediately
+    sim.FEL.getActivityEndEvent(acty).occTime = sim.time + sim.nextMomentDeltaT;
+    // return the preemption successor activity
+    return new aCTIVITYsTART({plannedActivity: succActy});
+  }
 }
 // define the exponential PDF as the default duration random variable
 aCTIVITY.defaultDurationMean = 1;
@@ -669,7 +735,6 @@ aCTIVITY.defaultDuration = function () {
  * type names of those activities, in which the object is currently participating).
  */
 class aCTIVITYsTART extends eVENT {
-  // allow
   constructor({occTime, delay, plannedActivity}) {
     super({occTime, delay});
     this.plannedActivity = plannedActivity;
@@ -680,7 +745,6 @@ class aCTIVITYsTART extends eVENT {
           resourceRoles = node.resourceRoles,
           actyTypeName = node.activityTypeName || "ProcActy",  // the activity's type/class
           followupEvents=[];
-    // set  new activity
     acty.startTime = this.occTime;
     // update statistics
     sim.stat.networkNodes[node.name].startedActivities++;
@@ -714,12 +778,14 @@ class aCTIVITYsTART extends eVENT {
     return followupEvents;
   }
   toString() {
-    var decPl = oes.defaults.simLogDecimalPlaces,
-        acty = this.plannedActivity, AT = acty.constructor,
-        evtTypeName = (AT.shortLabel || AT.name) + "Start",
-        evtStr="", slotListStr="";
-    Object.keys( AT.resourceRoles).forEach( function (resRoleName) {
-      if (AT.resourceRoles[resRoleName].range) {
+    const decPl = oes.defaults.simLogDecimalPlaces,
+        acty = this.plannedActivity,
+        AT = acty.constructor,  // the activity's type/class
+        labels = AT.labels,
+        evtTypeName = (labels?.className || AT.name) + "End";
+    var evtStr = "", slotListStr = "";
+    for (const resRoleName of Object.keys( acty.node.resourceRoles)) {
+      if (acty.node.resourceRoles[resRoleName].range) {  // individual resource
         const resObj = acty[resRoleName];
         let resObjStr = "";
         if (Array.isArray( resObj)) {
@@ -729,7 +795,7 @@ class aCTIVITYsTART extends eVENT {
         }
         slotListStr += resObjStr +", ";
       }
-    });
+    }
     evtStr = slotListStr ? `${evtTypeName}{ ${slotListStr}}` : evtTypeName;
     return `${evtStr}@${math.round(this.occTime,decPl)}`;
   }
@@ -746,7 +812,6 @@ class aCTIVITYeND extends eVENT {
           resourceRoles = node?.resourceRoles ?? AT.resourceRoles,
           resRoleNames = Object.keys( resourceRoles),
           followupEvents=[];
-    let namesOfSharedResRoles=[];
     // if there is an onActivityEnd procedure, execute it
     if (typeof acty.onActivityEnd === "function") {
       followupEvents.push(...acty.onActivityEnd());
@@ -765,7 +830,8 @@ class aCTIVITYeND extends eVENT {
             waitingTimeStat = nodeStat.waitingTime,
             cycleTimeStat = nodeStat.cycleTime,
             resUtilPerNode = nodeStat.resUtil;
-      nodeStat.completedActivities++;
+      if (acty.preempted) nodeStat.preemptedActivities++;
+      else nodeStat.completedActivities++;
       const waitingTime = acty.enqueueTime ? acty.startTime - acty.enqueueTime : 0;
       //waitingTimeStat.total += waitingTime;
       if (waitingTimeStat.max < waitingTime) waitingTimeStat.max = waitingTime;
@@ -788,40 +854,44 @@ class aCTIVITYeND extends eVENT {
         }
       }
     }
-    // execute this code only for AN activity nodes, and not for PN nodes
     if (node.constructor === aCTIVITYnODE) {  // isDirectInstanceOf
-      const succNode = node.getSuccessorNode();
-      if (succNode) {
-        const SuccAT = sim.Classes[succNode.activityTypeName];
-        const succActy = new SuccAT({node: succNode});
-        const succResRoles = succNode.resourceRoles ?? SuccAT.resourceRoles,
+      // [execute this code only for AN activity nodes, and not for PN nodes]
+      if (!acty.preempted) {
+        const succNodes = node.getSuccessorNodes( this.activity);
+        // schedule successor activities according to network structure
+        for (const succNode of succNodes) {
+          //TODO: make this work for multiple successor nodes
+          const SuccAT = sim.Classes[succNode.activityTypeName],
+              succActy = new SuccAT({node: succNode}),
+              succResRoles = succNode.resourceRoles ?? SuccAT.resourceRoles,
               succResRoleNames = Object.keys( succResRoles);
-        // By default, keep (individual) resources that are shared between AT and SuccAT
-        for (const resRoleName of resRoleNames) {
-          if (succResRoles[resRoleName]) {  // shared resource role
-            succActy.resRoleNamesSharedWithPredActivity ??= [];
-            succActy.resRoleNamesSharedWithPredActivity.push( resRoleName);
-            if (typeof acty[resRoleName] === "object") {
-              // transfer/re-allocate individual resource to successor activity
-              succActy[resRoleName] = acty[resRoleName];
-            } else {
-              succActy[resRoleName] = true;  // keep anonymous countpool resource
+          // By default, keep (individual) resources that are shared between AT and SuccAT
+          for (const resRoleName of resRoleNames) {
+            if (succResRoles[resRoleName]) {  // shared resource role
+              succActy.resRoleNamesSharedWithPredActivity ??= [];
+              succActy.resRoleNamesSharedWithPredActivity.push( resRoleName);
+              if (typeof acty[resRoleName] === "object") {
+                // transfer/re-allocate individual resource to successor activity
+                succActy[resRoleName] = acty[resRoleName];
+              } else {
+                succActy[resRoleName] = true;  // keep anonymous countpool resource
+              }
             }
           }
-        }
-        // assign variable for passing the list of shared resource roles
-        namesOfSharedResRoles = succActy.resRoleNamesSharedWithPredActivity;
-        // start or enqueue a successor activity according to the AN model
-        // are all successor activity resources already allocated (since included in activity resources)?
-        if (succResRoleNames.every( rn => resRoleNames.includes( rn))) {
-          // start successor activity with transferred resources
-          followupEvents.push( new aCTIVITYsTART({plannedActivity: succActy}));
-        } else {  // start/enqueue successor activity
-          succActy.startOrEnqueue();
+          // assign attribute for passing the list of transferred resource roles
+          acty.namesOfTransferredResRoles = succActy.resRoleNamesSharedWithPredActivity;
+          // start or enqueue a successor activity according to the AN model
+          // are all successor activity resources already allocated (since included in activity resources)?
+          if (succResRoleNames.every( rn => resRoleNames.includes( rn))) {
+            // start successor activity with transferred resources
+            followupEvents.push( new aCTIVITYsTART({plannedActivity: succActy}));
+          } else {  // start/enqueue successor activity
+            succActy.startOrEnqueue();
+          }
         }
       }
       // release all non-transferred resources of acty
-      acty.releaseResources( namesOfSharedResRoles);
+      acty.releaseResources();
       // if there are still planned activities in the task queue
       if (node.tasks.length > 0) {
         // if available, allocate required resources and start next activity
@@ -831,13 +901,14 @@ class aCTIVITYeND extends eVENT {
     return followupEvents;
   }
   toString() {
-    var decPl = oes.defaults.simLogDecimalPlaces,
-        acty = this.activity,
-        AT = acty.constructor,  // the activity's type/class
-        eventTypeName = (AT.shortLabel || AT.name) + "End",
-        evtStr = "", slotListStr = "";
-    Object.keys( acty.node.resourceRoles).forEach(function (resRoleName) {
-      if (acty.node.resourceRoles[resRoleName].range) {
+    const decPl = oes.defaults.simLogDecimalPlaces,
+          acty = this.activity,
+          AT = acty.constructor,  // the activity's type/class
+          labels = AT.labels,
+          evtTypeName = (labels?.className || AT.name) + "End";
+    var evtStr = "", slotListStr = "";
+    for (const resRoleName of Object.keys( acty.node.resourceRoles)) {
+      if (acty.node.resourceRoles[resRoleName].range) {  // individual resource
         const resObj = acty[resRoleName];
         let resObjStr = "";
         if (Array.isArray( resObj)) {
@@ -847,9 +918,9 @@ class aCTIVITYeND extends eVENT {
         }
         slotListStr += resObjStr +", ";
       }
-    });
-    if (slotListStr) evtStr = `${eventTypeName}{ ${slotListStr}}`;
-    else evtStr = eventTypeName;
+    }
+    if (slotListStr) evtStr = `${evtTypeName}{ ${slotListStr}}`;
+    else evtStr = evtTypeName;
     return `${evtStr}@${math.round(this.occTime, decPl)}`;
   }
 }
@@ -875,24 +946,28 @@ oes.constructImplicitlyDefinedActNet = function () {
   // construct the event nodes of the implicitly defined AN model
   for (const evtTypeName of sim.model.eventTypes) {
     const ET = sim.Classes[evtTypeName];
-    // the AN node name is the lower-cased type name suffixed by "{Evt|Act}Node"
+    // the AN node name is the lower-cased type name suffixed by "Node"
     const nodeName = oes.getNodeNameFromEvtTypeName( evtTypeName);
-    sim.model.networkNodes[nodeName] = {name: nodeName, typeName:"eVENTnODE", eventTypeName: evtTypeName};
-    if (ET.successorNode) {
-      sim.model.networkNodes[nodeName].successorNodeName =
-          oes.getNodeNameFromActTypeName( ET.successorNode);
+    const node = sim.model.networkNodes[nodeName] =
+        {name: nodeName, typeName:"eVENTnODE", eventTypeName: evtTypeName};
+    if (ET.successorNode) {  // providing the name of a successor activity type
+      if (typeof ET.successorNode === "string") {
+        node.successorNodeName = oes.getNodeNameFromActTypeName( ET.successorNode);
+      } else if (typeof ET.successorNode === "function") {
+        node.successorNodeExpr = ET.successorNode;
+      }
     }
   }
   // construct the activity nodes of the implicitly defined AN model
   for (const actTypeName of sim.model.activityTypes) {
     const AT = sim.Classes[actTypeName];
     AT.resourceRoles ??= Object.create(null);  // make sure AT.resourceRoles is defined
-    // the AN node name is the lower-cased type name suffixed by "{E|A}Node"
+    // the AN node name is the lower-cased type name suffixed by "Node"
     const nodeName = oes.getNodeNameFromActTypeName( actTypeName);
     const node = sim.model.networkNodes[nodeName] =
         {name: nodeName, typeName:"aCTIVITYnODE", activityTypeName: actTypeName};
     if (AT.waitingTimeout) node.waitingTimeout = AT.waitingTimeout;
-    if (AT.successorNode) {
+    if (AT.successorNode) {  // providing the name of a successor activity type
       if (typeof AT.successorNode === "string") {
         node.successorNodeName = oes.getNodeNameFromActTypeName( AT.successorNode);
       } else if (typeof AT.successorNode === "function") {
@@ -1104,6 +1179,7 @@ oes.initializeActNetStatistics = function () {
       if (typeof node.waitingTimeout === "function") nodeStat.waitingTimeouts = 0;
       nodeStat.startedActivities = 0;
       nodeStat.completedActivities = 0;
+      nodeStat.preemptedActivities = 0;
       // generic queue length statistics
       //nodeStat.queueLength.avg = 0.0;
       nodeStat.queueLength.max = 0;
@@ -1184,6 +1260,8 @@ sim.initializeSimulator = function () {
   sim.model.eventTypes ??= [];
   // initialize the Map of all objects (accessible by ID)
   sim.objects = new Map();
+  // initialize the Map of all objects (accessible by name)
+  sim.namedObjects = new Map();
   // initialize the Future Events List
   sim.FEL = new EventList();
   // initialize the map of statistics variables
@@ -1261,6 +1339,7 @@ sim.initializeSimulator = function () {
 sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   // clear initial state data structures
   sim.objects.clear();
+  sim.namedObjects.clear();
   sim.FEL.clear();
   sim.ongoingActivities = Object.create( null);  // a map of all ongoing activities accessible by ID
   sim.step = 0;  // simulation loop step counter
@@ -1346,7 +1425,7 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
     for (const evtTypeName of sim.model.eventTypes) {
       const ET = sim.Classes[evtTypeName];
       if (ET.recurrence || ET.eventRate) {
-        sim.FEL.add( new ET());
+        sim.schedule( new ET());
       }
     }
   }
@@ -1355,12 +1434,8 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
  * Schedule an event or a list of events ***************************
  *******************************************************************/
 sim.schedule = function (e) {
-  var events;
-  if (!Array.isArray(e)) events = [e];
-  else events = e;
-  for (const evt of events) {
-    sim.FEL.add( evt);
-  }
+  if (!Array.isArray(e)) sim.FEL.add( e);
+  else for (const evt of e) {sim.FEL.add( evt);}
 }
 /*******************************************************************
  * Assign model parameters with experiment parameter values ********
@@ -1394,12 +1469,12 @@ sim.advanceSimulationTime = function () {
  ********************************************************/
 sim.runScenario = function (createLog) {
   function sendLogMsg( currEvts) {
+    // convert values() iterator to array
     let objStr = [...sim.objects.values()].map( el => el.toString()).join("|");
     if (oes.defaults.showResPoolsInLog) {
       objStr += " // "+ Object.values( sim.scenario.resourcePools).toString();
     }
     postMessage({ step: sim.step, time: sim.time,
-      // convert values() iterator to array
       objectsStr: objStr,
       currEvtsStr: currEvts.map( el => el.toString()).join("|"),
       futEvtsStr: sim.FEL.toString()
@@ -1420,15 +1495,12 @@ sim.runScenario = function (createLog) {
     for (const e of nextEvents) {
       // apply event rule
       const followUpEvents = typeof e.onEvent === "function" ? e.onEvent() : [];
-      // schedule follow-up events
-      for (const f of followUpEvents) {
-        sim.FEL.add( f);
-      }
-      const EventClass = e.constructor;
+      sim.schedule( followUpEvents);
 
+      const EventClass = e.constructor;
       /**** AN/PN extension START ****/
-      // handle AN event nodes with a successor node
-      if (EventClass.name !== "aRRIVAL" && e.node?.successorNode) {  //TODO: refactor such that a PN item does not occur in AN code
+      // handle event nodes with a successor node
+      if (e.node?.successorNode && EventClass.name !== "aRRIVAL") {
         const successorNode = e.node.successorNode,
               SuccAT = sim.Classes[successorNode.activityTypeName],
               succActy = new SuccAT({node: successorNode});
@@ -1436,6 +1508,16 @@ sim.runScenario = function (createLog) {
         succActy.startOrEnqueue();
       }
       /**** AN/PN extension END ****/
+
+      /**** ABS extension START ****/
+      if (sim.config.roundBasedAgentExecution) {
+        for (const agt of sim.agents.values()) {
+          agt.roundBasedExecution = false;
+          agt.executeStep();
+          agt.roundBasedExecution = true;
+        }
+      }
+      /**** ABS extension END ****/
 
       // test if e is an exogenous event
       if (EventClass.recurrence || e.recurrence || EventClass.eventRate) {
@@ -1451,9 +1533,9 @@ sim.runScenario = function (createLog) {
           }
           */
           const nextEvt = e.createNextEvent();
-          if (nextEvt) sim.FEL.add( nextEvt);
+          if (nextEvt) sim.schedule( nextEvt);
         } else {
-          sim.FEL.add( new EventClass());
+          sim.schedule( new EventClass());
         }
       }
     }

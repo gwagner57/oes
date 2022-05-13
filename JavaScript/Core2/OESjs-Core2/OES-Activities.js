@@ -636,14 +636,17 @@ class aCTIVITYeND extends eVENT {
             waitingTimeStat = nodeStat.waitingTime,
             cycleTimeStat = nodeStat.cycleTime,
             resUtilPerNode = nodeStat.resUtil;
-      if (acty.preempted) nodeStat.preemptedActivities++;
-      else nodeStat.completedActivities++;
       const waitingTime = acty.enqueueTime ? acty.startTime - acty.enqueueTime : 0;
-      //waitingTimeStat.total += waitingTime;
-      if (waitingTimeStat.max < waitingTime) waitingTimeStat.max = waitingTime;
       const cycleTime = waitingTime + acty.occTime - acty.startTime;
-      //cycleTimeStat.total += cycleTime;
-      if (cycleTimeStat.max < cycleTime) cycleTimeStat.max = cycleTime;
+      if (acty.preempted) {
+        nodeStat.preemptedActivities++;
+      } else {
+        nodeStat.completedActivities++;
+        waitingTimeStat.total += waitingTime;
+        if (waitingTimeStat.max < waitingTime) waitingTimeStat.max = waitingTime;
+        cycleTimeStat.total += cycleTime;
+        if (cycleTimeStat.max < cycleTime) cycleTimeStat.max = cycleTime;
+      }
       // compute resource utilization per node (per resource object or per count pool)
       for (const resRoleName of resRoleNames) {
         const resRole = resourceRoles[resRoleName];
@@ -990,10 +993,12 @@ oes.initializeActNetStatistics = function () {
       //nodeStat.queueLength.avg = 0.0;
       nodeStat.queueLength.max = 0;
       // waiting time statistics
-      //nodeStat.waitingTime.avg = 0.0;
+      nodeStat.waitingTime.total = 0.0;
+      nodeStat.waitingTime.avg = 0.0;
       nodeStat.waitingTime.max = 0;
       // cycle time statistics
-      //nodeStat.cycleTime.avg = 0.0;
+      nodeStat.cycleTime.total = 0.0;
+      nodeStat.cycleTime.avg = 0.0;
       nodeStat.cycleTime.max = 0;
       // initialize resource utilization per resource object or per count pool
       for (const resRoleName of Object.keys( resRoles)) {
@@ -1014,11 +1019,13 @@ oes.initializeActNetStatistics = function () {
  * Compute the final AN statistics
  ********************************************************/
 oes.computeFinalActNetStatistics = function () {
-  // finalize resource utilization statistics
   for (const nodeName of Object.keys( sim.stat.networkNodes)) {
-    const node = sim.stat.networkNodes[nodeName];
-    if ("resUtil" in node) {
-      const resUtilPerNode = node.resUtil;
+    const nodeStat = sim.stat.networkNodes[nodeName];
+    // avoid dividing by 0 with x||1 expression
+    nodeStat.waitingTime.avg = nodeStat.waitingTime.total / (nodeStat.completedActivities||1);
+    nodeStat.cycleTime.avg = nodeStat.cycleTime.total / (nodeStat.completedActivities||1);
+    if ("resUtil" in nodeStat) {  // finalize resource utilization statistics
+      const resUtilPerNode = nodeStat.resUtil;
       for (const key of Object.keys( resUtilPerNode)) {
         var utiliz = resUtilPerNode[key];
         // key is either an objIdStr or a count pool name

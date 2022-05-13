@@ -74,7 +74,7 @@
   Object Event (<abbr title="Object-Event">OE</abbr>) class diagram, as shown
   below.</p><figure><img
   alt="conceptual information model describing object, event and activity types"
-  src="img/Pizzeria_CIMa.svg" width="500" /></figure><p>The association end
+  src="img/CIM.svg" width="500" /></figure><p>The association end
   annotations «rr» and «rp» denote <em>resource roles</em> and <em>resource
   pools</em>. For instance, the activity type <i>make pizza</i> has two
   resource roles, <i>pizza maker</i>s and <i>oven</i>. A pizza service company
@@ -99,49 +99,35 @@
   open="open"><summary>Conceptual Process Model</summary><p>The following BPMN
   diagram shows a conceptual process model of the Make-and-Deliver-Pizza
   business process, with three swimlanes for the three performers of the
-  process:</p><figure><img
-  alt="A conceptual process model in the form of a BPMN diagram"
-  src="img/Pizzeria_CPM_BPMN.svg" width="600" /></figure><p>Notice the BPMN
-  Boundary Timeout Event circle attached to the <i>take order</i> activity
-  representing timeout events that cancel the activity. They are supposed to
-  model the <em>reneging</em> behavior of waiting customers loosing their
-  patience and hanging up the phone without placing an order. However, BPMN
-  does not allow restricting such a timeout mechanism to the waiting phase of
-  a planned activity, that is the time span during which the planned activity
-  has been enqueued, but not yet started. Rather, it applies to the entire
-  cycle time of <i>take order</i> activities, which means that also started
-  activities, where the order taker is already listening to the customer, may
-  be canceled due to reneging.</p><p>While BPMN allows modeling the performers
+  process:</p>
+    <figure><img alt="A conceptual process model in the form of a BPMN diagram"
+  src="img/CPM_BPMN.svg" width="600" /></figure>
+    <p>While BPMN allows modeling the performers
   of activities with swimlanes, it does not support modeling other types of
   resource objects. As a workaround, we have included the resource objects
   <i>oven</i>s and <i>scooter</i>s in the form of BPMN Data Objects.</p><p>The
   third, and most severe, issue of the BPMN model is its uniform (semantically
   overloaded) use of "sequence flow" arrows for sequencing events and
-  activities. While in the case of all three activities, incoming "sequence
+  activities. In the case of all three activities, incoming "sequence
   flow" arrows do not mean that an activity is started, but rather that a new
   planned activity is enqueued (and only started when all required resources
-  become available), in the case of the event <i>lost order</i>, the incoming
-  "sequence flow" arrow means that a new event is scheduled to occur
-  immediately.</p><p>These three issues of BPMN have been solved in DPMN,
-  where <em>resource-dependent activity start arrows</em> are distinguished
-  from <em>event scheduling arrows</em>, as shown in the following DPMN
-  process diagram:</p><figure><img
+  become available).</p><p>These issues of BPMN have been solved in DPMN,
+  where <em>resource-dependent activity scheduling arrows</em> are distinguished
+  from <em>event scheduling arrows</em>. The following DPMN diagram shows
+  our process model.</p><figure><img
   alt="A conceptual process model in the form of a DPMN diagram"
-  src="img/Pizzeria_CPM.svg" width="550" /></figure><p>Notice how the
-  timeout event circle (with a clock icon) is attached to the three bars of
-  the resource-dependent activity start arrow representing the queue of
-  planned order taking activities waiting for the availability of an order
-  taker. This implies that the timeout applies to the waiting phase, and not
-  to the order taking activity.</p><p>A conceptual <abbr
-  title="Discrete Event Processing Notation">DPMN</abbr> process diagram does
+  src="img/CPM.svg" width="550" /></figure>
+    <p>A conceptual <abbr title="Discrete Event Processing Notation">DPMN</abbr> process diagram does
   normally not include any element representing a resource pool. Yet, it may
   display the performer roles of activity types, like <i>order taker</i> and
   <i>pizza maker </i> in the diagram above. It is assumed that for any
   organizational position described in the underlying <abbr
   title="Object-Event">OE</abbr> class model, the organization under
-  consideration has a corresponding resource
-  pool.</p></details></details><details><summary>Simulation
-  Design</summary><p>In our simulation design, we make the following
+  consideration has a corresponding resource pool.</p>
+  </details>
+  </details>
+  <details><summary>Simulation Design</summary>
+    <p>In our simulation design, we make the following
   simplifications. We consider only one particular pizza service company,
   which does not have to be modeled as an explicit object. Also, we abstract
   away from individual customers, orders and pizzas. And we merge the resource
@@ -164,8 +150,7 @@
   event and activity types.</figcaption><img alt="information design model"
   src="img/IDM.svg" width="500" /></figure>
   
-  <p>Notice how
-  functions representing random variables, like the <code>duration</code>
+  <p>Notice how functions representing random variables, like the <code>duration</code>
   function of all activity types, are marked with the keyword (or UML
   'stereotype') «rv» standing for "random variable". These random variable
   functions sample from a probability distribution function (PDF), which is
@@ -192,27 +177,27 @@
   <i>pizzaMakers</i>.</p><p>Notice that <i>OrderCall</i> events are exogenous,
   having a recurrence function defined case-wise for each of the five hours
   per day operation of the pizza service company (in the attached invariant
-  box).</p>For implementing the waiting timeout event defined in the process
+  box).</p>
+      <p>For implementing the waiting timeout event defined in the process
   model, the activity type <i>TakeOrder</i> has a class-level
   <i>waitingTimeout</i> function implementing a random variable with PDF
-  <i>U(3,6)</i>.</details><details open="open"><summary>Process Design
-  Model</summary><p>A process design model, in the form of a DPMN process
+        <i>U(3,6)</i>.</p>
+    </details>
+    <details open="open"><summary>Process Design Model</summary>
+      <p>A process design model, in the form of a DPMN process
   diagram as shown below, is derived from a conceptual process model by
   abstracting away from items that are not design-relevant and possibly adding
-  certain computational details. In the case of the Make-and-Deliver-Pizza
-  business process, we can drop the lost orders event since its purpose,
-  obtaining a statistics of lost orders, can be implicitly achieved by the
-  waiting timeout event attached to the queue of planned <i>TakeOrder</i>
-  activities.</p><figure><figcaption>A computationally complete process design
+  certain computational details.</p>
+      <figure><figcaption>A computationally complete process design
   for the Make-and-Deliver-Pizza business process.</figcaption><img alt="???"
-  src="img/Pizzeria_PDM.svg" width="550" /></figure><p>A <abbr
-  title="Discrete Event Processing Notation">DPMN</abbr> process design
-  diagram does not include any element representing a resource pool. Yet, it
+  src="img/PDM.svg" width="550" /></figure>
+      <p>A <abbr title="Discrete Event Processing Notation">DPMN</abbr> process design
+  diagram need not include elements representing resource pools. Yet, it
   may display the performer roles of activity types, like <i>OrderTaker</i>
   and <i>PizzaMaker</i> in the diagram above. It is assumed that for any
   organizational position described in the underlying <abbr
   title="Object-Event">OE</abbr> class model, the organization under
-  consideration has a corresponding resource pool. By default , each resource
+  consideration has a corresponding resource pool. By default, each resource
   role of an activity type is associated with a resource pool having the same
   (yet pluralized) name, such that its resources are instances of a
   corresponding resource role type, which is an organizational position in the
@@ -224,22 +209,8 @@
   members of this pool are instances of the organizational position
   <i>PizzaMaker</i>. These default pool assignments are normally not shown in
   a DPMN diagram, but an <abbr title="Object-Event">OE</abbr> simulator takes
-  care of them.</p></details></details><details><summary>Model Variant: Orders
-  May Also Be Taken by Pizza Makers</summary><p>For decreasing the number of
-  lost orders due to long waiting times, it is advisable to charge pizza
-  makers with taking orders whenever no order taker is available. In resource
-  management terminology, the organizational position <i>pizza maker</i> is
-  redefined by adding the resource role <i>order taker</i> to its portfolio of
-  organizational roles. </p><p>In a conceptual <abbr
-  title="Object-Event">OE</abbr> class diagram, this can be expressed by
-  adding a subtyping arrow from <i>pizza makers</i> to <i>order takers</i>
-  categorized as an <em><b>alternative resource subtyping</b></em> arrow with
-  the stereotype «ar», as shown in the following diagram:</p><figure><img
-  alt="conceptual information model describing object, event and activity types"
-  src="img/Pizzeria_CIM1b.svg" width="500" /></figure><p>The <abbr
-  title="Object-Event">OE</abbr> class design diagram is extended in the same
-  way, by adding an <em>alternative resource subtyping</em> arrow from
-  <i>PizzaMaker</i> to <i>OrderTaker</i>.</p><p>The DPMN process design model
-  is not affected by this change.</p></details> <p><a href="index.html">Back
-  to simulation</a></p></body>
+  care of them.</p>
+    </details>
+  </details>
+ <p><a href="index.html">Back to simulation</a></p></body>
 </html>

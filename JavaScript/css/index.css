@@ -55,3 +55,7 @@ form {
 form > * + * {
     margin-top: 1em;
 }
+#upfrontUI {
+    display: flex;
+    justify-content: space-between;
+}

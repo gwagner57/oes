@@ -7,6 +7,7 @@ const formEl = document.forms["run"],
     modelDescriptionEl = document.getElementById("modelDescription"),
     scenarioTitleEl = document.getElementById("scenarioTitle"),
     scenarioDescriptionEl = document.getElementById("scenarioDescription"),
+    upfrontUiEl = document.getElementById("upfrontUI"),
     simLogTableEl = document.getElementById("simLog"),
     simInfoEl = document.getElementById("simInfo"),
     execInfoEl = document.getElementById("execInfo");
@@ -27,11 +28,28 @@ function setupUI() {
     }
     util.fillSelectWithOptionsFromStringList( selExpEl, optionTextItems);
   }
+  fillModelParameterDisplayPanel();
+}
+function fillModelParameterDisplayPanel() {
+  const modelParamsTblEl = document.getElementById("modelParamsTbl");
+  for (const paramName of Object.keys( sim.model.p)) {
+    const rowEl = modelParamsTblEl.insertRow();  // create new table row
+    rowEl.insertCell().textContent = paramName;
+    rowEl.insertCell().textContent = sim.model.p[paramName];
+  }
 }
 function onChangeOfScenSelect() {
   sim.scenario = sim.scenarios[parseInt( selScenEl.value)];
   scenarioTitleEl.textContent = sim.scenario.title;
   scenarioDescriptionEl.innerHTML = sim.scenario.description;
+  const changedParams = sim.scenario.parameters || {};
+  const modelParamsTblEl = document.getElementById("modelParamsTbl");
+  // assign changed model parameters
+  for (const paramName of Object.keys( changedParams)) {
+    sim.model.p[paramName] = changedParams[paramName];
+  }
+  modelParamsTblEl.innerHTML = "";
+  fillModelParameterDisplayPanel();
 }
 function onChangeOfExpSelect() {
   if (selExpEl.value === "0") {
@@ -135,16 +153,20 @@ function run() {
     }
   } else choice = "0";
   // Hide UI elements
-  formEl.style.display = "none";  // hide selection form
   if (modelDescriptionEl) modelDescriptionEl.style.display = "none";
   if (scenarioDescriptionEl) scenarioDescriptionEl.style.display = "none";
+  if (upfrontUiEl) {
+    upfrontUiEl.style.display = "none";
+  } else {
+    formEl.style.display = "none";  // hide select&run form
+  }
 
   let nmrOfScriptFilesToLoad = 3; // lib + framework + simulation.js
   if (Array.isArray(sim.model.objectTypes)) nmrOfScriptFilesToLoad += sim.model.objectTypes.length;
   if (Array.isArray(sim.model.eventTypes)) nmrOfScriptFilesToLoad += sim.model.eventTypes.length;
   if (Array.isArray(sim.model.activityTypes)) nmrOfScriptFilesToLoad += sim.model.activityTypes.length;
   if (Array.isArray(sim.model.agentTypes)) nmrOfScriptFilesToLoad += sim.model.agentTypes.length;
-  document.body.appendChild( util.createProgressBarEl(`Loading ${nmrOfScriptFilesToLoad} script files ...`));
+  document.body.appendChild( util.createProgressBarEl(`Loading ${nmrOfScriptFilesToLoad} script files ... `));
 
   data = {simToRun: choice,
       createLog: logCheckboxEl.checked,

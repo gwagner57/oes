@@ -42,6 +42,11 @@ onmessage = function (e) {
     // assign alternative scenario, if selected
     if (e.data.scenarioNo !== undefined && sim.scenarios[e.data.scenarioNo]) {
       scenario = sim.scenarios[e.data.scenarioNo];
+      const changedParams = scenario.parameters || {};
+      // assign changed model parameters
+      for (const paramName of Object.keys( changedParams)) {
+        sim.model.p[paramName] = changedParams[paramName];
+      }
       // copy simulation end time from base scenario if not provided
       if (!scenario.durationInSimTime && !scenario.durationInSimSteps && !scenario.durationInCpuTime) {
         if (sim.scenario.durationInSimTime) {
