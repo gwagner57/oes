@@ -270,13 +270,16 @@ sim.runScenario = function (createLog) {
 
       const EventClass = e.constructor;
       /**** AN/PN extension START ****/
-      // handle event nodes with a successor node
-      if (e.node?.successorNode && EventClass.name !== "aRRIVAL") {
-        const successorNode = e.node.successorNode,
+      if (e.node) {
+        e.node.nmrOfEvents += 1;  // increment counter
+        // handle event nodes with a successor node
+        if (e.node.successorNode && EventClass.name !== "aRRIVAL") {
+          const successorNode = e.node.successorNode,
               SuccAT = sim.Classes[successorNode.activityTypeName],
               succActy = new SuccAT({node: successorNode});
-        // schedule successor activity
-        succActy.startOrEnqueue();
+          // schedule successor activity
+          succActy.startOrEnqueue();
+        }
       }
       /**** AN/PN extension END ****/
 

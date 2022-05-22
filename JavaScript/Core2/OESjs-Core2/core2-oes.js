@@ -830,14 +830,17 @@ class aCTIVITYeND extends eVENT {
             waitingTimeStat = nodeStat.waitingTime,
             cycleTimeStat = nodeStat.cycleTime,
             resUtilPerNode = nodeStat.resUtil;
-      if (acty.preempted) nodeStat.preemptedActivities++;
-      else nodeStat.completedActivities++;
       const waitingTime = acty.enqueueTime ? acty.startTime - acty.enqueueTime : 0;
-      //waitingTimeStat.total += waitingTime;
-      if (waitingTimeStat.max < waitingTime) waitingTimeStat.max = waitingTime;
       const cycleTime = waitingTime + acty.occTime - acty.startTime;
-      //cycleTimeStat.total += cycleTime;
-      if (cycleTimeStat.max < cycleTime) cycleTimeStat.max = cycleTime;
+      if (acty.preempted) {
+        nodeStat.preemptedActivities++;
+      } else {
+        nodeStat.completedActivities++;
+        waitingTimeStat.total += waitingTime;
+        if (waitingTimeStat.max < waitingTime) waitingTimeStat.max = waitingTime;
+        cycleTimeStat.total += cycleTime;
+        if (cycleTimeStat.max < cycleTime) cycleTimeStat.max = cycleTime;
+      }
       // compute resource utilization per node (per resource object or per count pool)
       for (const resRoleName of resRoleNames) {
         const resRole = resourceRoles[resRoleName];
@@ -847,7 +850,9 @@ class aCTIVITYeND extends eVENT {
           for (const resObj of resObjects) {
             resUtilPerNode[String(resObj.id)] += acty.duration;
             // update the activity state of resource objects
-            resObj.activityState.delete( AT.name);
+            if (!resObj.activityState) {
+              console.error("Missing activity state at "+ sim.time +": "+ resObj.name +":"+ acty.constructor.name);
+            } else resObj.activityState.delete( AT.name);
           }
         } else {  // per count pool
           resUtilPerNode[resRole.countPoolName] += acty.duration;
@@ -1184,10 +1189,12 @@ oes.initializeActNetStatistics = function () {
       //nodeStat.queueLength.avg = 0.0;
       nodeStat.queueLength.max = 0;
       // waiting time statistics
-      //nodeStat.waitingTime.avg = 0.0;
+      nodeStat.waitingTime.total = 0.0;
+      nodeStat.waitingTime.avg = 0.0;
       nodeStat.waitingTime.max = 0;
       // cycle time statistics
-      //nodeStat.cycleTime.avg = 0.0;
+      nodeStat.cycleTime.total = 0.0;
+      nodeStat.cycleTime.avg = 0.0;
       nodeStat.cycleTime.max = 0;
       // initialize resource utilization per resource object or per count pool
       for (const resRoleName of Object.keys( resRoles)) {
@@ -1208,11 +1215,13 @@ oes.initializeActNetStatistics = function () {
  * Compute the final AN statistics
  ********************************************************/
 oes.computeFinalActNetStatistics = function () {
-  // finalize resource utilization statistics
   for (const nodeName of Object.keys( sim.stat.networkNodes)) {
-    const node = sim.stat.networkNodes[nodeName];
-    if ("resUtil" in node) {
-      const resUtilPerNode = node.resUtil;
+    const nodeStat = sim.stat.networkNodes[nodeName];
+    // avoid dividing by 0 with x||1 expression
+    nodeStat.waitingTime.avg = nodeStat.waitingTime.total / (nodeStat.completedActivities||1);
+    nodeStat.cycleTime.avg = nodeStat.cycleTime.total / (nodeStat.completedActivities||1);
+    if ("resUtil" in nodeStat) {  // finalize resource utilization statistics
+      const resUtilPerNode = nodeStat.resUtil;
       for (const key of Object.keys( resUtilPerNode)) {
         var utiliz = resUtilPerNode[key];
         // key is either an objIdStr or a count pool name
@@ -1499,13 +1508,16 @@ sim.runScenario = function (createLog) {
 
       const EventClass = e.constructor;
       /**** AN/PN extension START ****/
-      // handle event nodes with a successor node
-      if (e.node?.successorNode && EventClass.name !== "aRRIVAL") {
-        const successorNode = e.node.successorNode,
+      if (e.node) {
+        e.node.nmrOfEvents += 1;  // increment counter
+        // handle event nodes with a successor node
+        if (e.node.successorNode && EventClass.name !== "aRRIVAL") {
+          const successorNode = e.node.successorNode,
               SuccAT = sim.Classes[successorNode.activityTypeName],
               succActy = new SuccAT({node: successorNode});
-        // schedule successor activity
-        succActy.startOrEnqueue();
+          // schedule successor activity
+          succActy.startOrEnqueue();
+        }
       }
       /**** AN/PN extension END ****/
 

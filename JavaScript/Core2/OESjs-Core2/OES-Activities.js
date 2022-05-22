@@ -656,7 +656,9 @@ class aCTIVITYeND extends eVENT {
           for (const resObj of resObjects) {
             resUtilPerNode[String(resObj.id)] += acty.duration;
             // update the activity state of resource objects
-            resObj.activityState.delete( AT.name);
+            if (!resObj.activityState) {
+              console.error("Missing activity state at "+ sim.time +": "+ resObj.name +":"+ acty.constructor.name);
+            } else resObj.activityState.delete( AT.name);
           }
         } else {  // per count pool
           resUtilPerNode[resRole.countPoolName] += acty.duration;

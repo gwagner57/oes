@@ -1,8 +1,7 @@
 class ProductArrival extends eVENT {
   constructor({occTime, delay}={}) {
     super({occTime, delay});
-    // product type is 1 in 10/60, 2 in 20/60 and 3 in 30/60 of all arrivals per hour
-    this.productType = rand.frequency({"1":1/6, "2":1/3, "3":1/2});
+    this.productType = rand.frequency({"1": ProductArrival.freq1, "2": ProductArrival.freq2, "3": ProductArrival.freq3});
   }
   onEvent() {
     const followupEvents = [];
@@ -32,5 +31,11 @@ class ProductArrival extends eVENT {
     return followupEvents;
   }
 }
-ProductArrival.eventRate = sim.model.p.arrivalRatePerHour / 60;  // rate per minute
+ProductArrival.eventRatePerHour = sim.model.p.arrivalRatePerHourType1 + sim.model.p.arrivalRatePerHourType2 +
+    sim.model.p.arrivalRatePerHourType3;
+ProductArrival.eventRate = ProductArrival.eventRatePerHour / 60;  // rate per minute
+ProductArrival.freq1 = sim.model.p.arrivalRatePerHourType1 / ProductArrival.eventRatePerHour;
+ProductArrival.freq2 = sim.model.p.arrivalRatePerHourType2 / ProductArrival.eventRatePerHour;
+ProductArrival.freq3 = sim.model.p.arrivalRatePerHourType3 / ProductArrival.eventRatePerHour;
+
 ProductArrival.labels = {"className":"Arr", "productType":"type"};

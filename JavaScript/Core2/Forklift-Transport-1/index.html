@@ -8,6 +8,7 @@
  <meta name="description" content="A simulation about a forklift transport operation, hauling incoming products from an arrival area
   to a storage area."/>
  <link href="../css/index.css" rel="stylesheet" />
+ <script src="../lib/ui/SingleRecordTableWidget.js"></script>
  <script src="../lib/math.js"></script>
  <script src="../lib/util.js"></script>
  <script src="../lib/idb5.js"></script>
@@ -56,11 +57,7 @@ sim.experimentTypes = [];
     <button onclick="exportExperResults()" type="button">Export exper. results</button>
    </div>
   </form>
-  <details id=""><summary>Model parameters</summary>
-   <table>
-    <tbody id="modelParamsTbl"></tbody>
-   </table>
-  </details>
+  <details id="container"><summary>Model parameters</summary></details>
  </div>
  <table style="display: none">
   <caption>Simulation Log</caption>

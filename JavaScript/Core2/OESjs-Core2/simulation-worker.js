@@ -9,34 +9,44 @@ self.importScripts("../OESjs-Core2/OES-Foundation.js", "../OESjs-Core2/OES-Activ
 self.importScripts("../lib/library-files.js");
 self.importScripts("../oesjs-core2/core2-oes.js");
 
-// load simulation-example-specific code
-self.importScripts("simulation.js");
-if (sim.model.objectTypes) {
-  for (const objT of sim.model.objectTypes) {
-    self.importScripts( objT + ".js");
-  }
-}
-if (sim.model.eventTypes) {
-  for (const evtT of sim.model.eventTypes) {
-    self.importScripts( evtT + ".js");
-  }
-}
-if (sim.model.activityTypes) {
-  for (const actT of sim.model.activityTypes) {
-    self.importScripts( actT + ".js");
-  }
-}
 // start simulation on message from main thread
 onmessage = function (e) {
   var scenario={};
+  function loadSimulationModelCode() {
+    if (sim.model.otherCodeFiles) {
+      for (const ocf of sim.model.otherCodeFiles) {
+        self.importScripts( ocf + ".js");
+      }
+    }
+    if (sim.model.objectTypes) {
+      for (const objT of sim.model.objectTypes) {
+        self.importScripts( objT + ".js");
+      }
+    }
+    if (sim.model.eventTypes) {
+      for (const evtT of sim.model.eventTypes) {
+        self.importScripts( evtT + ".js");
+      }
+    }
+    if (sim.model.activityTypes) {
+      for (const actT of sim.model.activityTypes) {
+        self.importScripts( actT + ".js");
+      }
+    }
+  }
+
   sim.loadEndTime = (new Date()).getTime();
-  if (sim.experimentType) {
-    // when experimentType has been set, run it
+  self.importScripts("simulation.js");
+  // assign scenario parameters to model parameters
+  if (e.data.scenParams) sim.model.p = e.data.scenParams;
+  loadSimulationModelCode();
+  if (sim.experimentType) {  // when experimentType has been set, run it
     sim.runExperiment( sim.experimentType);
   } else if (e.data.simToRun) {
     // assign alternative scenario, if selected
     if (e.data.scenarioNo !== undefined && sim.scenarios[e.data.scenarioNo]) {
       scenario = sim.scenarios[e.data.scenarioNo];
+      if (e.data.scenParams) scenario.parameters = e.data.scenParams;
       // copy simulation end time from base scenario if not provided
       if (!scenario.durationInSimTime && !scenario.durationInSimSteps && !scenario.durationInCpuTime) {
         if (sim.scenario.durationInSimTime) {
@@ -47,6 +57,8 @@ onmessage = function (e) {
           scenario.durationInCpuTime = sim.scenario.durationInCpuTime;
         }
       }
+      // copy setupInitialState from base scenario if not provided
+      if (!scenario.setupInitialState) scenario.setupInitialState = sim.scenario.setupInitialState;
       sim.scenario = scenario;
     }
     if (e.data.simToRun === "0") {

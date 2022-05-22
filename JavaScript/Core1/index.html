@@ -8,7 +8,7 @@
  <meta name="description"
        content="The OESjs Core 1 simulator implements an architecture for Object Event Simulation (OES), extending the OESjs Core 0 simulator by adding fixed-increment time progression, a seedable random number generator, a set of sampling functions from various probability distributions (uniform, triangular, normal, exponential, etc.), multiple scenarios per model, multiple experiment types per model, model parameters, parameter variation experiments, as well as persistent storage and export of experiment results."/>
  <link rel="icon" href="../../favicon.svg"/>
- <link rel="stylesheet" type="text/css" href="../../css/standard-page.css" />
+ <link rel="stylesheet" type="text/css" href="index.css" />
 </head>
 <body>
  <header>
@@ -30,20 +30,41 @@
  </header>
  <main>
   <h1>OES JavaScript Core 1 Simulator</h1>
-  <p>The OESjs Core 1 simulator implements an architecture for Object Event Simulation (OES), extending the OESjs Core 0 simulator by adding 
+  <div class="multicol">
+  <p>The OESjs Core 1 simulator implements an architecture for Object Event Simulation (OES), extending the OESjs Core 0 simulator by adding
    fixed-increment time progression, a seedable random number generator, a set of sampling functions from various probability distributions 
    (uniform, triangular, normal, exponential, etc.), multiple scenarios per model, multiple experiment types per model, model parameters,
    parameter variation experiments, as well as persistent storage and export of experiment results.</p>
   <p><small>You can download and inspect the code from the <a href="https://github.com/gwagner57/oes/tree/master/JavaScript/Core1">OES
    GitHub repo</a>.</small></p>
+  </div>
   <p><a href="tutorial.html">Tutorial</a></p>
   <h2>Simulation Examples</h2>
-  <ul>
-   <li><a href="Service-Desk-2/index.html">Service-Desk-2</a>: a model with two event types (<i>CustomerArrival</i> and <i>CustomerDeparture</i>) and two object types (<i>ServiceDesk</i> and <i>Customer</i>). The waiting line is explicitly represented as a queue of individual customer objects.</li>
-   <li><a href="Inventory-Management/index.html">Inventory-Management</a>: a model with two event types (<i>DailyDemand</i> and <i>Delivery</i>) and one object type (<i>SingleProductShop</i>). This example also offers two parameter variation experiments.</li>
-   <li><a href="Workstation-1/index.html">Workstation-1</a>: a model with three event types (<i>PartArrival</i>, <i>ProcessingStart</i> and <i>ProcessingEnd</i>) and one object type (<i>WorkStation</i>).</li>
-   <li><a href="Lemonade-Stand-1/index.html">Lemonade-Stand-1</a>: a model of a lemonade stand as a manufacturing company.</li>
-  </ul>
+  <div class="cards">
+   <div class="card">
+    <img src="Service-Desk-2/theme-image.svg" style="float: right" width="75" alt=""/>
+     <h3><a href="Service-Desk-2/index.html">Service-Desk-2</a></h3>
+     <p>A model with two event types (<i>CustomerArrival</i> and <i>CustomerDeparture</i>) and two object types (<i>ServiceDesk</i>
+      and <i>Customer</i>). The waiting line is explicitly represented as a queue of individual customer objects.</p>
+   </div>
+   <div class="card">
+    <img src="Inventory-Management-1/theme-image.svg" style="float: right" width="75" alt=""/>
+     <h3><a href="Inventory-Management-1/index.html">Inventory-Management-1</a></h3>
+     <p>A model with two event types (<i>DailyDemand</i> and <i>Delivery</i>) and one object type (<i>SingleProductShop</i>).
+      This example also offers two parameter variation experiments.</p>
+   </div>
+   <div class="card">
+    <img src="Workstation-1/theme-image.svg" style="float: right" width="120" alt=""/>
+     <h3><a href="Workstation-1/index.html">Workstation-1</a></h3>
+     <p>A model with three event types (<i>PartArrival</i>, <i>ProcessingStart</i> and <i>ProcessingEnd</i>) and
+      one object type (<i>WorkStation</i>).</p>
+   </div>
+   <div class="card">
+     <img src="lemonade-stand-1/cold_lemonade_by_the_enso-CC-BY-NC-SA-3.0.png" style="float: right" alt=""/>
+     <h3><a href="lemonade-stand-1/index.html">Lemonade-Stand-1</a></h3>
+     <p>A model of a lemonade stand as a manufacturing company.</p>
+   </div>
+  </div>
   <h3>Credits</h3>
   <p>OESjs Core 1 is using:</p>
   <ul>
@@ -53,7 +74,7 @@
     
  </main>
   <footer>
-   <p>© 2020-21 G. Wagner (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>), Brandenburg University of Technology, Germany</p>
+   <p>© 2020-22 Gerd Wagner (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>), Brandenburg University of Technology, Germany</p>
  </footer>
 </body>
 </html>

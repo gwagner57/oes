@@ -15,41 +15,46 @@ function setupUI() {
   var optionTextItems = [];
   // fill scenario choice control
   if (sim.scenarios.length > 0) {
-    for (let scen of sim.scenarios) {
+    for (const scen of sim.scenarios) {
       optionTextItems.push( scen.title);
     }
     util.fillSelectWithOptionsFromStringList( selScenEl, optionTextItems);
   }
-  // fill run choice control
+  // fill run selection list
   optionTextItems = ["Standalone simulation"];
   if (sim.experimentTypes.length > 0) {
-    for (let expT of sim.experimentTypes) {
+    for (const expT of sim.experimentTypes) {
       optionTextItems.push( expT.title);
     }
     util.fillSelectWithOptionsFromStringList( selExpEl, optionTextItems);
   }
-  fillModelParameterDisplayPanel();
+  sim.scenario.parameters = {...sim.model.p};  // clone model parameters
+  fillModelParameterPanel( sim.scenario.parameters);
 }
-function fillModelParameterDisplayPanel() {
-  const modelParamsTblEl = document.getElementById("modelParamsTbl");
-  for (const paramName of Object.keys( sim.model.p)) {
-    const rowEl = modelParamsTblEl.insertRow();  // create new table row
-    rowEl.insertCell().textContent = paramName;
-    rowEl.insertCell().textContent = sim.model.p[paramName];
-  }
+function fillModelParameterPanel( record) {
+  const containerEl = document.getElementById("container"),
+        tableChildEl = containerEl.querySelector("table");
+  // drop the <table> child element
+  if (tableChildEl) tableChildEl.remove();
+  containerEl.appendChild( new SingleRecordTableWidget( record));
 }
 function onChangeOfScenSelect() {
-  sim.scenario = sim.scenarios[parseInt( selScenEl.value)];
+  const scenarioNo = parseInt( selScenEl.value);
+  sim.scenario = sim.scenarios[scenarioNo];
   scenarioTitleEl.textContent = sim.scenario.title;
   scenarioDescriptionEl.innerHTML = sim.scenario.description;
-  const changedParams = sim.scenario.parameters || {};
-  const modelParamsTblEl = document.getElementById("modelParamsTbl");
-  // assign changed model parameters
-  for (const paramName of Object.keys( changedParams)) {
-    sim.model.p[paramName] = changedParams[paramName];
+  if (scenarioNo > 0) {
+    const changedParams = Object.keys( sim.scenario.parameters || {});
+    // fill up scenario parameters
+    for (const paramName of Object.keys( sim.model.p)) {
+      if (!changedParams.includes( paramName)) {
+        sim.scenario.parameters[paramName] = sim.model.p[paramName];
+      }
+    }
+  } else {  // default scenario
+    sim.scenario.parameters = {...sim.model.p};  // clone model parameters
   }
-  modelParamsTblEl.innerHTML = "";
-  fillModelParameterDisplayPanel();
+  fillModelParameterPanel( sim.scenario.parameters);
 }
 function onChangeOfExpSelect() {
   if (selExpEl.value === "0") {
@@ -144,6 +149,7 @@ async function exportExperResults() {
 async function clearDatabase() {
   await idb.deleteDB( sim.model.name);
 }
+/**************************************************************/
 function run() {
   var choice = selExpEl.value, data={};
   if (choice) {
@@ -168,9 +174,10 @@ function run() {
   if (Array.isArray(sim.model.agentTypes)) nmrOfScriptFilesToLoad += sim.model.agentTypes.length;
   document.body.appendChild( util.createProgressBarEl(`Loading ${nmrOfScriptFilesToLoad} script files ... `));
 
-  data = {simToRun: choice,
-      createLog: logCheckboxEl.checked,
-      storeExpRes: storeExpResCheckboxEl.checked};
+  data = {simToRun: choice,  // either standalone sim or experiment
+          scenParams: sim.scenario.parameters,
+          createLog: logCheckboxEl.checked,
+          storeExpRes: storeExpResCheckboxEl.checked};
   if (sim.scenarios.length > 0) {
     data.scenarioNo = parseInt( selScenEl.value)
   }

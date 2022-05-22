@@ -1,37 +1,46 @@
 "use strict";
-/*
+// load general framework code
 self.importScripts("../lib/seedrandom.min.js", "../lib/rand.js", "../lib/util.js",
     "../lib/math.js", "../lib/idb5.js", "../lib/EventList.js", "../lib/eNUMERATION.js");
 self.importScripts("../OESjs-Core2/OES-Foundation.js", "../OESjs-Core2/OES-Activities.js",
     "../OESjs-Core2/simulator.js");
-*/
-// load general framework code
+/*
 self.importScripts("../lib/library-files.js");
 self.importScripts("../OESjs-Core2/core2-oes.js");
+*/
 
-// load simulation-example-specific code
-self.importScripts("simulation.js");
-if (sim.model.objectTypes) {
-  for (const objT of sim.model.objectTypes) {
-    self.importScripts( objT + ".js");
-  }
-}
-if (sim.model.eventTypes) {
-  for (const evtT of sim.model.eventTypes) {
-    self.importScripts( evtT + ".js");
-  }
-}
-if (sim.model.activityTypes) {
-  for (const actT of sim.model.activityTypes) {
-    self.importScripts( actT + ".js");
-  }
-}
 // start simulation on message from main thread
 onmessage = function (e) {
   var scenario={};
+  function loadSimulationModelCode() {
+    if (sim.model.otherCodeFiles) {
+      for (const ocf of sim.model.otherCodeFiles) {
+        self.importScripts( ocf + ".js");
+      }
+    }
+    if (sim.model.objectTypes) {
+      for (const objT of sim.model.objectTypes) {
+        self.importScripts( objT + ".js");
+      }
+    }
+    if (sim.model.eventTypes) {
+      for (const evtT of sim.model.eventTypes) {
+        self.importScripts( evtT + ".js");
+      }
+    }
+    if (sim.model.activityTypes) {
+      for (const actT of sim.model.activityTypes) {
+        self.importScripts( actT + ".js");
+      }
+    }
+  }
+
   sim.loadEndTime = (new Date()).getTime();
-  if (sim.experimentType) {
-    // when experimentType has been set, run it
+  self.importScripts("simulation.js");
+  // assign scenario parameters to model parameters
+  if (e.data.scenParams) sim.model.p = e.data.scenParams;
+  loadSimulationModelCode();
+  if (sim.experimentType) {  // when experimentType has been set, run it
     sim.runExperiment( sim.experimentType);
   } else if (e.data.simToRun) {
     // assign alternative scenario, if selected
@@ -47,6 +56,8 @@ onmessage = function (e) {
           scenario.durationInCpuTime = sim.scenario.durationInCpuTime;
         }
       }
+      // copy setupInitialState from base scenario if not provided
+      if (!scenario.setupInitialState) scenario.setupInitialState = sim.scenario.setupInitialState;
       sim.scenario = scenario;
     }
     if (e.data.simToRun === "0") {

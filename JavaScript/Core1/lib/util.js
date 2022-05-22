@@ -59,5 +59,50 @@ const util = {
     }
     return Class;
     // Alternative solution: Class = this[name];
+  },
+  parseString( string, dataType) {
+    let value;
+    switch (dataType) {
+      case "integer":
+        value = parseInt( string);
+        break;
+      case "decimal":
+        value = parseFloat( string);
+        break;
+      case "list":
+      case "record":
+        try {
+          value = JSON.parse( string);
+        } catch (error) {
+          value = undefined;
+        }
+        break;
+    }
+    return value;
+  },
+  stringifyValue( value, dataType) {
+    let string="";
+    if (!dataType) {
+      if (Number.isInteger(value)) {
+        dataType = "integer";
+      } else if (typeof value === "number") {
+        dataType = "decimal";
+      } else if (Array.isArray( value)) {
+        dataType = "list";
+      } else if (typeof value === "object" && Object.keys( value).length > 0) {
+        dataType = "record";
+      }
+    }
+    switch (dataType) {
+      case "integer":
+      case "decimal":
+        string = String( value);
+        break;
+      case "list":
+      case "record":
+        string = JSON.stringify( value);
+        break;
+    }
+    return string;
   }
 }
