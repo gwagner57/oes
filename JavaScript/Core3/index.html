@@ -8,7 +8,7 @@
  <meta name="description"
        content="The OESjs Core 3 simulator implements an architecture for Object Event Simulation (OES), extending the OESjs Core 2 simulator by adding support for Processing Networks."/>
  <link rel="icon" href="../../favicon.svg"/>
- <link rel="stylesheet" type="text/css" href="../../css/standard-page.css" />
+ <link rel="stylesheet" type="text/css" href="index.css" />
 </head>
 <body>
 <header>
@@ -30,28 +30,49 @@
  </header>
  <main>
   <h1>OES JavaScript Core 3 Simulator</h1>
+  <div class="multicol">
   <p>The OESjs Core 3 simulator implements an architecture for Object Event Simulation (OES) that extends the OESjs Core 2 simulator by adding
    support for GPSS/SIMAN/Arena-style Processing Networks (PNs).</p>
   <p><small>You can download and inspect the code from the <a href="https://github.com/gwagner57/oes/tree/master/JavaScript/Core3">OES
    GitHub repo</a>.</small></p>
+  </div>
   <h2>Simulation Examples</h2>
-  <ul>
-   <li><h3><a href="Service-Desk-PN/index.html">Service-Desk-PN</a></h3></li>
-   <li><h3><a href="Make-and-Deliver-Pizza-PN-1/index.html">Make-and-Deliver-Pizza-PN-1</a></h3>
-    <p>Compare this with the OESjs-Core2 model <a href="../Core2/Make-and-Deliver-Pizza-AN-1/index.html">Make-and-Deliver-Pizza-AN-1</a>.</p></li>
-   <li><h3><a href="Diagnostic-Department-1/index.html">Diagnostic-Department-1</a></h3></li>
-   <li><h3><a href="Diagnostic-Department-2/index.html">Diagnostic-Department-2</a></h3></li>
-  </ul>
+  <div class="cards">
+   <div class="card">
+    <img src="Service-Desk-PN/theme-image.svg" width="75" alt=""/>
+    <h3><a href="Service-Desk-PN/index.html">Service-Desk-PN</a></h3>
+    <p>TThis minimal Processing Network model consists of three nodes: an entry node where customers arrive,
+     a processing node where service activities are performed on customers, and an exit node where customers depart.
+     These nodes are connected with processing flow arrows combining event/activity scheduling with object flow.</p>
+   </div>
+   <div class="card">
+    <img src="Make-and-Deliver-Pizza-PN-1/theme-image.svg" width="75" alt=""/>
+    <h3><a href="Make-and-Deliver-Pizza-PN-1/index.html">Make-and-Deliver-Pizza-PN-1</a></h3>
+    <p>Compare this with the Activity Network model
+     <a href="../Core2/Make-and-Deliver-Pizza-AN-1/index.html">Make-and-Deliver-Pizza-AN-1</a>.</p>
+   </div>
+   <div class="card">
+    <img src="Diagnostic-Department-1/theme-image.svg" width="75" alt=""/>
+    <h3><a href="Diagnostic-Department-1/index.html">Diagnostic-Department-1</a></h3>
+    <p>A diagnostic department of a hospital performs electrocardiography (ECG) and ultrasound scans (US).</p>
+   </div>
+   <div class="card">
+    <img src="Diagnostic-Department-2/theme-image.svg" width="75" alt=""/>
+    <h3><a href="Diagnostic-Department-2/index.html">Diagnostic-Department-2</a></h3>
+    <p>While in Diagnostic-Department-1 "perform ECG" and "perform US" are modeled as two processing nodes ("servers")
+     that subsume all secondary activities as implicit factors, we now model all relevant activities explicitly,
+     no longer using processing nodes, but rather processing activity nodes.</p>
+   </div>
+  </div>
   <h3>Credits</h3>
   <p>OESjs Core 3 is using:</p>
   <ul>
    <li>David Bau's seedable random number generator <a href="https://github.com/davidbau/seedrandom">seedrandom</a>.</li>
    <li>Jake Archibald's IndexedDB library <a href="https://github.com/jakearchibald/idb">IDB</a> for storing experiment data.</li>
   </ul>
-    
  </main>
   <footer>
-   <p>© 2021 Gerd Wagner (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>), Brandenburg University of Technology, Germany</p>
+   <p>© 2021-22 Gerd Wagner (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>), Brandenburg University of Technology, Germany</p>
  </footer>
 </body>
 </html>

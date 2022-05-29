@@ -12,8 +12,9 @@ class WalkBackHome extends aCTIVITY {
     let product=null;
     // check if there are suitable products waiting
     for (const fl of availableForklifts) {
+      if (!this.operator.type.canDriveForkliftTypes.includes( fl.id)) continue;
       product = sim.namedObjects.get("arrivalArea").productBuffer.getUnassignedProductByType(
-          Forklift.canTakeProductTypes[fl.type]);
+          fl.type.canTakeProductTypes);
       if (product) {
         this.operator.assignedProduct = product;
         product.isAssigned = true;

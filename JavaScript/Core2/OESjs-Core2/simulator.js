@@ -89,6 +89,7 @@ sim.initializeSimulator = function () {
     }
     oes.createResourcePools();
     oes.setupActNetStatistics();
+    // for PNs add statistics for entry and exit nodes
     if (sim.model.isPN) oes.setupProcNetStatistics();
   }
   /***********************************************************
@@ -159,9 +160,17 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   }
   /*** END AN/PN extensions BEFORE-setupInitialState *********************/
 
+  // add initial objects from UI
+  for (const objTypeName of Object.keys( sim.scenario.initialObjects)) {
+    const objRecords = sim.scenario.initialObjects[objTypeName];
+    sim.Classes[objTypeName].instances ??= Object.create(null);
+    for (const objId of Object.keys( objRecords)) {
+      //TODO: should the records be converted to class instances?
+      sim.Classes[objTypeName].instances[objId] = objRecords[objId];
+    }
+  }
   // set up initial state
   if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
-
   // create populations per class
   for (const o of sim.objects.values()) {
     const className = o.constructor.name;
@@ -240,6 +249,10 @@ sim.advanceSimulationTime = function () {
  ********************************************************/
 sim.runScenario = function (createLog) {
   function sendLogMsg( currEvts) {
+    function stringifyEvt( e) {
+      var string = e.toString();
+      return string;
+    }
     // convert values() iterator to array
     let objStr = [...sim.objects.values()].map( el => el.toString()).join("|");
     if (oes.defaults.showResPoolsInLog) {
@@ -247,7 +260,7 @@ sim.runScenario = function (createLog) {
     }
     postMessage({ step: sim.step, time: sim.time,
       objectsStr: objStr,
-      currEvtsStr: currEvts.map( el => el.toString()).join("|"),
+      currEvtsStr: currEvts.map( stringifyEvt).join("|"),
       futEvtsStr: sim.FEL.toString()
     });
   }

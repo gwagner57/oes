@@ -60,6 +60,34 @@ const util = {
     return Class;
     // Alternative solution: Class = this[name];
   },
+  /**
+   * Determines the implicit datatype of a value.
+   * @param {*} value
+   * @return {string}
+   */
+  determineDatatype( value) {
+    var dataType="";
+    if (typeof value === "string") {
+      dataType = "string";
+    } else if (Number.isInteger(value)) {
+      if (1800<=value && value<2100) dataType = "year";
+      else dataType = "integer";
+    } else if (typeof value === "number") {
+      dataType = "decimal";
+    } else if (Array.isArray( value)) {
+      dataType = "list";
+    } else if (typeof value === "object" && Object.keys( value).length > 0) {
+      dataType = "record";
+    }
+    return dataType;
+  },
+  /**
+   * Converts a string to a value according to a prescribed datatype.
+   * The return value is undefined, if the string does not comply with the datatype.
+   * @param {string} string - the string to be converted
+   * @param {string} dataType - one of: integer, year, decimal, list, record
+   * @return {*}
+   */
   parseString( string, dataType) {
     let value;
     switch (dataType) {
@@ -80,19 +108,16 @@ const util = {
     }
     return value;
   },
+  /**
+   * Converts a value to a string according to an explicitly provided (or implicit) datatype.
+   * The return value is undefined, if the string does not comply with the datatype.
+   * @param {string} value - the value to be stringified
+   * @param {string} dataType - one of: integer, year, decimal, list, record
+   * @return {string}
+   */
   stringifyValue( value, dataType) {
     let string="";
-    if (!dataType) {
-      if (Number.isInteger(value)) {
-        dataType = "integer";
-      } else if (typeof value === "number") {
-        dataType = "decimal";
-      } else if (Array.isArray( value)) {
-        dataType = "list";
-      } else if (typeof value === "object" && Object.keys( value).length > 0) {
-        dataType = "record";
-      }
-    }
+    if (!dataType) dataType = util.determineDatatype( value);
     switch (dataType) {
       case "integer":
       case "decimal":
@@ -104,5 +129,16 @@ const util = {
         break;
     }
     return string;
+  },
+  loadScript( fileURL) {
+    return new Promise( function (resolve, reject) {
+      const scriptEl = document.createElement("script");
+      scriptEl.src = fileURL;
+      scriptEl.onload = resolve;
+      scriptEl.onerror = function () {
+        reject( new Error(`Script load error for ${fileURL}`));
+      };
+      document.head.append( scriptEl);
+    });
   }
 }

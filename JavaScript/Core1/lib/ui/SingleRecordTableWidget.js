@@ -4,6 +4,7 @@ class SingleRecordTableWidget extends HTMLTableElement {
     const decimalPlaces = 2,
           loc = locale || "en-US",
           numFmt = new Intl.NumberFormat( loc, {maximumFractionDigits: decimalPlaces});
+    this.className = "SingleRecordTableWidget";
     this.record = record;
     // bind the syncRecordField event handler to this widget object
     this.syncRecordField = this.syncRecordField.bind( this);

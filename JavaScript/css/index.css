@@ -11,11 +11,12 @@ html {
 body {
     color: black;
     background-color: #f8f8f8;
-    font: 1rem 'Arial', sans-serif;
-    line-height: 1.2;  
-    max-width: 60em;
+    font: 1rem/1.4 'Helvetica', sans-serif;
     margin: 0 auto;
-    padding: 8px;
+    padding: 1em;
+}
+body:not(.wide) {
+    max-width: 60em;
 }
 h1 {
     font-size: 200%
@@ -63,20 +64,18 @@ td.invalid {
 }
 
 figure {
-    margin: 1em auto;
+    margin: 0.5em auto;
     text-align: center;
 }
 figure.right {
     float: right;
-    margin-left: 1em;
-    margin-bottom: 1em;
-    margin-top: 0;
+    margin-left: 0.5em;
     margin-right: 0;
 }
 figure.left {
     float: left;
-    margin-right: 1em;
-    margin-bottom: 1em;
+    margin-right: 0.5em;
+    margin-left: 0;
 }
 form {
     clear: both;
@@ -86,5 +85,6 @@ form > * + * {
 }
 #upfrontUI {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
 }

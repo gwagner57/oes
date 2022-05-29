@@ -12,12 +12,13 @@ class DriveForkliftHome extends aCTIVITY {
     const availableForklifts = sim.scenario.resourcePools["forklifts"].availResources;
     // check if there are suitable products waiting
     let product = sim.namedObjects.get("arrivalArea").productBuffer.getUnassignedProductByType(
-        Forklift.canTakeProductTypes[this.forklift.type]);
+        this.forklift.type.canTakeProductTypes);
     if (!product) {
       // check if there are other suitable forklifts for waiting products
       for (const fl of availableForklifts) {
+        if (!this.operator.type.canDriveForkliftTypes.includes( fl.id)) continue;
         product = sim.namedObjects.get("arrivalArea").productBuffer.getUnassignedProductByType(
-            Forklift.canTakeProductTypes[fl.type]);
+            fl.type.canTakeProductTypes);
         if (product) {
           // de-allocate current forklift
           sim.scenario.resourcePools["forklifts"].release( this.forklift);

@@ -13,7 +13,7 @@ class UnloadProduct extends aCTIVITY {
     delete this.operator.assignedProduct;
     // check if there is another suitable product waiting to be assigned
     const product = sim.namedObjects.get("arrivalArea").productBuffer.getUnassignedProductByType(
-        Forklift.canTakeProductTypes[this.forklift.type]);
+        this.forklift.type.canTakeProductTypes);
     if (product) {
       this.operator.assignedProduct = product;
       product.isAssigned = true;

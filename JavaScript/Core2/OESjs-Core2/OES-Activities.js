@@ -521,7 +521,10 @@ provide all required resources for its successor activity (of type ${succActy.co
     console.log(`Preemption: ${acty.constructor.name} at ${sim.time.toFixed(2)} with transferred resources ${namesOfTransferredResources}`);
     acty.preempted = true;
     // change the scheduled activity end event to occur immediately
-    sim.FEL.getActivityEndEvent(acty).occTime = sim.time + sim.nextMomentDeltaT;
+    const preemptedActivityEndEvent = sim.FEL.getActivityEndEvent( acty);
+    preemptedActivityEndEvent.occTime = sim.time + sim.nextMomentDeltaT;
+    sim.FEL.sort();
+    preemptedActivityEndEvent.color = "red";
     // return the preemption successor activity
     return new aCTIVITYsTART({plannedActivity: succActy});
   }
@@ -588,7 +591,7 @@ class aCTIVITYsTART extends eVENT {
         acty = this.plannedActivity,
         AT = acty.constructor,  // the activity's type/class
         labels = AT.labels,
-        evtTypeName = (labels?.className || AT.name) + "End";
+        evtTypeName = (labels?.className || AT.name) + "Start";
     var evtStr = "", slotListStr = "";
     for (const resRoleName of Object.keys( acty.node.resourceRoles)) {
       if (acty.node.resourceRoles[resRoleName].range) {  // individual resource
@@ -732,7 +735,10 @@ class aCTIVITYeND extends eVENT {
     }
     if (slotListStr) evtStr = `${evtTypeName}{ ${slotListStr}}`;
     else evtStr = evtTypeName;
-    return `${evtStr}@${math.round(this.occTime, decPl)}`;
+    evtStr = `${evtStr}@${math.round(this.occTime,decPl)}`;
+    // event strings may be colored for highlighting
+    if (this.color) evtStr = `<span style="color:${this.color}">${evtStr}</span>`;
+    return evtStr;
   }
 }
 
@@ -995,12 +1001,12 @@ oes.initializeActNetStatistics = function () {
       //nodeStat.queueLength.avg = 0.0;
       nodeStat.queueLength.max = 0;
       // waiting time statistics
-      nodeStat.waitingTime.total = 0.0;
-      nodeStat.waitingTime.avg = 0.0;
+      nodeStat.waitingTime.total = 0;
+      nodeStat.waitingTime.avg = 0;
       nodeStat.waitingTime.max = 0;
       // cycle time statistics
-      nodeStat.cycleTime.total = 0.0;
-      nodeStat.cycleTime.avg = 0.0;
+      nodeStat.cycleTime.total = 0;
+      nodeStat.cycleTime.avg = 0;
       nodeStat.cycleTime.max = 0;
       // initialize resource utilization per resource object or per count pool
       for (const resRoleName of Object.keys( resRoles)) {
@@ -1023,10 +1029,8 @@ oes.initializeActNetStatistics = function () {
 oes.computeFinalActNetStatistics = function () {
   for (const nodeName of Object.keys( sim.stat.networkNodes)) {
     const nodeStat = sim.stat.networkNodes[nodeName];
-    // avoid dividing by 0 with x||1 expression
-    nodeStat.waitingTime.avg = nodeStat.waitingTime.total / (nodeStat.completedActivities||1);
-    nodeStat.cycleTime.avg = nodeStat.cycleTime.total / (nodeStat.completedActivities||1);
-    if ("resUtil" in nodeStat) {  // finalize resource utilization statistics
+    if ("resUtil" in nodeStat) {  // select (processing) activity nodes
+      // finalize resource utilization statistics
       const resUtilPerNode = nodeStat.resUtil;
       for (const key of Object.keys( resUtilPerNode)) {
         var utiliz = resUtilPerNode[key];
@@ -1038,6 +1042,9 @@ oes.computeFinalActNetStatistics = function () {
         }
         resUtilPerNode[key] = math.round( utiliz, oes.defaults.expostStatDecimalPlaces);
       }
+      // compute averages (avoid dividing by 0 with x||1 expression)
+      nodeStat.waitingTime.avg = nodeStat.waitingTime.total / (nodeStat.completedActivities||1);
+      nodeStat.cycleTime.avg = nodeStat.cycleTime.total / (nodeStat.completedActivities||1);
     }
   }
 };

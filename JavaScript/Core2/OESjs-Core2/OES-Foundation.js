@@ -13,6 +13,7 @@ sim.model = Object.create(null);
 sim.model.v = Object.create(null); // map of (global) model variables
 sim.model.f = Object.create(null); // map of (global) model functions
 sim.model.p = Object.create(null); // map of model parameters
+sim.model.ui = Object.create(null); // user interface items
 sim.scenario = Object.create(null);  // default scenario record/object
 sim.scenarios = [];  // list of alternative scenarios
 sim.stat = Object.create(null); // map of statistics variables
@@ -124,7 +125,10 @@ class eVENT {
     }, this);
     if (slotListStr) evtStr = `${eventTypeName}{ ${slotListStr}}`;
     else evtStr = eventTypeName;
-    return `${evtStr}@${math.round(this.occTime,decPl)}`;
+    evtStr = `${evtStr}@${math.round(this.occTime,decPl)}`;
+    // event strings may be colored for highlighting
+    if (this.color) evtStr = `<span style="color:${this.color}">${evtStr}</span>`;
+    return evtStr;
   }
   // an event priority comparison function for Array.sort
   static rank( e1, e2) {

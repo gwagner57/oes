@@ -39,6 +39,7 @@ onmessage = function (e) {
   self.importScripts("simulation.js");
   // assign scenario parameters to model parameters
   if (e.data.scenParams) sim.model.p = e.data.scenParams;
+  if (e.data.initialObjects) sim.scenario.initialObjects = e.data.initialObjects;
   loadSimulationModelCode();
   if (sim.experimentType) {  // when experimentType has been set, run it
     sim.runExperiment( sim.experimentType);
@@ -56,6 +57,8 @@ onmessage = function (e) {
           scenario.durationInCpuTime = sim.scenario.durationInCpuTime;
         }
       }
+      // copy initialObjects provided by UI
+      if (sim.scenario.initialObjects) scenario.initialObjects = sim.scenario.initialObjects;
       // copy setupInitialState from base scenario if not provided
       if (!scenario.setupInitialState) scenario.setupInitialState = sim.scenario.setupInitialState;
       sim.scenario = scenario;

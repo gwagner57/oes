@@ -13,6 +13,9 @@ class EventList {
     this.events.push( e);
     this.events.sort( (e1, e2) => e1.occTime - e2.occTime);
   }
+  sort() {
+    this.events.sort( (e1, e2) => e1.occTime - e2.occTime);
+  }
   getNextOccurrenceTime() {
     if (this.events.length > 0) return this.events[0].occTime;
     else return 0;
@@ -49,5 +52,5 @@ class EventList {
     }
     return str;
   }
-  clear() {this.events = [];}
+  clear() {this.events.length = 0;}
 }

@@ -270,8 +270,8 @@ class pROCESSINGaCTIVITYeND extends aCTIVITYeND {
     // invoke event routine of aCTIVITYeND
     followupEvents.push(...super.onEvent());
 
-    const succNode = node.getSuccessorNode();
-    if (succNode) {
+    const succNodes = node.getSuccessorNodes();
+    for (const succNode of succNodes) {
       if (succNode instanceof pROCESSINGaCTIVITYnODE) {
         let SuccAT=null;
         if (succNode.activityTypeName) {
@@ -280,7 +280,7 @@ class pROCESSINGaCTIVITYeND extends aCTIVITYeND {
           SuccAT = pROCESSINGaCTIVITY;
         }
         succActy = new SuccAT({
-            node: succNode, processingObject: acty.processingObject});
+          node: succNode, processingObject: acty.processingObject});
         // only create a predecessorActivity slot, if some resource has a deferredRelease
         if (resRoleNames.some( resRoleName => resourceRoles[resRoleName].deferredRelease)) {
           succActy.predecessorActivity = acty;

@@ -24,9 +24,9 @@ oes.ui.logSimulationStep = function (simLogTableEl, step, time, currEvtsStr, obj
         rowEl = simLogTableEl.insertRow();  // create new table row
   rowEl.insertCell().textContent = String( step);
   rowEl.insertCell().textContent = String( math.round( time, decPl));
-  rowEl.insertCell().textContent = currEvtsStr.split("|").map( str => str.substring(0, str.indexOf("@"))).join(", ");
+  rowEl.insertCell().innerHTML = currEvtsStr.split("|").map( str => str.substring(0, str.indexOf("@"))).join(", ");
   rowEl.insertCell().textContent = objectsStr.split("|").join(", ");
-  rowEl.insertCell().textContent = futEvtsStr;
+  rowEl.insertCell().innerHTML = futEvtsStr;
 }
 /*******************************************************
  Display the standalone scenario run statistics

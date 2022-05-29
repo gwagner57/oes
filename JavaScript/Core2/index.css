@@ -9,7 +9,6 @@
  */
 
 html {
-  line-height: 1.4; /* 1 */
   -webkit-text-size-adjust: 100%; /* 2 */
 }
 
@@ -480,7 +479,7 @@ header img{
  Content Styles
 *********************************************/
 body {
-  font: 1rem 'Helvetica', sans-serif;
+  font: 1rem/1.4 'Helvetica', sans-serif;
   background-color: rgb(238,238,238);
 }
 p, dd {

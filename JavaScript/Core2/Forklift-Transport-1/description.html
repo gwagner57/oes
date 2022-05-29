@@ -40,6 +40,28 @@
        <li>If there is none, they walk back to the home location.</li>
       </ol></li>
    </ol>
+  <table>
+   <caption>Product types</caption>
+   <thead><tr><th>ID</th><th>Name</th><th>Arrival rate (per hour)</th></tr></thead>
+   <tbody><tr><td>1</td><td>small</td><td>10</td></tr>
+   <tr><td>2</td><td>medium</td><td>20</td></tr>
+   <tr><td>3</td><td>big</td><td>30</td></tr></tbody>
+  </table>
+  <table>
+   <caption>Forklift types</caption>
+   <thead><tr><th>ID</th><th>Name</th><th>Available</th><th>Can take products</th></tr></thead>
+   <tbody><tr><td>1</td><td>electric</td><td>1</td><td>{1,2}</td></tr>
+   <tr><td>2</td><td>manual</td><td>2</td><td>{1}</td></tr>
+   <tr><td>3</td><td>heavy</td><td>1</td><td>{2,3}</td></tr></tbody>
+  </table>
+  <table>
+   <caption>Operator types</caption>
+   <thead><tr><th>ID</th><th>Name</th><th>Available</th><th>Can drive forklifts</th></tr></thead>
+   <tbody><tr><td>1</td><td>senior</td><td>2</td><td>{1,3}</td></tr>
+   <tr><td>2</td><td>junior</td><td>2</td><td>{2}</td></tr>
+   <tr><td>3</td><td>external</td><td>2</td><td>{3}</td></tr></tbody>
+  </table>
+  
  </section>
   <p>You can inspect the model's <a href="https://github.com/gwagner57/oes/tree/master/JavaScript/Core2/Forklift-Transport-1">OESjs
   code</a> on the OES GitHub repo.</p>

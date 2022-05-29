@@ -480,7 +480,7 @@ header img{
  Content Styles
 *********************************************/
 body {
-  font: 1rem 'Helvetica', sans-serif;
+  font: 1rem/1.4 'Helvetica', sans-serif;
   background-color: rgb(238,238,238);
 }
 p, dd {

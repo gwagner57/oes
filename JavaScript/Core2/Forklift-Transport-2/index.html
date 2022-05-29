@@ -9,6 +9,7 @@
   to a storage area."/>
  <link href="../css/index.css" rel="stylesheet" />
  <script src="../lib/ui/SingleRecordTableWidget.js"></script>
+ <script src="../lib/ui/EntityTableWidget.js"></script>
  <script src="../lib/math.js"></script>
  <script src="../lib/util.js"></script>
  <script src="../lib/idb5.js"></script>
@@ -19,17 +20,29 @@ const sim = Object.create(null); // instead of {}
 sim.model = Object.create(null);
 sim.model.v = Object.create(null); // model variables
 sim.model.p = Object.create(null); // model parameters
+sim.model.ui = Object.create(null); // user interface items
 sim.scenario = Object.create(null);
 sim.scenarios = [];
 sim.stat = Object.create(null);
 sim.experimentTypes = [];
+ // for being able to run setupInitialStateForUi
+ class oBJECT {
+  constructor( id, name) {
+   this.id = id || sim.idCounter++;
+   // add each new object to the Map of simulation objects by ID
+   if (name) {  // name is optional
+    this.name = name;
+   }
+  }
+ }
 /*]]>*/</script>
  <script src="simulation.js"></script>
 </head>
-<body>
+<body class="wide">
  <div><small>An <em><a href="https://gwagner57.github.io/oes/">Object Event Simulation (OES)</a></em> example model.
   You can download and inspect its code from the <a href="https://github.com/gwagner57/oes/tree/master/JavaScript/Core2">OES
   GitHub repo</a>.</small></div>
+ <figure class="right"><img alt="Process Design Model" src="img/CPM.svg" width="600" /></figure>
  <hgroup>
   <h1>Forklift-Transport-2 <a href="description.html">Read more...</a></h1>
   <h2>With Preemption of DriveForkliftHome and WalkBackHome Activities</h2>
@@ -37,7 +50,6 @@ sim.experimentTypes = [];
  <p id="copyright">© 2022 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
   Brandenburg University of Technology, Germany.</p>
  <section id="modelDescription">
-  <figure class="right"><img alt="Process Design Model" src="img/CPM.svg" width="600" /></figure>
   <p>In a forklift transport operation, incoming products of different types are hauled from an arrival area to a
    destination area. There are different types of operators and each of them can only handle specific types of forklifts,
    which, in turn, can only transport specific types of products. This modeling problem has been posted by Noorjax Consulting
@@ -60,7 +72,7 @@ sim.experimentTypes = [];
     <button onclick="exportExperResults()" type="button">Export exper. results</button>
    </div>
   </form>
-  <details id="container"><summary>Model parameters</summary></details>
+  <details id="modParContainer"><summary>Model parameters</summary></details>
  </div>
   <table style="display: none">
       <caption>Simulation Log</caption>
@@ -77,5 +89,6 @@ sim.experimentTypes = [];
    <tbody></tbody>
   </table>
   <p id="execInfo"></p>
-  <script src="../oesjs-core2/index.js"></script></body>
+  <script src="../oesjs-core2/index.js"></script>
+</body>
 </html>

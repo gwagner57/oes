@@ -1,6 +1,5 @@
 class ProductBuffer extends Array {
   constructor( size=Infinity) {
-    // spread the array (of arrays) to a list of arguments as required for the Array constructor
     super();
     this.size = size;
   }
@@ -16,7 +15,7 @@ class ProductBuffer extends Array {
     var product=null;
     for (let i=0; i < this.length; i++) {
       if (this[i].isAssigned) continue;
-      if (types.includes(this[i].type)) product = this[i];
+      if (types.includes( this[i].type)) product = this[i];
     }
     return product;
   }
