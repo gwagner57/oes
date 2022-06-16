@@ -161,7 +161,7 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   /*** END AN/PN extensions BEFORE-setupInitialState *********************/
 
   // add initial objects from UI
-  for (const objTypeName of Object.keys( sim.scenario.initialObjects)) {
+  for (const objTypeName of Object.keys( sim.scenario.initialObjects || {})) {
     const objRecords = sim.scenario.initialObjects[objTypeName];
     sim.Classes[objTypeName].instances ??= Object.create(null);
     for (const objId of Object.keys( objRecords)) {

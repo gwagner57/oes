@@ -13,6 +13,7 @@ sim.model = Object.create(null);
 sim.model.v = Object.create(null); // map of (global) model variables
 sim.model.f = Object.create(null); // map of (global) model functions
 sim.model.p = Object.create(null); // map of model parameters
+sim.model.ui = Object.create(null); // user interface items
 sim.scenario = Object.create(null);  // default scenario record/object
 sim.scenarios = [];  // list of alternative scenarios
 sim.stat = Object.create(null); // map of statistics variables
@@ -124,7 +125,10 @@ class eVENT {
     }, this);
     if (slotListStr) evtStr = `${eventTypeName}{ ${slotListStr}}`;
     else evtStr = eventTypeName;
-    return `${evtStr}@${math.round(this.occTime,decPl)}`;
+    evtStr = `${evtStr}@${math.round(this.occTime,decPl)}`;
+    // event strings may be colored for highlighting
+    if (this.color) evtStr = `<span style="color:${this.color}">${evtStr}</span>`;
+    return evtStr;
   }
   // an event priority comparison function for Array.sort
   static rank( e1, e2) {
@@ -715,7 +719,10 @@ provide all required resources for its successor activity (of type ${succActy.co
     console.log(`Preemption: ${acty.constructor.name} at ${sim.time.toFixed(2)} with transferred resources ${namesOfTransferredResources}`);
     acty.preempted = true;
     // change the scheduled activity end event to occur immediately
-    sim.FEL.getActivityEndEvent(acty).occTime = sim.time + sim.nextMomentDeltaT;
+    const preemptedActivityEndEvent = sim.FEL.getActivityEndEvent( acty);
+    preemptedActivityEndEvent.occTime = sim.time + sim.nextMomentDeltaT;
+    sim.FEL.sort();
+    preemptedActivityEndEvent.color = "red";
     // return the preemption successor activity
     return new aCTIVITYsTART({plannedActivity: succActy});
   }
@@ -782,7 +789,7 @@ class aCTIVITYsTART extends eVENT {
         acty = this.plannedActivity,
         AT = acty.constructor,  // the activity's type/class
         labels = AT.labels,
-        evtTypeName = (labels?.className || AT.name) + "End";
+        evtTypeName = (labels?.className || AT.name) + "Start";
     var evtStr = "", slotListStr = "";
     for (const resRoleName of Object.keys( acty.node.resourceRoles)) {
       if (acty.node.resourceRoles[resRoleName].range) {  // individual resource
@@ -926,7 +933,10 @@ class aCTIVITYeND extends eVENT {
     }
     if (slotListStr) evtStr = `${evtTypeName}{ ${slotListStr}}`;
     else evtStr = evtTypeName;
-    return `${evtStr}@${math.round(this.occTime, decPl)}`;
+    evtStr = `${evtStr}@${math.round(this.occTime,decPl)}`;
+    // event strings may be colored for highlighting
+    if (this.color) evtStr = `<span style="color:${this.color}">${evtStr}</span>`;
+    return evtStr;
   }
 }
 
@@ -1189,12 +1199,12 @@ oes.initializeActNetStatistics = function () {
       //nodeStat.queueLength.avg = 0.0;
       nodeStat.queueLength.max = 0;
       // waiting time statistics
-      nodeStat.waitingTime.total = 0.0;
-      nodeStat.waitingTime.avg = 0.0;
+      nodeStat.waitingTime.total = 0;
+      nodeStat.waitingTime.avg = 0;
       nodeStat.waitingTime.max = 0;
       // cycle time statistics
-      nodeStat.cycleTime.total = 0.0;
-      nodeStat.cycleTime.avg = 0.0;
+      nodeStat.cycleTime.total = 0;
+      nodeStat.cycleTime.avg = 0;
       nodeStat.cycleTime.max = 0;
       // initialize resource utilization per resource object or per count pool
       for (const resRoleName of Object.keys( resRoles)) {
@@ -1217,10 +1227,8 @@ oes.initializeActNetStatistics = function () {
 oes.computeFinalActNetStatistics = function () {
   for (const nodeName of Object.keys( sim.stat.networkNodes)) {
     const nodeStat = sim.stat.networkNodes[nodeName];
-    // avoid dividing by 0 with x||1 expression
-    nodeStat.waitingTime.avg = nodeStat.waitingTime.total / (nodeStat.completedActivities||1);
-    nodeStat.cycleTime.avg = nodeStat.cycleTime.total / (nodeStat.completedActivities||1);
-    if ("resUtil" in nodeStat) {  // finalize resource utilization statistics
+    if ("resUtil" in nodeStat) {  // select (processing) activity nodes
+      // finalize resource utilization statistics
       const resUtilPerNode = nodeStat.resUtil;
       for (const key of Object.keys( resUtilPerNode)) {
         var utiliz = resUtilPerNode[key];
@@ -1232,6 +1240,9 @@ oes.computeFinalActNetStatistics = function () {
         }
         resUtilPerNode[key] = math.round( utiliz, oes.defaults.expostStatDecimalPlaces);
       }
+      // compute averages (avoid dividing by 0 with x||1 expression)
+      nodeStat.waitingTime.avg = nodeStat.waitingTime.total / (nodeStat.completedActivities||1);
+      nodeStat.cycleTime.avg = nodeStat.cycleTime.total / (nodeStat.completedActivities||1);
     }
   }
 };
@@ -1327,6 +1338,7 @@ sim.initializeSimulator = function () {
     }
     oes.createResourcePools();
     oes.setupActNetStatistics();
+    // for PNs add statistics for entry and exit nodes
     if (sim.model.isPN) oes.setupProcNetStatistics();
   }
   /***********************************************************
@@ -1397,9 +1409,17 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   }
   /*** END AN/PN extensions BEFORE-setupInitialState *********************/
 
+  // add initial objects from UI
+  for (const objTypeName of Object.keys( sim.scenario.initialObjects)) {
+    const objRecords = sim.scenario.initialObjects[objTypeName];
+    sim.Classes[objTypeName].instances ??= Object.create(null);
+    for (const objId of Object.keys( objRecords)) {
+      //TODO: should the records be converted to class instances?
+      sim.Classes[objTypeName].instances[objId] = objRecords[objId];
+    }
+  }
   // set up initial state
   if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
-
   // create populations per class
   for (const o of sim.objects.values()) {
     const className = o.constructor.name;
@@ -1478,6 +1498,10 @@ sim.advanceSimulationTime = function () {
  ********************************************************/
 sim.runScenario = function (createLog) {
   function sendLogMsg( currEvts) {
+    function stringifyEvt( e) {
+      var string = e.toString();
+      return string;
+    }
     // convert values() iterator to array
     let objStr = [...sim.objects.values()].map( el => el.toString()).join("|");
     if (oes.defaults.showResPoolsInLog) {
@@ -1485,7 +1509,7 @@ sim.runScenario = function (createLog) {
     }
     postMessage({ step: sim.step, time: sim.time,
       objectsStr: objStr,
-      currEvtsStr: currEvts.map( el => el.toString()).join("|"),
+      currEvtsStr: currEvts.map( stringifyEvt).join("|"),
       futEvtsStr: sim.FEL.toString()
     });
   }
