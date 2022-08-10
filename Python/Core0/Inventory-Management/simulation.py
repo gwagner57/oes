@@ -1,17 +1,23 @@
 import sys, os, importlib
 
-module_path = os.path.abspath('OESpy-Core0/')
-sys.path.insert(1, module_path)
+#module_path = os.path.abspath('OESpy-Core0/')
+#sys.path.insert(1, module_path)
 from simulator import Simulator, Model
 
 module_path = os.path.abspath('lib/')
 sys.path.insert(1, module_path)
-import math_lib
+import util
+
+# create simulator (object)
+sim = Simulator()
 #*******************************************************
 # Simulation Model                                     *
 # ******************************************************
-sim = Simulator()
-sim.model = Model ("discrete", "days", ["SingleProductShop"], ["DailyDemand", "Delivery"])
+timeModel = "discrete"
+timeUnit = "days"
+objectTypes = ["SingleProductShop"]
+eventTypes = ["DailyDemand", "Delivery"]
+sim.model = Model( timeModel, timeUnit, objectTypes, eventTypes)
 #*******************************************************
 # Dynamic Imports                                      *
 # ******************************************************
@@ -20,26 +26,23 @@ from DailyDemand import DailyDemand
 from SingleProductShop import SingleProductShop
 
 #*******************************************************
-# Simulation Scenario Settings                         *
+# Simulation Scenario/Configuration Settings                         *
 #*******************************************************
 sim.scenario.durationInSimTime = 1000
+sim.config.createLog = True
 #*******************************************************
 # Initial State                                        *
 #*******************************************************
-def setupInitialState(self):
-    tvShop = SingleProductShop(sim, 1,"TV Shop", 80, 50, 100)
-    sim.objects["tvShop"] = tvShop
-    sim.FEL.add(DailyDemand(sim, 1,25,tvShop))
+def setupInitialState():
+    tvShop = SingleProductShop( sim, 1,"TV Shop", 80, 50, 100)
+    sim.FEL.add( DailyDemand( sim, 25, tvShop, occTime=1))
 #*******************************************************
 # Statistics Variables                                 *
 #*******************************************************
-def setupStatistics(self):
-    sim.stat = {"nmrOfStockOuts" : 0, "lostSales" : 0, "serviceLevel" : 0.0}
-    return sim.stat
-
-def computeFinalStatistics(self):
+def setupStatistics():
+    sim.stat = {"nmrOfStockOuts": 0, "lostSales": 0, "serviceLevel": 0.0}
+def computeFinalStatistics():
     sim.stat['serviceLevel'] = (sim.time - sim.stat['nmrOfStockOuts']) / sim.time * 100
-    return sim.stat
 #************************************************************
 # Overwriting the (Abstract) Methods of Scenario and Model  *
 #************************************************************

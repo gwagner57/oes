@@ -2,55 +2,48 @@ import sys, os
 
 module_path = os.path.abspath('OESpy-Core0/')
 sys.path.insert(1, module_path)
-from oes_foundations import eVENT
+from oes_foundation import eVENT
 
 module_path = os.path.abspath('lib/')
 sys.path.insert(1, module_path)
-import math_lib
+import util
 
 from Delivery import Delivery
 
-class DailyDemand(eVENT):
-    def __init__(self, sim, occTime, quantity, shop):
-        super().__init__(sim, occTime)
+class DailyDemand( eVENT):
+    def __init__(self, sim, quantity, shop, occTime=None, delay=None):
+        super().__init__(sim, occTime, delay)
         self.quantity = quantity
-        self.occTime = occTime
         self.shop = shop
-        self.labels = {"quantity":quantity}
-        
+
     def onEvent(self, sim):
+        followupEvents = []
         q = self.quantity
         prevStockLevel = self.shop.quantityInStock
-        if (q > prevStockLevel):
+        # perform state changes
+        self.shop.quantityInStock = max( prevStockLevel-q, 0)
+        # update statistics
+        if q > prevStockLevel:
             sim.stat["nmrOfStockOuts"] = sim.stat["nmrOfStockOuts"] + 1
             sim.stat["lostSales"] = sim.stat["lostSales"] + (q - prevStockLevel)
-            
-        self.shop.quantityInStock = max(prevStockLevel-q,0)
-        
-        if (prevStockLevel > self.shop.reorderLevel and 
-            prevStockLevel - q <= self.shop.reorderLevel):
-            delay = Delivery.leadTime()
+        # create follow-up events
+        if prevStockLevel > self.shop.reorderLevel >= prevStockLevel - q :
             quantity = self.shop.targetInventory - self.shop.quantityInStock
             receiver = self.shop
-            return [Delivery(sim, quantity, receiver, delay=delay)]
-        
-        else:
-            return []
+            followupEvents.append( Delivery( sim, quantity, receiver, delay=Delivery.leadTime()))
+        return followupEvents
     
     @staticmethod
-    def quantity2():
-        return math_lib.getUniformRandomInteger(5, 30)
+    def quantity(): return util.getUniformRandomInteger(5, 30)
     
     @staticmethod
-    def recurrence():
-        return 1
+    def recurrence(): return 1
     
     def createNextEvent(self, sim):
-        occTime = self.occTime + DailyDemand.recurrence()
-        quantity = DailyDemand.quantity2()
+        quantity = DailyDemand.quantity()
         shop = self.shop
-        return DailyDemand(sim, occTime, quantity, shop)
+        return DailyDemand( sim, quantity, shop, delay=DailyDemand.recurrence())
     
     def __str__(self):
-        return '-> Type: Daily Demand, Occurence Time:' + str(self.occTime)+ ', Quantity:' +str(self.quantity)+', Shop: '+ str(self.shop.name)
+        return "Demand@"+ str(self.occTime) + "{ quant:"+ str(self.quantity) +"}"
     

@@ -17,6 +17,31 @@ oes.ui.nodeStat = {
   cTime: {title:"average/maximum cycle time"}
 };
 /*******************************************************
+ UI for defining the initial state objects
+ *******************************************************/
+oes.ui.createInitialObjectsUI = function () {
+  const objTypes = sim.ui.objectTypes;  // an array
+  const uiPanelEl = util.createExpandablePanel({id:"InitialStateObjectsUI",
+    heading: "Initial Objects", borderColor:"aqua",
+    hint: "Delete, create or edit the objects of the initial state"
+  });
+  // create an EntityTableWidget for each object type
+  for (const className of objTypes) {
+    const Class = sim.Classes[className];
+    var editableColumns, entityTblWidget=null;
+    if (sim.ui?.initialState?.objectViews[className]) {
+      editableColumns = sim.ui.initialState.objectViews[className].editableAttributes;
+    }
+    try {
+      entityTblWidget = new EntityTableWidget( Class, {editableColumns});
+    } catch (e) {
+      console.error( e);
+    }
+    if (entityTblWidget) uiPanelEl.appendChild( entityTblWidget);
+  }
+  return uiPanelEl;
+};
+/*******************************************************
  Create a simulation log entry (table row)
  ********************************************************/
 oes.ui.logSimulationStep = function (simLogTableEl, step, time, currEvtsStr, objectsStr, futEvtsStr) {

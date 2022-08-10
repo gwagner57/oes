@@ -91,19 +91,19 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
  Advance Simulation Time
  ********************************************************/
 sim.advanceSimulationTime = function () {
-  sim.nextEvtTime = sim.FEL.getNextOccurrenceTime();  // 0 if there is no next event
+  const nextEvtTime = sim.FEL.getNextOccurrenceTime();  // 0 if there is no next event
   // increment the step counter
   sim.step += 1;
   // advance simulation time
   if (sim.timeIncrement) {  // fixed-increment time progression
     // fixed-increment time progression simulations may also have events
-    if (sim.nextEvtTime > sim.time && sim.nextEvtTime < sim.time + sim.timeIncrement) {
-      sim.time = sim.nextEvtTime;  // an event occurring before the next incremented time
+    if (nextEvtTime > sim.time && nextEvtTime < sim.time + sim.timeIncrement) {
+      sim.time = nextEvtTime;  // an event occurring before the next incremented time
     } else {
       sim.time += sim.timeIncrement;
     }
-  } else if (sim.nextEvtTime > 0) {  // next-event time progression
-    sim.time = sim.nextEvtTime;
+  } else if (nextEvtTime > 0) {  // next-event time progression
+    sim.time = nextEvtTime;
   }
 }
 /*******************************************************

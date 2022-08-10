@@ -2,6 +2,13 @@
  *** Activities Package *******************************************************
  ******************************************************************************/
 
+/******************************************************************************
+ *** Lists of predefined cLASSes as reserved names for constraint checks ******
+ ******************************************************************************/
+oes.predefinedEventTypes = oes.predefinedEventTypes.push("aCTIVITYsTART","aCTIVITYeND");
+oes.predefinedActivityTypes = ["aCTIVITY"];
+
+
 // Datatype class for plain queues (with an optional capacity)
 class qUEUE extends Array {
   constructor( capacity) {
@@ -18,7 +25,6 @@ class qUEUE extends Array {
     return this.length>0 ? this.shift() : null;
   }
 }
-
 // An activity state (of an object) is a set of activity type names
 class aCTIVITYsTATE extends Set {
   constructor() {

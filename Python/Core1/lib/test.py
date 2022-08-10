@@ -1,5 +1,5 @@
 #!/usr/bin/env python -W ignore::DeprecationWarning
-import math
+import util
 import random
 from oes_distributions import *
 #importlib.import_module("rand")

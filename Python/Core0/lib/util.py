@@ -4,20 +4,20 @@ from statistics import stdev, fmean as mean
 from random import randint, uniform
 from itertools import product
 
-def cartesianProduct(arr):
+def cartesianProduct( arr):
     result = []
     for element in product(*arr):
         result.append(element)
-    return (result)
+    return result
 
 def getUniformRandomNumber(min, max):
-    return uniform(min, max)
+    return uniform( min, max)
 
 def getUniformRandomInteger(min, max):
-    return randint(min, max)
+    return randint( min, max)
 
 # To be implemented later
-def confInt(data, samples = 10000, alpha = 0.95):
+def confInt( data, samples = 10000, alpha = 0.95):
     pass
 
 # Test Statments for the needed functions. Uncomment to test the functionality

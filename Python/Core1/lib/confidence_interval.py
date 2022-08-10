@@ -1,6 +1,6 @@
 from numpy import mean
 import numpy as np 
-import math
+import util
 import random
 from scipy.stats import sem, t
 from scipy import mean

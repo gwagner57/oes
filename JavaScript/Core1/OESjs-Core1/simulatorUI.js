@@ -8,6 +8,31 @@ if (typeof oes !== "object") {
   };
 }
 /*******************************************************
+ UI for defining the initial state objects
+ *******************************************************/
+oes.ui.setupInitialObjectsUI = function () {
+  const objTypes = sim.model.objectTypes;  // an array
+  const uiPanelEl = util.createExpandablePanel({id:"InitialStateObjectsUI",
+    heading: "Initial Objects", borderColor:"aqua",
+    hint: "Delete, create or edit the objects of the initial state"
+  });
+  // create an EntityTableWidget for each object type
+  for (const className of objTypes) {
+    const Class = sim.Classes[className];
+    var editProps=[], entityTblWidget=null;
+    if (sim.config?.initialStateUI?.objectViews[className]) {
+      editProps = sim.config.initialStateUI.objectViews[className].editableProperties;
+    }
+    try {
+      entityTblWidget = new EntityTableWidget( Class, editProps);
+    } catch (e) {
+      console.error( e);
+    }
+    if (entityTblWidget) uiPanelEl.appendChild( entityTblWidget);
+  }
+  return uiPanelEl;
+};
+/*******************************************************
  Create a simulation log entry (table row)
  ********************************************************/
 oes.ui.logSimulationStep = function (simLogTableEl, step, time, currEvtsStr, objectsStr, futEvtsStr) {

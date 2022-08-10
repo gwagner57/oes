@@ -25,10 +25,16 @@ oes.defaults = {
   simLogDecimalPlaces: 2
 };
 
-/**
+/******************************************************************************
+ *** Lists of predefined cLASSes as reserved names for constraint checks ******
+ ******************************************************************************/
+oes.predefinedObjectTypes = ["oBJECT"];
+oes.predefinedEventTypes = ["eVENT"];
+
+/******************************************************************************
  * An OES object has an ID and may have a unique name. If no ID value is provided on creation,
  * an ID value is automatically assigned using the simulation scenarios "idCounter".
- */
+ ******************************************************************************/
 class oBJECT {
   constructor( id, name) {
     this.id = id || sim.idCounter++;

@@ -6,6 +6,13 @@
  ******************************************************************************/
 
 /******************************************************************************
+ *** Lists of predefined cLASSes as reserved names for constraint checks ******
+ ******************************************************************************/
+oes.predefinedObjectTypes = oes.predefinedObjectTypes.push("pROCESSINGoBJECT","pROCESSINGnODE","eNTRYnODE","eXITnODE");
+oes.predefinedEventTypes = oes.predefinedEventTypes.push("aRRIVAL","pROCESSINGaCTIVITYsTART","pROCESSINGaCTIVITYeND","dEPARTURE");
+oes.predefinedActivityTypes = oes.predefinedActivityTypes.push("pROCESSINGaCTIVITY");
+
+/******************************************************************************
  *** Processing Network Package ***********************************************
  ******************************************************************************/
 /**

@@ -4,12 +4,28 @@ const formEl = document.forms["run"],
     logCheckboxEl = formEl["log"],
     storeExpResCheckboxEl = formEl["storeExpRes"],
     selExpEl = formEl["selExp"],
+    modelDescriptionEl = document.getElementById("modelDescription"),
+    scenarioTitleEl = document.getElementById("scenarioTitle"),
+    scenarioDescriptionEl = document.getElementById("scenarioDescription"),
     simLogTableEl = document.getElementById("simLog"),
     statisticsTableEl = document.getElementById("statisticsTbl"),
     simInfoEl = document.getElementById("simInfo"),
     execInfoEl = document.getElementById("execInfo");
 function setupUI() {
   var optionTextItems = [];
+  function renderInitialObjectsTables() {
+    const containerEl = document.getElementById("upfrontUI"),
+        objTypeTableElems = containerEl.querySelectorAll("table.EntityTableWidget");
+    for (const objTypeTableEl of objTypeTableElems) {
+      objTypeTableEl.remove();
+    }
+    for (const objTypeName of Object.keys( sim.Classes)) {
+      const OT = sim.Classes[objTypeName];
+      if (OT?.editableAttributes) {
+        containerEl.appendChild( new EntityTableWidget( OT.instances));
+      }
+    }
+  }
   // fill scenario choice control
   if (sim.scenarios.length > 0) {
     for (let scen of sim.scenarios) {
@@ -24,6 +40,14 @@ function setupUI() {
       optionTextItems.push( expT.title);
     }
     util.fillSelectWithOptionsFromStringList( selExpEl, optionTextItems);
+  }
+  // create model parameter panel
+  sim.scenario.parameters = {...sim.model.p};  // clone model parameters
+  fillModelParameterPanel( sim.scenario.parameters);
+  // create initial state UI
+  if (Array.isArray( sim.ui.objectTypes) && sim.ui.objectTypes.length > 0) {
+    if ("setupInitialStateForUi" in sim.scenario) sim.scenario.setupInitialStateForUi();
+    renderInitialObjectsTables();
   }
 }
 function onChangeOfExpSelect() {
@@ -132,6 +156,8 @@ function run() {
     }
   }
   // Hide UI elements
+  if (modelDescriptionEl) modelDescriptionEl.style.display = "none";
+  if (scenarioDescriptionEl) scenarioDescriptionEl.style.display = "none";
   formEl.style.display = "none";  // hide selection form
   sim.model.setupStatistics();
   if (sim.experimentType) {
@@ -193,4 +219,21 @@ if (sim.scenarios.length > 0) {
   selScenEl.parentElement.style.display = "none";
 }
 if (sim.experimentType) run();  // pre-set experiment (in simulation.js)
-else setupUI();  // let the user choose
+else if (sim.ui?.objectTypes) {
+  /*************************************************
+   Set up the initial objects UI
+   *************************************************/
+  let loadExpressions=[];
+  for (const objTypeName of sim.ui.objectTypes) {
+    loadExpressions.push( util.loadScript( objTypeName + ".js"));
+  }
+  Promise.all( loadExpressions).then( function () {
+    for (const objTypeName of sim.ui.objectTypes)  {
+      const OT = sim.Classes[objTypeName] = util.getClass( objTypeName);
+      OT.instances = {};
+    }
+    setupUI();
+  }).catch( function (error) {console.log( error);});
+} else {
+  setupUI();
+}

@@ -38,11 +38,11 @@ sim.initializeScenarioRun = function () {
  Advance Simulation Time
  ********************************************************/
 sim.advanceSimulationTime = function () {
-  sim.nextEvtTime = sim.FEL.getNextOccurrenceTime();  // 0 if there is no next event
+  const nextEvtTime = sim.FEL.getNextOccurrenceTime();  // 0 if there is no next event
   // increment the step counter
   sim.step += 1;
   // advance simulation time
-  if (sim.nextEvtTime > 0) sim.time = sim.nextEvtTime;
+  if (nextEvtTime > 0) sim.time = nextEvtTime;
 }
 /*******************************************************
  Run a simulation scenario

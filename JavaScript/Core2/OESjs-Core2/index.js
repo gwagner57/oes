@@ -16,6 +16,18 @@ sim.Classes = Object.create(null);
 
 function setupUI() {
   var optionTextItems = [];
+  function renderInitialObjectsTables() {
+    const containerEl = oes.ui.createInitialObjectsUI(),
+        objTypeTableElems = containerEl.querySelectorAll("table.EntityTableWidget");
+    document.getElementById("upfrontUI").appendChild( containerEl);
+    for (const objTypeTableEl of objTypeTableElems) {
+      objTypeTableEl.remove();
+    }
+    for (const objTypeName of sim.ui.objectTypes) {
+      const OT = sim.Classes[objTypeName];
+      if (OT) containerEl.appendChild( new EntityTableWidget( OT));
+    }
+  }
   // fill scenario choice control
   if (sim.scenarios.length > 0) {
     for (const scen of sim.scenarios) {
@@ -31,10 +43,14 @@ function setupUI() {
     }
     util.fillSelectWithOptionsFromStringList( selExpEl, optionTextItems);
   }
+  // create model parameter panel
   sim.scenario.parameters = {...sim.model.p};  // clone model parameters
   fillModelParameterPanel( sim.scenario.parameters);
-  if ("setupInitialStateForUi" in sim.scenario) {
-    sim.scenario.setupInitialStateForUi();
+  // create initial state UI
+  if (Array.isArray( sim.ui.objectTypes) && sim.ui.objectTypes.length > 0) {
+    if ("setupInitialStateForUi" in sim.scenario) {
+      sim.scenario.setupInitialStateForUi();
+    }
     renderInitialObjectsTables();
   }
 }
@@ -44,19 +60,6 @@ function fillModelParameterPanel( record) {
   // drop the <table> child element
   if (modParTableEl) modParTableEl.remove();
   if (containerEl) containerEl.appendChild( new SingleRecordTableWidget( record));
-}
-function renderInitialObjectsTables() {
-  const containerEl = document.getElementById("upfrontUI"),
-      objTypeTableElems = containerEl.querySelectorAll("table.EntityTableWidget");
-  for (const objTypeTableEl of objTypeTableElems) {
-    objTypeTableEl.remove();
-  }
-  for (const objTypeName of Object.keys( sim.Classes)) {
-    const OT = sim.Classes[objTypeName];
-    if (OT?.editableAttributes) {
-      containerEl.appendChild( new EntityTableWidget( OT.instances));
-    }
-  }
 }
 function onChangeOfScenSelect() {
   const scenarioNo = parseInt( selScenEl.value);
@@ -179,7 +182,9 @@ function run() {
     }
   } else choice = "0";
   // Hide UI elements
-  document.getElementsByTagName("figure")[0].style.display = "none";
+  if (document.getElementsByTagName("figure")[0]) {
+    document.getElementsByTagName("figure")[0].style.display = "none";
+  }
   if (modelDescriptionEl) modelDescriptionEl.style.display = "none";
   if (scenarioDescriptionEl) scenarioDescriptionEl.style.display = "none";
   if (upfrontUiEl) {
@@ -256,21 +261,21 @@ if (sim.scenarios.length > 0) {
   selExpEl.style.display = "none";
 }
 if (sim.experimentType) run();  // pre-set experiment (in simulation.js)
-else if (sim.model.ui?.objectTypes) {
+else if (sim.ui?.objectTypes) {
   /*************************************************
    Set up the initial objects UI
    *************************************************/
   let loadExpressions=[];
-  for (const objTypeName of sim.model.ui.objectTypes) {
+  for (const objTypeName of sim.ui.objectTypes) {
     loadExpressions.push( util.loadScript( objTypeName + ".js"));
   }
   Promise.all( loadExpressions).then( function () {
-    for (const objTypeName of sim.model.ui.objectTypes)  {
+    for (const objTypeName of sim.ui.objectTypes)  {
       const OT = sim.Classes[objTypeName] = util.getClass( objTypeName);
       OT.instances = {};
     }
-    setupUI();})
-  .catch( function (error) {console.log( error);});
+    setupUI();
+  }).catch( function (error) {console.log( error);});
 } else {
   setupUI();
 }

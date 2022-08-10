@@ -19,7 +19,7 @@
   on top of a given simulation scenario for that model.</p><p>When running an
   experiment, the resulting statistics data are stored in a database, which
   allows looking them up later on or exporting them to data analysis tools
-  (such as Microsoft Excel and RStudio)</p><section><h4>2.6.1. Simple
+  (such as Microsoft Excel and RStudio)</p><section><h4>Simple
   Experiments</h4><p>A simple experiment type is defined with a
   <code>sim.experimentType</code> record on top of a model by defining (1) the
   number of <em>replications</em> and (2) possibly a list of <em>seed
@@ -218,7 +218,7 @@
     </table><p>When no seeds are defined, the experiment is run with implicit
   random seeds using JavaScript's built-in random number generator, which
   implies that experiment runs are not
-  reproducible.</p></section><section><h4>2.6.2. Parameter Variation
+  reproducible.</p></section><section><h4>Parameter Variation
   Experiments</h4><p>A parameter variation experiment is defined with (1) a
   number of <em>replications</em>, (2) a list of <em>seed values</em> (one for
   each replication), and (3) one or more experiment parameters. </p><p>An
@@ -379,7 +379,7 @@
           <td>93.62</td>
         </tr>
       </tbody>
-    </table></section><section><h4>2.6.1. Storage and Export of Experiment
+    </table></section><section><h4>Storage and Export of Experiment
   Results</h4><p>In OESjs-Core1, an experiment's output statistics data is
   stored in a browser-managed database using JavaScript's <em>IndexedDB</em>
   technology. The name of this database is the same as the name of the

@@ -2,44 +2,36 @@ import sys, os
 
 module_path = os.path.abspath('OESpy-Core0/')
 sys.path.insert(1, module_path)
-from oes_foundations import eVENT
+from oes_foundation import eVENT
 
 module_path = os.path.abspath('lib/')
 sys.path.insert(1, module_path)
-import math_lib
+import util
 
 class Delivery(eVENT):
-    def __init__(self, sim, quantity, receiver, occTime = None, delay = None):
-        super().__init__(sim, occTime, delay)
-        self.delay = delay
+    def __init__(self, sim, quantity, receiver, occTime=None, delay=None):
+        super().__init__( sim, occTime, delay)
         self.quantity = quantity
         self.receiver = receiver
-        self.labels = {"quantity":quantity}
-        
-    def onEvent(self, sim):
+
+    def onEvent( self, sim):
+        followupEvents = []
+        # perform state changes
         self.receiver.quantityInStock += self.quantity
-        if (self.receiver.quantityInStock <= self.receiver.reorderLevel):
-            delay = Delivery.leadTime()
+        # if stock quantity is still below reorderLevel, order more
+        if self.receiver.quantityInStock <= self.receiver.reorderLevel:
             quantity = self.receiver.targetInventory - self.receiver.quantityInStock
             receiver = self.receiver
-            return [Delivery(sim, delay= delay, quantity= quantity, receiver=receiver)]
-        else:
-            return []
-    
+            followupEvents.append( Delivery( sim, quantity, receiver, delay = Delivery.leadTime()))
+        return followupEvents
+
     @staticmethod
     def leadTime():
-        r = math_lib.getUniformRandomInteger(0, 99)
-        if (r < 25):
-            return 1
-        elif (r < 85):
-            return 2
-        else:
-            return 3
-    
-    @staticmethod
-    def recurrence():
-        return 0
+        r = util.getUniformRandomInteger( 0, 99)
+        if r < 25: return 1
+        elif r < 85: return 2
+        else: return 3
     
     def __str__(self):
-        return '-> Type: Delivery, Occurence Time: ' + str(self.occTime) + ', Quantity: ' + str(self.quantity)+ ', Shop : ' + str(self.receiver.name)
+        return "Delivery@"+ str(self.occTime) +"{ quant: " + str(self.quantity) + "}"
     

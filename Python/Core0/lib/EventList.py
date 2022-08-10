@@ -16,19 +16,19 @@ class EventList:
             return 0
         
     def getNextEvent(self):
-        if (len(self.events) > 0): return self.events[0]
+        if len(self.events) > 0: return self.events[0]
         else: return None
         
     def isEmpty(self):
-        if (len(self.events) > 0): return False
+        if len(self.events) > 0: return False
         else: return True
         
     def removeNextEvents(self):
         nextEvents = []
-        if (len(self.events) == 0): return []
+        if len(self.events) == 0: return []
         nextTime = self.events[0].occTime
-        while (len(self.events) > 0 and self.events[0].occTime == nextTime):
-            nextEvents.append(self.events.pop(0))
+        while len(self.events) > 0 and self.events[0].occTime == nextTime:
+            nextEvents.append( self.events.pop(0))
         return nextEvents
 
 # General Testcases to see if the data structrure behaves correctly      
