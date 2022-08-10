@@ -1,6 +1,7 @@
 import sys, os
-from simulatorUI import logSimulationStep
+
 from oes_foundation import defaults
+from simulatorUI import logSimulationStep
 
 module_path = os.path.abspath('lib/')
 sys.path.insert(1, module_path)
@@ -43,9 +44,7 @@ class Simulator:
         self.time = 0
         self.endTime = self.scenario.durationInSimTime or float('inf')  # infinity
         self._idCounter = self.scenario.idCounter or 1000
-             
         self.scenario.setupInitialState()
-        
         if has_method( self.model, "setupStatistics"): self.model.setupStatistics()
     
     def advanceSimulationTime(self):
@@ -66,13 +65,13 @@ class Simulator:
                     if has_method( e, "createNextEvent"): self.FEL.add( e.createNextEvent( self))
                     else: self.FEL.add( type(e)(delay=e.recurrence()))
         
-        if has_method( self.model, "computeFinalStatistics"):
-            self.model.computeFinalStatistics()
-            for k,v in self.stat.items():
-                if type(v) == float: self.stat[k] = round( v, defaults['expostStatDecimalPlaces'])
-            print ("\n-------------------- Final Statistics --------------------------")
-            print ("Stat:", self.stat)
-            
+        if has_method( self.model, "computeFinalStatistics"): self.model.computeFinalStatistics()
+
+        for k,v in self.stat.items():
+            if type(v) == float: self.stat[k] = round( v, defaults['expostStatDecimalPlaces'])
+        print ("\n-------------------- Final Statistics --------------------------")
+        print ("Stat:", self.stat)
+
     def runStandaloneScenario(self):
         self.initializeSimulator()
         self.initializeScenarioRun()
