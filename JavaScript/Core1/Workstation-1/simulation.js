@@ -16,7 +16,7 @@ sim.scenario.setupInitialState = function () {
   // Create initial objects
   var ws = new WorkStation({id: 1, inputBufferLength: 0, status:"AVAILABLE"});
   // Schedule initial events
-  sim.FEL.add( new PartArrival({occTime: 1, workStation: ws}));
+  sim.FEL.add( new PartArrival({occTime: PartArrival.recurrence(), workStation: ws}));
 }
 /*******************************************************
  Alternative Scenarios

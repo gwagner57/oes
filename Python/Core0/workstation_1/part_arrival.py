@@ -25,8 +25,7 @@ class PartArrival( eVENT):
         if ws.inputBufferLength > sim.stat["maxQueueLength"]:
             sim.stat["maxQueueLength"] = ws.inputBufferLength
         # schedule follow-up events
-        if ws.status == "AVAILABLE":
-            followupEvents.append( ProcessingStart( sim, ws))
+        if ws.status == "AVAILABLE": followupEvents.append( ProcessingStart( sim, ws))
         return followupEvents
 
     @staticmethod

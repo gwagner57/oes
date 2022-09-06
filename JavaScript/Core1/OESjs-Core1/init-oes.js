@@ -1,5 +1,5 @@
 /**********************************************************************
- *** Create initial objects/maps/arrays *******************************
+ *** Create namespace objects and initial objects/maps/arrays *********
  *** (most of them shared by UI thread and worker) ********************
  **********************************************************************/
 const sim = Object.create(null); // instead of {}

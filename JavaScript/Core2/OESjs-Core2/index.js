@@ -43,9 +43,10 @@ function setupUI() {
     }
     util.fillSelectWithOptionsFromStringList( selExpEl, optionTextItems);
   }
-  // create model parameter panel
-  sim.scenario.parameters = {...sim.model.p};  // clone model parameters
-  fillModelParameterPanel( sim.scenario.parameters);
+  if (Object.keys( sim.model.p).length > 0) {  // create model parameter panel
+    sim.scenario.parameters = {...sim.model.p};  // clone model parameters
+    fillModelParameterPanel( sim.scenario.parameters);
+  }
   // create initial state UI
   if (Array.isArray( sim.ui.objectTypes) && sim.ui.objectTypes.length > 0) {
     if ("setupInitialStateForUi" in sim.scenario) {

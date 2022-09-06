@@ -9,7 +9,9 @@ sim.model.otherCodeFiles = ["../lib/RingBuffer"];
 sim.model.objectTypes = ["SingleProductCompany", "ItemType", "InputItemType", "OutputItemType"];
 sim.model.eventTypes = ["StartOfDay", "DailyDelivery", "DailyProduction", "DailyDemand", "EndOfDay"];
 
-sim.ui.objectTypes = ["SingleProductCompany", "ItemType", "InputItemType", "OutputItemType"];
+if (sim.ui) {
+  sim.ui.objectTypes = ["SingleProductCompany", "ItemType", "InputItemType", "OutputItemType"];
+}
 
 /*******************************************************
  Default Scenario

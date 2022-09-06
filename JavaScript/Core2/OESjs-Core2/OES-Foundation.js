@@ -1,5 +1,5 @@
 /*******************************************************************************
- * OES JS Core 1 Foundation Objects and Classes
+ * OES JS Core 2 Foundation Objects and Classes
  *
  * @copyright Copyright 2020 Gerd Wagner
  *   Chair of Internet Technology, Brandenburg University of Technology, Germany.
@@ -7,7 +7,7 @@
  * @author Gerd Wagner
  ******************************************************************************/
 
-// Create initial (namespace) objects/maps/arrays
+/*
 const sim = Object.create(null);
 sim.model = Object.create(null);
 sim.model.v = Object.create(null); // map of (global) model variables
@@ -17,18 +17,18 @@ sim.model.ui = Object.create(null); // user interface items
 sim.scenario = Object.create(null);  // default scenario record/object
 sim.scenarios = [];  // list of alternative scenarios
 sim.stat = Object.create(null); // map of statistics variables
-sim.experimentTypes = [];
-
 sim.config = Object.create(null);
+sim.experimentTypes = [];
 
 var oes = Object.create(null);  // cannot be const, since also defined in simulatorUI.js
 oes.defaults = {
   nextMomentDeltaT: 0.01,
   expostStatDecimalPlaces: 2,
   simLogDecimalPlaces: 2,
-  timeSeriesCompressionRate: 1,  // number of array values to be compressed into one value
   showResPoolsInLog: false
 };
+*/
+oes.defaults.showResPoolsInLog = false;
 
 /******************************************************************************
  *** Lists of predefined cLASSes as reserved names for constraint checks ******

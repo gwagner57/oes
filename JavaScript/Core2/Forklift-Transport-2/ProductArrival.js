@@ -40,7 +40,7 @@ class ProductArrival extends eVENT {
           // a newly scheduled DriveForkliftFromHomeToArrivalArea activity
           acty.operator.assignedProduct = product;
           product.isAssigned = true;
-          // schedule the preemption successor activity
+          // schedule a DriveForkliftBackToArrivalArea activity that preempts acty
           followupEvents.push( aCTIVITY.preempt( acty, DriveForkliftBackToArrivalArea));
           break;
         }

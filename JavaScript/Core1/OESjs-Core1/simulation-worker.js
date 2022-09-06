@@ -4,7 +4,7 @@ self.importScripts("../lib/seedrandom.min.js", "../lib/rand.js", "../lib/EventLi
     "../lib/math.js", "../lib/idb5.js");
 */
 self.importScripts("../lib/library-files.js");
-self.importScripts("../OESjs-Core1/OES-Foundation.js", "../OESjs-Core1/simulator.js");
+self.importScripts("../oesjs-core1/init-oes.js", "../OESjs-Core1/OES-Foundation.js", "../OESjs-Core1/simulator.js");
 // load simulation-example-specific code
 self.importScripts("simulation.js");
 if (sim.model.objectTypes) {

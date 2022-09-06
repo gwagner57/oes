@@ -11,19 +11,21 @@ const formEl = document.forms["run"],
     statisticsTableEl = document.getElementById("statisticsTbl"),
     simInfoEl = document.getElementById("simInfo"),
     execInfoEl = document.getElementById("execInfo");
+// initialize the className->Class map
+sim.Classes = Object.create(null);
+
 function setupUI() {
   var optionTextItems = [];
   function renderInitialObjectsTables() {
-    const containerEl = document.getElementById("upfrontUI"),
+    const containerEl = oes.ui.createInitialObjectsUI(),
         objTypeTableElems = containerEl.querySelectorAll("table.EntityTableWidget");
+    document.getElementById("upfrontUI").appendChild( containerEl);
     for (const objTypeTableEl of objTypeTableElems) {
       objTypeTableEl.remove();
     }
-    for (const objTypeName of Object.keys( sim.Classes)) {
+    for (const objTypeName of sim.ui.objectTypes) {
       const OT = sim.Classes[objTypeName];
-      if (OT?.editableAttributes) {
-        containerEl.appendChild( new EntityTableWidget( OT.instances));
-      }
+      if (OT) containerEl.appendChild( new EntityTableWidget( OT));
     }
   }
   // fill scenario choice control
@@ -41,14 +43,40 @@ function setupUI() {
     }
     util.fillSelectWithOptionsFromStringList( selExpEl, optionTextItems);
   }
-  // create model parameter panel
-  sim.scenario.parameters = {...sim.model.p};  // clone model parameters
-  fillModelParameterPanel( sim.scenario.parameters);
+  if (Object.keys( sim.model.p).length > 0) {  // create model parameter panel
+    sim.scenario.parameters = {...sim.model.p};  // clone model parameters
+    fillModelParameterPanel( sim.scenario.parameters);
+  }
   // create initial state UI
   if (Array.isArray( sim.ui.objectTypes) && sim.ui.objectTypes.length > 0) {
     if ("setupInitialStateForUi" in sim.scenario) sim.scenario.setupInitialStateForUi();
     renderInitialObjectsTables();
   }
+}
+function fillModelParameterPanel( record) {
+  const containerEl = document.getElementById("modParContainer"),
+      modParTableEl = containerEl?.querySelector("table.SingleRecordTableWidget");
+  // drop the <table> child element
+  if (modParTableEl) modParTableEl.remove();
+  if (containerEl) containerEl.appendChild( new SingleRecordTableWidget( record));
+}
+function onChangeOfScenSelect() {
+  const scenarioNo = parseInt( selScenEl.value);
+  sim.scenario = sim.scenarios[scenarioNo];
+  scenarioTitleEl.textContent = sim.scenario.title;
+  scenarioDescriptionEl.innerHTML = sim.scenario.description;
+  if (scenarioNo > 0) {
+    const changedParams = Object.keys( sim.scenario.parameters || {});
+    // fill up scenario parameters
+    for (const paramName of Object.keys( sim.model.p)) {
+      if (!changedParams.includes( paramName)) {
+        sim.scenario.parameters[paramName] = sim.model.p[paramName];
+      }
+    }
+  } else {  // default scenario
+    sim.scenario.parameters = {...sim.model.p};  // clone model parameters
+  }
+  fillModelParameterPanel( sim.scenario.parameters);
 }
 function onChangeOfExpSelect() {
   if (selExpEl.value === "0") {

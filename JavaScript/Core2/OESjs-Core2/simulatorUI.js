@@ -1,12 +1,11 @@
-// Define the namespace variable "oes" if not yet defined
-if (typeof oes !== "object") {
-  oes = Object.create(null);
-  oes.ui = Object.create(null);
-  oes.defaults = {
-    expostStatDecimalPlaces: 2,
-    simLogDecimalPlaces: 2
-  };
-}
+/**********************************************************************
+ *** Create UI namespace objects **************************************
+ **********************************************************************/
+sim.ui = Object.create(null);
+oes.ui = Object.create(null);
+oes.ui.obs = Object.create(null);
+oes.ui.obs.SVG = Object.create(null);
+
 oes.ui.nodeStat = {
   enqu: {title:"enqueued tasks"},
   tmout: {title:"number of waiting timeouts (reneging)"},
@@ -16,6 +15,16 @@ oes.ui.nodeStat = {
   wTime: {title:"average/maximum waiting time"},
   cTime: {title:"average/maximum cycle time"}
 };
+// for being able to run setupInitialStateForUi
+class oBJECT {
+  constructor( id, name) {
+    this.id = id || sim.idCounter++;
+    // add each new object to the Map of simulation objects by ID
+    if (name) {  // name is optional
+      this.name = name;
+    }
+  }
+}
 /*******************************************************
  UI for defining the initial state objects
  *******************************************************/

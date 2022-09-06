@@ -5,25 +5,11 @@
  *   Chair of Internet Technology, Brandenburg University of Technology, Germany.
  * @license The MIT License (MIT)
  * @author Gerd Wagner
+ * TODO:
+ * - add removeNext( evtType) to FEL for canceling scheduled events
+ * - use FEL.removeNext in the Workstation-1a model for canceling the scheduled ProcessingEnd event
+ *   of an implicit activity that is preempted by a failure event
  ******************************************************************************/
-
-// Create initial (namespace) objects/maps/arrays
-const sim = {};
-sim.model = {};
-sim.model.v = Object.create(null); // map of (global) model variables
-sim.model.f = Object.create(null); // map of (global) model functions
-sim.model.p = Object.create(null); // map of model parameters
-sim.scenario = {};
-sim.scenarios = [];
-sim.stat = Object.create(null); // map of statistics variables
-sim.experimentTypes = [];
-
-oes = {};  // cannot be const, since also defined in simulatorUI.js
-oes.defaults = {
-  nextMomentDeltaT: 0.01,
-  expostStatDecimalPlaces: 2,
-  simLogDecimalPlaces: 2
-};
 
 /******************************************************************************
  *** Lists of predefined cLASSes as reserved names for constraint checks ******

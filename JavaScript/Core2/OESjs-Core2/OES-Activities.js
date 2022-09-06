@@ -1,5 +1,9 @@
 /******************************************************************************
  *** Activities Package *******************************************************
+ * TODO:
+ * - add removeNext( evtType) to FEL for canceling scheduled events
+ * - use FEL.removeNext in preempt for replacing the scheduled activity end event
+ *   of a preempted activity with an activity abortion event
  ******************************************************************************/
 
 /******************************************************************************
@@ -497,7 +501,15 @@ class aCTIVITY extends eVENT {
       }
     }
   }
-  // mode=1 represents the preemption mode PreemptionModeEL.ABORT
+  /***********************************************************
+   * Preempting an activity A with a successor activity B means
+   * (1) to abort or suspend A, (2) transfer A's resources to B,
+   * and (3) start B. Aborting an ongoing activity A means to cancel
+   * its scheduled end event and schedule an earlier abortion event.
+   *
+   * mode=1 represents the default preemption mode PreemptionModeEL.ABORT
+   * mode=2 represents PreemptionModeEL.SUSPEND
+   */
   static preempt( acty, succActyOrSuccActyType, mode=1) {
     var succActy=null, SuccActyType=null;
     const namesOfTransferredResources=[];  // just for logging
@@ -744,6 +756,87 @@ class aCTIVITYeND extends eVENT {
     evtStr = `${evtStr}@${math.round(this.occTime,decPl)}`;
     // event strings may be colored for highlighting
     if (this.color) evtStr = `<span style="color:${this.color}">${evtStr}</span>`;
+    return evtStr;
+  }
+}
+class aCTIVITYaBORTION extends eVENT {
+  constructor({occTime, delay, activity}) {
+    super({occTime, delay});
+    this.activity = activity;
+  }
+  onEvent() {
+    const acty = this.activity,
+        node = acty.node,
+        AT = acty.constructor,  // the activity's type/class
+        resourceRoles = node?.resourceRoles ?? AT.resourceRoles,
+        resRoleNames = Object.keys( resourceRoles),
+        followupEvents=[];
+    // if there is an onActivityAbortion procedure, execute it
+    if (typeof acty.onActivityAbortion === "function") {
+      followupEvents.push(...acty.onActivityAbortion());
+    }
+    // set duration if there is no pre-set duration
+    if (!acty.duration) {
+      acty.duration = this.occTime - acty.startTime;
+    }
+    // drop activity from map/collection of ongoing activities
+    delete sim.ongoingActivities[this.activity.id];
+
+    if (node) {  // update AN statistics
+      const nodeStat = sim.stat.networkNodes[node.name],
+            resUtilPerNode = nodeStat.resUtil;
+      if (acty.preempted) {
+        nodeStat.preemptedActivities++;
+      }
+      //TODO: nodeStat.abortedActivities++;
+      // compute resource utilization per node (per resource object or per count pool)
+      for (const resRoleName of resRoleNames) {
+        const resRole = resourceRoles[resRoleName];
+        if (resRole.range) {  // per resource object
+          let resObjects = acty[resRoleName];
+          if (!Array.isArray( resObjects)) resObjects = [resObjects];
+          for (const resObj of resObjects) {
+            resUtilPerNode[String(resObj.id)] += acty.duration;
+            // update the activity state of resource objects
+            if (!resObj.activityState) {
+              console.error("Missing activity state at "+ sim.time +": "+ resObj.name +":"+ acty.constructor.name);
+            } else resObj.activityState.delete( AT.name);
+          }
+        } else {  // per count pool
+          resUtilPerNode[resRole.countPoolName] += acty.duration;
+        }
+      }
+    }
+    if (node.constructor === aCTIVITYnODE) {  // isDirectInstanceOf
+      // [execute this code only for AN activity nodes, and not for PN nodes]
+      // release all non-transferred resources of acty
+      acty.releaseResources();
+    }
+    return followupEvents;
+  }
+  toString() {
+    const decPl = oes.defaults.simLogDecimalPlaces,
+        acty = this.activity,
+        AT = acty.constructor,  // the activity's type/class
+        labels = AT.labels,
+        evtTypeName = (labels?.className || AT.name) + "Abortion";
+    var evtStr = "", slotListStr = "";
+    for (const resRoleName of Object.keys( acty.node.resourceRoles)) {
+      if (acty.node.resourceRoles[resRoleName].range) {  // individual resource
+        const resObj = acty[resRoleName];
+        let resObjStr = "";
+        if (Array.isArray( resObj)) {
+          resObjStr = resObj.map( o => o.name || String(o.id)).toString();
+        } else {
+          resObjStr = resObj.name || String(resObj.id);
+        }
+        slotListStr += resObjStr +", ";
+      }
+    }
+    if (slotListStr) evtStr = `${evtTypeName}{ ${slotListStr}}`;
+    else evtStr = evtTypeName;
+    evtStr = `${evtStr}@${math.round(this.occTime,decPl)}`;
+    evtStr = `<span style="color:red">${evtStr}</span>`;
     return evtStr;
   }
 }

@@ -7,11 +7,18 @@
     <link href="https://sim4edu.com/oesjs/core1/lemonade-stand-1/" rel="canonical" />
     <meta name="description" content="A simulation of a lemonade seller that makes lemonade in pitchers and sells it in paper cups at a stand in a street market."/>
     <link href="../css/index.css" rel="stylesheet" />
+    <!-- *** Needed for initial state UI *************************** -->
+    <script src="../lib/datatypes.js"></script>
+    <script src="../lib/constraint-violation-error-types.js"></script>
+    <script src="../lib/ui/SingleRecordTableWidget.js"></script>
+    <script src="../lib/ui/EntityTableWidget.js"></script>
+    <!-- *********************************************************** -->
     <script src="../lib/math.js"></script>
     <script src="../lib/util.js"></script>
     <script src="../lib/idb5.js"></script>
+    <script src="../lib/ui/svg.js"></script>
+    <script src="../oesjs-core1/init-oes.js"></script>
     <script src="../oesjs-core1/simulatorUI.js"></script>
-    <script src="../lib/ui/init-oes-ui.js"></script>
     <script src="simulation.js"></script>
 </head>
 <body>
@@ -40,6 +47,7 @@
  </div>
   <h2 id="scenarioTitle">Default scenario</h2>
   <p id="scenarioDescription">The default scenario runs for 40 days.</p>
+ <div id="upfrontUI">
   <form id="run">
    <div><label>Select scenario: <select name="selScen" onchange="onChangeOfScenSelect()"></select></label></div>
    <div><button onclick="run()" type="button">Run</button>
@@ -49,6 +57,8 @@
     <button onclick="exportExperResults()" type="button">Export exper. results</button>
    </div>
   </form>
+  <details id="modParContainer"><summary>Model parameters</summary></details>
+ </div>
   <table style="display: none">
       <caption>Simulation Log</caption>
       <thead>

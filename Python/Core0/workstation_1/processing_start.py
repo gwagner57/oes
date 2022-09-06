@@ -8,7 +8,6 @@ module_path = os.path.abspath('lib/')
 sys.path.insert(1, module_path)
 import util
 
-from workstation import WorkStation
 from processing_end import ProcessingEnd
 
 

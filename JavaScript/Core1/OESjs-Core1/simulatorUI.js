@@ -1,17 +1,26 @@
-// Define the namespace variable "oes" if not yet defined
-if (typeof oes !== "object") {
-  oes = Object.create(null);
-  oes.ui = Object.create(null);
-  oes.defaults = {
-    expostStatDecimalPlaces: 2,
-    simLogDecimalPlaces: 2
-  };
+/**********************************************************************
+ *** Create UI namespace objects **************************************
+ **********************************************************************/
+sim.ui = Object.create(null);
+oes.ui = Object.create(null);
+oes.ui.obs = Object.create(null);
+oes.ui.obs.SVG = Object.create(null);
+
+// for being able to run setupInitialStateForUi
+class oBJECT {
+  constructor( id, name) {
+    this.id = id || sim.idCounter++;
+    // add each new object to the Map of simulation objects by ID
+    if (name) {  // name is optional
+      this.name = name;
+    }
+  }
 }
 /*******************************************************
  UI for defining the initial state objects
  *******************************************************/
-oes.ui.setupInitialObjectsUI = function () {
-  const objTypes = sim.model.objectTypes;  // an array
+oes.ui.createInitialObjectsUI = function () {
+  const objTypes = sim.ui.objectTypes;  // an array
   const uiPanelEl = util.createExpandablePanel({id:"InitialStateObjectsUI",
     heading: "Initial Objects", borderColor:"aqua",
     hint: "Delete, create or edit the objects of the initial state"
@@ -19,12 +28,12 @@ oes.ui.setupInitialObjectsUI = function () {
   // create an EntityTableWidget for each object type
   for (const className of objTypes) {
     const Class = sim.Classes[className];
-    var editProps=[], entityTblWidget=null;
-    if (sim.config?.initialStateUI?.objectViews[className]) {
-      editProps = sim.config.initialStateUI.objectViews[className].editableProperties;
+    var editableColumns, entityTblWidget=null;
+    if (sim.ui?.initialState?.objectViews[className]) {
+      editableColumns = sim.ui.initialState.objectViews[className].editableAttributes;
     }
     try {
-      entityTblWidget = new EntityTableWidget( Class, editProps);
+      entityTblWidget = new EntityTableWidget( Class, {editableColumns});
     } catch (e) {
       console.error( e);
     }
@@ -123,3 +132,204 @@ oes.ui.showResultsFromParVarExpScenarioRun = function (data, tableEl) {
     rowEl.insertCell().textContent = displayStr;
   });
 }
+/*====================================================================================
+    S V G
+ ==================================================================================== */
+oes.ui.obs.SVG.setup = function () {
+  var obsUI = sim.config.observationUI,
+      fixedElems = obsUI.fixedElements,
+      objViews = obsUI.objectViews,
+      canvasWidth = obsUI.canvas.width || 600,
+      canvasHeight = obsUI.canvas.height || 400,
+      canvasSvgEl = svg.createSVG({id:"canvasSVG",
+        width: canvasWidth, height: canvasHeight});
+  var defsEl = svg.createDefs(),
+      mainEl = document.querySelector("body > main");
+
+  function renderInitialObjView( objViewId, objIdStr) {
+    var el=null, shapeGroupEl=null, fp=null,
+        obj = objIdStr ? sim.objects[objIdStr] : sim.namedObjects[objViewId],
+        objView = objViews[objViewId],   // objViews[obj.constructor.Name]
+        objViewItems = Array.isArray( objView) ? objView : [objView];
+    shapeGroupEl = svg.createGroup();
+    objViewItems.forEach( function (itemDefRec) {
+      var txt="";
+      if (itemDefRec.shapeName) {
+        if (itemDefRec.fillPatternImage) {
+          fp = itemDefRec.fillPatternImage;
+          if (!fp.file.includes("/")) {
+            fp.file = oes.defaults.imgFolder + fp.file;
+          }
+          el = svg.createImageFillPattern( fp.id, fp.file);
+          defsEl.appendChild( el);
+          itemDefRec.style = "fill: url(#" + fp.id + ");" + itemDefRec.style;
+        }
+        el = svg.createShapeFromDefRec( itemDefRec, obj);
+        itemDefRec.elements[obj.id] = el;
+        canvasSvgEl.appendChild( el);
+      } else if (itemDefRec.text) {  // objViewItem defines a text element
+        if (typeof itemDefRec.text === "function") txt = itemDefRec.text( obj);
+        else txt = itemDefRec.text;
+        el = svg.createText( itemDefRec.x, itemDefRec.y, txt, itemDefRec.style)
+      } else {  // itemDefRec maps enum attribs to lists of visualization items
+        Object.keys( itemDefRec).forEach( function (key) {
+          var enumIndex = 0, currentEnumViewDefRec = [];
+          // ommit special fields
+          if (key !== "object" && key !== "element" && key !== "elements") {
+            enumIndex = obj[key];  // key is enum attr name
+            currentEnumViewDefRec = itemDefRec[key][enumIndex-1];
+            itemDefRec[key].forEach( function (shDefRec) {
+              var el = oes.ui.obs.SVG.createShapeFromDefRec( shDefRec, obj);
+              el.style.display = "none";
+              shDefRec.element = el;
+              canvasSvgEl.appendChild( el);
+              if (shDefRec.canvasBackgroundColor) {
+                sim.visualEl.style.backgroundColor = shDefRec.canvasBackgroundColor;
+              }
+            });
+            itemDefRec[key].element = currentEnumViewDefRec.element;
+            currentEnumViewDefRec.element.style.display = "block";
+          }
+        });
+      }
+      if (el) shapeGroupEl.appendChild( el);
+    });
+    canvasSvgEl.appendChild( shapeGroupEl);
+  }
+
+  // define SVG canvas
+  sim.visualEl = dom.createElement("div",{id:"visCanvas", classValues:"uiBlock"});
+  if (obsUI.canvas.style) canvasSvgEl.style = obsUI.canvas.style;
+  sim.visualEl.appendChild( canvasSvgEl);
+  canvasSvgEl.appendChild( defsEl);
+  mainEl.appendChild( sim.visualEl);
+  if (fixedElems) {  // render fixed elements
+    Object.keys( fixedElems).forEach( function (id) {
+      var el = oes.ui.obs.SVG.createShapeFromDefRec( fixedElems[id]);
+      canvasSvgEl.appendChild( el);
+    });
+  }
+  if (objViews) {  // render initial object views
+    Object.keys( objViews).forEach( function (objViewId) {
+      var objView = objViews[objViewId];
+      if (Array.isArray( objView)) {
+        objView.forEach( function (itemDefRec) {
+          itemDefRec.elements = {};
+        })
+      } else {
+        objView.elements = {};
+      }
+      if (sim.model.objectTypes.includes( objViewId)) {
+        // an object view for all instances of an object type
+        Object.keys( cLASS[objViewId].instances).forEach( function (objIdStr) {
+          renderInitialObjView( objViewId, objIdStr);
+        })
+      } else if (sim.namedObjects[objViewId]) {
+        renderInitialObjView( objViewId);
+      } else {
+        console.error("Object view ID "+ objViewId +
+            " does neither correspond to an object type nor an object name.")
+      }
+    });
+  }
+};
+oes.ui.obs.SVG.reset = function () {
+  oes.ui.obs.SVG.visualizeStep();  //TODO: replace with real reset code
+};
+oes.ui.obs.SVG.visualizeStep = function () {
+  var obsUI = sim.config.observationUI,
+      objViews = obsUI.objectViews;
+  /*************************************************************************/
+  function updateObjView( viewId, objIdStr) {
+    var itemDefRec={}, shAttribs=[], el=null, i=0, val,
+        obj = objIdStr ? sim.objects[objIdStr] : sim.namedObjects[viewId],
+        objView = objViews[viewId],
+        objViewItems = Array.isArray( objView) ? objView : [objView];
+    // objViewItems is a list of view item definition records
+    for (i=0; i < objViewItems.length; i++) {
+      itemDefRec = objViewItems[i];
+      el = itemDefRec.elements[obj.id];
+      if (itemDefRec.shapeName) {
+        shAttribs = itemDefRec.shapeAttributes;
+        Object.keys( shAttribs).forEach( function (attrName) {
+          if (typeof shAttribs[attrName] === "function") {
+            val = shAttribs[attrName]( obj);
+            switch (attrName) {
+              case "textContent":
+                el.textContent = val;
+                break;
+              case "file":
+                if (!val.includes("/")) {
+                  val = oes.defaults.imgFolder + val;
+                }
+                el.setAttributeNS( svg.XLINK_NS, "href", val);
+                break;
+              default:
+                el.setAttribute( attrName, val);
+                break;
+            }
+          }
+        });
+      } else {  // objView maps enum attribs to lists of vis item def rec
+        Object.keys( itemDefRec).forEach( function (key) {
+          var enumIndex=0, currentEnumViewDefRec = {};
+          // exclude properties that itemDefRec may also contain
+          if (key !== "object" && key !== "element") {
+            enumIndex = obj[key];
+            if (Number.isInteger( enumIndex) && Array.isArray( itemDefRec[key]) &&
+                enumIndex >= 1 && enumIndex <= itemDefRec[key].length) {
+              currentEnumViewDefRec = itemDefRec[key][enumIndex-1];
+              // hide previous enum view
+              itemDefRec[key].element.style.display = "none";
+              // display current enum view
+              currentEnumViewDefRec.element.style.display = "block";
+              // store current enum view element
+              itemDefRec[key].element = currentEnumViewDefRec.element;
+              if (currentEnumViewDefRec.canvasBackgroundColor) {
+                sim.visualEl.style.backgroundColor = currentEnumViewDefRec.canvasBackgroundColor;
+              }
+            }
+          }
+        });
+      }
+    }
+  }
+  /*************************************************************************/
+  Object.keys( objViews).forEach( function (objViewId) {
+    if (sim.model.objectTypes.includes( objViewId)) {
+      // an object view for all instances of an object type
+      Object.keys( cLASS[objViewId].instances).forEach( function (objIdStr) {
+        updateObjView( objViewId, objIdStr);
+      })
+    } else if (sim.namedObjects[objViewId]) {
+      updateObjView( objViewId);
+    }
+  });
+};
+oes.ui.obs.SVG.createShapeFromDefRec = function (shapeDefRec, obj) {
+  const fileName = shapeDefRec.shapeAttributes.file,
+      el = document.createElementNS( svg.NS, shapeDefRec.shapeName),
+      shAttr = shapeDefRec.shapeAttributes;
+  if (fileName && !fileName.includes("/")) {
+    shAttr.file = oes.defaults.imgFolder + fileName;
+  }
+  for (const attrName of Object.keys( shAttr)) {
+    let val;
+    if (typeof shAttr[attrName] === "function") {
+      val = shAttr[attrName]( obj);
+    } else val = shAttr[attrName];
+    switch (attrName) {
+      case "textContent":
+        el.textContent = val;
+        break;
+      case "file":
+        el.setAttributeNS( "http://www.w3.org/1999/xlink", "href", val);
+        break;
+      default:
+        el.setAttribute( attrName, val);
+        break;
+    }
+  }
+  if (shapeDefRec.style) el.setAttribute("style", shapeDefRec.style);
+  return el;
+};
