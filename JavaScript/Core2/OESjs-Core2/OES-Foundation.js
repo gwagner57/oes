@@ -16,8 +16,9 @@ oes.predefinedObjectTypes = ["oBJECT"];
 oes.predefinedEventTypes = ["eVENT"];
 
 /******************************************************************************
- * An OES object has an ID and may have a unique name. If no ID value is provided on creation,
- * an ID value is automatically assigned using the simulation scenarios "idCounter".
+ * An OES object has an ID and may have a unique name. If no ID value is
+ * provided on creation, an ID value is automatically assigned using the
+ * simulator's "idCounter".
  ******************************************************************************/
 class oBJECT {
   constructor( id, name) {

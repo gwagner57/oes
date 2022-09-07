@@ -12,7 +12,7 @@ sim.model.activityTypes = ["WalkToForklift", "DriveForkliftToArrivalArea", "Load
 "TransportProduct", "UnloadProduct", "DriveForkliftBackToArrivalArea", "DriveForkliftHome", "WalkBackHome" ];
 
 // object types which are to be rendered as tables in the initial state UI
-sim.model.ui.objectTypes = ["ProductType", "ForkliftType", "OperatorType"];
+if (sim.ui) sim.ui.objectTypes = ["ProductType", "ForkliftType", "OperatorType"];
 
 // model parameters
 sim.model.p.distanceOperatorHomeToForkliftHome = 50;  // m

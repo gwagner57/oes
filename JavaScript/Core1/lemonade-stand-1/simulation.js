@@ -18,7 +18,60 @@ if (sim.ui) {
  ********************************************************/
 sim.scenario.durationInSimTime = 40*24;  // 40 days
 sim.scenario.description = "The default scenario runs for 40 days.";
+sim.scenario.setupInitialStateForUi = function () {
+  OutputItemType.instances["2"] = new OutputItemType({id:2, name: "Lemonade",
+    quantityUnit: "ltr",
+    supplyUnit: "cup",
+    quantityPerSupplyUnit: 0.25,  /// in quantity units (ltr)
+    salesPrice: 1.5,  // e.g., USD
+    batchSize: 3.5,  // in quantity units (1 pitcher = 3.5 liters)
+    bomItemsPerBatch: {"Lemon": 3, "Water": 2.5, "IceCubes": 20, "Sugar": 0.3},
+    packItemsPerSupplyUnit: {"PaperCup": 1},
+    stockQuantity: 0  // in quantity units
+  });
+  SingleProductCompany.instances["1"] = new SingleProductCompany({id:1, name: "LemonadeStand",
+    productType: OutputItemType.instances["2"],  // Lemonade
+    liquidity: 100,
+    fixedCostPerDay: 50
+  });
+  InputItemType.instances["3"] = new InputItemType({id:3, name: "Lemon",
+    quantityUnit: "pc",  // piece(s)
+    supplyUnit: "bag",
+    quantityPerSupplyUnit: 5,  // pieces per bag
+    purchasePrice: 2,  // per bag
+    stockQuantity: 0
+  });
+  InputItemType.instances["4"] = new InputItemType({id:4, name: "Water",
+    quantityUnit: "ltr",
+    supplyUnit: "bottle",
+    quantityPerSupplyUnit: 1.5,  // litre
+    purchasePrice: 0.5,  // per bottle
+    stockQuantity: 0
+  });
+  InputItemType.instances["5"] = new InputItemType({id:5, name: "IceCubes",
+    quantityUnit: "pc",  // piece(s)
+    supplyUnit: "bag",
+    quantityPerSupplyUnit: 100,  // pieces per bag
+    purchasePrice: 2,  // per bag
+    stockQuantity: 0
+  });
+  InputItemType.instances["6"] = new InputItemType({id:6, name: "Sugar",
+    quantityUnit: "kg",
+    supplyUnit: "bag",
+    quantityPerSupplyUnit: 1,  // kg per bag
+    purchasePrice: 1,  // for a bag
+    stockQuantity: 0
+  });
+  InputItemType.instances["7"] = new InputItemType({id:7, name: "PaperCup",
+    quantityUnit: "pc",
+    supplyUnit: "box",
+    quantityPerSupplyUnit: 100,  // pieces per box
+    purchasePrice: 2.5,  // for a box
+    stockQuantity: 0
+  });
+}
 sim.scenario.setupInitialState = function () {
+  /*
   const iit1 = new InputItemType({id:3, name: "Lemon",
     quantityUnit: "pc",  // piece(s)
     supplyUnit: "bag",
@@ -69,8 +122,9 @@ sim.scenario.setupInitialState = function () {
     liquidity: 100,
     fixedCostPerDay: 50
   });
+  */
   // Schedule initial events
-  sim.schedule( new StartOfDay({occTime: 8, company: ls}));
+  sim.schedule( new StartOfDay({occTime: 8, company: 1}));
 }
 /*******************************************************
  Statistics variables
