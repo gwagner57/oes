@@ -17,28 +17,23 @@ class oBJECT {
   }
 }
 /*******************************************************
- UI for defining the initial state objects
+ UI for modifying model parameter values
  *******************************************************/
-oes.ui.createInitialObjectsUI = function () {
-  const objTypes = sim.ui.objectTypes;  // an array
+oes.ui.createModelParameterPanel = function () {
+  const uiPanelEl = util.createExpandablePanel({id:"ModelParameterUI",
+    heading: "Model Parameters", borderColor:"aqua",
+    hint: "Modify model parameter values"
+  });
+  return uiPanelEl;
+};
+/*******************************************************
+ UI for creating/modifying/deleting initial state objects
+ *******************************************************/
+oes.ui.createInitialObjectsPanel = function () {
   const uiPanelEl = util.createExpandablePanel({id:"InitialStateObjectsUI",
     heading: "Initial Objects", borderColor:"aqua",
-    hint: "Delete, create or edit the objects of the initial state"
+    hint: "Create, modify or delete objects of the initial state"
   });
-  // create an EntityTableWidget for each object type
-  for (const className of objTypes) {
-    const Class = sim.Classes[className];
-    var editableColumns, entityTblWidget=null;
-    if (sim.ui?.initialState?.objectViews[className]) {
-      editableColumns = sim.ui.initialState.objectViews[className].editableAttributes;
-    }
-    try {
-      entityTblWidget = new EntityTableWidget( Class, {editableColumns});
-    } catch (e) {
-      console.error( e);
-    }
-    if (entityTblWidget) uiPanelEl.appendChild( entityTblWidget);
-  }
   return uiPanelEl;
 };
 /*******************************************************

@@ -9,6 +9,7 @@ const formEl = document.forms["run"],
     scenarioDescriptionEl = document.getElementById("scenarioDescription"),
     upfrontUiEl = document.getElementById("upfrontUI"),
     simLogTableEl = document.getElementById("simLog"),
+    statisticsTableEl = document.getElementById("statisticsTbl"),
     simInfoEl = document.getElementById("simInfo"),
     execInfoEl = document.getElementById("execInfo");
 // initialize the className->Class map
@@ -17,7 +18,7 @@ sim.Classes = Object.create(null);
 function setupUI() {
   var optionTextItems = [];
   function renderInitialObjectsTables() {
-    const containerEl = oes.ui.createInitialObjectsUI(),
+    const containerEl = oes.ui.createInitialObjectsPanel(),
         objTypeTableElems = containerEl.querySelectorAll("table.EntityTableWidget");
     document.getElementById("upfrontUI").appendChild( containerEl);
     for (const objTypeTableEl of objTypeTableElems) {
@@ -25,7 +26,14 @@ function setupUI() {
     }
     for (const objTypeName of sim.ui.objectTypes) {
       const OT = sim.Classes[objTypeName];
-      if (OT) containerEl.appendChild( new EntityTableWidget( OT));
+      let entityTblWidget=null;
+      if (!OT || OT.isAbstract) continue;
+      try {
+        entityTblWidget = new EntityTableWidget( OT);
+      } catch (e) {
+        console.error( e);
+      }
+      if (entityTblWidget) containerEl.appendChild( entityTblWidget);
     }
   }
   // fill scenario choice control
@@ -45,6 +53,7 @@ function setupUI() {
   }
   if (Object.keys( sim.model.p).length > 0) {  // create model parameter panel
     sim.scenario.parameters = {...sim.model.p};  // clone model parameters
+    document.getElementById("upfrontUI").appendChild( oes.ui.createModelParameterPanel());
     fillModelParameterPanel( sim.scenario.parameters);
   }
   // create initial state UI
@@ -56,7 +65,7 @@ function setupUI() {
   }
 }
 function fillModelParameterPanel( record) {
-  const containerEl = document.getElementById("modParContainer"),
+  const containerEl = document.getElementById("ModelParameterUI"),
         modParTableEl = containerEl?.querySelector("table.SingleRecordTableWidget");
   // drop the <table> child element
   if (modParTableEl) modParTableEl.remove();
@@ -175,24 +184,24 @@ async function clearDatabase() {
 }
 /**************************************************************/
 function run() {
-  var choice = selExpEl.value, data={}, initialObjects={};
-  if (choice) {
-    if (choice !== "0") {
-      if (!sim.experimentType) sim.experimentType = sim.experimentTypes[parseInt(choice)-1];
-      simInfoEl.textContent = sim.experimentType.title;
-    }
-  } else choice = "0";
+  var choice = parseInt( selExpEl.value), data={}, initialObjects={};
+  if (isNaN( choice)) choice = 0;
+  if (choice > 0) {
+    if (!sim.experimentType) sim.experimentType = sim.experimentTypes[parseInt(choice)-1];
+    simInfoEl.textContent = sim.experimentType.title;
+    statisticsTableEl.querySelector("caption").textContent = "Experiment Results";
+  } else {
+    simInfoEl.textContent = `Standalone scenario run with a simulation time/duration of ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}.`;
+    statisticsTableEl.querySelector("caption").textContent = "Statistics";
+  }
   // Hide UI elements
   if (document.getElementsByTagName("figure")[0]) {
     document.getElementsByTagName("figure")[0].style.display = "none";
   }
   if (modelDescriptionEl) modelDescriptionEl.style.display = "none";
   if (scenarioDescriptionEl) scenarioDescriptionEl.style.display = "none";
-  if (upfrontUiEl) {
-    upfrontUiEl.style.display = "none";
-  } else {
-    formEl.style.display = "none";  // hide select&run form
-  }
+  if (upfrontUiEl) upfrontUiEl.style.display = "none";
+  else formEl.style.display = "none";  // hide select&run form
 
   let nmrOfScriptFilesToLoad = 3; // lib + framework + simulation.js
   if (Array.isArray(sim.model.objectTypes)) nmrOfScriptFilesToLoad += sim.model.objectTypes.length;
@@ -251,6 +260,7 @@ function run() {
   }
 }
 
+/**************************************************************/
 if (sim.scenarios.length > 0) {
   // Assign scenarioNo = 0 to default scenario
   sim.scenario.scenarioNo ??= 0;

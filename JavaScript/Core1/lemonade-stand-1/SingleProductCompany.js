@@ -89,5 +89,5 @@ class SingleProductCompany extends oBJECT {
   }
 }
 SingleProductCompany.labels = {"className":"SPC", "liquidity":"liq"};
-SingleProductCompany.displayAttributes = ["liquidity","fixedCostPerDay"];
+SingleProductCompany.displayAttributes = ["id","name","liquidity","fixedCostPerDay"];
 SingleProductCompany.editableAttributes = ["liquidity","fixedCostPerDay"];

@@ -1,0 +1,1 @@
+D:/Repos/web-engineering/CustomElementsWidgets/Single-Record-Table-Widget/SingleRecordTableWidget.js

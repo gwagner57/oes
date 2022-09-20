@@ -1,8 +1,12 @@
 class StartOfDay extends eVENT {
   constructor({occTime, delay, company} = {}) {
     super({occTime, delay});
-    this.company = typeof company === "object" ?
-        company : sim.objects.get( company);
+    if (company === undefined) throw "No value for company provided in StartOfDay constructor";
+    if (typeof company === "object") this.company =  company;
+    else {
+      if (!Number.isInteger( company)) throw "Value for company in StartOfDay constructor must be an object or integer";
+      this.company = sim.objects.get( company);
+    }
   }
   onEvent() {
     const followupEvents=[];

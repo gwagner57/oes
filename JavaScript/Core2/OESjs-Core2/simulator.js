@@ -372,6 +372,7 @@ sim.runScenario = function (createLog) {
  Run a Standalone Simulation Scenario (in a JS worker)
  ********************************************************/
 sim.runStandaloneScenario = function (createLog) {
+  //console.log("Start 'runStandaloneScenario'.");
   sim.initializeSimulator();
   if (!sim.scenario.randomSeed) sim.initializeScenarioRun();
   else sim.initializeScenarioRun({seed: sim.scenario.randomSeed});

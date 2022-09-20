@@ -7,3 +7,4 @@ class ItemType extends oBJECT {
     this.stockQuantity = stockQuantity;  // Number
   }
 }
+ItemType.isAbstract = true;

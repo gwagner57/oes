@@ -5,3 +5,4 @@ class InputItemType extends ItemType {
   }
 }
 InputItemType.labels = {"className":"InItem", "stockQuantity":"qty"};
+InputItemType.isAbstract = false;

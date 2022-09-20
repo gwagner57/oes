@@ -3,7 +3,7 @@ const concat = require('gulp-concat');
 
 const jsBundle = function () {
   return src([
-    "OES-Foundation.js", "OES-Activities.js", "simulator.js"
+    "init-oes.js", "OES-Foundation.js", "OES-Activities.js", "simulator.js"
   ])
     .pipe( concat('core2-oes.js'))
     .pipe( dest('.'));

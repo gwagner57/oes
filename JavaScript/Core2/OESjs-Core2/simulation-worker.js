@@ -33,6 +33,7 @@ onmessage = function (e) {
         self.importScripts( actT + ".js");
       }
     }
+    console.log("Simulation model code loaded.")
   }
 
   sim.loadEndTime = (new Date()).getTime();
@@ -43,7 +44,7 @@ onmessage = function (e) {
   loadSimulationModelCode();
   if (sim.experimentType) {  // when experimentType has been set, run it
     sim.runExperiment( sim.experimentType);
-  } else if (e.data.simToRun) {
+  } else if (e.data.simToRun >= 0) {
     // assign alternative scenario, if selected
     if (e.data.scenarioNo !== undefined && sim.scenarios[e.data.scenarioNo]) {
       scenario = sim.scenarios[e.data.scenarioNo];
@@ -63,7 +64,7 @@ onmessage = function (e) {
       if (!scenario.setupInitialState) scenario.setupInitialState = sim.scenario.setupInitialState;
       sim.scenario = scenario;
     }
-    if (e.data.simToRun === "0") {
+    if (e.data.simToRun === 0) {
       sim.runStandaloneScenario( e.data.createLog);
     } else {
       let expNo = parseInt( e.data.simToRun) - 1;

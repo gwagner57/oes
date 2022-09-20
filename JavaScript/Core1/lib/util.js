@@ -72,6 +72,9 @@ const util = {
     return Class;
     // Alternative solution: Class = this[name];
   },
+  getSuperClassOf( C) {
+    return Object.getPrototypeOf( C);
+  },
   loadScript( fileURL) {
     return new Promise( function (resolve, reject) {
       const scriptEl = document.createElement("script");
@@ -81,6 +84,7 @@ const util = {
         reject( new Error(`Script load error for ${fileURL}`));
       };
       document.head.append( scriptEl);
+      console.log(`${fileURL} loaded.`);
     });
   }
 }

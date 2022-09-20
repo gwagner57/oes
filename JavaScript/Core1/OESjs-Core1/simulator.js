@@ -25,6 +25,16 @@ sim.initializeSimulator = async function () {
   sim.FEL = new EventList();
   // Create map for statistics variables
   sim.stat = Object.create(null);
+  // initialize the className->Class map
+  sim.Classes = Object.create(null);
+  // Make object classes accessible via their object type name
+  for (const objTypeName of sim.model.objectTypes) {
+    sim.Classes[objTypeName] = util.getClass( objTypeName);
+  }
+  // Make event classes accessible via their event type name
+  for (const evtTypeName of sim.model.eventTypes) {
+    sim.Classes[evtTypeName] = util.getClass( evtTypeName);
+  }
   // Assign scenarioNo = 0 to default scenario
   if (sim.scenario.scenarioNo === undefined) sim.scenario.scenarioNo = 0;
   if (!sim.scenario.title) sim.scenario.title = "Default scenario";
@@ -73,8 +83,28 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   }
   // Assign model parameters with experiment parameter values
   if (expParSlots) sim.assignModelParameters( expParSlots);
+  // Set up statistics
+  if (sim.model.setupStatistics) sim.model.setupStatistics();
+  // Add initial objects (possibly changed in UI)
+  for (const objTypeName of Object.keys( sim.scenario.initialObjects || {})) {
+    const C = sim.Classes[objTypeName];
+    const objRecords = sim.scenario.initialObjects[objTypeName];
+    C.instances ??= Object.create(null);
+    for (const objId of Object.keys( objRecords)) {
+      //TODO: should the records be converted to class instances?
+      C.instances[objId] = new C( objRecords[objId]);
+    }
+  }
   // Set up initial state
   if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
+  // create populations per class
+  for (const o of sim.objects.values()) {
+    const className = o.constructor.name;
+    if (className in sim.Classes) {
+      sim.Classes[className].instances ??= Object.create(null);
+      sim.Classes[className].instances[o.id] = o;
+    }
+  }
   // schedule initial events if no initial event has been scheduled
   if (sim.FEL.isEmpty()) {
     for (const evtTypeName of sim.model.eventTypes) {
@@ -84,8 +114,6 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
       }
     }
   }
-  // Set up statistics
-  if (sim.model.setupStatistics) sim.model.setupStatistics();
 };
 /*******************************************************
  Advance Simulation Time

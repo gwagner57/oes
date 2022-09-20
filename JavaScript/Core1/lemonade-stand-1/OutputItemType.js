@@ -14,3 +14,4 @@ class OutputItemType extends ItemType {
 }
 OutputItemType.labels = {"className":"OutItem", "stockQuantity":"qty",
     "plannedProductionQuantity":"planProdQty"};
+OutputItemType.isAbstract = false;
