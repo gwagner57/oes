@@ -1,10 +1,10 @@
 class ServiceEnd extends eVENT {
-  constructor({ occTime, delay, serviceStation}) {
+  constructor({ occTime, delay, serviceDesk}) {
     super({occTime, delay});
-    this.serviceStation = serviceStation;
+    this.serviceDesk = serviceDesk;
   }
   onEvent() {
-    var followupEvents=[], ws = this.serviceStation;
+    var followupEvents=[], ws = this.serviceDesk;
     // decrease buffer length (remove part from buffer)
     ws.queueLength--;
     // update statistics
@@ -12,7 +12,7 @@ class ServiceEnd extends eVENT {
     // if there are still parts waiting
     if (ws.queueLength > 0) {
       // schedule the next processing start event
-      followupEvents.push( new ServiceStart({ serviceStation: ws}));
+      followupEvents.push( new ServiceStart({ serviceDesk: ws}));
     } else {  // buffer empty
       ws.status = "AVAILABLE";
     }

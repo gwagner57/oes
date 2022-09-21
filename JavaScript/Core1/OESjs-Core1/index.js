@@ -247,7 +247,7 @@ function run() {
         const loadTime = e.data.loadEndTime - startWorkerTime,
             executionTime = (new Date()).getTime() - e.data.loadEndTime;
         // Show loading time and execution time
-        execInfoEl.textContent = `Script files loading time: ${loadTime} ms, simulation execution time: ${executionTime} ms`;
+        execInfoEl.textContent = `Script files loading time: ${loadTime} ms, simulation execution time: ${executionTime} ms. Reload the page [Ctrl-R] to start over.`;
         if (e.data.statistics) {  // statistics from standalone scenario run
           oes.ui.showStatistics( e.data.statistics, statisticsTableEl);
         } else if (e.data.simpleExperiment) {

@@ -1,15 +1,15 @@
 class ServiceStart extends eVENT {
-  constructor({ occTime, delay, serviceStation}) {
+  constructor({ occTime, delay, serviceDesk}) {
     super({occTime, delay});
-    this.serviceStation = serviceStation;
+    this.serviceDesk = serviceDesk;
   }
   onEvent() {
-    var followupEvents=[], ws = this.serviceStation;
+    var followupEvents=[], ws = this.serviceDesk;
     ws.status = "BUSY";
     // schedule the processing end event
     followupEvents.push( new ServiceEnd({
       delay: ServiceDesk.serviceTime(),
-      serviceStation: ws
+      serviceDesk: ws
     }));
     return followupEvents;
   }

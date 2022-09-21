@@ -16,7 +16,7 @@ sim.scenario.setupInitialState = function () {
   // Create initial objects
   var s = new ServiceDesk({id: 1, queueLength: 0, status:"AVAILABLE"});
   // Schedule initial events
-  sim.FEL.add( new Arrival({occTime: Arrival.recurrence(), serviceStation: s}));
+  sim.FEL.add( new Arrival({occTime: Arrival.recurrence(), serviceDesk: s}));
 }
 /*******************************************************
  Alternative Scenarios
@@ -32,8 +32,8 @@ sim.scenarios[1] = {
     var s1 = new ServiceDesk({id: 1, queueLength: 0, status:"AVAILABLE"}),
         s2 = new ServiceDesk({id: 2, queueLength: 0, status:"AVAILABLE"});
     // Schedule initial events
-    sim.FEL.add( new Arrival({occTime: 1, serviceStation: s1}));
-    sim.FEL.add( new Arrival({occTime: 2, serviceStation: s2}));
+    sim.FEL.add( new Arrival({occTime: 1, serviceDesk: s1}));
+    sim.FEL.add( new Arrival({occTime: 2, serviceDesk: s2}));
   }
 };
 sim.scenarios[2] = {
@@ -45,7 +45,7 @@ sim.scenarios[2] = {
     // Create initial objects
     var ws = new ServiceDesk({id: 1, queueLength: 0, status:"AVAILABLE"});
     // Schedule initial events
-    sim.FEL.add( new Arrival({occTime: 1, serviceStation: ws}));
+    sim.FEL.add( new Arrival({occTime: 1, serviceDesk: ws}));
     Arrival.maxNmrOfEvents = 3;
   }
 };

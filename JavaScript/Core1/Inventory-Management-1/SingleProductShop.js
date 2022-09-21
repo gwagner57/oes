@@ -7,5 +7,5 @@ class SingleProductShop extends oBJECT {
     this.reorderInterval = reorderInterval;  // for periodic review policy
   }
 }
-SingleProductShop.labels = {"stockQuantity":"stock"};
+SingleProductShop.labels = {"className":"Shop", "stockQuantity":"stock"};
 

@@ -8,4 +8,4 @@ class ServiceDesk extends oBJECT {
     return rand.triangular( 3, 8, 4);  // min,max,mode
   }
 }
-ServiceDesk.labels = {"queueLength":"bufLen", "status":"st"};
+ServiceDesk.labels = {"className":"Desk", "queueLength":"qLen", "status":"status"};

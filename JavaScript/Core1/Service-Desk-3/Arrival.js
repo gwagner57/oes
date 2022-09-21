@@ -1,10 +1,10 @@
 class Arrival extends eVENT {
-  constructor({ occTime, delay, serviceStation}) {
+  constructor({ occTime, delay, serviceDesk}) {
     super({occTime, delay});
-    this.serviceStation = serviceStation;
+    this.serviceDesk = serviceDesk;
   }
   onEvent() {
-    var followupEvents=[], ws = this.serviceStation;
+    var followupEvents=[], ws = this.serviceDesk;
     // increase buffer length (add part to buffer)
     ws.queueLength++;
     // update statistics
@@ -15,7 +15,7 @@ class Arrival extends eVENT {
     // if the work station is available
     if (ws.status === "AVAILABLE") {
       // schedule the part's processing start event
-      followupEvents.push( new ServiceStart({ serviceStation: ws}));
+      followupEvents.push( new ServiceStart({ serviceDesk: ws}));
     }
     return followupEvents;
   }
@@ -24,7 +24,7 @@ class Arrival extends eVENT {
       return null;
     } else {
       Arrival.counter++;
-      return new Arrival({serviceStation: this.serviceStation});
+      return new Arrival({serviceDesk: this.serviceDesk});
     }
   }
   static recurrence() {return rand.exponential(1/6);}
