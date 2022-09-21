@@ -9,7 +9,7 @@
 /******************************************************************************
  *** Lists of predefined cLASSes as reserved names for constraint checks ******
  ******************************************************************************/
-oes.predefinedEventTypes = oes.predefinedEventTypes.push("aCTIVITYsTART","aCTIVITYeND");
+oes.predefinedEventTypes.push("aCTIVITYsTART","aCTIVITYeND");
 oes.predefinedActivityTypes = ["aCTIVITY"];
 
 

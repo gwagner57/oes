@@ -192,7 +192,7 @@ function run() {
     statisticsTableEl.querySelector("caption").textContent = "Experiment Results";
   } else {
     simInfoEl.textContent = `Standalone scenario run with a simulation time/duration of ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}.`;
-    statisticsTableEl.querySelector("caption").textContent = "Statistics";
+    if (statisticsTableEl) statisticsTableEl.querySelector("caption").textContent = "Statistics";
   }
   // Hide UI elements
   if (document.getElementsByTagName("figure")[0]) {

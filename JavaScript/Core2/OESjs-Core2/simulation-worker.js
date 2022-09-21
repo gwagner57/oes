@@ -67,7 +67,7 @@ onmessage = function (e) {
     if (e.data.simToRun === 0) {
       sim.runStandaloneScenario( e.data.createLog);
     } else {
-      let expNo = parseInt( e.data.simToRun) - 1;
+      let expNo = e.data.simToRun - 1;
       sim.experimentType = sim.experimentTypes[expNo];
       sim.experimentType.storeExpResults = e.data.storeExpRes;
       sim.runExperiment();
