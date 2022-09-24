@@ -137,6 +137,9 @@ sim.model.setupStatistics = function () {
 sim.model.computeFinalStatistics = function () {
   sim.stat.totalProfit = sim.stat.totalRevenue - sim.stat.totalCosts;
 }
+sim.model.timeSeries = {
+  "liquidity": {objectId:1, attribute:"liquidity"},
+}
 
 /*******************************************************
  Define an experiment (type)
@@ -147,3 +150,7 @@ sim.experimentTypes[0] = {
   nmrOfReplications: 10,
   seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012]
 };
+/*******************************************************
+ UI configuration
+ ********************************************************/
+sim.config.ui.modelParameters = true;

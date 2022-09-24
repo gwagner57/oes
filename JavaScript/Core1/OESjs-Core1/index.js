@@ -55,7 +55,8 @@ function setupUI() {
   }
   // only create model parameter UI and initial state UI, if upfrontUi container element has been defined
   if (upfrontUiEl) {
-    if (Object.keys( sim.model.p).length > 0) {  // create model parameter panel
+    if (sim.config.ui.modelParameters && Object.keys( sim.model.p).length > 0) {
+      // create model parameter panel
       upfrontUiEl.appendChild( oes.ui.createModelParameterPanel());
       fillModelParameterPanel( sim.scenario.parameters);
     }
@@ -193,7 +194,9 @@ function run() {
       statisticsTableEl.querySelector("caption").textContent = "Experiment Results";
     } else {
       simInfoEl.textContent = `Standalone scenario run with a simulation time/duration of ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}.`;
-      statisticsTableEl.querySelector("caption").textContent = "Statistics";
+      if (Object.keys( sim.stat).length > 0 && statisticsTableEl) {
+        statisticsTableEl.querySelector("caption").textContent = "Statistics";
+      }
     }
   }
   // Hide UI elements
@@ -258,6 +261,12 @@ function run() {
   }
 }
 /**************************************************************/
+if ("timeSeries" in sim.model &&
+    Object.keys( sim.model.timeSeries).length > 0 &&
+    typeof Chartist === "undefined") {
+  util.loadScript( "../lib/ui/chartist.js");
+  util.loadCSS( "../css/chartist.css");
+}
 if (sim.scenarios.length > 0) {
   // Assign scenarioNo = 0 to default scenario
   sim.scenario.scenarioNo ??= 0;

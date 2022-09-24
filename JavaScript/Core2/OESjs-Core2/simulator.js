@@ -6,9 +6,8 @@
 
 /*
 TODO:
-- compute generic queue length statistics per activity type
-- compute generic cycle time statistics per activity type
-- group all activity-induced extensions in "initializeSimulator" and other procedures
+- complete the creation of time series (charts)
+-
  */
 
 /*******************************************************************
@@ -137,10 +136,10 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   // reset model-specific statistics
   if (sim.model.setupStatistics) sim.model.setupStatistics();
   // (re)set the timeSeries statistics variable
-  if ("showTimeSeries" in sim.model &&
-      Object.keys( sim.model.showTimeSeries).length > 0) {
+  if ("timeSeries" in sim.model &&
+      Object.keys( sim.model.timeSeries).length > 0) {
     sim.stat.timeSeries = Object.create( null);
-    for (const tmSerLbl of Object.keys( sim.model.showTimeSeries)) {
+    for (const tmSerLbl of Object.keys( sim.model.timeSeries)) {
       sim.stat.timeSeries[tmSerLbl] = [];
       if (!sim.timeIncrement) {
         sim.stat.timeSeries[tmSerLbl][0] = [];
@@ -250,8 +249,7 @@ sim.advanceSimulationTime = function () {
 sim.runScenario = function (createLog) {
   function sendLogMsg( currEvts) {
     function stringifyEvt( e) {
-      var string = e.toString();
-      return string;
+      return e.toString();
     }
     // convert values() iterator to array
     let objStr = [...sim.objects.values()].map( el => el.toString()).join("|");
@@ -333,7 +331,7 @@ sim.runScenario = function (createLog) {
       else v = sim.stat[varName] * statVar.timeSeriesScalingFactor;
       */
       for (const tmSerLbl of Object.keys( sim.stat.timeSeries)) {
-        const tmSerVarDef = sim.model.showTimeSeries[tmSerLbl];
+        const tmSerVarDef = sim.model.timeSeries[tmSerLbl];
         let val=0;
         // TODO: how to interpolate for implementing time series compression
         if ("objectId" in tmSerVarDef) {

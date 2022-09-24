@@ -114,6 +114,8 @@ ul.links li:hover {
 
     <section href="ChIntroOES/SimStatistics.html" samepage="true"/>
 
+    <section href="ChIntroOES/SimTimeSeries.html"/>
+
     <section href="ChIntroOES/SimExperiments.html" samepage="true"/>
 
     <section href="ChIntroOES/SimLog.html" samepage="true"/>

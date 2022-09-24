@@ -45,13 +45,12 @@ sim.scenario.setupInitialState = function(){
 /*******************************************************
  Define Output Statistics Variables
  ********************************************************/
-sim.model.setupStatistics = function () {
-  sim.model.showTimeSeries = {
-    "retailer inventory": {objectId:1, attribute:"stockQuantity"},
-    "distributor inventory": {objectId:2, attribute:"stockQuantity"},
-    "wholesaler inventory": {objectId:3, attribute:"stockQuantity"},
-  }
-};
+sim.model.setupStatistics = function () {};
+sim.model.timeSeries = {
+  "retailer inventory": {objectId:1, attribute:"stockQuantity"},
+  "distributor inventory": {objectId:2, attribute:"stockQuantity"},
+  "wholesaler inventory": {objectId:3, attribute:"stockQuantity"},
+}
 
 sim.model.computeFinalStatistics = function () {
   // create a table showing supply chain node characteristics

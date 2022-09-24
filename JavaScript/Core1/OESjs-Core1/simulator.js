@@ -83,8 +83,20 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   }
   // Assign model parameters with experiment parameter values
   if (expParSlots) sim.assignModelParameters( expParSlots);
-  // Set up statistics
+  // reset model-specific statistics
   if (sim.model.setupStatistics) sim.model.setupStatistics();
+  // (re)set the timeSeries statistics variable
+  if ("timeSeries" in sim.model &&
+      Object.keys( sim.model.timeSeries).length > 0) {
+    sim.stat.timeSeries = Object.create( null);
+    for (const tmSerLbl of Object.keys( sim.model.timeSeries)) {
+      sim.stat.timeSeries[tmSerLbl] = [];
+      if (!sim.timeIncrement) {
+        sim.stat.timeSeries[tmSerLbl][0] = [];
+        sim.stat.timeSeries[tmSerLbl][1] = [];
+      }
+    }
+  }
   // Add initial objects (possibly changed in UI)
   for (const objTypeName of Object.keys( sim.scenario.initialObjects || {})) {
     const C = sim.Classes[objTypeName];
@@ -167,14 +179,44 @@ sim.runScenario = function (createLog) {
       }
       const EventClass = e.constructor;
       // test if e is an exogenous event
-      if (EventClass.recurrence) {
+      if (EventClass.recurrence || e.recurrence || EventClass.eventRate) {
         // schedule next exogenous event
         if ("createNextEvent" in e) {
           const nextEvt = e.createNextEvent();
           if (nextEvt) sim.FEL.add( nextEvt);
         } else {
-          sim.FEL.add( new EventClass({delay: EventClass.recurrence()}));
+          sim.schedule( new EventClass());
         }
+      }
+    }
+    // check if any time series has to be stored/returned
+    if ("timeSeries" in sim.stat) {
+      /*
+      if (!statVar.timeSeriesScalingFactor) v = sim.stat[varName];
+      else v = sim.stat[varName] * statVar.timeSeriesScalingFactor;
+      */
+      for (const tmSerLbl of Object.keys( sim.stat.timeSeries)) {
+        const tmSerVarDef = sim.model.timeSeries[tmSerLbl];
+        let val=0;
+        // TODO: how to interpolate for implementing time series compression
+        if ("objectId" in tmSerVarDef) {
+          const obj = sim.objects.get( tmSerVarDef.objectId);
+          val = obj[tmSerVarDef.attribute];
+        } else if ("statisticsVariable" in tmSerVarDef) {
+          val = sim.stat[tmSerVarDef.statisticsVariable];
+        }
+        if (sim.timeIncrement) {  // fixed increment time progression
+          sim.stat.timeSeries[tmSerLbl].push( val);
+        } else {  // next-event time progression
+          sim.stat.timeSeries[tmSerLbl][0].push( sim.time);
+          sim.stat.timeSeries[tmSerLbl][1].push( val);
+        }
+        /*
+        if (oes.stat.timeSeriesCompressionSteps > 1
+            && sim.step % oes.stat.timeSeriesCompressionSteps === 0) {
+          oes.stat.compressTimeSeries( sim.stat.timeSeries[varName]);
+        }
+        */
       }
     }
     if (createLog) sendLogMsg( nextEvents);  // log initial state

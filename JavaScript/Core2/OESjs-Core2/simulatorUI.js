@@ -94,7 +94,7 @@ oes.ui.showStatistics = function (stat) {
     nmrOfPredefStatSlots = "includeTimeouts" in stat ? 2 : 1;
   }
   if ("table" in stat) nmrOfPredefStatSlots++;
-  if ("timeSeries" in stat) nmrOfPredefStatSlots++;
+  if (showTimeSeries) nmrOfPredefStatSlots++;
   // create two column table for user-defined statistics
   if (Object.keys( stat).length > nmrOfPredefStatSlots) {
     const usrStatTblElem = document.createElement("table"),

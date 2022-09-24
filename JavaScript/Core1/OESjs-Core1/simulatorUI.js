@@ -52,12 +52,70 @@ oes.ui.logSimulationStep = function (simLogTableEl, step, time, currEvtsStr, obj
  Display the standalone scenario statistics
  ********************************************************/
 oes.ui.showStatistics = function (stat, tableEl) {
-  var decPl = oes.defaults.expostStatDecimalPlaces,
-      tbodyEl = tableEl.tBodies[0];
-  for (let varName of Object.keys( stat)) {
-    let rowEl = tbodyEl.insertRow();  // create new table row
+  const decPl = oes.defaults.expostStatDecimalPlaces,
+        tbodyEl = tableEl.tBodies[0];
+  const showTimeSeries = "timeSeries" in stat;
+  for (const varName of Object.keys( stat)) {
+    // skip pre-defined statistics (collection) variables
+    if (["table","timeSeries"].includes( varName)) continue;
+    const rowEl = tbodyEl.insertRow();  // create new table row
     rowEl.insertCell().textContent = varName;
     rowEl.insertCell().textContent = math.round( stat[varName], decPl);
+  }
+  if (showTimeSeries) {
+    const timeSeriesChartContainerEl = document.createElement("div");
+    timeSeriesChartContainerEl.id = "time-series-chart";
+    document.getElementById("simInfo").insertAdjacentElement(
+        "afterend", timeSeriesChartContainerEl);
+    const timeSeriesLabels = Object.keys( stat.timeSeries),
+        firstTmSerLbl = timeSeriesLabels[0],
+        firstTmSer = stat.timeSeries[firstTmSerLbl];
+    const legendLabels=[], chartSeries=[];
+    let dataT = [];
+    if (Array.isArray( firstTmSer[0])) {  // next-event time progression
+      dataT = firstTmSer[0];  // time series timepoints
+    } else {  // fixed-increment time progression
+      for (let i=0; i < firstTmSer.length; i++) {
+        dataT.push(i * sim.timeIncrement);
+      }
+    }
+    for (const tmSerLbl of timeSeriesLabels) {
+      legendLabels.push( tmSerLbl);
+      if (sim.timeIncrement) {  // fixed-increment time progression
+        dataY = stat.timeSeries[tmSerLbl];
+      } else {  // next-event time progression
+        dataY = stat.timeSeries[tmSerLbl][1];
+      }
+      chartSeries.push({name: tmSerLbl, data: dataY});
+    }
+    const chart = new Chartist.Line("#time-series-chart", {
+          labels: dataT,
+          series: chartSeries
+        }, {
+          showPoint: false,
+          lineSmooth: true,
+          width: "90%", height: "400px",
+          axisX: {
+            labelInterpolationFnc: function ( value, index ) {
+              const interval = parseInt( dataT.length / 10 );
+              return index % interval === 0 ? value : null;
+            }
+          },
+          axisY: {
+            //offset: 60,
+            /*
+            labelInterpolationFnc: function ( value ) {
+              return value.toFixed( 2 );
+            }
+            */
+          },
+          plugins: [
+            // display chart legend
+            Chartist.plugins.legend({
+              legendNames: legendLabels
+            })
+          ]}
+    );
   }
 }
 /*********************************************************************

@@ -86,5 +86,19 @@ const util = {
       document.head.append( scriptEl);
       console.log(`${fileURL} loaded.`);
     });
+  },
+  loadCSS( fileURL) {
+    return new Promise( function (resolve, reject) {
+      const linkEl = document.createElement("link");
+      linkEl.href = fileURL;
+      linkEl.rel = "stylesheet";
+      linkEl.type = "text/css";
+      linkEl.onload = resolve;
+      linkEl.onerror = function () {
+        reject( new Error(`CSS load error for ${fileURL}`));
+      };
+      document.head.append( linkEl);
+      console.log(`${fileURL} loaded.`);
+    });
   }
 }

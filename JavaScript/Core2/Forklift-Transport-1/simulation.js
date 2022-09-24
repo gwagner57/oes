@@ -83,6 +83,8 @@ sim.scenarios[1] = {
  Statistics variables
 ********************************************************/
 sim.model.setupStatistics = function () {
+  sim.stat.nmrOfArrivals = 0;
+  sim.stat.serviceLevel = 0;
 };
 sim.model.computeFinalStatistics = function () {
   sim.stat.nmrOfArrivals = sim.scenario.networkNodes["productArrivalEvtNode"].nmrOfEvents;
@@ -99,3 +101,7 @@ sim.experimentTypes[0] = {
   seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012]
 };
 */
+/*******************************************************
+ UI configuration
+ ********************************************************/
+sim.config.ui.modelParameters = true;
