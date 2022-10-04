@@ -13,13 +13,14 @@ body {
     background-color: #f8f8f8;
     font: 1rem/1.4 'Helvetica', sans-serif;
     margin: 0 auto;
-    padding: 1em;
+    padding: 0.5em 1em;
 }
 body:not(.wide) {
     max-width: 60em;
 }
 h1 {
-    font-size: 200%
+    font-size: 200%;
+    line-height: 1;
 }
 h1 > span.subheading  {
     font-size: 60%

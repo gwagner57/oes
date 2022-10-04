@@ -17,7 +17,7 @@ sim.Classes = Object.create(null);
 // clone model parameters for default scenario (0)
 sim.scenario.parameters = {...sim.model.p};
 
-function setupUI() {
+async function setupUI() {
   var optionTextItems = [];
   function renderInitialObjectsUI() {
     const containerEl = oes.ui.createInitialObjectsPanel(),
@@ -62,6 +62,22 @@ function setupUI() {
     }
     // create initial state UI
     if (Array.isArray( sim.ui.objectTypes) && sim.ui.objectTypes.length > 0) {
+      try {
+        // load the OES Foundation code for having the oBJECT class
+        //await util.loadScript( "../OESjs-Core1/OES-Foundation.js");
+        let loadExpressions=[];
+        for (const objTypeName of sim.ui.objectTypes) {
+          loadExpressions.push( util.loadScript( objTypeName + ".js"));
+        }
+        await Promise.all( loadExpressions);
+        for (const objTypeName of sim.ui.objectTypes)  {
+          const OT = sim.Classes[objTypeName] = util.getClass( objTypeName);
+          OT.instances = {};
+        }
+      }
+      catch( error) {
+        console.log( error);
+      }
       if ("setupInitialStateForUi" in sim.scenario) sim.scenario.setupInitialStateForUi();
       renderInitialObjectsUI();
     }
@@ -219,6 +235,8 @@ function run() {
       storeExpRes: storeExpResCheckboxEl.checked};
   for (const objTypeName of Object.keys( sim.Classes)) {
     initialObjects[objTypeName] = sim.Classes[objTypeName].instances;
+    //TODO: convert object references to ID references
+    //...
   }
   if (Object.keys( initialObjects).length > 0) data.initialObjects = initialObjects;
   if (sim.scenarios.length > 0) {
@@ -277,21 +295,4 @@ if (sim.scenarios.length > 0) {
   selScenEl.parentElement.style.display = "none";
 }
 if (sim.experimentType) run();  // pre-set experiment (in simulation.js)
-else if (sim.ui?.objectTypes) {
-  /*************************************************
-   Set up the initial objects UI
-   *************************************************/
-  let loadExpressions=[];
-  for (const objTypeName of sim.ui.objectTypes) {
-    loadExpressions.push( util.loadScript( objTypeName + ".js"));
-  }
-  Promise.all( loadExpressions).then( function () {
-    for (const objTypeName of sim.ui.objectTypes)  {
-      const OT = sim.Classes[objTypeName] = util.getClass( objTypeName);
-      OT.instances = {};
-    }
-    setupUI();
-  }).catch( function (error) {console.log( error);});
-} else {
-  setupUI();
-}
+else setupUI();

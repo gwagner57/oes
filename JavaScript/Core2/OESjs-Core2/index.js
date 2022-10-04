@@ -265,6 +265,7 @@ if ("timeSeries" in sim.model &&
     Object.keys( sim.model.timeSeries).length > 0 &&
     typeof Chartist === "undefined") {
   util.loadScript( "../lib/ui/chartist.js");
+  util.loadCSS( "../css/chartist.css");
 }
 if (sim.scenarios.length > 0) {
   // Assign scenarioNo = 0 to default scenario

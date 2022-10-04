@@ -24,13 +24,15 @@ oes.predefinedEventTypes = ["eVENT"];
 class oBJECT {
   constructor( id, name) {
     this.id = id || sim.idCounter++;
-    // add each new object to list of simulation objects
+    // add each new object to Map of simulation objects
     sim.objects.set( id, this);
     if (name) {  // name is optional
       this.name = name;
       // also add to the Map of simulation objects by name
       sim.namedObjects.set( name, this);
     }
+    // create a map of class instances
+    this.constructor.instances[id] = this;
   }
   // overwrite/improve the standard toString method
   toString() {

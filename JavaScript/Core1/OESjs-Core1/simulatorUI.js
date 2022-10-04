@@ -6,14 +6,14 @@ oes.ui = Object.create(null);
 oes.ui.obs = Object.create(null);
 oes.ui.obs.SVG = Object.create(null);
 
-// for being able to run setupInitialStateForUi
 class oBJECT {
-  constructor( id, name) {
+  constructor(id, name) {
     this.id = id || sim.idCounter++;
-    // add each new object to the Map of simulation objects by ID
     if (name) {  // name is optional
       this.name = name;
     }
+    // create a map of class instances
+    this.constructor.instances[id] = this;
   }
 }
 /*******************************************************
