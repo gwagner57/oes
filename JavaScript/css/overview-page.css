@@ -410,6 +410,7 @@ body {
   min-height: 100vh;  /* % of viewport height */
   display: flex;  /* defines a flex container */
   flex-direction: column;
+  padding: 10px;
 }
 
 #navigation {
