@@ -2,11 +2,11 @@
 // load general framework code
 self.importScripts("../lib/seedrandom.min.js", "../lib/rand.js", "../lib/util.js",
     "../lib/math.js", "../lib/idb5.js", "../lib/EventList.js", "../lib/eNUMERATION.js");
-self.importScripts("../OESjs-core3/init-oes.js", "../OESjs-Core3/OES-Foundation.js", "../OESjs-Core3/OES-Activities.js",
-    "../OESjs-Core3/OES-ProcessingNetworks.js", "../OESjs-Core3/simulator.js");
+self.importScripts("../framework/init-oes.js", "../framework/OES-Foundation.js", "../framework/OES-Activities.js",
+    "../framework/OES-ProcessingNetworks.js", "../framework/simulator.js");
 /*
 self.importScripts("../lib/library-files.js");
-self.importScripts("../oesjs-core3/core3-oes.js");
+self.importScripts("../framework/core3-oes.js");
 */
 
 // start simulation on message from main thread
