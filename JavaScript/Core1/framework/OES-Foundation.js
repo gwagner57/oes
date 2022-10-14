@@ -31,8 +31,8 @@ class oBJECT {
       // also add to the Map of simulation objects by name
       sim.namedObjects.set( name, this);
     }
-    // create a map of class instances
-    this.constructor.instances[id] = this;
+    // create a map of class instances / TODO: initialize "instances"
+    //this.constructor.instances[id] = this;
   }
   // overwrite/improve the standard toString method
   toString() {

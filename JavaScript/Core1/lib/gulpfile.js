@@ -28,9 +28,9 @@ exports.default = workerlib;
 
 const uilib = function () {
   return src([
-    "ui/SingleRecordTableWidget.js", "ui/EntityTableWidget.js", 
 	"util.js", "datatypes.js", "constraint-violation-error-types.js",
-    "math.js", "idb5.js", "svg.js"
+    "ui/SingleRecordTableWidget.js", "ui/EntityTableWidget.js", "ui/svg.js", 
+    "math.js", "idb5.js"
   ])
     .pipe( concat('ui-library-files.js'))
     //.pipe( terser().on('error', (error) => console.log(error)))

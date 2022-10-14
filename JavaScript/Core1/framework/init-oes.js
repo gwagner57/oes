@@ -8,11 +8,13 @@ sim.model.v = Object.create(null); // map of (global) model variables
 sim.model.f = Object.create(null); // map of (global) model functions
 sim.model.p = Object.create(null); // map of model parameters
 sim.scenario = Object.create(null);
-sim.scenarios = [];
 sim.stat = Object.create(null);
+sim.scenarios = [];
+sim.experimentTypes = [];
+
 sim.config = Object.create(null);
 sim.config.ui = Object.create(null);
-sim.experimentTypes = [];
+sim.ui = Object.create(null);
 
 const oes = Object.create(null);
 oes.defaults = {

@@ -24,7 +24,7 @@
 
     <html:meta content="en" name="og:locale"/>
 
-    <html:meta content="This tutorial article explains how to use the OESjs-Core2 simulation library, which implements an architecture for Object Event Simulation (OES), extending the OESjs Core 1 simulator by adding support for activities, which may be resource-constrained."
+    <html:meta content="This tutorial article explains how to use the OESjs-Core2 simulation library, which implements an architecture for Object Event Simulation (OES), extending the OESjs Core 1 simulator by adding support for (typically resource-constrained) activities."
                name="og:description"/>
 
     <html:meta content="https://gwagner57.github.io/oes/js/Core2/tutorial.html"
@@ -142,7 +142,7 @@ figure.right {
 
     <section href="ChActivityBasedModeling/Task-priorities.html"/>
 
-    <section href="ChActivityBasedModeling/Task-preemption.html"/>
+    <section href="ChActivityBasedModeling/Activity-Preemption.html"/>
   </chapter>
 
   <appendix>

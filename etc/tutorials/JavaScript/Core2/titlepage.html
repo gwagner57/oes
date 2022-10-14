@@ -46,18 +46,21 @@
     </ul> </div><div id="subtitle">How to create and run activity-based
   Discrete Event simulations with the simulation library <a
   href="https://sim4edu.com/oesjs/core2/">OESjs-Core2</a> available from the
-  <a href="https://github.com/gwagner57/oes/tree/master/JavaScript/Core2">OES
+  <a href="https://github.com/gwagner57/oes/blob/master/OESjs-Core2.zip">OES
   GitHub repo</a></div> <div id="authors">Gerd Wagner <a
-  href="mailto:G.Wagner@b-tu.de">G.Wagner@b-tu.de</a></div><p>Copyright © 2020
-  Gerd Wagner (<a href="https://creativecommons.org/licenses/by-nc/4.0/">CC
-  BY-NC</a>)</p><p>Published 2020-10-28</p><h2>Abstract</h2><p>This tutorial
-  article explains how to use the OESjs-Core2 simulation library, which
-  implements an architecture for Object Event Simulation (OES), extending the
-  OESjs Core 1 simulator by adding support for activities, which are composite
-  events with some duration. Activities are composed of a start event and an
-  end event. Resource-constrained activities are modeled by means of
-  <em>Resource Roles</em> (with <em>Resource Cardinality Constraints</em>) and
-  <em>Resource Pools</em>. They can only be started when their required
+  href="mailto:G.Wagner@b-tu.de">G.Wagner@b-tu.de</a></div><p>Copyright ©
+  2020-2022 Gerd Wagner (<a
+  href="https://creativecommons.org/licenses/by-nc/4.0/">CC
+  BY-NC</a>)</p><p>Published 2022-10-13</p><p>Available as <a
+  href="https://sim4edu.com/oesjs/core2/tutorial.html">HTML</a> and <a
+  href="https://sim4edu.com/oesjs/core2/tutorial.pdf">PDF</a>.</p><h2>Abstract</h2><p>This
+  tutorial article explains how to use the OESjs-Core2 simulation library,
+  which implements an architecture for Object Event Simulation (OES),
+  extending the OESjs Core 1 simulator by adding support for activities, which
+  are composite events with some duration. Activities are composed of a start
+  event and an end event. Resource-constrained activities are modeled by means
+  of <em>Resource Roles</em> (with <em>Resource Cardinality Constraints</em>)
+  and <em>Resource Pools</em>. They can only be started when their required
   resources are available. Due to this dependency, a simulated activity cannot
   be scheduled like a simulated event. Rather, it has to be added to a queue
   of planned activities, from which it is dequeued, and scheduled via an

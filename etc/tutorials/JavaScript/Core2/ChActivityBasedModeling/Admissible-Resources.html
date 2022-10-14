@@ -9,5 +9,18 @@
   <body><p>When activities admit using more resources than required, this
   means they can be started as soon as the required number of resources are
   available, but they can also be started with a greater number of resources,
-  typically implying a faster performance.</p></body>
+  typically implying a faster performance. This is illustrated in scenario 2
+  of the model <a
+  href="https://sim4edu.com/oesjs/core2/load-haul-dump-1/">Load-Haul-Dump-1</a>,
+  where two wheel loaders, instead of just one, can be allocated for
+  performing a <i>Load</i> activity.</p><p>This is specified by the resource
+  cardinality constraint 1..2 in the <abbr title="Object Event">OE</abbr>
+  class model below for the <i>Load</i>-<i>WheelLoader</i> association at the
+  <i>WheelLoader</i> side. The meaning of this resource cardinality constraint
+  is that the activity type <i>Load</i> requires at least one wheel loader and
+  allows up to two wheel loaders to be allocated for a <i>Load</i>
+  activity.</p><figure><figcaption id="figLoadHaulDumpIDM">An <abbr
+  title="Object Event">OE</abbr> class design model for the Load-Haul-Dump
+  system.</figcaption><img alt="???" src="../img/LoadHaulDump_IDM.svg"
+  width="500" /></figure></body>
 </html>

@@ -2,10 +2,11 @@
 // load general framework code
 self.importScripts("../lib/seedrandom.min.js", "../lib/rand.js", "../lib/util.js",
     "../lib/math.js", "../lib/idb5.js", "../lib/EventList.js", "../lib/eNUMERATION.js");
-self.importScripts("../oesjs-core1/init-oes.js", "../oesjs-core1/OES-Foundation.js", "../oesjs-core1/simulator.js");
+self.importScripts("../framework/init-oes.js", "../framework/OES-Foundation.js", "../framework/OES-Activities.js",
+    "../framework/simulator.js");
 /*
 self.importScripts("../lib/library-files.js");
-self.importScripts("../OESjs-Core1/core1-oes.js");
+self.importScripts("../framework/core2-oes.js");
 */
 
 // start simulation on message from main thread
@@ -32,6 +33,7 @@ onmessage = function (e) {
         self.importScripts( actT + ".js");
       }
     }
+    console.log("Simulation model code loaded.")
   }
 
   sim.loadEndTime = (new Date()).getTime();
@@ -40,8 +42,7 @@ onmessage = function (e) {
   if (e.data.scenParams) sim.model.p = e.data.scenParams;
   if (e.data.initialObjects) sim.scenario.initialObjects = e.data.initialObjects;
   loadSimulationModelCode();
-  if (sim.experimentType) {
-    // when experimentType has been set, run it
+  if (sim.experimentType) {  // when experimentType has been set, run it
     sim.runExperiment( sim.experimentType);
   } else if (e.data.simToRun >= 0) {
     // assign alternative scenario, if selected
@@ -66,7 +67,7 @@ onmessage = function (e) {
     if (e.data.simToRun === 0) {
       sim.runStandaloneScenario( e.data.createLog);
     } else {
-      let expNo = parseInt( e.data.simToRun) - 1;
+      let expNo = e.data.simToRun - 1;
       sim.experimentType = sim.experimentTypes[expNo];
       sim.experimentType.storeExpResults = e.data.storeExpRes;
       sim.runExperiment();

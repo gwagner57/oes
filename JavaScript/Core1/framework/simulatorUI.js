@@ -1,7 +1,6 @@
 /**********************************************************************
  *** Create UI namespace objects **************************************
  **********************************************************************/
-sim.ui = Object.create(null);
 oes.ui = Object.create(null);
 oes.ui.obs = Object.create(null);
 oes.ui.obs.SVG = Object.create(null);

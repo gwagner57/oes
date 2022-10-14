@@ -14,13 +14,15 @@ const formEl = document.forms["run"],
     execInfoEl = document.getElementById("execInfo");
 // initialize the className->Class map
 sim.Classes = Object.create(null);
+// clone model parameters for default scenario (0)
+sim.scenario.parameters = {...sim.model.p};
 
-function setupUI() {
+async function setupUI() {
   var optionTextItems = [];
-  function renderInitialObjectsTables() {
+  function renderInitialObjectsUI() {
     const containerEl = oes.ui.createInitialObjectsPanel(),
         objTypeTableElems = containerEl.querySelectorAll("table.EntityTableWidget");
-    document.getElementById("upfrontUI").appendChild( containerEl);
+    upfrontUiEl.appendChild( containerEl);
     for (const objTypeTableEl of objTypeTableElems) {
       objTypeTableEl.remove();
     }
@@ -38,35 +40,52 @@ function setupUI() {
   }
   // fill scenario choice control
   if (sim.scenarios.length > 0) {
-    for (const scen of sim.scenarios) {
+    for (let scen of sim.scenarios) {
       optionTextItems.push( scen.title);
     }
     util.fillSelectWithOptionsFromStringList( selScenEl, optionTextItems);
   }
-  // fill run selection list
-  optionTextItems = ["Standalone simulation"];
+  // fill run choice control
+  optionTextItems = ["Standalone scenario"];
   if (sim.experimentTypes.length > 0) {
-    for (const expT of sim.experimentTypes) {
+    for (let expT of sim.experimentTypes) {
       optionTextItems.push( expT.title);
     }
     util.fillSelectWithOptionsFromStringList( selExpEl, optionTextItems);
   }
-  if (sim.config.ui.modelParameters && Object.keys( sim.model.p).length > 0 && upfrontUiEl) {  // create model parameter panel
-    sim.scenario.parameters = {...sim.model.p};  // clone model parameters
-    document.getElementById("upfrontUI").appendChild( oes.ui.createModelParameterPanel());
-    fillModelParameterPanel( sim.scenario.parameters);
-  }
-  // create initial state UI
-  if (Array.isArray( sim.ui.objectTypes) && sim.ui.objectTypes.length > 0) {
-    if ("setupInitialStateForUi" in sim.scenario) {
-      sim.scenario.setupInitialStateForUi();
+  // only create model parameter UI and initial state UI, if upfrontUi container element has been defined
+  if (upfrontUiEl) {
+    if (sim.config.ui.modelParameters && Object.keys( sim.model.p).length > 0) {
+      // create model parameter panel
+      upfrontUiEl.appendChild( oes.ui.createModelParameterPanel());
+      fillModelParameterPanel( sim.scenario.parameters);
     }
-    renderInitialObjectsTables();
+    // create initial state UI
+    if (Array.isArray( sim.ui.objectTypes) && sim.ui.objectTypes.length > 0) {
+      try {
+        // load the OES Foundation code for having the oBJECT class
+        //await util.loadScript( "../framework/OES-Foundation.js");
+        let loadExpressions=[];
+        for (const objTypeName of sim.ui.objectTypes) {
+          loadExpressions.push( util.loadScript( objTypeName + ".js"));
+        }
+        await Promise.all( loadExpressions);
+        for (const objTypeName of sim.ui.objectTypes)  {
+          const OT = sim.Classes[objTypeName] = util.getClass( objTypeName);
+          OT.instances = {};
+        }
+      }
+      catch( error) {
+        console.log( error);
+      }
+      if ("setupInitialStateForUi" in sim.scenario) sim.scenario.setupInitialStateForUi();
+      renderInitialObjectsUI();
+    }
   }
 }
 function fillModelParameterPanel( record) {
   const containerEl = document.getElementById("ModelParameterUI"),
-        modParTableEl = containerEl?.querySelector("table.SingleRecordTableWidget");
+      modParTableEl = containerEl?.querySelector("table.SingleRecordTableWidget");
   // drop the <table> child element
   if (modParTableEl) modParTableEl.remove();
   if (containerEl) containerEl.appendChild( new SingleRecordTableWidget( record));
@@ -87,7 +106,7 @@ function onChangeOfScenSelect() {
   } else {  // default scenario
     sim.scenario.parameters = {...sim.model.p};  // clone model parameters
   }
-  fillModelParameterPanel( sim.scenario.parameters);
+  if (upfrontUiEl) fillModelParameterPanel( sim.scenario.parameters);
 }
 function onChangeOfExpSelect() {
   if (selExpEl.value === "0") {
@@ -182,46 +201,49 @@ async function exportExperResults() {
 async function clearDatabase() {
   await idb.deleteDB( sim.model.name);
 }
-/**************************************************************/
 function run() {
   var choice = parseInt( selExpEl.value), data={}, initialObjects={};
-  if (isNaN( choice)) choice = 0;
-  if (choice > 0) {
-    if (!sim.experimentType) sim.experimentType = sim.experimentTypes[parseInt(choice)-1];
-    simInfoEl.textContent = sim.experimentType.title;
-    statisticsTableEl.querySelector("caption").textContent = "Experiment Results";
-  } else {
-    simInfoEl.textContent = `Standalone scenario run with a simulation time/duration of ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}.`;
-    if (Object.keys( sim.stat).length > 0 && statisticsTableEl) statisticsTableEl.querySelector("caption").textContent = "Statistics";
+  if (!isNaN( choice)) {
+    if (choice > 0) {
+      if (!sim.experimentType) sim.experimentType = sim.experimentTypes[parseInt(choice)-1];
+      simInfoEl.textContent = sim.experimentType.title;
+      statisticsTableEl.querySelector("caption").textContent = "Experiment Results";
+    } else {
+      simInfoEl.textContent = `Standalone scenario run with a simulation time/duration of ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}.`;
+      if (Object.keys( sim.stat).length > 0 && statisticsTableEl) {
+        statisticsTableEl.querySelector("caption").textContent = "Statistics";
+      }
+    }
   }
   // Hide UI elements
-  if (document.getElementsByTagName("figure")[0]) {
-    document.getElementsByTagName("figure")[0].style.display = "none";
-  }
   if (modelDescriptionEl) modelDescriptionEl.style.display = "none";
   if (scenarioDescriptionEl) scenarioDescriptionEl.style.display = "none";
   if (upfrontUiEl) upfrontUiEl.style.display = "none";
   else formEl.style.display = "none";  // hide select&run form
 
-  let nmrOfScriptFilesToLoad = 3; // lib + framework + simulation.js
-  if (Array.isArray(sim.model.objectTypes)) nmrOfScriptFilesToLoad += sim.model.objectTypes.length;
-  if (Array.isArray(sim.model.eventTypes)) nmrOfScriptFilesToLoad += sim.model.eventTypes.length;
-  if (Array.isArray(sim.model.activityTypes)) nmrOfScriptFilesToLoad += sim.model.activityTypes.length;
-  if (Array.isArray(sim.model.agentTypes)) nmrOfScriptFilesToLoad += sim.model.agentTypes.length;
-  document.body.appendChild( util.createProgressBarEl(
-      `Loading ${nmrOfScriptFilesToLoad} script files ...`));
-
+  sim.model.setupStatistics();
+  if (sim.experimentType) {
+    if (!sim.experimentType.parameterDefs) {
+      oes.ui.createSimpleExpResultsTableHead( sim.stat, statisticsTableEl);
+    } else {
+      oes.ui.createParVarExpResultsTableHead( sim.stat, statisticsTableEl);
+    }
+  }
   data = {simToRun: choice,  // either standalone sim or experiment
-          scenParams: sim.scenario.parameters,
-          createLog: logCheckboxEl.checked,
-          storeExpRes: storeExpResCheckboxEl.checked};
+      scenParams: sim.scenario.parameters,
+      createLog: logCheckboxEl.checked,
+      storeExpRes: storeExpResCheckboxEl.checked};
   for (const objTypeName of Object.keys( sim.Classes)) {
     initialObjects[objTypeName] = sim.Classes[objTypeName].instances;
+    //TODO: convert object references to ID references
+    //...
   }
   if (Object.keys( initialObjects).length > 0) data.initialObjects = initialObjects;
   if (sim.scenarios.length > 0) {
     data.scenarioNo = parseInt( selScenEl.value)
   }
+  const nmrOfScriptFilesToLoad = 4 + sim.model.objectTypes.length + sim.model.eventTypes.length;
+  document.body.appendChild( util.createProgressBarEl(`Loading ${nmrOfScriptFilesToLoad} script files ...`));
 
   // store start time of simulation/experiment run
   const startWorkerTime = (new Date()).getTime();
@@ -229,9 +251,10 @@ function run() {
   const worker = new Worker("simulation-worker.js");
   // start the simulation in the worker thread
   worker.postMessage( data);
+
   // on incoming messages from worker
   worker.onmessage = function (e) {
-    if (e.data.step !== undefined) {  // create simulation log entry
+    if (e.data.step !== undefined) {  // create log entry
       simLogTableEl.parentElement.style.display = "block";
       oes.ui.logSimulationStep( simLogTableEl, e.data.step, e.data.time,
           e.data.currEvtsStr, e.data.objectsStr, e.data.futEvtsStr);
@@ -241,25 +264,20 @@ function run() {
       }
       if (e.data.expScenNo !== undefined) {  // parameter variation experiment
         oes.ui.showResultsFromParVarExpScenarioRun( e.data, statisticsTableEl);
-      } else { // standalone simulation run or simple experiment
+      } else {
         const loadTime = e.data.loadEndTime - startWorkerTime,
-              executionTime = (new Date()).getTime() - e.data.loadEndTime;
+            executionTime = (new Date()).getTime() - e.data.loadEndTime;
         // Show loading time and execution time
         execInfoEl.textContent = `Script files loading time: ${loadTime} ms, simulation execution time: ${executionTime} ms. Reload the page [Ctrl-R] to start over.`;
-        if (e.data.statistics) {  // statistics from standalone simulation run
-          let duration = "";
-          if (sim.scenario.durationInSimTime) duration = `${sim.scenario.durationInSimTime} ${sim.model.timeUnit}`;
-          else duration = `${Math.ceil( e.data.endSimTime)} ${sim.model.timeUnit}`;
-          simInfoEl.textContent = `Standalone simulation run with a simulation time/duration of ${duration}.`;
-          oes.ui.showStatistics( e.data.statistics);
+        if (e.data.statistics) {  // statistics from standalone scenario run
+          oes.ui.showStatistics( e.data.statistics, statisticsTableEl);
         } else if (e.data.simpleExperiment) {
-          oes.ui.showSimpleExpResults( e.data.simpleExperiment);
+          oes.ui.showSimpleExpResults( e.data.simpleExperiment, statisticsTableEl);
         }
       }
     }
   }
 }
-
 /**************************************************************/
 if ("timeSeries" in sim.model &&
     Object.keys( sim.model.timeSeries).length > 0 &&
@@ -270,29 +288,11 @@ if ("timeSeries" in sim.model &&
 if (sim.scenarios.length > 0) {
   // Assign scenarioNo = 0 to default scenario
   sim.scenario.scenarioNo ??= 0;
-  sim.scenario.title ??= "Default Scenario";
+  sim.scenario.title ??= "Default scenario";
   // Assign sim.scenarios[0] if not defined
   if (!sim.scenarios[0]) sim.scenarios[0] = sim.scenario;
 } else {
   selScenEl.parentElement.style.display = "none";
-  selExpEl.style.display = "none";
 }
 if (sim.experimentType) run();  // pre-set experiment (in simulation.js)
-else if (sim.ui?.objectTypes) {
-  /*************************************************
-   Set up the initial objects UI
-   *************************************************/
-  let loadExpressions=[];
-  for (const objTypeName of sim.ui.objectTypes) {
-    loadExpressions.push( util.loadScript( objTypeName + ".js"));
-  }
-  Promise.all( loadExpressions).then( function () {
-    for (const objTypeName of sim.ui.objectTypes)  {
-      const OT = sim.Classes[objTypeName] = util.getClass( objTypeName);
-      OT.instances = {};
-    }
-    setupUI();
-  }).catch( function (error) {console.log( error);});
-} else {
-  setupUI();
-}
+else setupUI();
