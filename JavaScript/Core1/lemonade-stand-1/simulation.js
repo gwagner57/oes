@@ -136,10 +136,10 @@ sim.model.setupStatistics = function () {
 };
 sim.model.computeFinalStatistics = function () {
   sim.stat.totalProfit = sim.stat.totalRevenue - sim.stat.totalCosts;
-}
+};
 sim.model.timeSeries = {
   "liquidity": {objectId:1, attribute:"liquidity"},
-}
+};
 
 /*******************************************************
  Define an experiment (type)

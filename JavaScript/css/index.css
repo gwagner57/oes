@@ -1,0 +1,92 @@
+/* Tinting special UI elements */
+html {
+    --baseColor: #FF6600;
+    --accentColor: #0D72FF;
+    scrollbar-color: var(--accentColor) Canvas;
+}
+:root { accent-color: var(--accentColor); }
+:focus-visible { outline-color: var(--accentColor); }
+::marker { color: var(--accentColor); }
+
+body {
+    color: black;
+    background-color: #f8f8f8;
+    font: 1rem/1.4 'Helvetica', sans-serif;
+    margin: 0 auto;
+    padding: 8px;
+}
+body:not(.wide) {
+    max-width: 60em;
+}
+h1 {
+    font-size: 200%
+}
+h1 > span.subheading  {
+    font-size: 60%
+}
+h2 {
+    font-size: 150%
+}
+h1 > a {
+    margin-left: 1em;
+    font-size: 50%
+}
+#copyright {
+  font-size: 85%;
+}
+
+table {
+    border: thin solid black;
+    margin: 1em 0;
+    border-collapse: collapse;
+    empty-cells: show;
+}
+table td, table th {
+    border: thin solid black;
+    padding: 0.2em;
+}
+details {
+    background-color: hsl(0,0%,92%) /* a bit darker than ghostwhite */;
+}
+details > summary {
+    cursor: pointer;
+}
+td[data-type="integer"],td[data-type="decimal"] {
+    text-align:right;
+}
+td.invalid {
+    color: red;
+}
+[contentEditable] {
+    cursor: pointer;
+    color: blue;
+    background-color: white;
+}
+
+figure {
+    margin: 1em auto;
+    text-align: center;
+}
+figure.right {
+    float: right;
+    margin-left: 1em;
+    margin-bottom: 1em;
+    margin-top: 0;
+    margin-right: 0;
+}
+figure.left {
+    float: left;
+    margin-right: 1em;
+    margin-bottom: 1em;
+}
+form {
+    clear: both;
+}
+form > * + * {
+    margin-top: 1em;
+}
+#upfrontUI {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}

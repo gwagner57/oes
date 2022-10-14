@@ -10,16 +10,10 @@
   implements the <i>Object Event Simulation (<a href="https://sim4edu.com/OES"
   target="_top">OES</a>)</i> paradigm, allowing activity-based <em>Discrete
   Event Simulation</em> based on <i>object-oriented</i> modeling and <i>event
-  scheduling</i>. You can <a
-  href="https://github.com/gwagner57/oes/blob/master/OESjs-Core2.zip">download
-  OESjs-Core2</a> in the form of a ZIP archive file from the <a>OES GitHub
-  repo</a>. After extracting the archive on your local disk, you can run any
-  of its example models or create your own model (e.g., by making a copy of
-  one of the example model folders and using its code files a s starting
-  point). </p><p>The code of an OESjs-Core2 simulation consists of (1) the
-  OESjs-Core2 library files in the folder <kbd>OESjs-Core2</kbd>, (2) general
-  library files in the <kbd>lib</kbd> folder and (3) the following files to be
-  created by the simulation developer:</p><ol>
+  scheduling</i>. </p><p>The code of an OESjs-Core2 simulation consists of (1)
+  the OESjs-Core2 library files in the folder <kbd>OESjs-Core2</kbd>, (2)
+  general library files in the <kbd>lib</kbd> folder and (3) the following
+  files to be created by the simulation developer:</p><ol>
       <li>For each object type <i>ObjT</i>, a JS code file
       <kbd>ObjT.js</kbd>.</li>
 
@@ -58,9 +52,14 @@
   output).</p><p>The following sections present the basic concepts of the
   OESjs<i>-Core2</i> simulation library, and show how to implement the models
   described in <a href="../ChIntroOEM/index.html"></a>.</p><blockquote
-  class="role-attention"><p>You can download the simulation example folders
-  from the OES repo to your computer, and then possibly modify their files for
-  creating your own simulations. Since an OESjs simulation includes a JS
+  class="role-attention"><p>You can <a
+  href="https://github.com/gwagner57/oes/blob/master/OESjs-Core2.zip">download
+  OESjs-Core2</a> in the form of a ZIP archive file from the <a>OES GitHub
+  repo</a>. After extracting the archive on your local disk, you can run any
+  of its example models by going to its folder and loading its
+  <kbd>index.html</kbd> file into your brwoser. You can create your own model
+  by making a copy of one of the example model folders and using its code
+  files a s starting point. </p><p>Since an OESjs simulation includes a JS
   worker file for running the simulator in its own thread separately from the
   main (user interface) thread, it cannot be run from the local file system
   without changing the browser's default configuration (due to the web
@@ -79,16 +78,16 @@
 
       <li><p>Disable this policy by changing its value from
       <strong>true</strong> to <strong>false</strong>.</p></li>
-    </ol><p>This creates only a small security risk because the important web
-  security policy called "CORS" is only disabled for file URLs, but not for
-  normal URLs.</p><p>For other browsers, like Chrome, you need to install a
-  local HTTP server and load your simulation's <i>index.html</i> file from
-  that local server, or run it via the JS development tool <em>WebStorm</em>
-  (which has a built-in local server), because the only option for loading JS
-  worker files from the local file system in Chrome would be to disable the
-  CORS policy completely (see <a
+    </ol><p>This creates only a small security risk because the web security
+  policy called "CORS" is only disabled for file URLs, but not for normal
+  URLs.</p><p>For other browsers, like Chrome, you need to install a local
+  HTTP server and load your simulation's <i>index.html</i> file from that
+  local server, or run it via the JS development tool <em>WebStorm</em> (which
+  has a built-in local server), because the only option for loading JS worker
+  files from the local file system in Chrome would be to disable the CORS
+  policy completely (see <a
   href="https://windowsreport.com/browser-not-support-cross-origin/"
   target="_top">how to disable CORS in Chrome</a>), but that would create a
-  severe security risk and is therefore not
+  more severe security risk and is therefore not
   recommended.</p></blockquote></body>
 </html>

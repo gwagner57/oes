@@ -7,8 +7,8 @@
   </head>
 
   <body><p>The JavaScript-based simulator <a
-  href="https://sim4edu.com/oesjs/core1/"><i>OESjs-Core1</i></a>
-  implements the <i>Object Event Simulation (<a href="https://sim4edu.com/OES"
+  href="https://sim4edu.com/oesjs/core1/"><i>OESjs-Core1</i></a> implements
+  the <i>Object Event Simulation (<a href="https://sim4edu.com/OES"
   target="_top">OES</a>)</i> paradigm, representing a general <i>Discrete
   Event Simulation</i> approach based on <i>object-oriented</i> modeling and
   <i>event scheduling</i>. </p><p>The code of an OESjs-Core1 simulation
@@ -50,12 +50,42 @@
   environment handling (e.g., user interfaces for statistics
   output).</p><p>The following sections present the basic concepts of the
   OESjs<i> </i>Core1 simulation library.</p><blockquote
-  class="role-attention"><p>While you can directly run an OESjs Core1
-  simulation model from a remote website (e.g., from the OES GitHub website),
-  you can only run it from your local file system after changing your
-  browser's default configuration. </p><p>For FireFox, you have to set the
-  configuration property <code>security.fileuri.strict_origin_policy</code> to
-  <i>false</i> by first entering <code>about:config</code> in the browser's
-  web address bar and then entering this property
-  name.</p></blockquote></body>
+  class="role-attention"><p>You can <a
+  href="https://github.com/gwagner57/oes/blob/master/OESjs-Core2.zip">download
+  OESjs-Core2</a> in the form of a ZIP archive file from the <a>OES GitHub
+  repo</a>. After extracting the archive on your local disk, you can run any
+  of its example models by going to its folder and loading its
+  <kbd>index.html</kbd> file into your brwoser. You can create your own model
+  by making a copy of one of the example model folders and using its code
+  files a s starting point.</p><p>Since an OESjs simulation includes a JS
+  worker file for running the simulator in its own thread separately from the
+  main (user interface) thread, it cannot be run from the local file system
+  without changing the browser's default configuration (due to the web
+  security policy <a
+  href="https://www.freecodecamp.org/news/cors-csp-web-security-concepts-for-developers/"
+  title="Cross-Origin Resource Sharing">CORS</a>).</p><p>For developing OESjs
+  simulations on your computer, you should use <em>Firefox</em> because its
+  security settings can be easily configured such that it allows loading JS
+  worker files directly from the local file system by disabling the flag
+  "strict_origin_policy" specifically for file URLs:</p><ol type="1">
+      <li><p>Enter "<strong>about:config</strong>" in the Firefox search
+      bar.</p></li>
+
+      <li><p>Search for
+      "<strong>security.fileuri.strict_origin_policy</strong>".</p></li>
+
+      <li><p>Disable this policy by changing its value from
+      <strong>true</strong> to <strong>false</strong>.</p></li>
+    </ol><p>This creates only a small security risk because the web security
+  policy called "CORS" is only disabled for file URLs, but not for normal
+  URLs.</p><p>For other browsers, like Chrome, you need to install a local
+  HTTP server and load your simulation's <i>index.html</i> file from that
+  local server, or run it via the JS development tool <em>WebStorm</em> (which
+  has a built-in local server), because the only option for loading JS worker
+  files from the local file system in Chrome would be to disable the CORS
+  policy completely (see <a
+  href="https://windowsreport.com/browser-not-support-cross-origin/"
+  target="_top">how to disable CORS in Chrome</a>), but that would create a
+  more severe security risk and is therefore not
+  recommended.</p></blockquote></body>
 </html>
