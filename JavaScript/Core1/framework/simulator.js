@@ -106,6 +106,7 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
       //TODO: should the records be converted to class instances?
       C.instances[objId] = new C( objRecords[objId]);
     }
+    console.log( C.name +": "+ JSON.stringify( C.instances));
   }
   // Set up initial state
   if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();

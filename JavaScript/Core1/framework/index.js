@@ -63,23 +63,19 @@ async function setupUI() {
     // create initial state UI
     if (Array.isArray( sim.ui.objectTypes) && sim.ui.objectTypes.length > 0) {
       try {
-        // load the OES Foundation code for having the oBJECT class
-        //await util.loadScript( "../framework/OES-Foundation.js");
-        let loadExpressions=[];
         for (const objTypeName of sim.ui.objectTypes) {
-          loadExpressions.push( util.loadScript( objTypeName + ".js"));
+          await util.loadScript( objTypeName + ".js");
         }
-        await Promise.all( loadExpressions);
         for (const objTypeName of sim.ui.objectTypes)  {
           const OT = sim.Classes[objTypeName] = util.getClass( objTypeName);
           OT.instances = {};
         }
+        if ("setupInitialStateForUi" in sim.scenario) sim.scenario.setupInitialStateForUi();
+        renderInitialObjectsUI();
       }
       catch( error) {
         console.log( error);
       }
-      if ("setupInitialStateForUi" in sim.scenario) sim.scenario.setupInitialStateForUi();
-      renderInitialObjectsUI();
     }
   }
 }
@@ -234,10 +230,21 @@ function run() {
       createLog: logCheckboxEl.checked,
       storeExpRes: storeExpResCheckboxEl.checked};
   for (const objTypeName of Object.keys( sim.Classes)) {
-    initialObjects[objTypeName] = sim.Classes[objTypeName].instances;
-    //TODO: convert object references to ID references
-    //...
+    const C = sim.Classes[objTypeName];
+    initialObjects[objTypeName] = C.instances;
+    // convert object references to ID references
+    for (const objId of Object.keys( C.instances)) {
+      const obj = C.instances[objId];
+      for (const p of Object.keys( obj)) {
+        const v = obj[p];
+        // is v an instance of an object class?
+        if (typeof v === "object" && v.constructor.name in Object.keys( sim.Classes)) {
+          obj[p] = v.id;  // assign ID reference
+        }
+      }
+    }
   }
+  console.log( JSON.stringify( initialObjects["SingleProductCompany"]));
   if (Object.keys( initialObjects).length > 0) data.initialObjects = initialObjects;
   if (sim.scenarios.length > 0) {
     data.scenarioNo = parseInt( selScenEl.value)

@@ -1,9 +1,14 @@
 class SingleProductCompany extends oBJECT {
   constructor({ id, name, productType, liquidity, fixedCostPerDay }) {
     super( id, name);
-    this.productType = typeof productType === "object" ? productType :
-        typeof productType === "string" ? sim.namedObjects.get( productType) :
-            sim.objects.get( productType);
+    if (typeof productType === "object") this.productType = productType;
+    else if (typeof productType === "string") {
+      const o = sim.namedObjects.get(productType);
+      this.productType = o ? o : productType;
+    } else if (Number.isInteger( productType)) {
+      const o = sim.objects.get( productType);
+      this.productType = o ? o : productType;
+    }
     this.liquidity = liquidity;
     this.fixedCostPerDay = fixedCostPerDay;  // Includes labor cost and facilities cost
     //*** statistics variables ***

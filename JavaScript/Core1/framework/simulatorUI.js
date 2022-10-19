@@ -14,6 +14,17 @@ class oBJECT {
     // create a map of class instances
     this.constructor.instances[id] = this;
   }
+  // used in the JSON.stringify method
+  toJSON() {
+    var obj = {};
+    for (const prop of Object.keys( this)) {
+      const val = this[prop];
+      if (typeof val === "object" && val instanceof oBJECT) {
+        obj[prop] = val.id;  // map oBJECT references to ID references
+      } else obj[prop] = val;
+    }
+    return obj;
+  }
 }
 /*******************************************************
  UI for modifying model parameter values

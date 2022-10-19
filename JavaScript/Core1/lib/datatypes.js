@@ -307,6 +307,10 @@ const dt = {
     const cond = dt.dataTypes[Type]?.condition;
     return cond !== undefined && cond( value);
   },
+  // https://stackoverflow.com/questions/526559/testing-if-something-is-a-class-in-javascript
+  isClass( C) {
+    return typeof C === "function" && C.prototype !== undefined;
+  },
   range2JsDataType( range) {
     var jsDataType="";
     switch (range) {

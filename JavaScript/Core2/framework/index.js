@@ -15,7 +15,7 @@ const formEl = document.forms["run"],
 // initialize the className->Class map
 sim.Classes = Object.create(null);
 
-function setupUI() {
+async function setupUI() {
   var optionTextItems = [];
   function renderInitialObjectsTables() {
     const containerEl = oes.ui.createInitialObjectsPanel(),
@@ -58,10 +58,20 @@ function setupUI() {
   }
   // create initial state UI
   if (Array.isArray( sim.ui.objectTypes) && sim.ui.objectTypes.length > 0) {
-    if ("setupInitialStateForUi" in sim.scenario) {
-      sim.scenario.setupInitialStateForUi();
+    try {
+      for (const objTypeName of sim.ui.objectTypes) {
+        await util.loadScript( objTypeName + ".js");
+      }
+      for (const objTypeName of sim.ui.objectTypes)  {
+        const OT = sim.Classes[objTypeName] = util.getClass( objTypeName);
+        OT.instances = {};
+      }
+      if ("setupInitialStateForUi" in sim.scenario) sim.scenario.setupInitialStateForUi();
+      renderInitialObjectsUI();
     }
-    renderInitialObjectsTables();
+    catch( error) {
+      console.log( error);
+    }
   }
 }
 function fillModelParameterPanel( record) {
@@ -278,21 +288,4 @@ if (sim.scenarios.length > 0) {
   selExpEl.style.display = "none";
 }
 if (sim.experimentType) run();  // pre-set experiment (in simulation.js)
-else if (sim.ui?.objectTypes) {
-  /*************************************************
-   Load object classes for the initial objects UI
-   *************************************************/
-  let loadExpressions=[];
-  for (const objTypeName of sim.ui.objectTypes) {
-    loadExpressions.push( util.loadScript( objTypeName + ".js"));
-  }
-  Promise.all( loadExpressions).then( function () {
-    for (const objTypeName of sim.ui.objectTypes)  {
-      const OT = sim.Classes[objTypeName] = util.getClass( objTypeName);
-      OT.instances = {};
-    }
-    setupUI();
-  }).catch( function (error) {console.log( error);});
-} else {
-  setupUI();
-}
+else setupUI();
