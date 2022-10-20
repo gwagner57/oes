@@ -1,6 +1,6 @@
 // load general framework code
 self.importScripts("../lib/EventList.js", "../lib/math.js",
-    "../OESjs-Core0/OES-Foundation.js", "../OESjs-Core0/simulator.js");
+    "../framework/OES-Foundation.js", "../framework/simulator.js");
 // load simulation-example-specific code
 self.importScripts("simulation.js");
 if (sim.model.objectTypes) {

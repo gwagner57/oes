@@ -8,7 +8,7 @@
  <meta name="description"
        content="The OESjs Core 0 simulator implements a minimal architecture for Object Event Simulation (OES), supporting model variables, object types, event types, next-event time progression and simple simulation experiments"/>
  <link rel="icon" href="../../favicon.svg"/>
- <link rel="stylesheet" type="text/css" href="../../css/standard-page.css" />
+ <link rel="stylesheet" type="text/css" href="css/overview-page.css" />
 </head>
 <body>
  <header>
@@ -29,19 +29,43 @@
   </div>
  </header>
  <main>
-  <h1>OES JavaScript Core 0 Simulator</h1>
+  <h1>OES JavaScript Core 0 Simulator <a href="https://github.com/gwagner57/oes/blob/master/OESjs-Core0.zip" style="margin-left:2em; border: 2px solid;
+    border-radius:15px;padding:5px;text-decoration:none;" title="Get a ZIP archive with the framework and examples">Download</a></h1>
   <p>The OESjs Core 0 simulator implements a minimal architecture for Object Event Simulation (OES), supporting models with (global) model variables and functions, 
    object types, event types, and simple simulation experiments.</p>
-  <p><small>You can download and inspect the code from the <a href="https://github.com/gwagner57/oes/tree/master/JavaScript/Core0">OES
+  <p><small>You can inspect the code in the <a href="https://github.com/gwagner57/oes/tree/master/JavaScript/Core0">OES
    GitHub repo</a>.</small></p>
-  <p><a href="tutorial.html">Tutorial</a></p>
+  <p><a href="tutorial.html"><strong>Read the tutorial</strong></a></p>
   <h2>Simulation Examples</h2>
-  <ul>
-   <li><a href="Service-Desk-0/index.html">Service-Desk-0</a>: a simulation model with two event types (<i>CustomerArrival</i> and <i>CustomerDeparture</i>) and no object type. The system state is not expressed with objects, but with the help of the model variable <i>queueLength</i> representing the length of the waiting line.</li>
-   <li><a href="Service-Desk-1/index.html">Service-Desk-1</a>: a model with two event types (<i>CustomerArrival</i> and <i>CustomerDeparture</i>) and one object type (<i>ServiceDesk</i>). The state variable <i>queue length</i> is represented by the attribute <i>queueLength</i> of the service desk object.</li>
-   <li><a href="Service-Desk-2/index.html">Service-Desk-2</a>: a model with two event types (<i>CustomerArrival</i> and <i>CustomerDeparture</i>) and two object types (<i>ServiceDesk</i> and <i>Customer</i>). In this model, the waiting line is explicitly represented as a queue of individual customer objects.</li>
-   <li><a href="Inventory-Management/index.html">Inventory-Management</a>: a model with two event types (<i>DailyDemand</i> and <i>Delivery</i>) and one object type (<i>SingleProductShop</i>).</li>
-  </ul>
+  <div class="cards">
+   <div class="card">
+    <img src="Service-Desk-0/theme-image.svg" style="float: right" width="75" alt=""/>
+    <h3><a href="Service-Desk-0/index.html">Service-Desk-0</a></h3>
+    <p>A simulation model with two event types (<i>CustomerArrival</i> and <i>CustomerDeparture</i>) and no object type.
+     The system state is not expressed with objects, but with the help of the model variable <i>queueLength</i>
+     representing the length of the waiting line.</p>
+   </div>
+   <div class="card">
+    <img src="Service-Desk-1/theme-image.svg" style="float: right" width="75" alt=""/>
+    <h3><a href="Service-Desk-1/index.html">Service-Desk-1</a></h3>
+    <p>A simulation model with two event types (<i>CustomerArrival</i> and <i>CustomerDeparture</i>) and
+     one object type (<i>ServiceDesk</i>). The state variable <i>queue length</i> is represented
+     by the attribute <i>queueLength</i> of the service desk object.</p>
+   </div>
+   <div class="card">
+    <img src="Service-Desk-2/theme-image.svg" style="float: right" width="75" alt=""/>
+    <h3><a href="Service-Desk-2/index.html">Service-Desk-2</a></h3>
+    <p>A simulation model with two event types (<i>CustomerArrival</i> and <i>CustomerDeparture</i>) and
+     two object types (<i>ServiceDesk</i> and <i>Customer</i>). In this model, the waiting line is explicitly
+     represented as a queue of individual customer objects.</p>
+   </div>
+   <div class="card">
+    <img src="Inventory-Management-1/theme-image.svg" style="float: right" width="75" alt=""/>
+    <h3><a href="Inventory-Management-1/index.html">Inventory-Management-1</a></h3>
+    <p>A model with two event types (<i>DailyDemand</i> and <i>Delivery</i>) and one object type (<i>SingleProductShop</i>).
+     This example also offers two parameter variation experiments.</p>
+   </div>
+  </div>
  </main>
   <footer>
    <p>© 2020-22 G. Wagner (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>), Brandenburg University of Technology, Germany</p>
