@@ -19,7 +19,7 @@ class oBJECT {
     var obj = {};
     for (const prop of Object.keys( this)) {
       const val = this[prop];
-      if (typeof val === "object" && val instanceof oBJECT) {
+      if (val instanceof oBJECT) {
         obj[prop] = val.id;  // map oBJECT references to ID references
       } else obj[prop] = val;
     }

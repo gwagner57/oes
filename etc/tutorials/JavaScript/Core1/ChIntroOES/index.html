@@ -6,15 +6,15 @@
     <title>Creating Object Event Simulations with OESjs-Core1</title>
   </head>
 
-  <body><p>The JavaScript-based simulator <a
-  href="https://sim4edu.com/oesjs/core1/"><i>OESjs-Core1</i></a> implements
+  <body><p>The JavaScript-based simulation framework <a
+  href="https://sim4edu.com/oesjs/core1/"><i>OESjs Core1</i></a> implements
   the <i>Object Event Simulation (<a href="https://sim4edu.com/OES"
   target="_top">OES</a>)</i> paradigm, representing a general <i>Discrete
   Event Simulation</i> approach based on <i>object-oriented</i> modeling and
-  <i>event scheduling</i>. </p><p>The code of an OESjs-Core1 simulation
-  consists of (1) the OESjs-Core1 library files in the folder
-  <kbd>OESjs-Core1</kbd>, (2) general library files in the <kbd>lib</kbd>
-  folder and (3) the following files to be created by the simulation
+  <i>event scheduling</i>. </p><p>The code of an OESjs Core1 simulation
+  consists of (1) the OESjs Core1 framework files in the folder
+  <kbd>framework</kbd>, (2) general library files in the <kbd>lib</kbd> folder
+  and (3) the following files to be created by the simulation
   developer:</p><ol>
       <li>For each object type <i>ObjT</i>, a JS code file
       <kbd>ObjT.js</kbd>.</li>
@@ -24,7 +24,7 @@
 
       <li>A <kbd>simulation.js</kbd> file defining further parts of the
       simulation, such as statistics variables and the initial state.</li>
-    </ol><p>OESjs-Core1 supports three forms of simulations:</p><ol>
+    </ol><p>OESjs Core1 supports three forms of simulations:</p><ol>
       <li><p>Standalone scenario simulations, which are good for getting a
       quick impression of a simulation model, e.g., by checking some simple
       statistics.</p></li>
@@ -40,7 +40,7 @@
       each experiment parameter value combination defines an experiment
       scenario, which is run repeatedly, according to the specified number or
       replications for collecting statistics.</p></li>
-    </ol><p>OESjs-Core1 allows to define two or more simulation scenarios for
+    </ol><p>OESjs Core1 allows to define two or more simulation scenarios for
   a given model. While an experiment type is defined for a given model, an
   experiment of that type is run on top of a specific scenario.</p><p>Using a
   simulation library like OESjs Core1 means that only the model-specific logic
@@ -52,10 +52,10 @@
   OESjs<i> </i>Core1 simulation library.</p><blockquote
   class="role-attention"><p>You can <a
   href="https://github.com/gwagner57/oes/blob/master/OESjs-Core2.zip">download
-  OESjs-Core2</a> in the form of a ZIP archive file from the <a>OES GitHub
+  OESjs Core2</a> in the form of a ZIP archive file from the <a>OES GitHub
   repo</a>. After extracting the archive on your local disk, you can run any
   of its example models by going to its folder and loading its
-  <kbd>index.html</kbd> file into your brwoser. You can create your own model
+  <kbd>index.html</kbd> file into your browser. You can create your own model
   by making a copy of one of the example model folders and using its code
   files a s starting point.</p><p>Since an OESjs simulation includes a JS
   worker file for running the simulator in its own thread separately from the
