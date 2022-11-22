@@ -18,12 +18,8 @@ class DailyDelivery extends eVENT {
     // paying for the delivered items results in decrementing the liquidity
     recv.liquidity -= delItems.cost;
     // update costing
-    this.receiver.dailyCosts = delItems.cost;
-    // schedule next event
-    followupEvents.push( new DailyProduction({
-      delay: 1,  // 1 hour later
-      company: this.receiver
-    }));
+    sim.stat.dailyCosts += delItems.cost;
+    sim.stat.totalCosts += delItems.cost;
     return followupEvents;
   }
 }

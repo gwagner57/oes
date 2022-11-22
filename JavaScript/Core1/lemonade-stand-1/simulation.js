@@ -25,7 +25,7 @@ sim.scenario.setupInitialStateForUi = function () {
     quantityPerSupplyUnit: 0.25,  /// in quantity units (ltr)
     salesPrice: 1.5,  // e.g., USD
     batchSize: 3.5,  // in quantity units (1 pitcher = 3.5 liters)
-    bomItemsPerBatch: {"Lemon": 3, "Water": 2.5, "IceCubes": 20, "Sugar": 0.3},
+    bomItems: {"Lemon": 3, "Water": 2.5, "IceCubes": 20, "Sugar": 0.3},
     packItemsPerSupplyUnit: {"PaperCup": 1},
     stockQuantity: 0  // in quantity units
   });
@@ -113,7 +113,7 @@ sim.scenario.setupInitialState = function () {
     quantityPerSupplyUnit: 0.25,  /// in quantity units (ltr)
     salesPrice: 1.5,  // e.g., USD
     batchSize: 3.5,  // in quantity units (1 pitcher = 3.5 liters)
-    bomItemsPerBatch: {"Lemon": 3, "Water": 2.5, "IceCubes": 20, "Sugar": 0.3},
+    bomItems: {"Lemon": 3, "Water": 2.5, "IceCubes": 20, "Sugar": 0.3},
     packItemsPerSupplyUnit: {"PaperCup": 1},
     stockQuantity: 0  // in quantity units
   });
@@ -131,6 +131,9 @@ sim.scenario.setupInitialState = function () {
 ********************************************************/
 sim.model.setupStatistics = function () {
   sim.stat.lostSales = 0;
+  sim.stat.dailyCosts = 0;
+  sim.stat.dailyRevenue = 0;
+  sim.stat.dailyProfit = 0;
   sim.stat.totalRevenue = 0;
   sim.stat.totalCosts = 0;
 };

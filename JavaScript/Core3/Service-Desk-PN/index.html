@@ -21,11 +21,14 @@
  <h1>A Service Desk System as a Processing Network</h1>
  <p id="copyright">© 2021 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
   Brandenburg University of Technology, Germany.</p>
+<div id="modelDescription">
  <p>This minimal <em>Processing Network</em> model consists of three nodes: an <em>entry node</em> where customers arrive,
   a <em>processing node</em> where service activities are performed on customers, and an <em>exit node</em>
   where customers depart. These nodes are connected with <em>processing flow</em> arrows combining event/activity
   scheduling with object flow. The processing node's setting <i>processingCapacity=1</i> means that the
   node's processing station is a resource that can process exactly one processing object at a time.</p>
+</div>
+<h2 id="scenarioTitle">Default scenario</h2>
  <form id="run">
      <div><label>Select scenario: <select name="selScen"></select></label></div>
      <div><button type="button" onclick="run()">Run</button> <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>

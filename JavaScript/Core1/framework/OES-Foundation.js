@@ -37,8 +37,8 @@ class oBJECT {
   // overwrite/improve the standard toString method
   toString() {
     const Class = this.constructor,
-        labels = Class.labels,
-        decPl = oes.defaults.simLogDecimalPlaces;
+          labels = Class.labels,
+          decPl = oes.defaults.simLogDecimalPlaces;
     var i=0, valStr="", str="";
     // suppress display, if class name is not specified in "labels"
     if (!labels?.className) return "";
@@ -47,9 +47,11 @@ class oBJECT {
     for (const prop of Object.keys( this)) {
       if (!labels || !labels[prop]) continue;
       const propLabel = labels[prop],
-          val = this[prop];
+            val = this[prop];
       if (typeof val === "number" && !Number.isInteger( val)) {
         valStr = String( math.round( val, decPl));
+      } else if (val instanceof RingBuffer) {
+        valStr = "["+ val.toString() +"]";
       } else if (Array.isArray( val)) {
         valStr = "["+ val.map( v => v.id).toString() +"]";
       } else if (typeof val === "object") {

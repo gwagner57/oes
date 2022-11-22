@@ -10,18 +10,31 @@ class StartOfDay extends eVENT {
   }
   onEvent() {
     const followupEvents=[];
+    // reset daily statistics
+    sim.stat.dailyCosts = 0;
+    sim.stat.dailyRevenue = 0;
+    sim.stat.dailyProfit = 0;
     // forecast today's demand
     const dailyDemandForecast = this.company.getDemandForecast();
-    // plan today's production and create replenishment order
-    const replOrder = this.company.planProductionQuantityAndReplenishmentOrder( dailyDemandForecast);
+    // compute today's production quantity and replenishment order
+    const {planProdQty, replenOrder} = this.company.planProdQtyAndReplenOrder( dailyDemandForecast);
     // schedule delivery of entire replenishment order
     followupEvents.push( new DailyDelivery({
-      delay: 2,  // 2 hours later
+      delay: 2,  // 2 hours later (at 10 am)
       receiver: this.company,
-      deliveredItems: replOrder
+      deliveredItems: replenOrder
+    }));
+    followupEvents.push( new DailyProduction({
+      delay: 3,  // 3 hours later (at 11 am)
+      company: this.company,
+      quantity: planProdQty
+    }));
+    followupEvents.push( new DailyDemand({
+      delay: 9,  // 9 hours later (at 5 pm)
+      company: this.company
     }));
     followupEvents.push( new EndOfDay({
-      delay: 10,  // 10 hours later
+      delay: 10,  // 10 hours later (at 6 pm)
       company: this.company
     }));
     return followupEvents;

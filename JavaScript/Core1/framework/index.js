@@ -244,7 +244,7 @@ function run() {
       }
     }
   }
-  console.log( JSON.stringify( initialObjects["SingleProductCompany"]));
+  //console.log( JSON.stringify( initialObjects["SingleProductCompany"]));
   if (Object.keys( initialObjects).length > 0) data.initialObjects = initialObjects;
   if (sim.scenarios.length > 0) {
     data.scenarioNo = parseInt( selScenEl.value)

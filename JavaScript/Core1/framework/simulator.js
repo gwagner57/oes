@@ -5,7 +5,7 @@
 /*******************************************************************
  * Initialize Simulator ********************************************
  *******************************************************************/
-sim.initializeSimulator = async function () {
+sim.initializeSimulator = function () {
   if (sim.model.nextMomentDeltaT) sim.nextMomentDeltaT = sim.model.nextMomentDeltaT;
   else {  // assign defaults
     if (sim.model.time === "discrete") sim.nextMomentDeltaT = 1;
@@ -17,13 +17,16 @@ sim.initializeSimulator = async function () {
   } else {
     if (sim.model.OnEachTimeStep) sim.timeIncrement = 1;  // default
   }
-  // A map of all objects (accessible by ID)
+  // make sure these lists are defined (using ES 2020 syntax)
+  sim.model.objectTypes ??= [];
+  sim.model.eventTypes ??= [];
+  // initialize the map of all objects (accessible by ID)
   sim.objects = new Map();
   // initialize the Map of all objects (accessible by name)
   sim.namedObjects = new Map();
-  // The Future Events List
+  // initialize the Future Events List
   sim.FEL = new EventList();
-  // Create map for statistics variables
+  // initialize the map for statistics variables
   sim.stat = Object.create(null);
   // initialize the className->Class map
   sim.Classes = Object.create(null);
@@ -36,9 +39,8 @@ sim.initializeSimulator = async function () {
     sim.Classes[evtTypeName] = util.getClass( evtTypeName);
   }
   // Assign scenarioNo = 0 to default scenario
-  if (sim.scenario.scenarioNo === undefined) sim.scenario.scenarioNo = 0;
-  if (!sim.scenario.title) sim.scenario.title = "Default scenario";
-}
+  sim.scenario.scenarioNo ??= 0;
+  sim.scenario.title ??= "Default scenario";}
 /*******************************************************************
  * Schedule an event or a list of events ***************************
  *******************************************************************/
@@ -66,9 +68,9 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   sim.step = 0;  // simulation loop step counter
   sim.time = 0;  // simulation time
   // Set default values for end time parameters
-  if (!sim.scenario.durationInSimTime) sim.scenario.durationInSimTime = Infinity;
-  if (!sim.scenario.durationInSimSteps) sim.scenario.durationInSimSteps = Infinity;
-  if (!sim.scenario.durationInCpuTime) sim.scenario.durationInCpuTime = Infinity;
+  sim.scenario.durationInSimTime ??= Infinity;
+  sim.scenario.durationInSimSteps ??= Infinity;
+  sim.scenario.durationInCpuTime ??= Infinity;
   // get ID counter from simulation scenario, or set to default value
   sim.idCounter = sim.scenario.idCounter || 1000;
   // set up a default random variate sampling method
@@ -106,7 +108,6 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
       //TODO: should the records be converted to class instances?
       C.instances[objId] = new C( objRecords[objId]);
     }
-    console.log( C.name +": "+ JSON.stringify( C.instances));
   }
   // Set up initial state
   if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
@@ -153,7 +154,7 @@ sim.advanceSimulationTime = function () {
 sim.runScenario = function (createLog) {
   function sendLogMsg( currEvts) {
     self.postMessage({ step: sim.step, time: sim.time,
-      // convert values() iterator to array
+      // convert values() iterator to array and map its elements to strings
       objectsStr: [...sim.objects.values()].map( el => el.toString()).join("|"),
       currEvtsStr: currEvts.map( el => el.toString()).join("|"),
       futEvtsStr: sim.FEL.toString()
@@ -246,7 +247,7 @@ sim.runExperiment = async function () {
     if (sim.model.setupStatistics) sim.model.setupStatistics();
     // initialize replication statistics record
     exp.replicStat = Object.create(null);  // empty map
-    for (let varName of Object.keys( sim.stat)) {
+    for (const varName of Object.keys( sim.stat)) {
       exp.replicStat[varName] = [];  // an array per statistics variable
     }
     // run experiment scenario replications
@@ -255,9 +256,9 @@ sim.runExperiment = async function () {
       else sim.initializeScenarioRun();
       sim.runScenario();
       // store replication statistics
-      Object.keys( exp.replicStat).forEach( function (varName) {
-        exp.replicStat[varName][k] = sim.stat[varName];
-      });
+      for (const key of Object.keys( exp.replicStat)) {
+        if (key !== "nodes") exp.replicStat[key][k] = sim.stat[key];
+      }
       if (exp.storeExpResults) {
         try {
           await sim.db.add( "experiment_scenario_runs", {
@@ -273,18 +274,19 @@ sim.runExperiment = async function () {
     // define exp.summaryStat to be a map for the summary statistics
     exp.summaryStat = Object.create(null);
     // aggregate replication statistics in exp.summaryStat
-    Object.keys( exp.replicStat).forEach( function (varName) {
+    for (const varName of Object.keys( exp.replicStat)) {
       exp.summaryStat[varName] = Object.create(null);  // empty map
-      Object.keys( math.stat.summary).forEach( function (aggr) {
-        var aggrF = math.stat.summary[aggr].f;
+      for (const aggr of Object.keys( math.stat.summary)) {
+        const aggrF = math.stat.summary[aggr].f;
         exp.summaryStat[varName][aggr] = aggrF( exp.replicStat[varName]);
-      });
-    });
+      }
+    }
     // send experiment statistics to main thread
     self.postMessage({simpleExperiment: exp});
   }
   async function runParVarExperiment() {
-    const valueSets = [], expParSlots = {},
+    const valueSets = [],
+          expParSlots = Object.create(null),
           N = exp.parameterDefs.length;
     exp.scenarios = [];
     // create a list of value sets, one set for each parameter

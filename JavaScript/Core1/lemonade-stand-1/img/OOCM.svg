@@ -122,7 +122,7 @@
 				<text x="1" y="137.53" class="st2" v:langID="1031"><v:paragraph/><v:tabList/>salesPrice : Decimal<v:newlineChar/><tspan
 							x="1" dy="1.2em" class="st3">batchSize </tspan>: Decimal<v:newlineChar/><tspan x="1" dy="1.2em"
 							class="st3">stockQuantity </tspan>: Decimal<v:newlineChar/><tspan x="1" dy="1.2em" class="st3">plannedProductionQuantity </tspan>: Decimal<v:newlineChar/><tspan
-							x="1" dy="1.2em" class="st3">bomItemsPerBatch </tspan>: Map</text>			</g>
+							x="1" dy="1.2em" class="st3">bomItems </tspan>: Map</text>			</g>
 			<g id="shape35-37" v:mID="35" v:groupContext="shape" transform="translate(0,-50.0034)">
 				<title>Name</title>
 				<desc>OutputItemType</desc>

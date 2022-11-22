@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lemonade-Stand-1 Discrete Event Simulation Model Description</title>
+    <meta content="width=device-width, initial-scale = 1.0" name="viewport" />
+    <meta content="en" http-equiv="Content-Language" />
+    <meta content="This page describes the Discrete Event Simulation model Lemonade-Stand-1" name="description" />
+    <link href="../css/description.css" rel="stylesheet" />
+  </head>
+
+<body>
+ <div id="frontMatter"><h1><span>A Lemonade Stand as a Manufacturing Company</span> <a href="index.html">Back to simulation</a></h1>
+  <p id="copyright">© 2022 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner, Brandenburg University of Technology, Germany.</p> 
+  <figure class="right"><img alt="" src="img/mineral-water-lime-ice-mint-320x213-CC0.jpeg" width="320" height="213" /></figure>
+ </div>
+
+ <section id="shortDescription">
+  <p>A lemonade seller makes lemonade in pitchers and sells it in paper cups at a stand in a street market.
+   Each day consists of the following process steps and phases:</p>
+  <ol>
+   <li>The day starts with making planning decisions (demand forecasting, production planning and sales price planning)
+    and ordering the required materials (lemons, sugar, water, ice cubes, paper cups).</li>
+   <li>Some time later, the planned quantity of lemonade is produced, the sales price is decided and
+    the stand is opened.</li>
+   <li>Then, customers arrive randomly and order a cup of lemonade. As long as there is still lemonade in stock,
+    customer orders are served.</li>
+   <li>At the end of the day, the lemonade stand is closed and the remaining lemonade and expired input items are dumped.</li>
+  </ol>
+  <p>A lemonade stand can be modeled in a generic way as an instance of a <em>single product manufacturing company</em> 
+    that uses an input inventory and transforms <em>input items</em> into an <em>output item</em> (the product). We make a series of three 
+    increasingly complex models of lemonade stands:</p>
+   <ol>
+    <li>In the basic model, <a href='../lemonade-stand-1/'>Lemonade-Stand-1</a>, we build a scenario with just one lemonade stand (a monopoly) and we abstract away from market conditions,
+    customers and individual customer orders as well as from suppliers, individual replenishment orders and corresponding deliveries, 
+	inventory management, marketing activities and competition. Customer orders are aggregated into a daily demand quantity. 
+	An aggregate replenishment order is directly converted into a corresponding daily delivery. Due to just-in-time deliveries
+	there is no need for inventory management.</li>
+    <li>In the Lemonade-Stand-2 model, we consider individual deliveries (with random lead times),
+	 inventory management (with perishable items) and market conditions dominated by the weather.</li>
+    <li>In the third model, we consider individual customers and we build a scenario with several lemonade stands
+      that compete with each other.</li>
+   </ol>
+  </section>
+  
+ <details><summary>Background</summary>
+  <p>The <a href='https://en.wikipedia.org/wiki/Lemonade_Stand'>Lemonade Stand Game</a> was developed in 1973 by Bob Jamison for mainframe
+   computers and was later ported to the Apple II platform in 1979 and distributed by Apple throughout the 1980s.
+   <a href="https://museum.syssrc.com/artifact/exhibits/1030/">Play the Apple II Lemonade Stand Game</a> in an Apple II emulator.</p>
+ </details>
+<!--  
+ <details><summary>Conceptual Model</summary>
+  <p></p>
+  <details><summary>Conceptual Information Model</summary>
+   <p>The potentially relevant object types are:</p>
+   <ol>
+    <li></li>
+   </ol>
+   <p>Potentially relevant types of events and activities are:</p>
+   <ol>
+    <li></li>
+   </ol>
+  </details>
+  <details><summary>Conceptual Process Model</summary>
+   <p></p>
+  </details>
+ </details>
+-->
+ <details><summary>Simulation Design</summary>
+  <p>It is assumed that the day starts at 8 am with demand forecasting (based on the weather forecast), production planning 
+   and ordering materials for restocking the inventory. Due to random lead times, the replenishment orders result in deliveries on
+   the same day or on one of the following days at 2 pm.
+   The planned product quantity is produced and, depending on the weather, the sales price is decided at 11 am. Abstracting away 
+   from individual purchase events, customer demand is aggregated in a daily demand event at 5 pm.
+   Finally, the business day ends at 6 pm with dumping the remaining lemonade and the expired input items.</p>
+  <p>Following the <a href="https://articles.jsime.org/1/1"><em>Object Event Modeling and Simulation (OEM&amp;S)</em></a> paradigm, we first model
+   the system's object types (defining its state structure) together with its event types in an <em>information model</em>,
+   and then the system's dynamics in the form of event rules in a <em>process model</em>.</p>
+     <p>The Lemonade-Stand-2 model allows simulation-based active learning of the following topics:</p>
+     <ol>
+         <li><details><summary>Bill of Materials</summary>
+             <p>A <em>Bill of Materials (BoM)</em> defines the composition of a product in the form of a list of component items, each with a quantity,
+                 as required for assembling a production unit. In general, a component item may also have a BoM, i.e. be composed of other items, such that a nested
+                 composition tree is obatined.</p>
+             <p>In the case of a lemonade stand with lemonade as a product, the production unit may be a 3.5 ltr pitcher of lemonade, so we may have the following BoM:</p>
+             <pre>{"Lemon": 3, "Water": 2.5, "IceCubes": 20, "Sugar": 0.3}</pre>
+         </details></li>
+         <li><details><summary>Demand Forecasting</summary>
+             <p>The demand of a new day can be forecasted on the basis of the previously recorded daily demand data, which forms
+                 a <em>time series</em>. The two most common forecasting methods for time series are the
+                 <a href="https://people.duke.edu/~rnau/411avg.htm#SMA">Simple Moving Average</a> and the
+                 <a href="https://people.duke.edu/~rnau/411avg.htm#SES">Exponentially Weighted Moving Average</a> methods.
+                 In the Lemonade-Stand-2 model, the <em>Simple Moving Average</em> method is used.</p>
+         </details></li>
+         <li><details><summary>Production Planning</summary>
+             <p>The production quantity (in number of batches) is planned according to the demand forecast, but under the constraints of using the available input items in stock
+                 and the budget available for purchasing additional inpute items.</p>
+         </details></li>
+         <li><details id="PED"><summary>Price Elasticity of Demand</summary>
+             <p>The <em>Price Elasticity of Demand (PED)</em> is a measure used to show the responsiveness, or elasticity, of the quantity demanded
+                 of a good or service to a change in its price. More precisely, it gives the percentage change in quantity demanded in response to
+                 a one percent change in price (ceteris paribus, i.e. holding constant all the other determinants of demand, such as income).
+                 In general, the demand for a good is said to be inelastic when the PED is less than one (in absolute value): that is,
+                 changes in price have a relatively small effect on the quantity of the good demanded. The demand for a good is said to be
+                 elastic when its PED is greater than one (in absolute value): that is, changes in price have a relatively large effect
+                 on the demand quantity of a good.</p>
+         </details></li>
+         <li><details><summary>Sales Price Planning</summary>
+             <p>Normally, price planning is based on full costs per product unit, which are computed as fixed costs (mainly labor, and, e.g., depreciation
+                 on assets and marketing costs) plus variable costs (mainly input materials). In <em>cost-plus pricing</em>, the product price <i>p</i> is planned by adding
+                 a proportional profit to the costs <i>c</i>: <i>p</i> = <i>c</i> + <i>rc</i>  where <i>r</i> is the planned profit rate.</p>
+             <p>During favorable market conditions, full costs could be used for cost-plus pricing, while during periods of poor sales (e.g., due to increased competition),
+                 marginal costs may be used. The profit rate could be adapted when the <a href="#PED" title="Price Elasticity of Demand">PED</a> of the product is changing.
+                 For instance, the lemonade stand could increase its planned profit rate when the weather conditions are sunny and warm, because under such conditions
+                 the otherwise very price-elastic demand for lemonade gets more inelastic, thus allowing for price increases without affecting the demand.</p>
+         </details></li>
+     </ol>
+  <details><summary>Information Design Model</summary>
+     <p>The second version of the LSG model contains the following object types:</p>
+     <ol>
+       <li><i>SingleProductCompany</i></li>
+       <li><i>InputItemType</i> as a subtype of <i>ItemType</i></li>
+       <li><i>OutputItemType</i> as a subtype of <i>ItemType</i></li>
+     </ol>
+       <p>and the following event types:</p>
+       <ol>
+           <li>StartOfDay</li>
+           <li>Delivery</li>
+           <li>DailyProduction</li>
+           <li>DailyDemand</li>
+           <li>EndOfDay</li>
+       </ol>
+     <figure>
+       <img src="img/IDM.svg" width="800"/>
+       <figcaption>An information design model describing object types and event types.</figcaption>
+     </figure>
+     <p>Notice that the <em>bill of materials (BoM)</em> for a product batch is modeled by the the collection-valued property <code>bomItems</code> 
+	  where each BoM item is of type <code>BomItem</code>, associating a quantity with an input item type. The collection values of the
+	  property <code>bomItems</code> can be implemented in the form of maps where input item type names (such as "Lemon") are the keys and quantities are their values:</p>
+     <pre>{"Lemon": 3, "Water": 2.5, "IceCubes": 50, "Sugar": 0.3}</pre>
+	 <!--
+     <p>These special properties, and the behavior operations of <i>SingleProductCompany</i> instances are described in the following diagram:</p>
+       <figure>
+           <img src="img/OOCM.svg" width="400"/>
+           <figcaption>An OO class model with behavior operations of <i>SingleProductCompany</i> instances.</figcaption>
+       </figure>
+	 -->  
+  </details>
+  <details><summary>Process Design Model</summary>
+   <p>A DPMN process design model can be decomposed into a set of event rule design
+    models, one for each type of event specified in the design model.</p>
+   <p>T.B.D.</p>
+   <!--
+   <figure><figcaption>A design model for the <code>HaulRequest</code> event rule.</figcaption>
+    <img src="img/HaulRequest_RDM.svg" width="300" /></figure>
+   -->
+  </details>
+ </details>
+  
+  <details><summary>Implementation with OESjs</summary>
+   <p>The JavaScript-based simulator OESjs implements the Object Event Simulation paradigm, and, consequently, allows a
+  straight-forward coding of OEM class models and DPMN process models. You can inspect the model's 
+  <a href="https://sim4edu.com/oesjs/core1/lemonade-stand-1">OESjs code</a> on the OES GitHub repo.</p>
+  <details><summary>Implementing the Information Design Model</summary>
+    <p>For implementing the information design model, we have to code all object types, event types and activity types specified in the model
+     in the form of classes.</p>
+    <figure class="right"><img alt="???" src="img/Truck_IDM.svg" width="300" /></figure>
+  </details>
+  <details><summary>Implementing the Process Design Model</summary>
+  <p>A DPMN process design model can be decomposed into a set of event rule design
+  models, one for each type of event specified in the design model.</p>
+  <figure><figcaption>A design model for the <code>HaulRequest</code> event rule.</figcaption>
+   <img src="img/HaulRequest_RDM.svg" width="300" /></figure>
+  </details>
+ </details>
+ <p><a href="index.html">Back to simulation</a></p>
+</body>
+</html>

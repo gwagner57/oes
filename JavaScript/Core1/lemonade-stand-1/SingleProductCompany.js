@@ -11,25 +11,21 @@ class SingleProductCompany extends oBJECT {
     }
     this.liquidity = liquidity;
     this.fixedCostPerDay = fixedCostPerDay;  // Includes labor cost and facilities cost
-    //*** statistics variables ***
+    //*** history data ***
     this.dailyDemandQuantity = new RingBuffer();
-    this.dailyRevenue = new RingBuffer();
-    this.dailyCosts = 0;
-    this.dailyProfit = new RingBuffer();
   }
   getDemandForecast() {
-    var sum=0, demandForecast=0;
-    const demandHistory = this.dailyDemandQuantity,  // a ring buffer
-          N = demandHistory.nmrOfItems();
-    if (N < 3) {  // buffer still too empty
+    var demandForecast=0;
+    const demandHistory = this.dailyDemandQuantity;
+    if (demandHistory.nmrOfItems() === 0) {  // buffer still empty
       demandForecast = DailyDemand.quantity();
     } else  {  // Simple Exponential Smoothing (SES) with simple moving average
-      demandForecast = Math.ceil( demandHistory.getMovingAverage());
+      demandForecast = Math.ceil( demandHistory.getMovingAverage( 3));
     }
     return demandForecast;
   }
   computeProductBatchCost() {  // "bom" maps input item IDs/names to quantities
-    const bom = this.productType.bomItemsPerBatch;
+    const bom = this.productType.bomItems;
     var cost=0;
     for (const inpItemName of Object.keys( bom)) {
       const inpItem = sim.namedObjects.get( inpItemName);
@@ -37,19 +33,22 @@ class SingleProductCompany extends oBJECT {
     }
     return cost;
   }
-  /**
-   Plan production quantity in number of batches (e.g. pitchers)
-   */
-  planProductionQuantityAndReplenishmentOrder( demandForecast) {
+  /******************************************************************
+   Plan production quantity in number of batches (e.g. pitchers).
+   First compute the production quantity based on demand forecast. Then check,
+   if the liquidity is sufficient for purchasing the required materials.
+   Otherwise, compute the production quantity based on available liquidity.
+   ******************************************************************/
+  planProdQtyAndReplenOrder( demandForecast) {
     function computeReplenishmentOrder( prodType, planProdQty) {
-      const bom = prodType.bomItemsPerBatch,
+      const bom = prodType.bomItems,
             packBom = prodType.packagingItemsPerSupplyUnit;
       var replenOrder={}, replenCost=0;
       // compute order quantities for production input replenishment
       for (const itemName of Object.keys( bom)) {
         const item = sim.namedObjects.get( itemName),
-            requiredQty = planProdQty * bom[itemName],
-            orderQty = Math.max( requiredQty - item.stockQuantity, 0);
+              requiredQty = planProdQty * bom[itemName],
+              orderQty = Math.max( requiredQty - item.stockQuantity, 0);
         // order quantities in supply units
         replenOrder[itemName] = Math.ceil( orderQty / item.quantityPerSupplyUnit);
         replenCost += replenOrder[itemName] * item.purchasePrice;
@@ -66,7 +65,7 @@ class SingleProductCompany extends oBJECT {
       replenOrder.cost = replenCost;
       return replenOrder;
     }
-    // in number of batches (e.g. pitchers)
+    // in number of batches (e.g. pitchers in the case of lemonade)
     let planProdQty = Math.ceil( demandForecast * this.productType.quantityPerSupplyUnit /
             this.productType.batchSize);
     // compute replenishment order quantities and cost
@@ -77,13 +76,11 @@ class SingleProductCompany extends oBJECT {
       planProdQty = Math.floor( this.liquidity / batchCost);
       replenOrder = computeReplenishmentOrder( this.productType, planProdQty);
     }
-    this.productType.plannedProductionQuantity = planProdQty;
-    return replenOrder;
+    return {planProdQty, replenOrder};
   }
-  performProduction() {
+  performProduction( planProdQty) {
     const prodType = this.productType,
-          bom = prodType.bomItemsPerBatch,
-          planProdQty = prodType.plannedProductionQuantity;
+          bom = prodType.bomItems;
     // subtract production inputs from inventory
     for (const itemName of Object.keys( bom)) {
       const item = sim.namedObjects.get( itemName);

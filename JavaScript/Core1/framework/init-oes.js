@@ -14,6 +14,7 @@ sim.experimentTypes = [];
 
 sim.config = Object.create(null);
 sim.config.ui = Object.create(null);
+sim.config.ui.obs = {canvas: Object.create(null)};
 sim.ui = Object.create(null);
 
 const oes = Object.create(null);
