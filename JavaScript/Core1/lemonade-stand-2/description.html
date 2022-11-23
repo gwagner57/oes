@@ -96,14 +96,28 @@
              <p>The production quantity (in number of batches) is planned according to the demand forecast, but under the constraints of using the available input items in stock
                  and the budget available for purchasing additional inpute items.</p>
          </details></li>
-         <li><details id="PED"><summary>Price Elasticity of Demand</summary>
-             <p>The <em>Price Elasticity of Demand (PED)</em> is a measure used to show the responsiveness, or elasticity, of the quantity demanded
-                 of a good or service to a change in its price. More precisely, it gives the percentage change in quantity demanded in response to
-                 a one percent change in price (ceteris paribus, i.e. holding constant all the other determinants of demand, such as income).
-                 In general, the demand for a good is said to be inelastic when the PED is less than one (in absolute value): that is,
-                 changes in price have a relatively small effect on the quantity of the good demanded. The demand for a good is said to be
-                 elastic when its PED is greater than one (in absolute value): that is, changes in price have a relatively large effect
-                 on the demand quantity of a good.</p>
+         <li><details><summary>Inventory Management</summary>
+             <p>Inventory management is one of the big topics in <a href="https://en.wikipedia.org/wiki/Operations_research">Operations Research</a>,
+                 which is a scientific discipline that develops mathematical/analytical methods for decision-making in various application domains. </p>
+             <p>The goal of inventory management is to satisfy demand and avoid <em>stock-out</em> events, while minimizing inventory costs.
+                 Too much inventory incurs unnecessary holding costs (and capital costs). Not having enough inventory results in stock-outs,
+                 impacting the ability to manufacture goods or provide customers with products.</p>
+             <p>There are two different replenishment policies used in inventory management:</p>
+             <ol>
+                 <li>The <em><b>continuous</b> replenishment</em> policy is based on a <em>reorder point</em>, such that a new replenishment order
+                     is issued whenever the stock level falls below the reorder point.</li>
+                 <li>The <em><b>periodic</b> replenishment</em> policy is based on a <em>reorder interval</em>, such that new replenishment orders
+                     are periodically issued whenever the reorder interval time has passed.</li>
+             </ol>
+             <p>For achieving a certain service level, the reorder point has to be set accordingly. A common approach for setting
+                 the reorder point (RP) is based on the concept of <em>safety stock (SS)</em>, which is extra inventory beyond the
+                 <em>expected lead time demand ELTD</em> (the expected daily demand multiplied by the expected lead time in days):</p>
+             <p>RP = ELTD + SS, with ELTD = E(D) ∗ E(LT)</p>
+             <p>Now the question is how to compute the safety stock (on the assumption that both lead time and demand vary independently)?</p>
+             <p>A simple approach (the <em>“max – average” method</em>) is to deduct the expected lead time demand from the <em>maximum lead time demand MLT</em>D:</p>
+
+             <div>SS = MLTD - ELTD, with MLTD = E(D) ∗ max(LT),</div>
+             <p>which implies that RP = MLTD.</p>
          </details></li>
          <li><details><summary>Sales Price Planning</summary>
              <p>Normally, price planning is based on full costs per product unit, which are computed as fixed costs (mainly labor, and, e.g., depreciation
@@ -113,6 +127,15 @@
                  marginal costs may be used. The profit rate could be adapted when the <a href="#PED" title="Price Elasticity of Demand">PED</a> of the product is changing.
                  For instance, the lemonade stand could increase its planned profit rate when the weather conditions are sunny and warm, because under such conditions
                  the otherwise very price-elastic demand for lemonade gets more inelastic, thus allowing for price increases without affecting the demand.</p>
+         </details></li>
+         <li><details id="PED"><summary>Price Elasticity of Demand</summary>
+             <p>The <em>Price Elasticity of Demand (PED)</em> is a measure used to show the responsiveness, or elasticity, of the quantity demanded
+                 of a good or service to a change in its price. More precisely, it gives the percentage change in quantity demanded in response to
+                 a one percent change in price (ceteris paribus, i.e. holding constant all the other determinants of demand, such as income).
+                 In general, the demand for a good is said to be inelastic when the PED is less than one (in absolute value): that is,
+                 changes in price have a relatively small effect on the quantity of the good demanded. The demand for a good is said to be
+                 elastic when its PED is greater than one (in absolute value): that is, changes in price have a relatively large effect
+                 on the demand quantity of a good.</p>
          </details></li>
      </ol>
   <details><summary>Information Design Model</summary>

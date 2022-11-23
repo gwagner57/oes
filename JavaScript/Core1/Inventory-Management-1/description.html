@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Inventory-Management-1 Discrete Event Simulation Model Description</title>
+    <meta content="width=device-width, initial-scale = 1.0" name="viewport" />
+    <meta content="en" http-equiv="Content-Language" />
+    <meta content="This page describes the Discrete Event Simulation model Inventory-Management-1" name="description" />
+    <link href="../css/description.css" rel="stylesheet" />
+  </head>
+
+<body>
+ <div id="frontMatter"><h1><span>Inventory Management with Continuous Replenishment</span> <a href="index.html">Back to simulation</a></h1>
+  <p id="copyright">© 2022 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner, Brandenburg University of Technology, Germany.</p> 
+  <figure class="right"><img alt="" src="img/theme-image.svg" width="300" /></figure>
+ </div>
+
+ <section id="shortDescription">
+  <p>A shop is selling one product type only (e.g., one model of TVs), such that its in-house inventory only consists of items of that type. 
+   On each business day, customers come to the shop and place their orders. If the ordered product quantity is in stock, the customer pays 
+   for the order and the ordered items are provided. Otherwise, the shop has missed a business opportunity and the difference between order quantity 
+   and the inventory level counts as a lost sale. The order may still be partially fulfilled, if there are still some items in stock, 
+   else the customer has to leave the shop without any item. The percentage of lost sales is an important performance indicator.</p>
+  <p>Whenever the stock level falls below a certain threshold (called <i>reorder point</i>), the shop places a replenishment order 
+   with a quantity computed as the difference between an upper threshold (called <i>target inventory</i>) and the current stock level.</p>
+  </section>
+  
+ <details><summary>Background</summary>
+  <p>Inventory management is one of the big topics in <a href="https://en.wikipedia.org/wiki/Operations_research">Operations Research</a>,
+   which is a scientific discipline that develops mathematical/analytical methods for decision-making in various application domains. </p>
+  <p>The goal of inventory management is to satisfy demand and avoid <em>stock-out</em> events, while minimizing inventory costs. 
+   Too much inventory incurs unnecessary holding costs (and capital costs). Not having enough inventory results in stock-outs, 
+   impacting the ability to manufacture goods or provide customers with products.</p>
+  <p>In fact, stock-outs may result in loss of:</p>
+   <ul>
+    <li>Revenue</li>
+    <li>Gross profit</li>
+    <li>Customers</li>
+    <li>Market share</li>
+   </ul>
+<p>There are two different replenishment policies used in inventory management:</p>
+<ol>
+ <li>The <em><b>continuous</b> replenishment</em> policy is based on a <em>reorder point</em>, such that a new replenishment order 
+  is issued whenever the stock level falls below the reorder point.</li>
+ <li>The <em><b>periodic</b> replenishment</em> policy is based on a <em>reorder interval</em>, such that new replenishment orders 
+  are periodically issued whenever the reorder interval time has passed.</li>
+</ol>
+<p>For achieving a certain service level, the reorder point has to be set accordingly. A common approach for setting 
+ the reorder point (RP) is based on the concept of <em>safety stock (SS)</em>, which is extra inventory beyond the 
+ <em>expected lead time demand ELTD</em> (the expected daily demand multiplied by the expected lead time in days):</p>
+<p>RP = ELTD + SS, with ELTD = E(D) &lowast; E(LT)</p>
+<p>Now the question is how to compute the safety stock (on the assumption that both lead time and demand vary independently)?</p>
+<p>A simple approach (the <em>“max – average” method</em>) is to deduct the expected lead time demand from the <em>maximum lead time demand MLT</em>D:</p>
+
+<div>SS = MLTD - ELTD, with MLTD = E(D) &lowast; max(LT),</div>
+<div>which implies that RP = MLTD.</div>
+<p>However, this simple approach does not allow taking a target service level into account.</p>
+<p>A more sophisticated method is based on a target service level:</p>
+<p>SS = Z &lowast; Sqrt( E(LT) &lowast; Var(D) + E(D)<sup>2</sup> &lowast; Var(LT))</p>
+<p>Here, <em>Sqrt()</em> stands for the square root operation, <em>Var()</em> for the statistical variance (being the square of the standard deviation), and <em>Z</em> represents&nbsp;the "Z-score", which&nbsp;allows taking&nbsp;a target service level into
+    account. The following table allows determining the Z-score from the target service level.</p>
+<table border="1">
+    <tbody>
+        <tr>
+            <th scope="row">Target service level</th>
+            <td>90%</td>
+            <td>91%</td>
+            <td>92%</td>
+            <td>93%</td>
+            <td>94%</td>
+            <td>95%</td>
+            <td>96%</td>
+            <td>97%</td>
+            <td>98%</td>
+            <td>99%</td>
+        </tr>
+        <tr>
+            <th scope="row">Z-Score</th>
+            <td>1.28</td>
+            <td>1.34</td>
+            <td>1.41</td>
+            <td>1.48</td>
+            <td>1.55</td>
+            <td>1.64</td>
+            <td>1.75</td>
+            <td>1.88</td>
+            <td>2.05</td>
+            <td>2.33</td>
+        </tr>
+    </tbody>
+</table>
+<p>Typically, a target service level of 95%, and hence a&nbsp;Z-score of 1.64, is used, but the choice may depend on the type of product.</p>
+<p></p> 
+</details>
+<!--  
+ <details><summary>Conceptual Model</summary>
+  <p></p>
+  <details><summary>Conceptual Information Model</summary>
+   <p>The potentially relevant object types are:</p>
+   <ol>
+    <li></li>
+   </ol>
+   <p>Potentially relevant types of events and activities are:</p>
+   <ol>
+    <li></li>
+   </ol>
+  </details>
+  <details><summary>Conceptual Process Model</summary>
+   <p></p>
+  </details>
+ </details>
+-->
+ <details><summary>Simulation Design</summary>
+  <p>For simplicity, customer orders are treated in an abstract way by aggregating all customer orders during a business day 
+   into a daily demand event, such that the random variation of the daily order quantity is modeled by a random variable.</p>
+  <p>Likewise, the random variation of the <em>delivery lead time</em>, which is the time in-between a replenishment order 
+   and the corresponding delivery, is modeled by a random variable.</p>  
+  <details><summary>Information Design Model</summary>
+     <p>The random variation of the lead time between a replenishment order and the corresponding delivery
+       is modeled by a random variable with a uniform probability distribution between 1 and 3 days.
+       The inventory is modelled as an object with three attributes: <code>productQuantityInStock</code>,
+       <code>reorderPoint</code> and <code>targetInventory</code>. For simplicity, the model does not create
+       replenishment order events, but instead it only schedules corresponding delivery events.</p>
+      <p>Consequently, we model just one object type: <b><code>SingleProductShop</code></b>, with three attributes
+         <code>quantityInStock</code> (NonNegativeInteger),  <code>reorderPoint</code> (NonNegativeInteger), 
+		 and <code>targetInventory</code> (PositiveInteger). In addition, we model two event types:</p>
+     <ul>
+       <li><b><code>DailyDemand</code></b> as an exogeneous event type with one attribute: <code>quantity</code> (PositiveInteger),
+         and with the random variable function <code>sampleQuantity</code> and, as an exogeneous event type, 
+		 with a <code>recurrence</code> function.</li>
+       <li><b><code>Delivery</code></b> as a caused event type with one attribute: <code>quantity</code> (PositiveInteger),
+         and with the random variable function <code>sampleLeadTime</code>.</li>
+     </ul>
+     <figure>
+       <img src="img/IDM.svg" width="600"/>
+       <figcaption>An information design model describing object types and event types.</figcaption>
+     </figure>
+	 <p>When the design model is implemented with an object-oriented programming language or framework, 
+	  the participation associations between <code>DailyDemand</code> and <code>SingleProductShop</code>, as well as 
+	  between <code>Delivery</code> and <code>SingleProductShop</code>,	are represented with the corresponding
+    reference properties <code>shop</code> and <code>receiver</code>. This is also the case when using the Object Event
+	  Simulation (OES) framework <i>OESjs</i> available from <a href="https://sim4edu.com">Sim4edu</a>, 
+	  where all object types are derived from the pre-defined OES category <code>oBJECT</code> 
+	  and all event types are derived from the pre-defined OES category <code>eVENT</code>, 
+	  as shown in the following diagram:</p>
+     <figure>
+       <img src="img/IDM-OO.svg" width="600"/>
+       <figcaption>An OES class model showing the pre-defined types <code>oBJECT</code> and <code>eVENT</code>.</figcaption>
+     </figure>
+  </details>
+  <details><summary>Process Design Model</summary>
+   <figure><figcaption>A process design model.</figcaption>
+    <img src="img/PDM.svg" width="600" /></figure>
+   <p>A DPMN process design model can be decomposed into a set of event rule design
+    models, one for each type of event specified in the design model.</p>
+     <table>
+       <caption>Event rule design table.</caption>
+       <thead>
+       <tr>
+         <td>ON (event type)</td><td>DO (event routine)</td>
+       </tr>
+       </thead>
+       <tbody style="font-size: smaller">
+       <tr>
+         <td>DailyDemand( demQuant) @ t</td>
+         <td>
+<pre>IF demQuant &lt;= shop.quantityInStock
+THEN
+  IF shop.quantityInStock − demQuant &lt; shop.reorderPoint AND
+       shop.quantityInStock > shop.reorderPoint
+  THEN
+    SET ordQuant TO shop.targetInventory −
+          shop.quantityInStock - demQuant
+    SCHEDULE Delivery( ordQuant) @ t + sampleLeadTime()
+  DECREMENT shop.quantityInStock BY demQuant
+ELSE (if demQuant > shop.quantityInStock)
+  INCREMENT shop.lostSales BY demQuant − shop.quantityInStock
+  SET shop.quantityInStock TO 0</pre>
+         </td>
+       </tr>
+       <tr>
+         <td>Delivery( delQuant) @ t</td>
+         <td>
+<pre>INCREMENT receiver.quantityInStock BY delQuant
+IF receiver.quantityInStock &lt;= receiver.reorderPoint
+THEN
+  SET ordQuant TO receiver.targetInventory −
+        receiver.quantityInStock
+  SCHEDULE Delivery( ordQuant) @ t + sampleLeadTime()
+</pre></td>
+       </tr>
+       </tbody>
+     </table>
+  </details>
+ </details>
+  
+  <details><summary>Implementation with OESjs</summary>
+   <p>The JavaScript-based simulator OESjs implements the Object Event Simulation paradigm, and, consequently, allows a
+  straight-forward coding of OEM class models and DPMN process models. You can inspect the model's 
+  <a href="https://sim4edu.com/oesjs/core1/lemonade-stand-1">OESjs code</a> on the OES GitHub repo.</p>
+  <details><summary>Implementing the Information Design Model</summary>
+    <p>For implementing the information design model, we have to code all object types, event types and activity types specified in the model
+     in the form of classes.</p>
+    <figure class="right"><img alt="???" src="img/Truck_IDM.svg" width="300" /></figure>
+  </details>
+  <details><summary>Implementing the Process Design Model</summary>
+  <p>A DPMN process design model can be decomposed into a set of event rule design
+  models, one for each type of event specified in the design model.</p>
+  <figure><figcaption>A design model for the <code>HaulRequest</code> event rule.</figcaption>
+   <img src="img/HaulRequest_RDM.svg" width="300" /></figure>
+  </details>
+ </details>
+ <p><a href="index.html">Back to simulation</a></p>
+</body>
+</html>

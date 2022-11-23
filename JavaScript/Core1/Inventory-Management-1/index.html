@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>DES Example Inventory Management</title>
+ <meta charset="utf-8">
+ <title>Inventory-Management-1 Discrete Event Simulation Example</title>
  <meta name="viewport" content="width=device-width, initial-scale = 1.0" />
- <link href="https://sim4edu.com/oesjs/core1/Inventory-Management" rel="canonical" />
+ <link href="https://sim4edu.com/oesjs/core1/Inventory-Management-1" rel="canonical" />
  <meta name="description" content="A simulation of an inventory management system."/>
  <link href="../css/index.css" rel="stylesheet" />
  <script src="../lib/math.js"></script>
@@ -18,13 +18,16 @@
  <div><small>An <em><a href="https://gwagner57.github.io/oes/">Object Event Simulation (OES)</a></em> example model.
   You can download and inspect its code from the <a href="https://github.com/gwagner57/oes/tree/master/JavaScript/Core1">OES
   GitHub repo</a>.</small></div>
- <h1>Inventory Management</h1>
+ <h1>Inventory-Management-1 <a href="description.html">Read more...</a><br/>
+     <span class="subheading">A Model of Inventory Management with Periodic/Continuous Replenishment</span></h1>
+ <p id="copyright">© 2022 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
+     Brandenburg University of Technology, Germany.</p>
  <div id="scenarioDescription">
-  <figure class="right"><img alt="Process Design Model" src="PDM.svg" width="500" /></figure>
+  <figure class="right"><img alt="Process Design Model" src="img/PDM.svg" width="500" /></figure>
   <p>
    The default scenario has the following parameter values: <em>target inventory</em> is set to 80 units,
-   <em>reorder interval</em> is set to 3 days (only relevant for the periodic review policy),
-   and <em>reorder point</em> is set to 50 units (only relevant for the continuous review policy).
+   <em>reorder interval</em> is set to 3 days (only relevant for periodic replenishment),
+   and <em>reorder point</em> is set to 50 units (only relevant for continuous replenishment).
   </p>
  </div>
  <form id="run">
