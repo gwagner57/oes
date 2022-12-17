@@ -40,7 +40,18 @@ sim.initializeSimulator = function () {
   }
   // Assign scenarioNo = 0 to default scenario
   sim.scenario.scenarioNo ??= 0;
-  sim.scenario.title ??= "Default scenario";}
+  sim.scenario.title ??= "Default scenario";
+  // compute derived property EventClass.participantRoles
+  for (const evtTypeName of sim.model.eventTypes) {
+    const EventClass = sim.Classes[evtTypeName];
+    if (typeof EventClass.properties === "object") {
+      EventClass.participantRoles = Object.keys( EventClass.properties).filter( function (prop) {
+        // the range of a participant role must be an object type
+        return sim.model.objectTypes.includes( EventClass.properties[prop].range);
+      });
+    }
+  }
+}
 /*******************************************************************
  * Schedule an event or a list of events ***************************
  *******************************************************************/
@@ -52,7 +63,7 @@ sim.schedule = function (e) {
  * Assign model parameters with experiment parameter values ********
  *******************************************************************/
 sim.assignModelParameters = function (expParSlots) {
-  for (let parName of Object.keys( sim.model.p)) {
+  for (let parName of Object.keys( expParSlots)) {
     sim.model.p[parName] = expParSlots[parName];
   }
 }
@@ -128,6 +139,8 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
       }
     }
   }
+  // get stepDuration from simulation config, or set to default value
+  sim.stepDuration = sim.config.stepDuration || 0;
 };
 /*******************************************************
  Advance Simulation Time
@@ -160,12 +173,8 @@ sim.runScenario = function (createLog) {
       futEvtsStr: sim.FEL.toString()
     });
   }
-  const startTime = (new Date()).getTime();
-  if (createLog) sendLogMsg([]);  // log initial state
-  // Simulation Loop
-  while (sim.time < sim.scenario.durationInSimTime &&
-      sim.step < sim.scenario.durationInSimSteps &&
-      (new Date()).getTime() - startTime < sim.scenario.durationInCpuTime) {
+  function runScenarioStep() {
+    const stepStartTime = (new Date()).getTime();
     sim.advanceSimulationTime();
     // extract and process next events
     const nextEvents = sim.FEL.removeNextEvents();
@@ -221,9 +230,32 @@ sim.runScenario = function (createLog) {
         */
       }
     }
-    if (createLog) sendLogMsg( nextEvents);  // log initial state
-    // end simulation if no time increment and no more events
-    if (!sim.timeIncrement && sim.FEL.isEmpty()) break;
+    if (createLog) sendLogMsg( nextEvents);  // log current state
+    if (sim.stepDuration) {  // loop with "setTimeout"
+      if (sim.time < sim.scenario.durationInSimTime &&
+          sim.step < sim.scenario.durationInSimSteps &&
+          (sim.timeIncrement || !sim.FEL.isEmpty())) {  // end simulation if no more events
+        // compute the time needed for executing this step
+        const stepTime = (new Date()).getTime() - stepStartTime;
+        // check if we need some delay, because of the stepDuration parameter
+        const stepDelay = sim.stepDuration > stepTime ? sim.stepDuration - stepTime : 0;
+        setTimeout( runScenarioStep, stepDelay);
+      }
+    }
+  }
+
+  const scenStartTime = (new Date()).getTime();
+  if (createLog) sendLogMsg([]);  // log initial state
+  if (sim.stepDuration) {  // slowing down the execution with "setTimeout"
+    runScenarioStep();
+  } else {  // normal simulation Loop
+    while (sim.time < sim.scenario.durationInSimTime &&
+    sim.step < sim.scenario.durationInSimSteps &&
+    (new Date()).getTime() - scenStartTime < sim.scenario.durationInCpuTime) {
+      runScenarioStep();
+      // end simulation if no time increment and no more events
+      if (!sim.timeIncrement && sim.FEL.isEmpty()) break;
+    }
   }
   if (sim.model.computeFinalStatistics) sim.model.computeFinalStatistics();
 }

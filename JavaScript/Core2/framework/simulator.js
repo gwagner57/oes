@@ -220,7 +220,7 @@ sim.schedule = function (e) {
  * Assign model parameters with experiment parameter values ********
  *******************************************************************/
 sim.assignModelParameters = function (expParSlots) {
-  for (const parName of Object.keys( sim.model.p)) {
+  for (const parName of Object.keys( expParSlots)) {
     sim.model.p[parName] = expParSlots[parName];
   }
 }

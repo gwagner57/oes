@@ -15,11 +15,8 @@ class DailyDelivery extends eVENT {
       const item = sim.namedObjects.get( itemName);
       item.stockQuantity += delItems[itemName] * item.quantityPerSupplyUnit;
     }
-    // paying for the delivered items results in decrementing the liquidity
-    recv.liquidity -= delItems.cost;
     // update costing
     sim.stat.dailyCosts += delItems.cost;
-    sim.stat.totalCosts += delItems.cost;
     return followupEvents;
   }
 }

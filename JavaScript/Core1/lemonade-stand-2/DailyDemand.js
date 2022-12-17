@@ -29,8 +29,6 @@ class DailyDemand extends eVENT {
     }
     // calculate daily revenue
     const dailyRevenue = Math.min( this.quantity, sellableSupplyUnits) * prodType.salesPrice;
-    // update liquidity
-    this.company.liquidity += dailyRevenue;
     // update statistics
     sim.stat.dailyRevenue = dailyRevenue;
     sim.stat.totalRevenue += dailyRevenue;

@@ -7,16 +7,16 @@ class LemonadeMarket extends DailyDemandMarket {
     this.weatherState = new RingBuffer({itemType: WeatherStateEL});
     // add initial weather state
     if (weatherState) this.weatherState.add( weatherState);
-    this.temperature = new RingBuffer();
+    this.temperatureHistory = new RingBuffer();
     // add initial temperature
-    this.temperature.add( 25);
+    this.temperatureHistory.add( 25);
     this.dailyDemandQuantity = new RingBuffer();
   }
   getDailyDemandQuantity() {
     var demQty=0;
     // first update the "weather"
     this.updateWeather();
-    const lastTemperature = this.temperature.getLast(),
+    const lastTemperature = this.temperatureHistory.getLast(),
           lastWeatherState = this.weatherState.getLast();
     switch (lastWeatherState) {
     case WeatherStateEL.SUNNY:
@@ -38,7 +38,7 @@ class LemonadeMarket extends DailyDemandMarket {
   }
   updateWeather() {
     var newWeatherState = 0,
-        newTemperature = this.temperature.getLast();
+        newTemperature = this.temperatureHistory.getLast();
     const r = rand.uniformInt( 0, 99);
     switch (this.weatherState.getLast()) {
     case WeatherStateEL.SUNNY:
@@ -87,7 +87,7 @@ class LemonadeMarket extends DailyDemandMarket {
     this.weatherState.add( newWeatherState);
     // make sure the temperature is in the range [15,35]
     newTemperature = Math.min( Math.max( 15, newTemperature), 35);
-    this.temperature.add( newTemperature);
+    this.temperatureHistory.add( newTemperature);
   }
 }
 LemonadeMarket.labels = {"className":"LemMarket", "weatherState":"ws"};

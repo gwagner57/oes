@@ -16,11 +16,8 @@ class Delivery extends eVENT {
       item.stockQuantity += delItems[itemName] * item.quantityPerSupplyUnit;
       item.outstandingOrder = false;
     }
-    // paying for the delivered items results in decrementing the liquidity
-    recv.liquidity -= delItems.cost;
     // update costing
     sim.stat.dailyCosts += delItems.cost;
-    sim.stat.totalCosts += delItems.cost;
     return followupEvents;
   }
 }

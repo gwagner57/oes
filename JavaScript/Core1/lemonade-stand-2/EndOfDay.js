@@ -10,12 +10,12 @@ class EndOfDay extends eVENT {
     comp.productType.stockQuantity = 0;
     // dump expired input items
     sim.namedObjects.get("IceCubes").stockQuantity = 0;
-    // update liquidity
-    this.company.liquidity -= comp.fixedCostPerDay;
     // update statistics
     sim.stat.dailyCosts += comp.fixedCostPerDay;
     sim.stat.totalCosts += sim.stat.dailyCosts;
     sim.stat.dailyProfit = sim.stat.dailyRevenue - sim.stat.dailyCosts;
+    // update liquidity
+    this.company.liquidity += sim.stat.dailyProfit;
     return followupEvents;
   }
 }

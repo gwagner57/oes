@@ -8,7 +8,7 @@ class Delivery extends eVENT {
     const followupEvents=[];
     this.receiver.stockQuantity += this.quantity;
     if (sim.model.p.reviewPolicy === "continuous") {
-      // schedule another Delivery if stock level is not raised above reorder level
+      // schedule another Delivery if stock level has not been raised above reorder point
       if (this.receiver.stockQuantity <= this.receiver.reorderPoint ) {
         followupEvents.push( new Delivery({
           delay: Delivery.leadTime(),
@@ -20,7 +20,7 @@ class Delivery extends eVENT {
     return followupEvents;
   }
   static leadTime() {
-    var r = rand.uniformInt( 0, 99);
+    const r = rand.uniformInt( 0, 99);
     if (r < 25) return 1;         // probability 0.25
     else if (r < 85) return 2;    // probability 0.60
     else return 3;                // probability 0.15
