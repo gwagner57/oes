@@ -10,6 +10,13 @@ sim.model.objectTypes = ["SingleProductCompany", "ItemType", "InputItemType", "O
     "ProductCategory", "DailyDemandMarket", "LemonadeMarket"];
 sim.model.eventTypes = ["StartOfDay", "DailyProduction", "Delivery", "DailyDemand", "EndOfDay"];
 
+sim.config.visualize = true;
+sim.config.stepDuration = 500;  // one simulation step has a duration of 500 ms
+sim.config.observationUI.type = "SVG";
+//sim.config.userInteractive = true;
+
+//sim.config.artworkCredits = "Weather icons by https://icons8.com";
+
 /*******************************************************
  Default Scenario
  ********************************************************/

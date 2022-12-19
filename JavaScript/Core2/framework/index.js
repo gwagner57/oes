@@ -9,7 +9,7 @@ const formEl = document.forms["run"],
     scenarioDescriptionEl = document.getElementById("scenarioDescription"),
     upfrontUiEl = document.getElementById("upfrontUI"),
     simLogTableEl = document.getElementById("simLog"),
-    statisticsTableEl = document.getElementById("statisticsTbl"),
+    exPostStatTableEl = document.getElementById("exPostStatTbl"),
     simInfoEl = document.getElementById("simInfo"),
     execInfoEl = document.getElementById("execInfo");
 // initialize the className->Class map
@@ -199,10 +199,10 @@ function run() {
   if (choice > 0) {
     if (!sim.experimentType) sim.experimentType = sim.experimentTypes[parseInt(choice)-1];
     simInfoEl.textContent = sim.experimentType.title;
-    statisticsTableEl.querySelector("caption").textContent = "Experiment Results";
+    exPostStatTableEl.querySelector("caption").textContent = "Experiment Results";
   } else {
     simInfoEl.textContent = `Standalone scenario run with a simulation time/duration of ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}.`;
-    if (Object.keys( sim.stat).length > 0 && statisticsTableEl) statisticsTableEl.querySelector("caption").textContent = "Statistics";
+    if (Object.keys( sim.stat).length > 0 && exPostStatTableEl) exPostStatTableEl.querySelector("caption").textContent = "Statistics";
   }
   // Hide UI elements
   if (document.getElementsByTagName("figure")[0]) {
@@ -250,7 +250,7 @@ function run() {
         document.getElementById("progress-container").remove();
       }
       if (e.data.expScenNo !== undefined) {  // parameter variation experiment
-        oes.ui.showResultsFromParVarExpScenarioRun( e.data, statisticsTableEl);
+        oes.ui.showResultsFromParVarExpScenarioRun( e.data, exPostStatTableEl);
       } else { // standalone simulation run or simple experiment
         const loadTime = e.data.loadEndTime - startWorkerTime,
               executionTime = (new Date()).getTime() - e.data.loadEndTime;

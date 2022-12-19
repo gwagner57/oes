@@ -100,7 +100,7 @@ oes.ui.showStatistics = function (stat) {
     const usrStatTblElem = document.createElement("table"),
           tbodyEl = usrStatTblElem.createTBody(),
           captionEl = usrStatTblElem.createCaption();
-    usrStatTblElem.id = "userDefinedStatisticsTbl";
+    usrStatTblElem.id = "userDefinedexPostStatTbl";
     captionEl.textContent = "User-defined statistics";
     for (const varName of Object.keys( stat)) {
       // skip pre-defined statistics (collection) variables
@@ -117,7 +117,7 @@ oes.ui.showStatistics = function (stat) {
     const objTblElem = document.createElement("table"),
           tbodyEl = objTblElem.createTBody(),
           captionEl = objTblElem.createCaption();
-    objTblElem.id = "objectsStatisticsTbl";
+    objTblElem.id = "objectsexPostStatTbl";
     captionEl.textContent = stat.table.name || "Object statistics";
     for (const row of stat.table.rows) {
       const rowEl = tbodyEl.insertRow();  // create new table row
@@ -142,7 +142,7 @@ oes.ui.showStatistics = function (stat) {
       const entryNodeStatTblElem = document.createElement("table"),
             tbodyEl = entryNodeStatTblElem.createTBody(),
             rowEl = tbodyEl.insertRow();
-      entryNodeStatTblElem.id = "entryNodeStatisticsTbl";
+      entryNodeStatTblElem.id = "entryNodeexPostStatTbl";
       rowEl.innerHTML = "<tr><th>Entry node</th><th>arrived</th></tr>";
       for (const nodeName of Object.keys( stat.networkNodes)) {
         const nodeStat = stat.networkNodes[nodeName];
@@ -157,7 +157,7 @@ oes.ui.showStatistics = function (stat) {
     // create table for AN/PN statistics per activity/processing node
     const actyNodeStatTblElem = document.createElement("table");
     const tbodyEl = actyNodeStatTblElem.createTBody();
-    actyNodeStatTblElem.id = "activityNodeStatisticsTbl";
+    actyNodeStatTblElem.id = "activityNodeexPostStatTbl";
     tbodyEl.insertRow().innerHTML = `<tr><th>${isPN ? "Processing":"Activity"} node</th>`+
         perNodeStatTblHeadElemsString + "<th>resource utilization</th></tr>";
     for (const nodeName of Object.keys( stat.networkNodes)) {
@@ -185,7 +185,7 @@ oes.ui.showStatistics = function (stat) {
       // create table for PN statistics per exit node
       const exitNodeStatTblElem = document.createElement("table");
       const tbodyEl = exitNodeStatTblElem.createTBody();
-      exitNodeStatTblElem.id = "exitNodeStatisticsTbl";
+      exitNodeStatTblElem.id = "exitNodeexPostStatTbl";
       const rowEl = tbodyEl.insertRow();
       rowEl.innerHTML = "<tr><th>Exit node</th><th>departed</th><th>avg. throughput time</th></tr>";
       for (const nodeName of Object.keys( stat.networkNodes)) {
@@ -264,7 +264,7 @@ oes.ui.showSimpleExpResults = function (exp) {
         decPl = oes.defaults.expostStatDecimalPlaces;
   const tableEl = document.createElement("table"),
         tbodyEl = document.createElement("tbody");
-  tableEl.id = "statisticsTbl";
+  tableEl.id = "exPostStatTbl";
   tableEl.innerHTML = '<caption>Experiment results</caption>';
   tableEl.appendChild( tbodyEl);
 

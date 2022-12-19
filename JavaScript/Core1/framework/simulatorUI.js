@@ -5,6 +5,7 @@ oes.ui = Object.create(null);
 oes.ui.obs = Object.create(null);
 oes.ui.obs.SVG = Object.create(null);
 oes.ui.obs.canvas = Object.create(null);
+sim.config.observationUI = Object.create(null);
 
 class oBJECT {
   constructor(id, name) {
@@ -196,6 +197,94 @@ oes.ui.showResultsFromParVarExpScenarioRun = function (data, tableEl) {
     rowEl.insertCell().textContent = displayStr;
   });
 }
+
+
+/*******************************************************
+ Set up the Visualization
+ *******************************************************/
+oes.ui.setupVisualization = function () {
+  var mainEl = document.querySelector("body > main");
+  if (sim.model.space.type) {
+    oes.ui.setupSpaceView();
+  } else if (sim.config.observationUI.type) {  // visualizing a non-spatial model
+    switch (sim.config.observationUI.type) {
+    case "SVG":
+      oes.ui.setupCanvas = oes.ui.vis.SVG.setup;
+      oes.ui.resetCanvas = oes.ui.vis.SVG.reset;
+      oes.ui.visualizeStep = oes.ui.vis.SVG.visualizeStep;
+      break;
+    /*
+    case "Zdog":
+      oes.ui.setupCanvas = zdogVis.setup;
+      oes.ui.resetCanvas = zdogVis.reset;
+      oes.ui.visualizeStep = zdogVis.visualizeStep;
+      break;
+    */
+    default:
+      console.log("Invalid visualization type: "+ sim.config.observationUI.visualType);
+      sim.config.visualize = false;
+    }
+  } else sim.config.visualize = false;
+  if (sim.config.visualize) oes.ui.setupCanvas( mainEl);
+
+};
+/*******************************************************
+ Set up the Space Visualization
+ *******************************************************/
+oes.ui.setupSpaceView = function () {
+  if (sim.model.space.type === undefined) throw "No space type defined in *setupSpaceView*";
+  switch (sim.model.space.type) {
+      // TODO: use (detect?) correct references methods, when other than the DOM
+      // visualization "modules" are implemented for IntegerGrid case.
+    case "IntegerGrid":
+      switch (sim.config.observationUI.spaceView.type) {
+        case "threeDim":
+          oes.ui.setupCanvas = oes.ui.space.threeDim.Babylon.setup;
+          oes.ui.resetCanvas = oes.ui.space.threeDim.Babylon.reset;
+          oes.ui.visualizeStep = oes.ui.space.threeDim.Babylon.render;
+          break;
+        default:
+          oes.ui.setupCanvas = oes.ui.space.grid.setup;
+          oes.ui.resetCanvas = oes.ui.space.grid.reset;
+          oes.ui.visualizeStep = oes.ui.space.grid.i.dom.renderIntegerGrid;
+      }
+      break;
+      // TODO: use (detect?) correct references methods, when other than the DOM
+      // visualization "modules" are implemented for ObjectGrid case.
+    case "ObjectGrid":
+      oes.ui.setupCanvas = oes.ui.space.grid.o.dom.setupObjectGrid;
+      oes.ui.resetCanvas = oes.ui.space.grid.reset;
+      oes.ui.visualizeStep = oes.ui.space.grid.o.dom.renderObjectGrid;
+      break;
+    case "1D":
+      switch (sim.config.observationUI.spaceView.type) {
+        case "oneDimSVG":
+          oes.ui.setupCanvas = oes.ui.space.oneDim.SVG.setup;
+          oes.ui.resetCanvas = oes.ui.space.oneDim.SVG.reset;
+          oes.ui.visualizeStep = oes.ui.space.oneDim.SVG.renderSimState;
+          break;
+        case "threeDim":
+          oes.ui.setupCanvas = oes.ui.space.threeDim.Babylon.setup;
+          oes.ui.resetCanvas = oes.ui.space.threeDim.Babylon.reset;
+          oes.ui.visualizeStep = oes.ui.space.threeDim.Babylon.render;
+          break;
+          // defaults to oneDimSVG visualization
+        default:
+          oes.ui.setupCanvas = oes.ui.space.oneDim.SVG.setup;
+          oes.ui.resetCanvas = oes.ui.space.oneDim.SVG.reset;
+          oes.ui.visualizeStep = oes.ui.space.oneDim.SVG.renderSimState;
+      }
+      break;
+    case "2D":
+      oes.ui.setupCanvas = oes.ui.space.twoDim.Phaser.setup;
+      oes.ui.resetCanvas = oes.ui.space.twoDim.Phaser.reset;
+      oes.ui.visualizeStep = oes.ui.space.twoDim.Phaser.render;
+      break;
+    case "3D":
+      // TODO: complete when a 3D space is supported.
+      break;
+  }
+};
 /*====================================================================================
     S V G
  ==================================================================================== */
