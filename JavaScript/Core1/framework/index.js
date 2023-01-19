@@ -26,7 +26,7 @@ async function setupUI() {
     for (const objTypeTableEl of objTypeTableElems) {
       objTypeTableEl.remove();
     }
-    for (const objTypeName of sim.ui.objectTypes) {
+    for (const objTypeName of sim.config.ui.objectTypes) {
       const OT = sim.Classes[objTypeName];
       let entityTblWidget=null;
       if (!OT || OT.isAbstract) continue;
@@ -43,7 +43,7 @@ async function setupUI() {
     for (let scen of sim.scenarios) {
       optionTextItems.push( scen.title);
     }
-    util.fillSelectWithOptionsFromStringList( selScenEl, optionTextItems);
+    dom.fillSelectWithOptionsFromStringList( selScenEl, optionTextItems);
   }
   // fill run choice control
   optionTextItems = ["Standalone scenario"];
@@ -51,7 +51,7 @@ async function setupUI() {
     for (let expT of sim.experimentTypes) {
       optionTextItems.push( expT.title);
     }
-    util.fillSelectWithOptionsFromStringList( selExpEl, optionTextItems);
+    dom.fillSelectWithOptionsFromStringList( selExpEl, optionTextItems);
   }
   // only create model parameter UI and initial state UI, if upfrontUi container element has been defined
   if (upfrontUiEl) {
@@ -61,12 +61,12 @@ async function setupUI() {
       fillModelParameterPanel( sim.scenario.parameters);
     }
     // create initial state UI
-    if (Array.isArray( sim.ui.objectTypes) && sim.ui.objectTypes.length > 0) {
+    if (Array.isArray( sim.config.ui.objectTypes) && sim.config.ui.objectTypes.length > 0) {
       try {
-        for (const objTypeName of sim.ui.objectTypes) {
+        for (const objTypeName of sim.config.ui.objectTypes) {
           await util.loadScript( objTypeName + ".js");
         }
-        for (const objTypeName of sim.ui.objectTypes)  {
+        for (const objTypeName of sim.config.ui.objectTypes)  {
           const OT = sim.Classes[objTypeName] = util.getClass( objTypeName);
           OT.instances = {};
         }
@@ -78,6 +78,21 @@ async function setupUI() {
       }
     }
   }
+  /*********************************************************************
+   Set up UIs for Visualization, Event Appearances and User Interaction
+   **********************************************************************/
+  if (sim.config.visualize) {
+    await oes.ui.setupVisualization();
+    if (sim.config.ui.obs.eventAppearances &&
+        Object.keys( sim.config.ui.obs.eventAppearances).length > 0) {
+      oes.ui.setupEventAppearances();
+    }
+    if (sim.scenario.userInteractions &&
+        Object.keys( sim.scenario.userInteractions).length > 0 &&
+        sim.config.userInteractive) {
+      oes.ui.setupUserInteraction();
+    }
+  } else sim.config.userInteractive = false;  // no visual. implies no usr interaction
 }
 function fillModelParameterPanel( record) {
   const containerEl = document.getElementById("ModelParameterUI"),
@@ -225,12 +240,9 @@ function run() {
       oes.ui.createParVarExpResultsTableHead( sim.stat, exPostStatTableEl);
     }
   }
-  data = {simToRun: choice,  // either standalone sim or experiment
-      scenParams: sim.scenario.parameters,
-      createLog: logCheckboxEl.checked,
-      storeExpRes: storeExpResCheckboxEl.checked};
   for (const objTypeName of Object.keys( sim.Classes)) {
     const C = sim.Classes[objTypeName];
+    if (!("instances" in C)) continue;  // skip abstract classes
     initialObjects[objTypeName] = C.instances;
     // convert object references to ID references
     for (const objId of Object.keys( C.instances)) {
@@ -257,15 +269,26 @@ function run() {
   // set up the simulation worker
   const worker = new Worker("simulation-worker.js");
   // start the simulation in the worker thread
+  data = {simToRun: choice,  // either standalone sim or experiment
+    scenParams: sim.scenario.parameters,
+    createLog: logCheckboxEl.checked,
+    storeExpRes: storeExpResCheckboxEl.checked
+  };
+  if (sim.config.ui.obs.visualizationAttributes) {
+    data.visualizationAttributes = sim.config.ui.obs.visualizationAttributes;
+  }
   worker.postMessage( data);
 
   // on incoming messages from worker
   worker.onmessage = function (e) {
-    if (e.data.step !== undefined) {  // create log entry
+    if (e.data.step !== undefined && !e.data.viewSlotsPerObject) {  // create log entry
       simLogTableEl.parentElement.style.display = "block";
       oes.ui.logSimulationStep( simLogTableEl, e.data.step, e.data.time,
           e.data.currEvtsStr, e.data.objectsStr, e.data.futEvtsStr);
-    } else {
+    } else if (e.data.viewSlotsPerObject) {
+      //console.log( JSON.stringify( e.data.viewSlotsPerObject));
+      oes.ui.updateVisualization( e.data.viewSlotsPerObject);
+    } else {  // end of simulation/experiment
       if (document.getElementById("progress-container")) {
         document.getElementById("progress-container").remove();
       }
@@ -273,7 +296,7 @@ function run() {
         oes.ui.showResultsFromParVarExpScenarioRun( e.data, exPostStatTableEl);
       } else {
         const loadTime = e.data.loadEndTime - startWorkerTime,
-            executionTime = (new Date()).getTime() - e.data.loadEndTime;
+              executionTime = (new Date()).getTime() - e.data.loadEndTime;
         // Show loading time and execution time
         execInfoEl.textContent = `Script files loading time: ${loadTime} ms, simulation execution time: ${executionTime} ms. Reload the page [Ctrl-R] to start over.`;
         if (e.data.statistics) {  // statistics from standalone scenario run

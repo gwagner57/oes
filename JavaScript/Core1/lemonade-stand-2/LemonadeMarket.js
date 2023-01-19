@@ -2,14 +2,14 @@ const WeatherStateEL = new eNUMERATION( "WeatherStateEL",
     ["sunny", "partly cloudy", "cloudy", "rainy"] );
 
 class LemonadeMarket extends DailyDemandMarket {
-  constructor({id, name, weatherState}) {
+  constructor({id, name, weatherState=2, temperature=25}) {
     super({id, name});
-    this.weatherState = new RingBuffer({itemType: WeatherStateEL});
-    // add initial weather state
-    if (weatherState) this.weatherState.add( weatherState);
+    this.weatherState = weatherState;
+    this.weatherStateHistory = new RingBuffer({itemType: WeatherStateEL});
+    this.weatherStateHistory.add( weatherState);
+    this.temperature = temperature;
     this.temperatureHistory = new RingBuffer();
-    // add initial temperature
-    this.temperatureHistory.add( 25);
+    this.temperatureHistory.add( temperature);
     this.dailyDemandQuantity = new RingBuffer();
   }
   getDailyDemandQuantity() {
@@ -17,7 +17,7 @@ class LemonadeMarket extends DailyDemandMarket {
     // first update the "weather"
     this.updateWeather();
     const lastTemperature = this.temperatureHistory.getLast(),
-          lastWeatherState = this.weatherState.getLast();
+          lastWeatherState = this.weatherStateHistory.getLast();
     switch (lastWeatherState) {
     case WeatherStateEL.SUNNY:
       demQty = 300 + (lastTemperature - 20) * 10 ;
@@ -40,7 +40,7 @@ class LemonadeMarket extends DailyDemandMarket {
     var newWeatherState = 0,
         newTemperature = this.temperatureHistory.getLast();
     const r = rand.uniformInt( 0, 99);
-    switch (this.weatherState.getLast()) {
+    switch (this.weatherStateHistory.getLast()) {
     case WeatherStateEL.SUNNY:
       if (r < 50) {
         newWeatherState = WeatherStateEL.SUNNY;
@@ -84,9 +84,11 @@ class LemonadeMarket extends DailyDemandMarket {
       }
       break;
     }
-    this.weatherState.add( newWeatherState);
+    this.weatherState = newWeatherState;
+    this.weatherStateHistory.add( newWeatherState);
     // make sure the temperature is in the range [15,35]
     newTemperature = Math.min( Math.max( 15, newTemperature), 35);
+    this.temperature = newTemperature;
     this.temperatureHistory.add( newTemperature);
   }
 }

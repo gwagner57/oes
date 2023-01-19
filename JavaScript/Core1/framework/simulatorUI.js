@@ -5,29 +5,7 @@ oes.ui = Object.create(null);
 oes.ui.obs = Object.create(null);
 oes.ui.obs.SVG = Object.create(null);
 oes.ui.obs.canvas = Object.create(null);
-sim.config.observationUI = Object.create(null);
 
-class oBJECT {
-  constructor(id, name) {
-    this.id = id || sim.idCounter++;
-    if (name) {  // name is optional
-      this.name = name;
-    }
-    // create a map of class instances
-    this.constructor.instances[id] = this;
-  }
-  // used in the JSON.stringify method
-  toJSON() {
-    var obj = {};
-    for (const prop of Object.keys( this)) {
-      const val = this[prop];
-      if (val instanceof oBJECT) {
-        obj[prop] = val.id;  // map oBJECT references to ID references
-      } else obj[prop] = val;
-    }
-    return obj;
-  }
-}
 /*******************************************************
  UI for modifying model parameter values
  *******************************************************/
@@ -186,32 +164,65 @@ oes.ui.createParVarExpResultsTableHead = function (stat, tableEl)  {
  Show the results of a parameter variation experiment
  **********************************************************************/
 oes.ui.showResultsFromParVarExpScenarioRun = function (data, tableEl) {
-  var tbodyEl = tableEl.tBodies[0];
-  var rowEl = tbodyEl.insertRow();  // create new table row
+  const tbodyEl = tableEl.tBodies[0],
+        rowEl = tbodyEl.insertRow();  // create new table row
   rowEl.insertCell().textContent = data.expScenNo;
   rowEl.insertCell().textContent = data.expScenParamValues.toString();
   Object.keys( data.expScenStat).forEach( function (v) {
-    var statVal = data.expScenStat[v], displayStr="",
-        decPl = oes.defaults.expostStatDecimalPlaces;
-    displayStr = math.round( statVal, decPl);
-    rowEl.insertCell().textContent = displayStr;
+    const statVal = data.expScenStat[v],
+          decPl = oes.defaults.expostStatDecimalPlaces;
+    rowEl.insertCell().textContent = math.round( statVal, decPl);
   });
+}
+/*********************************************************************
+ Load the simulation model code
+ **********************************************************************/
+oes.ui.loadSimulationModelCode = async function () {
+  if (sim.model.otherCodeFiles) {
+    for (const fn of sim.model.otherCodeFiles) {
+      await util.loadScript( fn + ".js");
+    }
+  }
+  if (sim.model.objectTypes) {
+    for (const fn of sim.model.objectTypes) {
+      await util.loadScript( fn + ".js");
+    }
+  }
+  if (sim.model.eventTypes) {
+    for (const fn of sim.model.eventTypes) {
+      await util.loadScript( fn + ".js");
+    }
+  }
+  if (sim.model.activityTypes) {
+    for (const fn of sim.model.activityTypes) {
+      await util.loadScript( fn + ".js");
+    }
+  }
 }
 
 
 /*******************************************************
  Set up the Visualization
  *******************************************************/
-oes.ui.setupVisualization = function () {
-  var mainEl = document.querySelector("body > main");
-  if (sim.model.space.type) {
+oes.ui.setupVisualization = async function () {
+  const insertPointEl = document.querySelector("form#run");
+  if (sim.model.space) {
     oes.ui.setupSpaceView();
-  } else if (sim.config.observationUI.type) {  // visualizing a non-spatial model
-    switch (sim.config.observationUI.type) {
+  } else if (sim.config.ui.obs.type) {  // visualizing a non-spatial model
+    const objViews = sim.config.ui.obs.objectViews;
+    if (objViews) {
+      const visProps = sim.config.ui.obs.visualizationAttributes = {};
+      for (const objViewId of Object.keys(objViews)) {
+        const objView = objViews[objViewId];
+        // append the slots of objView.visualizationAttributes to visProps
+        visProps[objViewId] = objView.visualizationAttributes;
+      }
+    }
+    switch (sim.config.ui.obs.type) {
     case "SVG":
-      oes.ui.setupCanvas = oes.ui.vis.SVG.setup;
-      oes.ui.resetCanvas = oes.ui.vis.SVG.reset;
-      oes.ui.visualizeStep = oes.ui.vis.SVG.visualizeStep;
+      oes.ui.setupCanvas = oes.ui.obs.SVG.setup;
+      oes.ui.resetCanvas = oes.ui.obs.SVG.reset;
+      oes.ui.visualizeStep = oes.ui.obs.SVG.visualizeStep;
       break;
     /*
     case "Zdog":
@@ -221,13 +232,114 @@ oes.ui.setupVisualization = function () {
       break;
     */
     default:
-      console.log("Invalid visualization type: "+ sim.config.observationUI.visualType);
+      console.log("Invalid visualization type: "+ sim.config.ui.obs.type);
       sim.config.visualize = false;
     }
   } else sim.config.visualize = false;
-  if (sim.config.visualize) oes.ui.setupCanvas( mainEl);
-
+  // initialize the map of all objects (accessible by ID)
+  sim.objects = new Map();
+  // initialize the Map of all objects (accessible by name)
+  sim.namedObjects = new Map();
+  // initialize the className->Class map
+  sim.Classes = Object.create(null);
+  // define a dummy version
+  sim.schedule = function (e) {}
+  // load all code files
+  await oes.ui.loadSimulationModelCode();
+  // Make object classes accessible via their object type name
+  for (const objTypeName of sim.model.objectTypes) {
+    sim.Classes[objTypeName] = util.getClass( objTypeName);
+  }
+  oes.setupInitialStateDataStructures();
+  // visualize initial state
+  oes.ui.setupCanvas( insertPointEl);
 };
+/*******************************************************
+ Update the visualization objects
+ *******************************************************/
+oes.ui.updateVisualization = function (visSlots) {
+  const obsUI = sim.config.ui.obs,
+        objViews = obsUI.objectViews;
+  /*************************************************************************/
+  function updateObjView( viewId, obj) {
+    const objView = objViews[viewId],
+          changeSlots = visSlots[viewId],
+          viewItemsPerAttr = obsUI.attribute2ViewItems[viewId];
+    for (const attr of Object.keys( changeSlots)) {
+      // update objects
+      const attrPathParts = attr.split(".");
+      switch (attrPathParts.length) {
+        case 1:
+          obj[attr+"_pre"] = obj[attr];
+          obj[attr] = changeSlots[attr];
+          break;
+        case 2: {
+          const a1 = attrPathParts[0], a2 = attrPathParts[1];
+          obj[a1][a2+"_pre"] = obj[a1][a2];
+          obj[a1][a2] = changeSlots[attr];
+          break;}
+        case 3:
+          const a1 = attrPathParts[0], a2 = attrPathParts[1], a3 = attrPathParts[2];
+          obj[a1][a2][a3+"_pre"] = obj[a1][a2][a3];
+          obj[a1][a2][a3] = changeSlots[attr];
+          break;
+      }
+      // update object views
+      if (obsUI.enumAttributes.includes( attr)) {  // an enum-attribute-based view item
+        // viewItemsPerAttr maps the value of an enum attribute to a vis item def rec
+        const prevEnumIndex = obj[attr+"_pre"],  //TODO: support multi-part attr
+              prevItemDefRec = viewItemsPerAttr[attr][prevEnumIndex-1],
+              newEnumIndex = changeSlots[attr],
+              newItemDefRec = viewItemsPerAttr[attr][newEnumIndex-1];
+        // hide previous enum view
+        prevItemDefRec.element.style.display = "none";
+        // display new enum view
+        newItemDefRec.element.style.display = "block";
+        if (newItemDefRec.canvasBackgroundColor) {
+          sim.config.ui.canvasContainerEl.style.backgroundColor = newItemDefRec.canvasBackgroundColor;
+        }
+      } else {  // ordinary view items
+        for (const itemDefRec of viewItemsPerAttr[attr]) {
+          const el = itemDefRec.elements[obj.id],
+                shAttribs = itemDefRec.shapeAttributes;
+          for (const attrName of Object.keys( shAttribs)) {
+            if (typeof shAttribs[attrName] === "function") {
+              let val = shAttribs[attrName]( obj);
+              switch (attrName) {
+              case "textContent":
+                el.textContent = val;
+                break;
+              case "file":
+                if (!val.includes("/")) val = oes.defaults.imgFolder + val;
+                el.setAttributeNS( svg.XLINK_NS, "href", val);
+                break;
+              default:
+                el.setAttribute( attrName, val);
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  /*************************************************************************/
+  for (const viewId of Object.keys( visSlots)) {
+    if (sim.model.objectTypes.includes( viewId)) {
+      // an object view for all instances of an object type
+      const ObjectTypePopulation = sim.Classes[viewId].instances;
+      for (const objIdStr of Object.keys( ObjectTypePopulation)) {
+        const obj = ObjectTypePopulation[objIdStr];
+        updateObjView( viewId, obj);
+      }
+    } else if (sim.namedObjects.has( viewId)) {
+      const obj = sim.namedObjects.get( viewId);
+      updateObjView( viewId, obj);
+    } else {
+      console.log(`The objViewId "${viewId}" does neither denote an object nor an object type!`);
+    }
+  }
+}
 /*******************************************************
  Set up the Space Visualization
  *******************************************************/
@@ -237,7 +349,7 @@ oes.ui.setupSpaceView = function () {
       // TODO: use (detect?) correct references methods, when other than the DOM
       // visualization "modules" are implemented for IntegerGrid case.
     case "IntegerGrid":
-      switch (sim.config.observationUI.spaceView.type) {
+      switch (sim.config.ui.obs.spaceView.type) {
         case "threeDim":
           oes.ui.setupCanvas = oes.ui.space.threeDim.Babylon.setup;
           oes.ui.resetCanvas = oes.ui.space.threeDim.Babylon.reset;
@@ -257,7 +369,7 @@ oes.ui.setupSpaceView = function () {
       oes.ui.visualizeStep = oes.ui.space.grid.o.dom.renderObjectGrid;
       break;
     case "1D":
-      switch (sim.config.observationUI.spaceView.type) {
+      switch (sim.config.ui.obs.spaceView.type) {
         case "oneDimSVG":
           oes.ui.setupCanvas = oes.ui.space.oneDim.SVG.setup;
           oes.ui.resetCanvas = oes.ui.space.oneDim.SVG.reset;
@@ -288,7 +400,7 @@ oes.ui.setupSpaceView = function () {
 /*====================================================================================
     S V G
  ==================================================================================== */
-oes.ui.obs.SVG.setup = function () {
+oes.ui.obs.SVG.setup = function ( insertPointEl) {
   const obsUI = sim.config.ui.obs,
         fixedElems = obsUI.fixedElements,
         objViews = obsUI.objectViews,
@@ -296,87 +408,105 @@ oes.ui.obs.SVG.setup = function () {
         canvasHeight = obsUI.canvas.height || 400,
         canvasSvgEl = svg.createSVG({id:"canvasSVG",
             width: canvasWidth, height: canvasHeight}),
-        defsEl = svg.createDefs(),
-        mainEl = document.querySelector("body > main");
+        defsEl = svg.createDefs();
 
-  function renderInitialObjView( objViewId, objIdStr) {
-    const obj = objIdStr ? sim.objects[objIdStr] : sim.namedObjects[objViewId],
-          objView = objViews[objViewId],   // objViews[obj.constructor.Name]
-          objViewItems = Array.isArray( objView) ? objView : [objView],
+  function renderInitialObjView( viewId, obj) {
+    const objView = objViews[viewId],
           shapeGroupEl = svg.createGroup();
-    for (const itemDefRec of objViewItems) {
-      let txt="", el=null, fp=null;
-      if (itemDefRec.shapeName) {
-        if (itemDefRec.fillPatternImage) {
-          fp = itemDefRec.fillPatternImage;
-          if (!fp.file.includes("/")) {
-            fp.file = oes.defaults.imgFolder + fp.file;
+    for (const attrViewItemsRec of objView.attributesViewItemsRecords) {
+      if ("enumAttribute" in attrViewItemsRec) {
+        // the array viewItemsDef.viewItems maps an enum index to a view item
+        const enumAttr = attrViewItemsRec.enumAttribute,
+              enumIndex = obj[enumAttr],
+              currentEnumViewDefRec = attrViewItemsRec.viewItems[enumIndex-1];
+        obsUI.enumAttributes.push( enumAttr);
+        for (const shDefRec of attrViewItemsRec.viewItems) {
+          const el = oes.ui.obs.SVG.createShapeFromDefRec( shDefRec, obj);
+          el.style.display = "none";
+          shDefRec.element = el;
+          canvasSvgEl.appendChild( el);
+          if (shDefRec.canvasBackgroundColor) {
+            el.canvasBackgroundColor = shDefRec.canvasBackgroundColor;
           }
-          el = svg.createImageFillPattern( fp.id, fp.file);
-          defsEl.appendChild( el);
-          itemDefRec.style = "fill: url(#" + fp.id + ");" + itemDefRec.style;
         }
-        el = svg.createShapeFromDefRec( itemDefRec, obj);
-        itemDefRec.elements[obj.id] = el;
-        canvasSvgEl.appendChild( el);
-      } else if (itemDefRec.text) {  // objViewItem defines a text element
-        if (typeof itemDefRec.text === "function") txt = itemDefRec.text( obj);
-        else txt = itemDefRec.text;
-        el = svg.createText( itemDefRec.x, itemDefRec.y, txt, itemDefRec.style)
-      } else {  // itemDefRec maps enum attribs to lists of visualization items
-        for (const key of Object.keys( itemDefRec)) {
-          // ommit special fields
-          if (key !== "object" && key !== "element" && key !== "elements") {
-            const enumIndex = obj[key];  // key is enum attr name
-            const currentEnumViewDefRec = itemDefRec[key][enumIndex-1];
-            for (const shDefRec of itemDefRec[key]) {
-              el = oes.ui.obs.SVG.createShapeFromDefRec( shDefRec, obj);
-              el.style.display = "none";
-              shDefRec.element = el;
-              canvasSvgEl.appendChild( el);
-              if (shDefRec.canvasBackgroundColor) {
-                sim.visualEl.style.backgroundColor = shDefRec.canvasBackgroundColor;
+        currentEnumViewDefRec.element.style.display = "block";
+        if (currentEnumViewDefRec.canvasBackgroundColor) {
+          sim.config.ui.canvasContainerEl.style.backgroundColor = currentEnumViewDefRec.canvasBackgroundColor;
+        }
+      } else {
+        // process an additive list of view item definition records for the given object and attribute
+        for (const itemDefRec of attrViewItemsRec.viewItems) {
+          let el=null, fp=null;
+          // initialize the view item's object ID to SVG elements map
+          itemDefRec.elements ??= {};
+          if (itemDefRec.shapeName) {
+            if (itemDefRec.fillPatternImage) {
+              fp = itemDefRec.fillPatternImage;
+              if (!fp.file.includes("/")) {
+                fp.file = oes.defaults.imgFolder + fp.file;
               }
+              el = svg.createImageFillPattern( fp.id, fp.file);
+              defsEl.appendChild( el);
+              itemDefRec.style = "fill: url(#" + fp.id + ");" + itemDefRec.style;
             }
-            itemDefRec[key].element = currentEnumViewDefRec.element;
-            currentEnumViewDefRec.element.style.display = "block";
+            el = svg.createShapeFromDefRec( itemDefRec, obj);
+            //canvasSvgEl.appendChild( el);
+          } else {}
+          if (el) {
+            itemDefRec.elements[obj.id] = el;
+            shapeGroupEl.appendChild( el);
           }
         }
       }
-      if (el) shapeGroupEl.appendChild( el);
     }
     canvasSvgEl.appendChild( shapeGroupEl);
   }
 
   // define SVG canvas
-  sim.visualEl = dom.createElement("div",{id:"visCanvas", classValues:"uiBlock"});
+  sim.config.ui.canvasContainerEl = dom.createElement("div",{id:"visCanvas", classValues:"uiBlock"});
   if (obsUI.canvas.style) canvasSvgEl.style = obsUI.canvas.style;
-  sim.visualEl.appendChild( canvasSvgEl);
+  sim.config.ui.canvasContainerEl.appendChild( canvasSvgEl);
   canvasSvgEl.appendChild( defsEl);
-  mainEl.appendChild( sim.visualEl);
+  insertPointEl.after( sim.config.ui.canvasContainerEl);
   if (fixedElems) {  // render fixed elements
     for (const id of Object.keys( fixedElems)) {
       const el = oes.ui.obs.SVG.createShapeFromDefRec( fixedElems[id]);
       canvasSvgEl.appendChild( el);
     }
   }
-  if (objViews) {  // render initial object views
-    for (const objViewId of Object.keys( objViews)) {
-      const objView = objViews[objViewId];
-      if (Array.isArray( objView)) {
-        for (const itemDefRec of objView) itemDefRec.elements = {};
+  // construct attribute to viewItems map
+  obsUI.attribute2ViewItems = {};
+  for (const viewId of Object.keys( objViews)) {
+    const objView = objViews[viewId];
+    obsUI.attribute2ViewItems[viewId] = {};
+    for (const attrViewItemsRec of objView.attributesViewItemsRecords) {
+      if ("enumAttribute" in attrViewItemsRec) {
+        // the array viewItemsDef.viewItems maps an enum index to a view item
+        const enumAttr = attrViewItemsRec.enumAttribute;
+        obsUI.attribute2ViewItems[viewId][enumAttr] = attrViewItemsRec.viewItems;
       } else {
-        objView.elements = {};
-      }
-      if (sim.model.objectTypes.includes( objViewId)) {
-        // an object view for all instances of an object type
-        for (const objIdStr of Object.keys( sim.Classes[objViewId].instances)) {
-          renderInitialObjView( objViewId, objIdStr);
+        // the array viewItemsDef.viewItems is an additive list of view item definition records for the given object and attribute
+        for (const attrName of attrViewItemsRec.attributes) {
+          obsUI.attribute2ViewItems[viewId][attrName] = attrViewItemsRec.viewItems;
         }
-      } else if (sim.namedObjects[objViewId]) {
-        renderInitialObjView( objViewId);
+      }
+    }
+  }
+  // render initial object views
+  if (objViews) {
+    for (const viewId of Object.keys( objViews)) {
+      if (sim.model.objectTypes.includes( viewId)) {
+        // an object view for all instances of an object type
+        const ObjectTypePopulation = sim.Classes[viewId].instances;
+        for (const objIdStr of Object.keys( ObjectTypePopulation)) {
+          const obj = ObjectTypePopulation[objIdStr];
+          renderInitialObjView( viewId, obj);
+        }
+      } else if (sim.namedObjects.has( viewId)) {
+        const obj = sim.namedObjects.get( viewId);
+        renderInitialObjView( viewId, obj);
       } else {
-        console.error("Object view ID "+ objViewId +
+        console.error("Object view ID "+ viewId +
             " does neither correspond to an object type nor an object name.")
       }
     }
@@ -386,13 +516,14 @@ oes.ui.obs.SVG.reset = function () {
   oes.ui.obs.SVG.visualizeStep();  //TODO: replace with real reset code
 };
 oes.ui.obs.SVG.visualizeStep = function () {
-  var obsUI = sim.config.ui.obs,
-      objViews = obsUI.objectViews;
+  const obsUI = sim.config.ui.obs,
+        objViews = obsUI.objectViews;
   /*************************************************************************/
   function updateObjView( viewId, objIdStr) {
-    const obj = objIdStr ? sim.objects[objIdStr] : sim.namedObjects[viewId],
+    const obj = objIdStr ? sim.objects.get( objIdStr) : sim.namedObjects.get( viewId),
           objView = objViews[viewId],
-          objViewItems = Array.isArray( objView) ? objView : [objView];
+          objViewItems = Array.isArray( objView.viewItems) ?
+              objView.viewItems : [objView.viewItems];
     // objViewItems is a list of view item definition records
     for (let i=0; i < objViewItems.length; i++) {
       const itemDefRec = objViewItems[i],
@@ -418,21 +549,20 @@ oes.ui.obs.SVG.visualizeStep = function () {
         }
       } else {  // objView maps enum attribs to lists of vis item def rec
         for (const key of Object.keys( itemDefRec)) {
-          // exclude properties that itemDefRec may also contain
-          if (key !== "object" && key !== "element") {
-            const enumIndex = obj[key];
-            if (Number.isInteger( enumIndex) && Array.isArray( itemDefRec[key]) &&
-                enumIndex >= 1 && enumIndex <= itemDefRec[key].length) {
-              const currentEnumViewDefRec = itemDefRec[key][enumIndex-1];
-              // hide previous enum view
-              itemDefRec[key].element.style.display = "none";
-              // display current enum view
-              currentEnumViewDefRec.element.style.display = "block";
-              // store current enum view element
-              itemDefRec[key].element = currentEnumViewDefRec.element;
-              if (currentEnumViewDefRec.canvasBackgroundColor) {
-                sim.visualEl.style.backgroundColor = currentEnumViewDefRec.canvasBackgroundColor;
-              }
+          // omit special fields
+          if (["element","elements"].includes( key)) continue;
+          const enumIndex = obj[key];
+          if (Number.isInteger( enumIndex) && Array.isArray( itemDefRec[key]) &&
+              enumIndex >= 1 && enumIndex <= itemDefRec[key].length) {
+            const currentEnumViewDefRec = itemDefRec[key][enumIndex-1];
+            // hide previous enum view
+            itemDefRec[key].element.style.display = "none";
+            // display current enum view
+            currentEnumViewDefRec.element.style.display = "block";
+            // store current enum view element
+            itemDefRec[key].element = currentEnumViewDefRec.element;
+            if (currentEnumViewDefRec.canvasBackgroundColor) {
+              sim.config.ui.canvasContainerEl.style.backgroundColor = currentEnumViewDefRec.canvasBackgroundColor;
             }
           }
         }
@@ -443,10 +573,10 @@ oes.ui.obs.SVG.visualizeStep = function () {
   for (const objViewId of Object.keys( objViews)) {
     if (sim.model.objectTypes.includes( objViewId)) {
       // an object view for all instances of an object type
-      Object.keys( cLASS[objViewId].instances).forEach( function (objIdStr) {
+      for (const objIdStr of Object.keys( cLASS[objViewId].instances)) {
         updateObjView( objViewId, objIdStr);
-      })
-    } else if (sim.namedObjects[objViewId]) {
+      }
+    } else if (sim.namedObjects.get( objViewId)) {
       updateObjView( objViewId);
     }
   }
@@ -454,16 +584,16 @@ oes.ui.obs.SVG.visualizeStep = function () {
 
 oes.ui.obs.SVG.createShapeFromDefRec = function (shapeDefRec, obj) {
   const fileName = shapeDefRec.shapeAttributes.file,
-      el = document.createElementNS( svg.NS, shapeDefRec.shapeName),
-      shAttr = shapeDefRec.shapeAttributes;
+        el = document.createElementNS( svg.NS, shapeDefRec.shapeName),
+        shAttribs = shapeDefRec.shapeAttributes;
   if (fileName && !fileName.includes("/")) {
-    shAttr.file = oes.defaults.imgFolder + fileName;
+    shAttribs.file = oes.defaults.imgFolder + fileName;
   }
-  for (const attrName of Object.keys( shAttr)) {
+  for (const attrName of Object.keys( shAttribs)) {
     let val;
-    if (typeof shAttr[attrName] === "function") {
-      val = shAttr[attrName]( obj);
-    } else val = shAttr[attrName];
+    if (typeof shAttribs[attrName] === "function") {
+      val = shAttribs[attrName]( obj);
+    } else val = shAttribs[attrName];
     switch (attrName) {
       case "textContent":
         el.textContent = val;
@@ -478,4 +608,40 @@ oes.ui.obs.SVG.createShapeFromDefRec = function (shapeDefRec, obj) {
   }
   if (shapeDefRec.style) el.setAttribute("style", shapeDefRec.style);
   return el;
+};
+/*******************************************************
+ Set up the Event Appearances (Sound + Animations)
+ TODO: support audio/sound
+ *******************************************************/
+oes.ui.setupEventAppearances = function () {
+  const eventAppearances = sim.config.ui.obs.eventAppearances;
+  sim.config.ui.animations = sim.config.ui.animations || {};
+  Object.keys( eventAppearances).forEach( function (trigEvtTypeName) {
+    var evtAppearDefRec = eventAppearances[trigEvtTypeName],
+        evtView = evtAppearDefRec.view,
+        domElem=null, animation=null, timingDefRec={};
+    if (evtView.imageFile) {
+      domElem = document.createElement("img");
+      if (!evtView.imageFile.includes("/")) {
+        domElem.src = oes.defaults.imgFolder + evtView.imageFile;
+      } else {
+        domElem.src = evtView.imageFile;
+      }
+      if (evtView.style) domElem.style = evtView.style;
+      sim.config.ui.canvasContainerEl.appendChild( domElem);
+      /*
+      } else if (evtView.shapeName === "text") {
+        domElem = svg.createText( );
+        canvasSvgEl.appendChild( el);
+      */
+    } else {
+      domElem = evtView.domElem();
+    }
+    timingDefRec.duration = evtView.duration || 1000;
+    if (evtView.iterations) timingDefRec.iterations = evtView.iterations;
+    if (evtView.fill) timingDefRec.fill = evtView.fill;
+    animation = domElem.animate( evtView.keyframes, timingDefRec);
+    animation.pause();  // do not yet start the animation
+    sim.config.ui.animations[trigEvtTypeName] = animation;  // store the animation handle
+  });
 };

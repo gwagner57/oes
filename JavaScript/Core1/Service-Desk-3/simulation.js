@@ -1,7 +1,7 @@
 /*******************************************************
  Simulation Model
 ********************************************************/
-sim.model.name = "Workstation";
+sim.model.name = "Service-Desk-3";
 sim.model.time = "continuous";
 sim.model.timeUnit = "min";
 sim.model.objectTypes = ["ServiceDesk"];

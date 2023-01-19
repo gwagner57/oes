@@ -60,17 +60,14 @@ sim.schedule = function (e) {
   else for (const evt of e) {sim.FEL.add( evt);}
 }
 /*******************************************************************
- * Assign model parameters with experiment parameter values ********
- *******************************************************************/
-sim.assignModelParameters = function (expParSlots) {
-  for (let parName of Object.keys( expParSlots)) {
-    sim.model.p[parName] = expParSlots[parName];
-  }
-}
-/*******************************************************************
  * Initialize a (standalone or experiment scenario) simulation run *
  *******************************************************************/
 sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
+  function assignModelParameters( expParSlots) {
+    for (const parName of Object.keys( expParSlots)) {
+      sim.model.p[parName] = expParSlots[parName];
+    }
+  }
   // clear initial state data structures
   sim.objects.clear();
   sim.namedObjects.clear();
@@ -95,7 +92,7 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
     rand.gen = Math.random;
   }
   // Assign model parameters with experiment parameter values
-  if (expParSlots) sim.assignModelParameters( expParSlots);
+  if (expParSlots) assignModelParameters( expParSlots);
   // reset model-specific statistics
   if (sim.model.setupStatistics) sim.model.setupStatistics();
   // (re)set the timeSeries statistics variable
@@ -110,26 +107,7 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
       }
     }
   }
-  // Add initial objects (possibly changed in UI)
-  for (const objTypeName of Object.keys( sim.scenario.initialObjects || {})) {
-    const C = sim.Classes[objTypeName];
-    const objRecords = sim.scenario.initialObjects[objTypeName];
-    C.instances ??= Object.create(null);
-    for (const objId of Object.keys( objRecords)) {
-      //TODO: should the records be converted to class instances?
-      C.instances[objId] = new C( objRecords[objId]);
-    }
-  }
-  // Set up initial state
-  if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
-  // create populations per class
-  for (const o of sim.objects.values()) {
-    const className = o.constructor.name;
-    if (className in sim.Classes) {
-      sim.Classes[className].instances ??= Object.create(null);
-      sim.Classes[className].instances[o.id] = o;
-    }
-  }
+  oes.setupInitialStateDataStructures();
   // schedule initial events if no initial event has been scheduled
   if (sim.FEL.isEmpty()) {
     for (const evtTypeName of sim.model.eventTypes) {
@@ -174,6 +152,58 @@ sim.runScenario = function (createLog) {
     });
   }
   function runScenarioStep() {
+    function sendVisualizationData( currentEvents) {
+      const eventAppearances = sim.config.ui.obs.eventAppearances,
+            objViewAttributes = sim.config.ui.obs.visualizationAttributes,
+            viewSlotsPerObject = {};
+      // send object view data
+      for (const objViewId of Object.keys( objViewAttributes)) {
+        const visAttributes = objViewAttributes[objViewId],
+              obj = sim.namedObjects.get( objViewId),
+              objVisSlots = {};
+        if (obj) {  // a specific object to be visualized
+          for (const visAttr of visAttributes) {
+            const attrPathParts = visAttr.split("."),
+                  p1 = attrPathParts[0];
+            switch (attrPathParts.length) {
+            case 1:
+              // create slot only if the value has changed
+              if (obj[p1] !== obj[p1+"_pre"]) objVisSlots[p1] = obj[p1];
+              obj[p1+"_pre"] = obj[p1];
+              break;
+            case 2: {
+              const p2 = attrPathParts[1];
+              // create slot only if the value has changed
+              if (obj[p1][p2] !== obj[p1][p2+"_pre"]) objVisSlots[visAttr] = obj[p1][p2];
+              obj[p1][p2+"_pre"] = obj[p1][p2];
+              break;}
+            case 3:
+              const p2 = attrPathParts[1], p3 = attrPathParts[2];
+              // create slot only if the value has changed
+              if (obj[p1][p2][p3] !== obj[p1][p2][p3+"_pre"]) objVisSlots[visAttr] = obj[p1][p2][p3];
+              obj[p1][p2][p3+"_pre"] = obj[p1][p2][p3];
+              break;
+            }
+          }
+          if (Object.keys( objVisSlots).length > 0) viewSlotsPerObject[objViewId] = objVisSlots;
+        } else if (sim.model.objectTypes.includes( objViewId)) {
+          // an object view for all instances of an object type
+          for (const objIdStr of Object.keys( sim.Classes[objViewId].instances)) {
+            // ...
+          }
+        }
+      }
+      // send event appearance data
+      for (const e of currentEvents) {
+        const ET = e.constructor;
+        if (ET.name in eventAppearances) {
+
+        }
+      }
+      if (Object.keys( viewSlotsPerObject).length > 0) {
+        self.postMessage({ step: sim.step, time: sim.time, viewSlotsPerObject});
+      }
+    }
     const stepStartTime = (new Date()).getTime();
     sim.advanceSimulationTime();
     // extract and process next events
@@ -182,7 +212,7 @@ sim.runScenario = function (createLog) {
     if (nextEvents.length > 1) nextEvents.sort( eVENT.rank);
     // process next (=current) events
     for (const e of nextEvents) {
-      // apply event rule
+      // process event by applying its event rule
       const followUpEvents = e.onEvent();
       // schedule follow-up events
       for (const f of followUpEvents) {
@@ -231,15 +261,20 @@ sim.runScenario = function (createLog) {
       }
     }
     if (createLog) sendLogMsg( nextEvents);  // log current state
+    if (sim.config.visualize) sendVisualizationData( nextEvents);  // send visualization data
     if (sim.stepDuration) {  // loop with "setTimeout"
       if (sim.time < sim.scenario.durationInSimTime &&
           sim.step < sim.scenario.durationInSimSteps &&
           (sim.timeIncrement || !sim.FEL.isEmpty())) {  // end simulation if no more events
-        // compute the time needed for executing this step
+        // compute the time that was needed for executing this step
         const stepTime = (new Date()).getTime() - stepStartTime;
         // check if we need some delay, because of the stepDuration parameter
         const stepDelay = sim.stepDuration > stepTime ? sim.stepDuration - stepTime : 0;
         setTimeout( runScenarioStep, stepDelay);
+      } else {
+        if (sim.model.computeFinalStatistics) sim.model.computeFinalStatistics();
+        // send statistics to main thread ate end of simulation
+        self.postMessage({statistics: sim.stat, endSimTime: sim.time, loadEndTime: sim.loadEndTime});
       }
     }
   }
@@ -247,17 +282,19 @@ sim.runScenario = function (createLog) {
   const scenStartTime = (new Date()).getTime();
   if (createLog) sendLogMsg([]);  // log initial state
   if (sim.stepDuration) {  // slowing down the execution with "setTimeout"
-    runScenarioStep();
-  } else {  // normal simulation Loop
+    runScenarioStep();  // asynchronous simulation Loop
+  } else {  // normal (synchronous) simulation Loop
     while (sim.time < sim.scenario.durationInSimTime &&
-    sim.step < sim.scenario.durationInSimSteps &&
-    (new Date()).getTime() - scenStartTime < sim.scenario.durationInCpuTime) {
+           sim.step < sim.scenario.durationInSimSteps &&
+           (new Date()).getTime() - scenStartTime < sim.scenario.durationInCpuTime) {
       runScenarioStep();
       // end simulation if no time increment and no more events
       if (!sim.timeIncrement && sim.FEL.isEmpty()) break;
     }
+    if (sim.model.computeFinalStatistics) sim.model.computeFinalStatistics();
+    // send statistics to main thread ate end of simulation
+    self.postMessage({statistics: sim.stat, endSimTime: sim.time, loadEndTime: sim.loadEndTime});
   }
-  if (sim.model.computeFinalStatistics) sim.model.computeFinalStatistics();
 }
 /*******************************************************
  Run a Standalone Simulation Scenario (in a JS worker)
@@ -267,8 +304,6 @@ sim.runStandaloneScenario = function (createLog) {
   if (!sim.scenario.randomSeed) sim.initializeScenarioRun();
   else sim.initializeScenarioRun({seed: sim.scenario.randomSeed});
   sim.runScenario( createLog);
-  // send statistics to main thread
-  self.postMessage({statistics: sim.stat, endSimTime: sim.time, loadEndTime: sim.loadEndTime});
 }
 /*******************************************************
  Run an Experiment (in a JS worker)

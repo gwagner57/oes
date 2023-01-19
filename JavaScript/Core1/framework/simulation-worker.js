@@ -33,15 +33,13 @@ onmessage = function (e) {
       }
     }
   }
-
   sim.loadEndTime = (new Date()).getTime();
   self.importScripts("simulation.js");
   // assign scenario parameters to model parameters
   if (e.data.scenParams) sim.model.p = e.data.scenParams;
   if (e.data.initialObjects) sim.scenario.initialObjects = e.data.initialObjects;
   loadSimulationModelCode();
-  if (sim.experimentType) {
-    // when experimentType has been set, run it
+  if (sim.experimentType) {  // when experimentType has been set, run it
     sim.runExperiment( sim.experimentType);
   } else if (e.data.simToRun >= 0) {
     // assign alternative scenario, if selected
@@ -64,6 +62,9 @@ onmessage = function (e) {
       sim.scenario = scenario;
     }
     if (e.data.simToRun === 0) {
+      if (e.data.visualizationAttributes) {
+        sim.config.ui.obs.visualizationAttributes = e.data.visualizationAttributes;
+      }
       sim.runStandaloneScenario( e.data.createLog);
     } else {
       let expNo = parseInt( e.data.simToRun) - 1;

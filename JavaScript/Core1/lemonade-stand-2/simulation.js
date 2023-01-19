@@ -11,8 +11,8 @@ sim.model.objectTypes = ["SingleProductCompany", "ItemType", "InputItemType", "O
 sim.model.eventTypes = ["StartOfDay", "DailyProduction", "Delivery", "DailyDemand", "EndOfDay"];
 
 sim.config.visualize = true;
-sim.config.stepDuration = 500;  // one simulation step has a duration of 500 ms
-sim.config.observationUI.type = "SVG";
+sim.config.stepDuration = 500;  // the duration of one simulation step in ms
+sim.config.ui.obs.type = "SVG";
 //sim.config.userInteractive = true;
 
 //sim.config.artworkCredits = "Weather icons by https://icons8.com";
@@ -20,7 +20,7 @@ sim.config.observationUI.type = "SVG";
 /*******************************************************
  Default Scenario
  ********************************************************/
-sim.scenario.durationInSimTime = 40*24;  // 40 days
+sim.scenario.durationInSimTime = 10*24;  // 40 days
 sim.scenario.description = "The default scenario runs for 40 days.";
 sim.scenario.setupInitialState = function () {
   const iit1 = new InputItemType({id:3, name: "Lemon",
@@ -67,9 +67,9 @@ sim.scenario.setupInitialState = function () {
     targetInventory: 1000,
     reorderPoint: 500
   });
-  const lm = new LemonadeMarket({id:8, name:"LemonadeMarket", weatherState: WeatherStateEL.PARTLY_CLOUDY});
-  const pc = new ProductCategory({id:9, name: "Lemonade", market: lm});
-  const oit = new OutputItemType({id:2, name: "Lemonade",
+  const lm = new LemonadeMarket({id:8, name:"lemonadeMarket", weatherState: WeatherStateEL.PARTLY_CLOUDY});
+  const pc = new ProductCategory({id:9, name: "lemonade", market: lm});
+  const oit = new OutputItemType({id:2, name: "Lemona",
     quantityUnit: "ltr",
     supplyUnit: "cup",
     quantityPerSupplyUnit: 0.25,  /// in quantity units (ltr)
@@ -80,7 +80,7 @@ sim.scenario.setupInitialState = function () {
     packItemsPerSupplyUnit: {"PaperCup": 1},
     stockQuantity: 0  // in quantity units
   });
-  const ls = new SingleProductCompany({id:1, name: "LemonadeStand",
+  const ls = new SingleProductCompany({id:1, name: "lemonadeStand",
     productType: oit,  // Lemonade
     liquidity: 100,
     fixedCostPerDay: 50
@@ -127,67 +127,88 @@ sim.config.ui.obs.canvas.height = 300;
 //Allows background styling (not needed here)
 //sim.config.ui.observation.canvas.style = "background-color:yellow";
 sim.config.ui.obs.fixedElements = {
-  "LemonadeStandTable": {
+  "lemonadeStandTable": {
     shapeName: "polygon",  // an SVG shape name
     // defining fixed values for the attributes of an SVG shape
-    shapeAttributes: {points: "400,150 400,160 350,160 350,260 340,260 340,160 240,160 240,260 230,260 230,160 180,160 180,150"},
+    shapeAttributes: {points: "400,200 400,210 350,210 350,310 340,310 340,210 240,210 240,310 230,310 230,210 180,210 180,200"},
     // CSS style rules for the SVG element
     style: "fill:brown; stroke-width:0"
   },
-  "LemonadePitcher": {
+  "lemonadePitcher": {
     shapeName: "polyline",
-    shapeAttributes: {points: "200,100 200,150 250,150 250,100"},
+    shapeAttributes: {points: "200,125 200,200 250,200 250,125"},
     style: "fill:none; stroke:black; stroke-width:3"
   }
 };
+/*
+ A view is defined for a specific object, when the view name denotes an object name,
+ or for all objects of an object type, when the view name denotes an object type name.
+ It specifies a list of visualization attributes and a list of view items being SVG elements.
+ */
 sim.config.ui.obs.objectViews = {
-  "LemonadeStand": [  // a view consisting of a group of SVG elements
-    {shapeName: "rect",  // an SVG shape name
-      // CSS style rules for the SVG element
-      style: "fill:yellow; stroke-width:0",
-      // attribute-value slots of an SVG shape, using fixed values or expressions
-      shapeAttributes: {
-        // defining fixed values for the attributes of an SVG shape
-        x: 205, width: 40,
-        // using expressions for defining the values of shape attributes
-        y: function (stand) {return 145 - stand.productType.stockQuantity;},
-        height: function (stand) {return stand.productType.stockQuantity;}
+  "lemonadeStand": {  // a view for the object "lemonadeStand"
+    visualizationAttributes: ["productType.stockQuantity","dailyProfit"],
+    attributesViewItemsRecords: [
+      { attributes:["productType.stockQuantity"],
+        viewItems: [  // a list of view item definition records for the given object and attribute
+          {shapeName: "rect",  // an SVG shape name
+            style: "fill:yellow; stroke-width:0",  // CSS style rules for the SVG element
+            // attribute-value slots of an SVG shape, using fixed values or expressions
+            shapeAttributes: {
+              // defining fixed values for the attributes of an SVG shape
+              x: 205, width: 40,
+              // using expressions for defining the values of shape attributes
+              y: stand => 195 - stand.productType.stockQuantity,
+              // the parameter "stand" represents a LemonadeStand object
+              height: stand => stand.productType.stockQuantity
+            }
+          },
+          {shapeName: "text",  // text elements are treated like shapes
+            style:"font-size:10px; text-anchor:middle",  // CSS text style rules
+            shapeAttributes: {
+              x: 225, y: 195,  // coordinates for positioning the text
+              textContent: stand => stand.productType.stockQuantity
+            }
+          }
+        ]
+      },
+      { attributes:["dailyProfit"],
+        viewItems: [
+          {shapeName: "rect",
+            style:"stroke-width:0",
+            fillPatternImage:{id:"fp1", file:"Dollar-Coin.svg"},
+            shapeAttributes: { x: 300, width: 60,
+              y: stand =>  195 - Math.floor( stand.dailyProfit / 2),
+              height: stand =>  Math.floor( stand.dailyProfit / 2)
+            }
+          },
+          {shapeName: "text",
+            style:"font-size:10px; text-anchor:middle",  // CSS text style rules
+            shapeAttributes: {
+              x: 375, y: 195,
+              textContent: stand => Math.floor( stand.dailyProfit) || ""
+            }
+          }
+        ]
       }
-    },
-    {shapeName: "text",  // text elements are treated like shapes
-      style:"font-size:10px; text-anchor:middle",  // CSS text style rules
-      shapeAttributes: {
-        x: 225, y: 145,  // coordinates for positioning the text
-        textContent: function (stand) {return stand.productType.stockQuantity;}
+    ]
+  },
+  // a view consisting of a map of enum attributes to lists of visualization items with an optional canvasBackgroundColor
+  "lemonadeMarket": {
+    visualizationAttributes: ["weatherState"],
+    attributesViewItemsRecords: [
+      { enumAttribute:"weatherState",
+        viewItems: [  // an array list mapping enum indexes to visualization items
+          {shapeName:"image", shapeAttributes:{ file:"icons8-Summer-96.png",
+            x:450, y:0, width:96, height:96}, canvasBackgroundColor:"lightyellow"},
+          {shapeName:"image", shapeAttributes:{ file:"icons8-Partly-Cloudy-Day-96.png",
+            x:450, y:0, width:96, height:96}, canvasBackgroundColor:"oldlace"},  // or ivory?
+          {shapeName:"image", shapeAttributes:{ file:"icons8-Cloud-128.png",
+            x:450, y:0, width:128, height:128}, canvasBackgroundColor:"lightgray"},
+          {shapeName:"image", shapeAttributes:{ file:"icons8-Rain-128.png",
+            x:450, y:0, width:128, height:128}, canvasBackgroundColor:"silver"},
+        ]
       }
-    },
-    /*
-  {shapeName: "rect",  // dailyRevenue
-   style:"stroke-width:0",
-   fillPatternImage:{id:"fp1", file:"Dollar-Coin.svg"},
-   shapeAttributes: { x: 300, width: 60,
-     y: function (stand) {return 145 - parseInt( stand.dailyRevenue);},
-     height: function (stand) {return parseInt( stand.dailyRevenue);}
-   }
-  },*/
-    {shapeName: "text",  // text element for dailyRevenue
-      style:"font-size:10px; text-anchor:middle",  // CSS text style rules
-      shapeAttributes: {
-        x: 375, y: 145,
-        textContent: function (stand) {return stand.dailyRevenue ? stand.dailyRevenue : "";}
-      }
-    }
-  ],
-  "Market": {  // a view consisting of a map of enum attributes to lists of visualization items with an optional canvasBackgroundColor
-    "weatherState": [  // an array list mapping enum indexes to visualization items
-      {shapeName:"image", shapeAttributes:{ file:"icons8-Summer-96.png",
-          x:450, y:0, width:96, height:96}, canvasBackgroundColor:"lightyellow"},
-      {shapeName:"image", shapeAttributes:{ file:"icons8-Partly-Cloudy-Day-96.png",
-          x:450, y:0, width:96, height:96}, canvasBackgroundColor:"oldlace"},  // or ivory?
-      {shapeName:"image", shapeAttributes:{ file:"icons8-Cloud-128.png",
-          x:450, y:0, width:128, height:128}, canvasBackgroundColor:"lightgray"},
-      {shapeName:"image", shapeAttributes:{ file:"icons8-Rain-128.png",
-          x:450, y:0, width:128, height:128}, canvasBackgroundColor:"silver"},
     ]
   }
 };
@@ -221,7 +242,7 @@ sim.config.ui.obs.eventAppearances = {
   },
   "EndOfDay": {
     view: {  // an event view is a web animation of a DOM element
-      domElem: function () {return sim.visualEl;},  // the visualization container element
+      domElem: function () {return sim.config.ui.canvasContainerEl;},  // the visualization container element
       keyframes: [{backgroundColor:'lightgray'}, {backgroundColor:'darkslategrey'}],
       duration: 1000  // ms
     }

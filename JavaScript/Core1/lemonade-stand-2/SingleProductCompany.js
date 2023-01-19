@@ -11,6 +11,7 @@ class SingleProductCompany extends oBJECT {
     }
     this.liquidity = liquidity;
     this.fixedCostPerDay = fixedCostPerDay;  // Includes labor cost and facilities cost
+    this.dailyProfit = 0;  // for visualization
   }
   getDemandForecast() {
     // forecast weather state and temperature for the demand period

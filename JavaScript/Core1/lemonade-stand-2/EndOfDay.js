@@ -14,8 +14,9 @@ class EndOfDay extends eVENT {
     sim.stat.dailyCosts += comp.fixedCostPerDay;
     sim.stat.totalCosts += sim.stat.dailyCosts;
     sim.stat.dailyProfit = sim.stat.dailyRevenue - sim.stat.dailyCosts;
+    comp.dailyProfit = sim.stat.dailyProfit;  // for visualization
     // update liquidity
-    this.company.liquidity += sim.stat.dailyProfit;
+    comp.liquidity += sim.stat.dailyProfit;
     return followupEvents;
   }
 }

@@ -1,18 +1,4 @@
 const util = {
-  /*******************************************************************************
-   * Create option elements from an array list of option text strings
-   * and insert them into a selection list element
-   * @param {object} selEl  A select(ion list) element
-   * @param {Array<string>} strings  An array list of strings
-   ******************************************************************************/
-  fillSelectWithOptionsFromStringList( selEl, strings) {
-    for (let i=0; i < strings.length; i++) {
-      let el = document.createElement("option");
-      el.textContent = `(${i}) ${strings[i]}`;
-      el.value = i;
-      selEl.add( el, null);
-    }
-  },
   // the progress indication is indeterminate if there is no value
   createProgressBarEl( title, value) {
     const progressContainerEl = document.createElement("div"),
