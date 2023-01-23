@@ -63,6 +63,10 @@ async function setupUI() {
     // create initial state UI
     if (Array.isArray( sim.config.ui.objectTypes) && sim.config.ui.objectTypes.length > 0) {
       try {
+        // initialize the map of all objects (accessible by ID)
+        sim.objects = new Map();
+        // initialize the Map of all objects (accessible by name)
+        sim.namedObjects = new Map();
         for (const objTypeName of sim.config.ui.objectTypes) {
           await util.loadScript( objTypeName + ".js");
         }
@@ -82,6 +86,14 @@ async function setupUI() {
    Set up UIs for Visualization, Event Appearances and User Interaction
    **********************************************************************/
   if (sim.config.visualize) {
+    const logLabelEl = document.forms["run"].elements["log"].parentElement,
+          visLabelEl = document.createElement("label"),
+          stepDurLabelEl = document.createElement("label");
+    visLabelEl.innerHTML = "Visualize <input name='vis' type='checkbox' checked='checked'/>";
+    logLabelEl.before( visLabelEl);
+    stepDurLabelEl.innerHTML = `Step duration (ms): <input name='stepDur' type='number' value='${sim.config.stepDuration}' min="100" step="100"/>`;
+    stepDurLabelEl.lastElementChild.style.width = "4em";  // size of input field
+    logLabelEl.before( stepDurLabelEl);
     await oes.ui.setupVisualization();
     if (sim.config.ui.obs.eventAppearances &&
         Object.keys( sim.config.ui.obs.eventAppearances).length > 0) {
@@ -121,10 +133,10 @@ function onChangeOfScenSelect() {
 }
 function onChangeOfExpSelect() {
   if (selExpEl.value === "0") {
-    logCheckboxEl.parentElement.style.display = "block";
+    logCheckboxEl.parentElement.parentElement.style.display = "block";
     storeExpResCheckboxEl.parentElement.parentElement.style.display = "none";
   } else {
-    logCheckboxEl.parentElement.style.display = "none";
+    logCheckboxEl.parentElement.parentElement.style.display = "none";
     // allow choosing "store results" only if browser supports IndexedDB
     if ('indexedDB' in self) {
       storeExpResCheckboxEl.parentElement.parentElement.style.display = "block";
@@ -213,10 +225,14 @@ async function clearDatabase() {
   await idb.deleteDB( sim.model.name);
 }
 function run() {
-  var choice = parseInt( selExpEl.value), data={}, initialObjects={};
+  const choice = parseInt( selExpEl.value),
+        visualizeCheckbox = document.forms["run"].elements["vis"],
+        visualize = visualizeCheckbox?.checked,
+        visCanvasEl = document.getElementById("visCanvas"),
+        initialObjects={};
   if (!isNaN( choice)) {
     if (choice > 0) {
-      if (!sim.experimentType) sim.experimentType = sim.experimentTypes[parseInt(choice)-1];
+      if (!sim.experimentType) sim.experimentType = sim.experimentTypes[choice-1];
       simInfoEl.textContent = sim.experimentType.title;
       exPostStatTableEl.querySelector("caption").textContent = "Experiment Results";
     } else {
@@ -231,6 +247,7 @@ function run() {
   if (scenarioDescriptionEl) scenarioDescriptionEl.style.display = "none";
   if (upfrontUiEl) upfrontUiEl.style.display = "none";
   else formEl.style.display = "none";  // hide select&run form
+  if (!visualize && visCanvasEl) visCanvasEl.style.display = "none";  // hide visualization canvas
 
   sim.model.setupStatistics();
   if (sim.experimentType) {
@@ -256,38 +273,38 @@ function run() {
       }
     }
   }
-  //console.log( JSON.stringify( initialObjects["SingleProductCompany"]));
-  if (Object.keys( initialObjects).length > 0) data.initialObjects = initialObjects;
-  if (sim.scenarios.length > 0) {
-    data.scenarioNo = parseInt( selScenEl.value)
-  }
   const nmrOfScriptFilesToLoad = 4 + sim.model.objectTypes.length + sim.model.eventTypes.length;
   document.body.appendChild( util.createProgressBarEl(`Loading ${nmrOfScriptFilesToLoad} script files ...`));
 
-  // store start time of simulation/experiment run
-  const startWorkerTime = (new Date()).getTime();
   // set up the simulation worker
   const worker = new Worker("simulation-worker.js");
   // start the simulation in the worker thread
-  data = {simToRun: choice,  // either standalone sim or experiment
+  const data = {simToRun: choice,  // either standalone sim or experiment
     scenParams: sim.scenario.parameters,
+    visualize: visualize,
     createLog: logCheckboxEl.checked,
     storeExpRes: storeExpResCheckboxEl.checked
   };
+  if (Object.keys( initialObjects).length > 0) data.initialObjects = initialObjects;
+  if (sim.scenarios.length > 0) data.scenarioNo = parseInt( selScenEl.value);
   if (sim.config.ui.obs.visualizationAttributes) {
     data.visualizationAttributes = sim.config.ui.obs.visualizationAttributes;
   }
+  // store start time of simulation/experiment run
+  const startWorkerTime = (new Date()).getTime();
   worker.postMessage( data);
 
   // on incoming messages from worker
   worker.onmessage = function (e) {
-    if (e.data.step !== undefined && !e.data.viewSlotsPerObject) {  // create log entry
+    if (e.data.step !== undefined && !e.data.viewSlotsPerObject
+        && !e.data.eventsToAppear) {  // create log entry
       simLogTableEl.parentElement.style.display = "block";
       oes.ui.logSimulationStep( simLogTableEl, e.data.step, e.data.time,
           e.data.currEvtsStr, e.data.objectsStr, e.data.futEvtsStr);
-    } else if (e.data.viewSlotsPerObject) {
-      //console.log( JSON.stringify( e.data.viewSlotsPerObject));
-      oes.ui.updateVisualization( e.data.viewSlotsPerObject);
+    } else if ("viewSlotsPerObject" in e.data || "eventsToAppear" in e.data) {
+      sim.time = e.data.time;
+      if ("viewSlotsPerObject" in e.data) oes.ui.visualizeStep( e.data.viewSlotsPerObject);
+      if ("eventsToAppear" in e.data) oes.ui.playEventAnimation( e.data.eventsToAppear);
     } else {  // end of simulation/experiment
       if (document.getElementById("progress-container")) {
         document.getElementById("progress-container").remove();

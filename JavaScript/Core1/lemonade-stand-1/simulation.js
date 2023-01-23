@@ -9,9 +9,7 @@ sim.model.otherCodeFiles = ["../lib/RingBuffer"];
 sim.model.objectTypes = ["SingleProductCompany", "ItemType", "InputItemType", "OutputItemType"];
 sim.model.eventTypes = ["StartOfDay", "DailyDelivery", "DailyProduction", "DailyDemand", "EndOfDay"];
 
-if (sim.config.ui) {
-  sim.config.ui.objectTypes = ["SingleProductCompany", "ItemType", "InputItemType", "OutputItemType"];
-}
+sim.config.ui.objectTypes = ["SingleProductCompany", "ItemType", "InputItemType", "OutputItemType"];
 
 /*******************************************************
  Default Scenario
@@ -140,6 +138,8 @@ sim.model.setupStatistics = function () {
 sim.model.computeFinalStatistics = function () {
   sim.stat.totalProfit = sim.stat.totalRevenue - sim.stat.totalCosts;
 };
+sim.config.ui.stat.excludeFromTable = ["dailyCosts","dailyRevenue","dailyProfit"];
+
 sim.model.timeSeries = {
   "dailyRevenue": {statisticsVariable:"dailyRevenue"},
   "dailyProfit": {statisticsVariable:"dailyProfit"},

@@ -18,8 +18,9 @@ oes.predefinedObjectTypes = ["oBJECT"];
 oes.predefinedEventTypes = ["eVENT"];
 
 /******************************************************************************
- * An OES object has an ID and may have a unique name. If no ID value is provided on creation,
- * an ID value is automatically assigned using the simulation scenarios "idCounter".
+ * An OES object has an ID and may have a unique name. If no ID value is provided
+ * on creation, an auto-integer ID value is automatically assigned using the
+ * simulation scenario's "idCounter".
  ******************************************************************************/
 class oBJECT {
   constructor( id, name) {
@@ -31,8 +32,9 @@ class oBJECT {
       // also add to the Map of simulation objects by name
       sim.namedObjects.set( name, this);
     }
-    // create a map of class instances / TODO: initialize "instances"
-    //this.constructor.instances[id] = this;
+    // create a map of class instances
+    this.constructor.instances ??= {};
+    this.constructor.instances[id] = this;
   }
   // overwrite/improve the standard toString method
   toString() {

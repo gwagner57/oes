@@ -52,15 +52,17 @@
   </div>
   <h2 id="scenarioTitle">Default scenario</h2>
   <p id="scenarioDescription">The default scenario runs for 40 days.</p>
-  <form id="run">
-   <div><label>Select scenario: <select name="selScen" onchange="onChangeOfScenSelect()"></select></label></div>
-   <div><button onclick="run()" type="button">Run</button>
-     <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>
-   <div><label>Simulation log <input name="log" type="checkbox" /></label></div>
-   <div style="display: none"><label>Store exper. results <input name="storeExpRes" type="checkbox" /></label>
-    <button onclick="exportExperResults()" type="button">Export exper. results</button>
-   </div>
-  </form>
+  <div id="upfrontUI">
+   <form id="run">
+    <div><label>Select scenario: <select name="selScen" onchange="onChangeOfScenSelect()"></select></label></div>
+    <div><button onclick="run()" type="button">Run</button>
+      <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>
+    <div><label>Simulation log <input name="log" type="checkbox" /></label></div>
+    <div style="display: none"><label>Store exper. results <input name="storeExpRes" type="checkbox" /></label>
+     <button onclick="exportExperResults()" type="button">Export exper. results</button>
+    </div>
+   </form>
+  </div>
   <table style="display: none">
       <caption>Simulation Log</caption>
       <thead>

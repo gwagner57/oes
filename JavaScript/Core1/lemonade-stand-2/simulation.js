@@ -5,17 +5,20 @@ sim.model.name = "Lemonade-Stand-2";
 sim.model.time = "discrete"; // implies using only discrete random variables
 sim.model.timeUnit = "h";
 
-sim.model.otherCodeFiles = ["../lib/RingBuffer"];
+sim.model.otherCodeFiles = ["../lib/RingBuffer"];  // used for history data
 sim.model.objectTypes = ["SingleProductCompany", "ItemType", "InputItemType", "OutputItemType",
     "ProductCategory", "DailyDemandMarket", "LemonadeMarket"];
 sim.model.eventTypes = ["StartOfDay", "DailyProduction", "Delivery", "DailyDemand", "EndOfDay"];
 
+/*******************************************************
+ Simulation Configuration
+ ********************************************************/
 sim.config.visualize = true;
+sim.config.ui.obs.type = "SVG";  // the type of observation user interface
 sim.config.stepDuration = 500;  // the duration of one simulation step in ms
-sim.config.ui.obs.type = "SVG";
-//sim.config.userInteractive = true;
+sim.config.ui.artworkCredits = "Weather icons by https://icons8.com";
 
-//sim.config.artworkCredits = "Weather icons by https://icons8.com";
+//sim.config.userInteractive = true;
 
 /*******************************************************
  Default Scenario
@@ -77,7 +80,7 @@ sim.scenario.setupInitialState = function () {
     salesPrice: 1.5,  // e.g., USD
     batchSize: 3.5,  // in quantity units (1 pitcher = 3.5 liters)
     bomItems: {"Lemon": 3, "Water": 2.5, "IceCubes": 20, "Sugar": 0.3},
-    packItemsPerSupplyUnit: {"PaperCup": 1},
+    packItemsPerSupplyUnit: {"PaperCup": 1},  // 1 paper cup per cup of lemonade
     stockQuantity: 0  // in quantity units
   });
   const ls = new SingleProductCompany({id:1, name: "lemonadeStand",
@@ -102,6 +105,8 @@ sim.model.setupStatistics = function () {
 sim.model.computeFinalStatistics = function () {
   sim.stat.totalProfit = sim.stat.totalRevenue - sim.stat.totalCosts;
 }
+sim.config.ui.stat.excludeFromTable = ["dailyCosts","dailyRevenue","dailyProfit"];
+
 sim.model.timeSeries = {
   "dailyRevenue": {statisticsVariable:"dailyRevenue"},
   "dailyProfit": {statisticsVariable:"dailyProfit"},
@@ -123,7 +128,7 @@ sim.experimentTypes[0] = {
  ********************************************************/
 sim.config.ui.obs.type = "SVG";
 sim.config.ui.obs.canvas.width = 600;
-sim.config.ui.obs.canvas.height = 300;
+sim.config.ui.obs.canvas.height = 320;
 //Allows background styling (not needed here)
 //sim.config.ui.observation.canvas.style = "background-color:yellow";
 sim.config.ui.obs.fixedElements = {
@@ -167,7 +172,14 @@ sim.config.ui.obs.objectViews = {
             style:"font-size:10px; text-anchor:middle",  // CSS text style rules
             shapeAttributes: {
               x: 225, y: 195,  // coordinates for positioning the text
-              textContent: stand => stand.productType.stockQuantity
+              textContent: stand => stand.productType.stockQuantity + " L"
+            }
+          },
+          {shapeName: "text",  // text elements are treated like shapes
+            style:"font-size:20px; text-anchor:middle",  // CSS text style rules
+            shapeAttributes: {
+              x: 50, y: 50,  // coordinates for positioning the text
+              textContent: () => sim.time ? "Day "+ Math.ceil( sim.time / 24) : ""
             }
           }
         ]
@@ -186,7 +198,7 @@ sim.config.ui.obs.objectViews = {
             style:"font-size:10px; text-anchor:middle",  // CSS text style rules
             shapeAttributes: {
               x: 375, y: 195,
-              textContent: stand => Math.floor( stand.dailyProfit) || ""
+              textContent: stand => stand.dailyProfit > 0 ? "$"+ Math.floor( stand.dailyProfit) : ""
             }
           }
         ]
@@ -233,8 +245,8 @@ sim.config.ui.obs.eventAppearances = {
     //sound: {duration: 1000, source:"12/300/80 14/200/90"},
     view: {  // an event view is a web animation of a DOM element
       imageFile: "customers.svg",
-      style: "width:300px; height:300px; position:absolute; left:-30%; top:135px;",
-      keyframes: [{left:'-30%'}, {left:'80%'}],
+      style: "width:300px; height:300px; position:absolute; left:-100%; bottom:3%;",
+      keyframes: [{left:'-30%'}, {left:'90%'}],
       duration: 1000,  // ms
       //iterations: Infinity,
       //fill:
@@ -242,7 +254,7 @@ sim.config.ui.obs.eventAppearances = {
   },
   "EndOfDay": {
     view: {  // an event view is a web animation of a DOM element
-      domElem: function () {return sim.config.ui.canvasContainerEl;},  // the visualization container element
+      domElem: () => sim.config.ui.canvasContainerEl,  // the visualization container element
       keyframes: [{backgroundColor:'lightgray'}, {backgroundColor:'darkslategrey'}],
       duration: 1000  // ms
     }

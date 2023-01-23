@@ -19,6 +19,8 @@ class StartOfDay extends eVENT {
     sim.stat.dailyCosts = 0;
     sim.stat.dailyRevenue = 0;
     sim.stat.dailyProfit = 0;
+    // reset daily profit
+    this.company.dailyProfit = 0;
     // forecast today's demand
     const dailyDemandForecast = this.company.getDemandForecast();
     // production planning and just-in-time orders
@@ -44,8 +46,8 @@ class StartOfDay extends eVENT {
     }));
     // create replenishment deliveries based on inventory
     for (const itemName of invItems) {
-      let delivItems={};
-      const invItem = sim.namedObjects.get( itemName);
+      const invItem = sim.namedObjects.get( itemName),
+            delivItems={};
       if (invItem.justInTime) continue;
       if (invItem.reorderPeriod && dayNo % invItem.reorderPeriod === 0 ||
           invItem.reorderPoint && !invItem.outstandingOrder &&

@@ -32,6 +32,8 @@ class DailyDemand extends eVENT {
     // update statistics
     sim.stat.dailyRevenue = dailyRevenue;
     sim.stat.totalRevenue += dailyRevenue;
+    // for visualization
+    this.company.dailyProfit = sim.stat.dailyRevenue - this.company.fixedCostPerDay;
     return followupEvents;
   }
 }

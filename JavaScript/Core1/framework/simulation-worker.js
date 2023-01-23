@@ -27,11 +27,6 @@ onmessage = function (e) {
         self.importScripts( evtT + ".js");
       }
     }
-    if (sim.model.activityTypes) {
-      for (const actT of sim.model.activityTypes) {
-        self.importScripts( actT + ".js");
-      }
-    }
   }
   sim.loadEndTime = (new Date()).getTime();
   self.importScripts("simulation.js");
@@ -62,6 +57,7 @@ onmessage = function (e) {
       sim.scenario = scenario;
     }
     if (e.data.simToRun === 0) {
+      sim.config.visualize = e.data.visualize;
       if (e.data.visualizationAttributes) {
         sim.config.ui.obs.visualizationAttributes = e.data.visualizationAttributes;
       }

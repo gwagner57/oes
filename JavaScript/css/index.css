@@ -81,9 +81,13 @@ figure.left {
 }
 form {
     clear: both;
+    margin-bottom: 1em;
 }
 form > * + * {
     margin-top: 1em;
+}
+label {
+    margin-right: 2em;
 }
 #upfrontUI {
     display: flex;

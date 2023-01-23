@@ -13,8 +13,10 @@ sim.scenarios = [];
 sim.experimentTypes = [];
 
 sim.config = Object.create(null);
-sim.config.ui = Object.create(null);
-sim.config.ui.obs = {canvas: Object.create(null), enumAttributes:[]};
+sim.config.ui = {
+  "obs": {canvas: Object.create(null), enumAttributes: []},
+  "stat": Object.create(null)
+};
 
 const oes = Object.create(null);
 oes.defaults = {

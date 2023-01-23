@@ -155,7 +155,8 @@ sim.runScenario = function (createLog) {
     function sendVisualizationData( currentEvents) {
       const eventAppearances = sim.config.ui.obs.eventAppearances,
             objViewAttributes = sim.config.ui.obs.visualizationAttributes,
-            viewSlotsPerObject = {};
+            viewSlotsPerObject = {},
+            eventsToAppear = {};
       // send object view data
       for (const objViewId of Object.keys( objViewAttributes)) {
         const visAttributes = objViewAttributes[objViewId],
@@ -197,11 +198,15 @@ sim.runScenario = function (createLog) {
       for (const e of currentEvents) {
         const ET = e.constructor;
         if (ET.name in eventAppearances) {
-
+          eventsToAppear[ET.name] = JSON.stringify(e);
         }
       }
-      if (Object.keys( viewSlotsPerObject).length > 0) {
+      if (Object.keys( viewSlotsPerObject).length > 0 && Object.keys( eventsToAppear).length > 0) {
+        self.postMessage({ step: sim.step, time: sim.time, viewSlotsPerObject, eventsToAppear});
+      } else if (Object.keys( viewSlotsPerObject).length > 0) {
         self.postMessage({ step: sim.step, time: sim.time, viewSlotsPerObject});
+      } else if (Object.keys( eventsToAppear).length > 0) {
+        self.postMessage({ step: sim.step, time: sim.time, eventsToAppear});
       }
     }
     const stepStartTime = (new Date()).getTime();
