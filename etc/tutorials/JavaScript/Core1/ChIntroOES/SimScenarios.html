@@ -87,24 +87,23 @@ sim.model.statistics = {...};</pre><p>We briefly discuss each group of
   // Initialize model variables
   ...
   // <b>Create initial objects</b>
-  let <b>serviceDesk1</b> = new ServiceDesk({id: 1, queueLength: 0});
+  const <b>serviceDesk1</b> = new ServiceDesk({id: 1, queueLength: 0});
   // Schedule initial events
   ...
-};</pre><p>Notice that object IDs are positive integers, but when used as keys
-  in the map <code>sim.objects</code>, they are converted to
-  strings.</p><p>Instead of assigning a <strong>fixed value</strong> to a
-  property like <code>queueLength</code> for defining an object's initial
-  state, as in <code>queueLength: 0</code>, we can also assign it a
-  <strong>fixed expression</strong>, as in <code>queueLength:
+};</pre><p>Notice that object IDs are positive integers.</p><p>Instead of
+  assigning a <strong>fixed value</strong> to a property like
+  <code>queueLength</code> for defining an object's initial state, as in
+  <code>queueLength: 0</code>, we can also assign it an<strong>
+  expression</strong>, as in <code>queueLength:
   Math.round(12/30)</code>.</p><p>An <strong>initial event</strong> is
-  scheduled by adding it to the <em>Future Events List (FEL)</em>, as shown in
-  the following example:</p><pre>sim.scenario.setupInitialState = function () {
+  scheduled (or added to the <em>Future Events List)</em>, as shown in the
+  following example:</p><pre>sim.scenario.setupInitialState = function () {
   // Initialize model variables
   ...
   // Create initial objects
-  let desk1 = new ServiceDesk({id: 1, queueLength: 0});
+  const desk1 = new ServiceDesk({id: 1, queueLength: 0});
   // <b>Schedule initial events</b>
-  sim.<b>FEL.add</b>( <b>new CustomerArrival</b>({occTime:1, serviceDesk: desk1}));
+  sim.<b>schedule</b>( <b>new CustomerArrival</b>({occTime:1, serviceDesk: desk1}));
 };</pre><p>Initial objects or events can be parametrized with the help of
   model parameters.</p></section><section><h4>2.3.4. Defining Alternative
   Scenarios with Different Initial States</h4><p>For running a model on top of

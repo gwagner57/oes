@@ -114,11 +114,28 @@ ul.links li:hover {
 
     <section href="ChIntroOES/SimStatistics.html" samepage="true"/>
 
-    <section href="ChIntroOES/SimTimeSeries.html"/>
+    <section href="ChIntroOES/SimTimeSeries.html" samepage="true"/>
 
     <section href="ChIntroOES/SimExperiments.html" samepage="true"/>
 
     <section href="ChIntroOES/SimLog.html" samepage="true"/>
+
+    <section href="ChIntroOES/Observation-and-UserInteraction.html"
+             samepage="true"/>
+  </chapter>
+
+  <chapter href="ChSimProgramming/index.html">
+    <!-- <section href="ChSimProgramming/VariableRanges.html"/> -->
+
+    <section href="ChSimProgramming/AccessingObjects.html" samepage="true"/>
+
+    <section href="ChSimProgramming/AttributeHistory.html" samepage="true"/>
+  </chapter>
+
+  <chapter href="ChUserInterfaces/index.html">
+    <section href="ChUserInterfaces/ObservationUI.html" samepage="true"/>
+
+    <section href="ChUserInterfaces/UserInteractionUI.html" samepage="true"/>
   </chapter>
 
   <appendix href="architecture.html"/>

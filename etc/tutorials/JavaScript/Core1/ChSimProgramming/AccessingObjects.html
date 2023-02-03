@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Accessing Objects</title>
+  </head>
+
+  <body><p>The objects defined in the initial state, or created during a
+  simulation run, can be accessed either by their ID number or by their name,
+  if they have one. For instance, the object with { id: 1,
+  name:"serviceDesk1", ...} has the ID number 1 and the name "serviceDesk1".
+  It can be retrieved by ID from the collection <code>sim.objects</code> (a JS
+  Map) in the following way:</p><pre>var object1 = sim.objects.get( 1);</pre><p>It
+  can also be retrieved by name from the collection
+  <code>sim.<b>namedObjects</b></code> (also a JS Map) in the following
+  way:</p><pre>var object1 = sim.namedObjects.get("serviceDesk1");</pre><p>For
+  looping over all simulation objects, we can loop over the collection
+  <code>sim.objects</code> in the following way:</p><pre>for (const obj of sim.objects.values()) {
+  ...  // do something with obj
+}</pre><p>We can loop over all simulation objects of a specific type, say
+  <code>ServiceDesk</code>, in the following way:</p><pre>for (const objIdStr of Object.keys( sim.Classes["ServiceDesk"].instances)) {
+  const obj = sim.Classes["ServiceDesk"].instances[objIdStr];
+  ...  // do something with obj
+}</pre><p>Here, <code>sim.Classes</code> provides a map from class names to
+  classes, which are special JS objects, such that for a class <code>C</code>,
+  the collection <code>C.instances</code> (a JS map/object) provides a map
+  from object IDs to JS objects. Thus, the expression <code>Object.keys(
+  sim.Classes["ServiceDesk"].instances)</code> represents an array/list of
+  object ID strings, namely the keys of the map
+  <code>sim.Classes["ServiceDesk"].instances</code>.</p></body>
+</html>

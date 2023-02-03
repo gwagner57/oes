@@ -17,7 +17,8 @@ const dir = {
 const workerlib = function () {
   return src([
     "seedrandom.min.js", "rand.js", "util.js", 
-    "math.js", "idb5.js", "EventList.js", "eNUMERATION.js"
+    "math.js", "idb5.js", "EventList.js", "eNUMERATION.js",
+	""
   ])
     .pipe( concat('worker-library-files.js'))
     //.pipe( terser().on('error', (error) => console.log(error)))
@@ -29,10 +30,12 @@ exports.default = workerlib;
 const uilib = function () {
   return src([
 	"util.js", "datatypes.js", "constraint-violation-error-types.js",
-    "ui/SingleRecordTableWidget.js", "ui/EntityTableWidget.js", "ui/svg.js", 
-    "math.js", "idb5.js"
+    "ui/SingleRecordTableWidget.js", "ui/EntityTableWidget.js", 
+	"ui/dom.js", "ui/svg.js",
+    "math.js", "idb5.js",
+	"../framework/init-oes.js", "../framework/OES-Foundation.js"
   ])
-    .pipe( concat('ui-library-files.js'))
+    .pipe( concat('ui-files.js'))
     //.pipe( terser().on('error', (error) => console.log(error)))
     //.pipe( rename({ suffix: '.min' }))
     .pipe( dest( dir.lib));

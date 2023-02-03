@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Defining an Observation User Interface</title>
+  </head>
+
+  <body><p>An observation UI allows defining views for objects and events (and
+  sounds for events) such that they can be visualized (and sonified) during a
+  simulation run. Since OESjs is a framework for web-based simulation, an
+  observation UI is based on the following Web technologies: CSS, SVG and <a
+  href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API">Web
+  Animations</a>. For learning more about SVG shapes and their attributes, see
+  the book chapter <a href="http://svgpocketguide.com/book/#section-2"
+  target="_top">Basic Shapes &amp; Paths</a> by Joni Trythall. For learning
+  more about CSS styling of SVG elements, see <a
+  href="http://www.smashingmagazine.com/2014/11/styling-and-animating-svgs-with-css/"
+  target="_top">Styling And Animating SVGs With CSS</a> by Sara
+  Soueidan.</p><section><h4>Visualizing Objects</h4><p>For being able to
+  observe objects in a simulation run, they have to be visualized in some
+  form. OESjs supports both the visualization of objects in space in
+  <em>spatial models</em> and of objects in non-spatial models. </p><p>In a
+  visualization of a non-spatial model, such as the ServiceDesk-1 model, all
+  object views have to be explicitly positioned in an observation canvas.
+  </p><p>In the case of our <em>ServiceDesk-1</em> model, we may, for
+  instance, visualize the service desk using either an image or simply a
+  fixed-size rectangle, and its queue in the form of a growing and shrinking
+  bar.</p><p>Two-dimensional visualizations can be obtained by using the web
+  technology of <em>Scalable Vector Graphics (SVG)</em> in the definition of
+  the observation UI. For defining an observation UI with SVG-based
+  visualization, the following settings have to be made:</p><pre
+  class="role-listing-1">sim.config.obs.ui.type = "SVG";
+sim.config.obs.ui.canvas.width = 600;
+sim.config.obs.ui.canvas.height = 300;</pre><p>In addition, one can define a
+  CSS style for the canvas element in the following way, e.g., for setting a
+  background color or background image:</p><pre class="role-listing-1">sim.config.obs.ui.canvas.<b>style</b> = "background-color: azure";</pre><p>Then
+  we can define fixed elements of a visualization, giving each one a name
+  (here: "desk") and defining an SVG shape with attributes and a CSS
+  style:</p><pre class="role-listing-1">sim.config.obs.ui.<b>fixedElements</b> = {
+  "desk": {
+    shapeName: "rect",
+    shapeAttributes: { x: 350, y: 200, width: 50, height: 30},
+    style: "fill:brown; stroke-width:0"
+  }
+};</pre><p>The main issue in visualization is to visualize simulation objects
+  by defining suitable views for them and then map some of their attributes to
+  suitable visual parameters such as color, shape width and height, etc. A
+  <b><i>view</i></b> can be defined either for all instances of an object type
+  or for specific instances only.</p><p>For instance, we may want to visualize
+  the waiting line of the object "serviceDesk1" in the form of a rectangle and
+  map the service desk's <i>queueLength</i> attribute to the width of that
+  rectangle, as in the following object view definition:</p><pre
+  class="role-listing-1">sim.config.obs.ui.<b>objectViews</b> = {
+  "<b>serviceDesk1</b>": {  // the name of the object
+    visualizationAttributes: ["queueLength"],
+    attributesViewItemsRecords: [
+      { attributes:["queueLength"],
+        viewItems: [  // a list of 2 view elements for the object <b>"</b>serviceDesk1<b>"</b>
+          {shapeName: "rect",  // a rectangle
+           shapeAttributes: {  // left-upper corner (x,y) as well as width and height
+             x: sd =&gt; Math.max( 0, 330 - sd.queueLength * 20),
+             width: sd =&gt; Math.min( 300, sd.queueLength * 20),
+             y: 150, height: 80 },
+           style:"fill:yellow; stroke-width:0"},
+          {shapeName: "text",
+           shapeAttributes: {x: 325, y: 250, textContent: sd =&gt; sd.queueLength},
+           style: "font-size:14px; text-anchor:middle"}
+    ]
+  }
+};</pre><p>Notice that the view consists of two elements: a rectangle and an
+  attached text displaying the queue length. In the view definition, certain
+  attributes are assigned a fixed value, while others are assigned a JS
+  function expression, which codes the mapping of object attributes to visual
+  parameters.</p><p>Alternatively, instead of defining a view for a specific
+  service desk object, we can also define a view for all service desk objects,
+  like so</p><pre class="role-listing-1">sim.config.obs.ui.<b>objectViews</b> = {
+  "<b>ServiceDesk</b>": [  // the name of the object type/class
+    { shapeName: "rect",  // a rectangle defined by 
+      shapeAttributes: {  // left-upper corner (x,y) as well as width and height
+        x: function (sd) {return Math.max( 0, 330 - sd.queueLength * 20);},
+        width: function (sd) {return Math.min( 300, sd.queueLength * 20);},
+        y: 150, height: 80
+      },
+      style:"fill:yellow; stroke-width:0"
+    }
+};</pre></section><section><h4>Visualizing Events</h4><p></p></section></body>
+</html>

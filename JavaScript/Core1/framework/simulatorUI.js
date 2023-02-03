@@ -214,11 +214,11 @@ oes.ui.setupVisualization = async function () {
   } else if (sim.config.ui.obs.type) {  // visualizing a non-spatial model
     const objViews = sim.config.ui.obs.objectViews;
     if (objViews) {
-      const visProps = sim.config.ui.obs.visualizationAttributes = {};
+      const visAttribs = sim.config.ui.obs.visualizationAttributes = {};
       for (const objViewId of Object.keys(objViews)) {
         const objView = objViews[objViewId];
-        // append the slots of objView.visualizationAttributes to visProps
-        visProps[objViewId] = objView.visualizationAttributes;
+        // append the slots of objView.visualizationAttributes to visAttribs
+        visAttribs[objViewId] = objView.visualizationAttributes;
       }
     }
     switch (sim.config.ui.obs.type) {
@@ -590,3 +590,9 @@ oes.ui.playEventAnimation = function (eventsToAppear) {
     sim.config.ui.animations[evtTypeName].play();
   }
 };
+/*
+ When the user confirms their choice(s) by activating the "continue" button, this triggers an event handler
+ that restarts the simulator by calling sim.runScenarioStep( followupEvents) where the followupEvents
+ have been obtained from invoking the onEvent method on the UIA triggering event with the
+ UIA input field values as parameters.
+ */

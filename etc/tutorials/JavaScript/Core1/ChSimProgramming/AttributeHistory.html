@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html class="role-ebook-page" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Defining and Using a History Attribute</title>
+  </head>
+
+  <body><p>There are use cases which require to construct a history of the
+  changing values of a certain attribute for a specific object and evaluate or
+  simply display this history. For example, we may define a history attribute
+  <code>temperatureHistory</code> in addition to the attribute
+  <code>temperature</code> for recording the history of average daily
+  temperatures:</p><pre>class LemonadeMarket extends DailyDemandMarket {
+  constructor({id, name, temperature}) {
+    super({id, name});
+    this.temperature = temperature;
+    this.temperatureHistory = new <b>RingBuffer</b>();
+    this.temperatureHistory.<b>add</b>( temperature);
+  }</pre><p>The value of such a history attribute is a <em>ring buffer</em>,
+  having a limited size and an <code>add</code> operation for adding new items
+  to the buffer as in the last constructor statement above.</p><p>Notice that
+  the oldest item of such a buffer may get lost when the buffer is already
+  full and a new item is added.</p><p>The value of a history attribute can be
+  converted to a string with the help of the expression</p><pre>sim.namedObjects["lemonadeMarket"].temperatureHistory.toString()</pre></body>
+</html>

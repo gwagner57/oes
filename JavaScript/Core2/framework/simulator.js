@@ -6,7 +6,6 @@
 
 /*
 TODO:
-- complete the creation of time series (charts)
 -
  */
 
