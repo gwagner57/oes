@@ -67,6 +67,11 @@ async function setupUI() {
         sim.objects = new Map();
         // initialize the Map of all objects (accessible by name)
         sim.namedObjects = new Map();
+        if (sim.model.otherCodeFiles) {
+          for (const ocf of sim.model.otherCodeFiles) {
+            await util.loadScript( ocf + ".js");
+          }
+        }
         for (const objTypeName of sim.config.ui.objectTypes) {
           await util.loadScript( objTypeName + ".js");
         }
@@ -104,7 +109,7 @@ async function setupUI() {
         sim.config.userInteractive) {
       oes.ui.setupUserInteraction();
     }
-  } else sim.config.userInteractive = false;  // no visual. implies no usr interaction
+  } else sim.config.userInteractive = false;  // no visualization implies no usr interaction
 }
 function fillModelParameterPanel( record) {
   const containerEl = document.getElementById("ModelParameterUI"),
@@ -274,14 +279,13 @@ function run() {
     }
   }
   const nmrOfScriptFilesToLoad = 4 + sim.model.objectTypes.length + sim.model.eventTypes.length;
-  document.body.appendChild( util.createProgressBarEl(`Loading ${nmrOfScriptFilesToLoad} script files ...`));
+  document.body.appendChild( dom.createProgressBarEl(`Loading ${nmrOfScriptFilesToLoad} script files ...`));
 
   // set up the simulation worker
   const worker = new Worker("simulation-worker.js");
-  // start the simulation in the worker thread
   const data = {simToRun: choice,  // either standalone sim or experiment
     scenParams: sim.scenario.parameters,
-    visualize: visualize,
+    visualize: choice === 0 ? visualize : false,
     createLog: logCheckboxEl.checked,
     storeExpRes: storeExpResCheckboxEl.checked
   };
@@ -292,6 +296,7 @@ function run() {
   }
   // store start time of simulation/experiment run
   const startWorkerTime = (new Date()).getTime();
+  // start the simulation in the worker thread
   worker.postMessage( data);
 
   // on incoming messages from worker
@@ -301,6 +306,12 @@ function run() {
       simLogTableEl.parentElement.style.display = "block";
       oes.ui.logSimulationStep( simLogTableEl, e.data.step, e.data.time,
           e.data.currEvtsStr, e.data.objectsStr, e.data.futEvtsStr);
+    } else if (e.data.dropProgressContainer) { //setProgressBarText( txt)
+      if (document.getElementById("progress-container")) {
+        document.getElementById("progress-container").remove();
+      }
+    } else if (e.data.progressBarText) {
+      dom.setProgressBarText( e.data.progressBarText);
     } else if ("viewSlotsPerObject" in e.data || "eventsToAppear" in e.data) {
       sim.time = e.data.time;
       if ("viewSlotsPerObject" in e.data) oes.ui.visualizeStep( e.data.viewSlotsPerObject);

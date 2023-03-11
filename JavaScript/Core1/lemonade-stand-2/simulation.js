@@ -16,6 +16,8 @@ sim.model.eventTypes = ["StartOfDay", "DailyProduction", "Delivery", "DailyDeman
 sim.config.visualize = true;
 sim.config.ui.obs.type = "SVG";  // the type of observation user interface
 sim.config.stepDuration = 500;  // the duration of one simulation step in ms
+sim.config.userInteractive = true;
+
 sim.config.ui.artworkCredits = "Weather icons by https://icons8.com";
 
 //sim.config.userInteractive = true;
@@ -258,5 +260,67 @@ sim.config.ui.obs.eventAppearances = {
       keyframes: [{backgroundColor:'lightgray'}, {backgroundColor:'darkslategrey'}],
       duration: 1000  // ms
     }
+  }
+};
+/*******************************************************
+ Define User Interactions
+ ********************************************************/
+sim.scenario.userInteractions = {
+  "StartOfDay": {  // triggering event type
+    // a UIA may be triggered by an event satisfying a condition
+    condition: function (e) {
+      return (e.company.id === 1);
+    },
+    title: "Plan production and sales price (at start of day)",
+    outputFields: {
+      "dailyDemandHistory": {
+        label: "Demand history (cups)",
+        hint: "How many cups of lemonade have been sold in the past days",
+        // defining the value of an output field
+        value: () => sim.namedObjects["lemonadeMarket"].dailyDemandHistory.toString()
+      },
+      "weatherStateHistory": {
+        label: "Weather history",
+        hint: "How the weather was in the past days",
+        value: function () {
+          return sim.namedObjects["Market"].history.weatherState.toString();
+        }
+      },
+      "temperatureHistory": {
+        label: "Temperature history (°C)",
+        hint: "How the temperature was in the past days",
+        value: function () {
+          return sim.namedObjects["Market"].history.temperature.toString();
+        }
+      },
+      "forecastWeatherState": {
+        label: "Weather forecast",
+        hint: "The weather forecast for today",
+        value: function () {
+          return WeatherStateEL.labels[sim.namedObjects["Market"].forecastWeatherState - 1];
+        }
+      },
+      "forecastTemperature": {
+        label: "Temperature forecast",
+        hint: "The temperature forecast for today",
+        value: function () {
+          return sim.namedObjects["Market"].forecastTemperature.toString();
+        }
+      }
+    },
+    inputFields: {
+      "planProdQty": {
+        range: "PositiveInteger", default: 12, label: "Planned prod. quantity",
+        hint: "How many pitchers of lemonade to produce?", suffixLabel: "pitchers (3.5 l)"
+      },
+      "planSalesPrice": {
+        range: "Amount", decimalPlaces: 2, default: 2.00, label: "Planned sales price ($)",
+        hint: "For how many $ is a cup to be sold?", suffixLabel: "per cup"
+      }
+    },
+    // a list of fields or field groups (sub-arrays) defining the ordering/grouping of UI fields
+    fieldOrder: ["dailyDemandHistory", "dailyRevenueHistory", "weatherStateHistory", "temperatureHistory",
+      ["forecastWeatherState", "forecastTemperature"], "planProdQty", "planSalesPrice"],
+    waitForUserInput: true
   }
 };

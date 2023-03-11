@@ -282,5 +282,39 @@ var dom = {
        el = document.createElement("tbody");
        tableEl.appendChild( el);
        return tableEl;
-     }
+     },
+   // the progress indication is indeterminate if there is no value
+   createProgressBarEl( title, value) {
+     const progressContainerEl = document.createElement("div"),
+         progressEl = document.createElement("progress"),
+         progressLabelEl = document.createElement("label"),
+         progressInfoEl = document.createElement("p");
+     progressEl.id = "progress";
+     // values between 0 and 1
+     if (value !== undefined) progressEl.value = value;  // initial value
+     progressLabelEl.for = "progress";
+     progressLabelEl.textContent = title;
+     progressContainerEl.id = "progress-container";
+     progressContainerEl.appendChild( progressLabelEl);
+     progressContainerEl.appendChild( progressEl);
+     progressContainerEl.appendChild( progressInfoEl);
+     return progressContainerEl
+   },
+   setProgressBarText( txt) {
+     const progressContainerEl = document.getElementById("progress-container"),
+           progressLabelEl = progressContainerEl.querySelector("label");
+     progressLabelEl.textContent = txt;
+   },
+   createExpandablePanel({id, heading, hint, borderColor}) {
+     const uiPanelEl = document.createElement("details"),
+         headEl = document.createElement("summary");
+     uiPanelEl.id = id;
+     uiPanelEl.className = "expandablePanel";
+     if (borderColor) uiPanelEl.style.borderColor = borderColor;
+     headEl.innerHTML = heading;
+     if (hint) headEl.title = hint;
+     uiPanelEl.appendChild( headEl);
+     uiPanelEl.style.overflowX = "auto";  // horizontal scrolling
+     return uiPanelEl;
+   }
 };

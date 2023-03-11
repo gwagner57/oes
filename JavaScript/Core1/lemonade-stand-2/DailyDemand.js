@@ -14,8 +14,8 @@ class DailyDemand extends eVENT {
           availPackaging = Math.ceil(sim.namedObjects.get("PaperCup").stockQuantity /
               prodType.packagingItemsPerSupplyUnit["PaperCup"]),
           sellableSupplyUnits = Math.min( availSupplyUnits, availPackaging);
-    // store dailyDemandQuantity in history buffer
-    prodType.productCategory.market.dailyDemandQuantity.add( this.quantity);
+    // store daily demand quantity in history buffer
+    prodType.productCategory.market.dailyDemandHistory.add( this.quantity);
     // deduct demand from product quantity and packaging materials in stock
     if (this.quantity > sellableSupplyUnits) {
       prodType.stockQuantity -= sellableSupplyUnits * qtyPerSupplyUnit;

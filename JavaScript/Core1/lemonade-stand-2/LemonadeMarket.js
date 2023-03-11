@@ -10,7 +10,7 @@ class LemonadeMarket extends DailyDemandMarket {
     this.temperature = temperature;
     this.temperatureHistory = new RingBuffer();
     this.temperatureHistory.add( temperature);
-    this.dailyDemandQuantity = new RingBuffer();
+    this.dailyDemandHistory = new RingBuffer();
   }
   getDailyDemandQuantity() {
     var demQty=0;

@@ -6,27 +6,26 @@
     <title>Defining a User Interface for User Interactions</title>
   </head>
 
-  <body><p>In an event-based simulation, implicit actions bound to events of a
-  certain type (representing <em>action events</em>) can be replaced by
-  <em>user actions</em>, such that when an event of that type occurs, the
-  simulation halts and the user gets the opportunity to perform an action (or
-  take a decision) that determines how the simulation is continued. This type
-  of interaction requires a suitable user interface that allows the user to
+  <body><p>In an event-based simulation, events of a certain type
+  (representing <em>action events</em>) can be replaced by <em>user
+  actions</em>, such that when an event of that type occurs, the simulator
+  halts and gives the user the opportunity to perform an action (or take a
+  decision) that determines how the simulation is continued. This type of
+  interaction requires a suitable user interface (UI) that allows the user to
   enter values for action/decision parameters or select one of a number of
-  possible actions.</p><p>A <em>user interaction user interface (UI)</em>
-  allows defining user actions bound to events of a certain type. Such a UI
-  turns a simulation into a game, or a <em>human-in-the-loop</em>
-  simulation.</p><p>For instance, in the simulation of a lemonade stand (as an
-  example of a manufacturing company), there could be an event type
-  <i>StartOfDay</i> representing the start of a business day at which
-  replenishment decisions have to be made. While these decisions would be made
-  algorithmically in a normal simulation, a user interaction UI would allow a
-  human user to make these decisions in a user-interactive (human-in-the-loop)
-  simulation.</p><p>A user interaction (UIA) is triggered by a simulation
-  event (of some type, possibly satisfying some condition) leading to the
-  creation of a modal UIA window and an interruption of the simulation loop by
-  having the browser wait for user input/actions. The UIA window contains the
-  following UI elements: </p><ol>
+  possible actions.</p><p>A <em>user interaction UI</em> allows defining user
+  actions bound to events of a certain type. Such a UI turns a simulation into
+  a game, or a <em>human-in-the-loop</em> simulation.</p><p>For instance, in
+  the simulation of a lemonade stand (as an example of a manufacturing
+  company), there could be an event type <i>StartOfDay</i> representing the
+  start of a business day at which replenishment decisions have to be made.
+  While these decisions would be made algorithmically in a normal simulation,
+  a user interaction UI would allow a human user to make these decisions in a
+  user-interactive (human-in-the-loop) simulation.</p><p>A user interaction
+  (UIA) is triggered by a simulation event (of some type, possibly satisfying
+  some condition) leading to the creation of a modal UIA window and an
+  interruption of the simulation loop by having the browser wait for user
+  input/actions. The UIA window contains the following UI elements: </p><ol>
       <li><em>output fields</em> for informing the user about the current
       values of critical state variables,</li>
 

@@ -12,7 +12,7 @@ sim.config.ui.animations = {};
  UI for modifying model parameter values
  *******************************************************/
 oes.ui.createModelParameterPanel = function () {
-  const uiPanelEl = util.createExpandablePanel({id:"ModelParameterUI",
+  const uiPanelEl = dom.createExpandablePanel({id:"ModelParameterUI",
     heading: "Model Parameters", borderColor:"aqua",
     hint: "Modify model parameter values"
   });
@@ -22,7 +22,7 @@ oes.ui.createModelParameterPanel = function () {
  UI for creating/modifying/deleting initial state objects
  *******************************************************/
 oes.ui.createInitialObjectsPanel = function () {
-  const uiPanelEl = util.createExpandablePanel({id:"InitialStateObjectsUI",
+  const uiPanelEl = dom.createExpandablePanel({id:"InitialStateObjectsUI",
     heading: "Initial Objects", borderColor:"aqua",
     hint: "Create, modify or delete objects of the initial state"
   });
@@ -590,9 +590,42 @@ oes.ui.playEventAnimation = function (eventsToAppear) {
     sim.config.ui.animations[evtTypeName].play();
   }
 };
+/***********************************************************************
+ Set up the User Interaction (UIA) Elements
+ **********************************************************************/
 /*
  When the user confirms their choice(s) by activating the "continue" button, this triggers an event handler
  that restarts the simulator by calling sim.runScenarioStep( followupEvents) where the followupEvents
  have been obtained from invoking the onEvent method on the UIA triggering event with the
  UIA input field values as parameters.
  */
+oes.ui.setupUserInteraction = function () {
+  sim.ui.userInteractions = sim.ui.userInteractions || {};
+  sim.currentEvents = {};  // map of current events by type
+  Object.keys( sim.scenario.userInteractions).forEach( function (trigEvtTypeName) {
+    var uiDefRec = sim.scenario.userInteractions[trigEvtTypeName],
+        uiContainerEl=null, followupEvents=[], title="";
+    //TODO: check if this reset can be dropped: uiDefRec.fieldValues = {};  // reset
+    uiDefRec.userActions = {
+      "continue": function () {
+        var inpFldValues={};  // initialize onEvent parameter record
+        Object.keys( uiDefRec.inputFields).forEach( function (inpFldName) {
+          // extract input field values from oBJECTvIEW's fieldValues map
+          inpFldValues[inpFldName] = uiDefRec.fieldValues[inpFldName];
+        });
+        uiDefRec.domElem.style.display = "none";
+        followupEvents = sim.currentEvents[trigEvtTypeName].onEvent( inpFldValues);
+        sim.runScenarioStep( followupEvents);  // restart simulator
+      }
+    };
+    uiDefRec.userActions["continue"].label = "Continue";
+    title = uiDefRec.title;
+
+    delete uiDefRec.title;
+    uiContainerEl = oBJECTvIEW.createUiFromViewModel( uiDefRec);  // create form element
+    uiContainerEl.querySelectorAll("input")[0].setAttribute("autofocus","true");
+    uiDefRec.domElem = dom.createDraggableModal({fromElem: uiContainerEl,
+      title:title, classValues:"action-required"});
+    uiDefRec.domElem.style.display = "none";
+  })
+};

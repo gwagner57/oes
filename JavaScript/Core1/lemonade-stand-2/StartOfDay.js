@@ -12,8 +12,8 @@ class StartOfDay extends eVENT {
           invItems = [...inpInvItems, ...packItems],
           dayNo = Math.ceil( sim.time / 24),
           market = prodType.productCategory.market,
-          // update weather and get dailyDemandQuantity
-          dailyDemandQuantity = market.getDailyDemandQuantity();
+          // update weather and get dailyDemandHistory
+          dailyDemandHistory = market.getDailyDemandQuantity();
     let planProdQty=0, justInTimeOrder={};
     // reset daily statistics
     sim.stat.dailyCosts = 0;
@@ -74,7 +74,7 @@ class StartOfDay extends eVENT {
     followupEvents.push( new DailyDemand({
       delay: 9,  // 9 hours later (at 5 pm)
       company: this.company,
-      quantity: dailyDemandQuantity
+      quantity: dailyDemandHistory
     }));
     followupEvents.push( new EndOfDay({
       delay: 10,  // 10 hours later

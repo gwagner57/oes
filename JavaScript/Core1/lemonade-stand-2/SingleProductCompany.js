@@ -23,7 +23,7 @@ class SingleProductCompany extends oBJECT {
       // make forecasts based on yesterday's weather state
     }
     var demandForecast=0;
-    const demandHistory = this.productType.productCategory.market.dailyDemandQuantity;  // a ring buffer
+    const demandHistory = this.productType.productCategory.market.dailyDemandHistory;  // a ring buffer
     if (demandHistory.nmrOfItems() === 0) {  // buffer still empty
       demandForecast = DailyDemand.quantity();
     } else  {  //TODO: Simple Exponential Smoothing (SES)

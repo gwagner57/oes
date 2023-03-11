@@ -121,25 +121,6 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   sim.stepDuration = sim.config.stepDuration || 0;
 };
 /*******************************************************
- Advance Simulation Time
- ********************************************************/
-sim.advanceSimulationTime = function () {
-  const nextEvtTime = sim.FEL.getNextOccurrenceTime();  // 0 if there is no next event
-  // increment the step counter
-  sim.step += 1;
-  // advance simulation time
-  if (sim.timeIncrement) {  // fixed-increment time progression
-    // fixed-increment time progression simulations may also have events
-    if (nextEvtTime > sim.time && nextEvtTime < sim.time + sim.timeIncrement) {
-      sim.time = nextEvtTime;  // an event occurring before the next incremented time
-    } else {
-      sim.time += sim.timeIncrement;
-    }
-  } else if (nextEvtTime > 0) {  // next-event time progression
-    sim.time = nextEvtTime;
-  }
-}
-/*******************************************************
  Run a simulation scenario
  ********************************************************/
 sim.runScenario = function (createLog) {
@@ -152,6 +133,22 @@ sim.runScenario = function (createLog) {
     });
   }
   function runScenarioStep() {
+    function advanceSimulationTime() {
+      const nextEvtTime = sim.FEL.getNextOccurrenceTime();  // 0 if there is no next event
+      // increment the step counter
+      sim.step += 1;
+      // advance simulation time
+      if (sim.timeIncrement) {  // fixed-increment time progression
+        // fixed-increment time progression simulations may also have events
+        if (nextEvtTime > sim.time && nextEvtTime < sim.time + sim.timeIncrement) {
+          sim.time = nextEvtTime;  // an event occurring before the next incremented time
+        } else {
+          sim.time += sim.timeIncrement;
+        }
+      } else if (nextEvtTime > 0) {  // next-event time progression
+        sim.time = nextEvtTime;
+      }
+    }
     function sendVisualizationData( currentEvents) {
       const eventAppearances = sim.config.ui.obs.eventAppearances,
             objViewAttributes = sim.config.ui.obs.visualizationAttributes,
@@ -210,7 +207,7 @@ sim.runScenario = function (createLog) {
       }
     }
     const stepStartTime = (new Date()).getTime();
-    sim.advanceSimulationTime();
+    advanceSimulationTime();
     // extract and process next events
     const nextEvents = sim.FEL.removeNextEvents();
     // sort simultaneous events according to priority order
@@ -266,7 +263,7 @@ sim.runScenario = function (createLog) {
       }
     }
     if (createLog) sendLogMsg( nextEvents);  // log current state
-    if (sim.config.visualize) sendVisualizationData( nextEvents);  // send visualization data
+    if (sim.visualize) sendVisualizationData( nextEvents);  // send visualization data
     if (sim.stepDuration) {  // loop with "setTimeout"
       if (sim.time < sim.scenario.durationInSimTime &&
           sim.step < sim.scenario.durationInSimSteps &&
@@ -308,6 +305,7 @@ sim.runStandaloneScenario = function (createLog) {
   sim.initializeSimulator();
   if (!sim.scenario.randomSeed) sim.initializeScenarioRun();
   else sim.initializeScenarioRun({seed: sim.scenario.randomSeed});
+  if (!sim.visualize) sim.stepDuration = 0;
   sim.runScenario( createLog);
 }
 /*******************************************************
@@ -315,7 +313,7 @@ sim.runStandaloneScenario = function (createLog) {
  ********************************************************/
 sim.runExperiment = async function () {
   var exp = sim.experimentType, expRun={};
-  async function runSimpleExperiment() { 
+  async function runSimpleExperiment() {
     if (sim.model.setupStatistics) sim.model.setupStatistics();
     // initialize replication statistics record
     exp.replicStat = Object.create(null);  // empty map

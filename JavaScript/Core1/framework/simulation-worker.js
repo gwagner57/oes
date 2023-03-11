@@ -28,13 +28,14 @@ onmessage = function (e) {
       }
     }
   }
-  sim.loadEndTime = (new Date()).getTime();
   self.importScripts("simulation.js");
   // assign scenario parameters to model parameters
   if (e.data.scenParams) sim.model.p = e.data.scenParams;
   if (e.data.initialObjects) sim.scenario.initialObjects = e.data.initialObjects;
   loadSimulationModelCode();
+  sim.loadEndTime = (new Date()).getTime();
   if (sim.experimentType) {  // when experimentType has been set, run it
+    self.postMessage({progressBarText:"Executing experiment..."});
     sim.runExperiment( sim.experimentType);
   } else if (e.data.simToRun >= 0) {
     // assign alternative scenario, if selected
@@ -57,15 +58,21 @@ onmessage = function (e) {
       sim.scenario = scenario;
     }
     if (e.data.simToRun === 0) {
-      sim.config.visualize = e.data.visualize;
-      if (e.data.visualizationAttributes) {
-        sim.config.ui.obs.visualizationAttributes = e.data.visualizationAttributes;
+      if (e.data.visualize) {
+        sim.visualize = e.data.visualize;
+        if (e.data.visualizationAttributes) {
+          sim.config.ui.obs.visualizationAttributes = e.data.visualizationAttributes;
+        }
+        self.postMessage({dropProgressContainer:true});
+      } else {
+        self.postMessage({progressBarText:"Executing simulation..."});
       }
       sim.runStandaloneScenario( e.data.createLog);
     } else {
       let expNo = parseInt( e.data.simToRun) - 1;
       sim.experimentType = sim.experimentTypes[expNo];
       sim.experimentType.storeExpResults = e.data.storeExpRes;
+      self.postMessage({progressBarText:"Executing experiment..."});
       sim.runExperiment();
     }
   }
