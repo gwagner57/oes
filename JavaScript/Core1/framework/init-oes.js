@@ -17,6 +17,7 @@ sim.config.ui = {
   "obs": {canvas: Object.create(null), enumAttributes: []},
   "stat": Object.create(null)
 };
+sim.ui = Object.create(null);
 
 const oes = Object.create(null);
 oes.defaults = {

@@ -602,30 +602,34 @@ oes.ui.playEventAnimation = function (eventsToAppear) {
 oes.ui.setupUserInteraction = function () {
   sim.ui.userInteractions = sim.ui.userInteractions || {};
   sim.currentEvents = {};  // map of current events by type
-  Object.keys( sim.scenario.userInteractions).forEach( function (trigEvtTypeName) {
-    var uiDefRec = sim.scenario.userInteractions[trigEvtTypeName],
-        uiContainerEl=null, followupEvents=[], title="";
+  for (const trigEvtTypeName of Object.keys( sim.scenario.userInteractions)) {
+    const uiDefRec = sim.scenario.userInteractions[trigEvtTypeName],
+          viewModel = {...uiDefRec};  // needs to be completed
+          title = uiDefRec.title;
     //TODO: check if this reset can be dropped: uiDefRec.fieldValues = {};  // reset
-    uiDefRec.userActions = {
+    for (const fld of Object.keys( viewModel.outputFields)) {
+      viewModel.outputFields[fld].inputOutputMode = "O";
+    }
+    viewModel.fields = { ...viewModel.outputFields, ...viewModel.inputFields};
+
+    viewModel.userActions = {
       "continue": function () {
         var inpFldValues={};  // initialize onEvent parameter record
-        Object.keys( uiDefRec.inputFields).forEach( function (inpFldName) {
-          // extract input field values from oBJECTvIEW's fieldValues map
-          inpFldValues[inpFldName] = uiDefRec.fieldValues[inpFldName];
-        });
-        uiDefRec.domElem.style.display = "none";
-        followupEvents = sim.currentEvents[trigEvtTypeName].onEvent( inpFldValues);
+        for (const inpFldName of Object.keys( viewModel.inputFields)) {
+          // extract input field values from the view's fieldValues map
+          inpFldValues[inpFldName] = viewModel.fieldValues[inpFldName];
+        }
+        viewModel.domElem.style.display = "none";
+        const followupEvents = sim.currentEvents[trigEvtTypeName].onEvent( inpFldValues);
         sim.runScenarioStep( followupEvents);  // restart simulator
       }
     };
-    uiDefRec.userActions["continue"].label = "Continue";
-    title = uiDefRec.title;
+    viewModel.userActions["continue"].label = "Continue";
 
-    delete uiDefRec.title;
-    uiContainerEl = oBJECTvIEW.createUiFromViewModel( uiDefRec);  // create form element
-    uiContainerEl.querySelectorAll("input")[0].setAttribute("autofocus","true");
-    uiDefRec.domElem = dom.createDraggableModal({fromElem: uiContainerEl,
+    const uiContainerEl = oBJECTvIEW.createUiFromViewModel( viewModel);  // create form element
+    //uiContainerEl.querySelectorAll("input")[0].setAttribute("autofocus","true");
+    viewModel.domElem = dom.createDraggableModal({fromElem: uiContainerEl,
       title:title, classValues:"action-required"});
-    uiDefRec.domElem.style.display = "none";
-  })
+    viewModel.domElem.style.display = "none";
+  }
 };

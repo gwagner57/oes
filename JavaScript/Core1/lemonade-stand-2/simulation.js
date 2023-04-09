@@ -277,35 +277,27 @@ sim.scenario.userInteractions = {
         label: "Demand history (cups)",
         hint: "How many cups of lemonade have been sold in the past days",
         // defining the value of an output field
-        value: () => sim.namedObjects["lemonadeMarket"].dailyDemandHistory.toString()
+        value: () => sim.namedObjects["lemonadeMarket"]?.dailyDemandHistory.toString()
       },
       "weatherStateHistory": {
         label: "Weather history",
         hint: "How the weather was in the past days",
-        value: function () {
-          return sim.namedObjects["Market"].history.weatherState.toString();
-        }
+        value: () => sim.namedObjects["lemonadeMarket"]?.weatherStateHistory.toString()
       },
       "temperatureHistory": {
         label: "Temperature history (°C)",
         hint: "How the temperature was in the past days",
-        value: function () {
-          return sim.namedObjects["Market"].history.temperature.toString();
-        }
+        value: () => sim.namedObjects["lemonadeMarket"]?.temperatureHistory.toString()
       },
       "forecastWeatherState": {
         label: "Weather forecast",
         hint: "The weather forecast for today",
-        value: function () {
-          return WeatherStateEL.labels[sim.namedObjects["Market"].forecastWeatherState - 1];
-        }
+        value: () => WeatherStateEL.labels[sim.namedObjects["lemonadeMarket"]?.forecastWeatherState - 1]
       },
       "forecastTemperature": {
         label: "Temperature forecast",
         hint: "The temperature forecast for today",
-        value: function () {
-          return sim.namedObjects["Market"].forecastTemperature.toString();
-        }
+        value: () => sim.namedObjects["lemonadeMarket"]?.forecastTemperature.toString()
       }
     },
     inputFields: {

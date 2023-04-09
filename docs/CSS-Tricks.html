@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title></title>
+  </head>
+
+  <body><h2>Animation for Simulation (draft version)<br /></h2><p>Animations
+  are a fascinating topic for web designers, and there are several web
+  technologies that support making animations. The simplest approach is
+  defining declarative CSS animations: either with <em>CSS transitions</em>,
+  allowing simple <em>from-to</em> value changes of CSS properties for
+  creating corresponding visual effects, or <em>keyframe</em>-based animations
+  with the CSS <em>animation</em> property allowing more powerful visual
+  effects.</p><p>Even before CSS has introduced these animation features, it
+  was possible to program animations of DOM elements with JavaScript. These
+  procedural animations require more effort, though.</p><p>Simulation is an
+  old topic in science and engineering, and it is also widely used in
+  education and entertainment today. In fact, the development of the
+  <em>Object-Oriented Programming</em> paradigm has been triggered by the
+  simulation programming language <a
+  href="https://sim4edu.com/explain/what-is-simula">Simula</a> that has
+  invented the concepts of objects, classes and inheritance back in the
+  1960's.<br /></p><p>Essentially, there are two different types of real-world
+  systems and simulation approaches: <em>continuous</em> systems/simulations
+  and <em>discrete </em>systems/simulations. While physical, and many
+  technical, systems are essentially characterized by <em>continuous state
+  changes</em> of their objects, biological and social systems, as well as
+  many technical (in particular digital) systems, are essentially
+  characterized by <em>discrete state changes</em> of their objects.</p><p>In
+  continuous simulation, state changes are modeled with the help of algebraic
+  and <em>differential equations</em>, and a simulator uses solvers for
+  computing approximate solutions. Discrete state changes of objects can be
+  modeled with the help of <em>event-based simulation</em>.</p><p>For a given
+  simulation model, it is often desirable to add a visualization of its
+  simulation runs. Such a visualization is very similar to a JS animation.
+  However, the changes of visual properties of user interface elements do not
+  have to be explicitly programmed, but, rather, they are provided by the
+  simulation.</p><p>We show how a CSS-based web animation can be added to a
+  given simulation model, using the Open Source front-end JS simulation
+  framework <a href="https://sim4edu.com/oesjs/core1/">OESjs</a>. As an
+  example of a simulation model, we use the model of a lemonade
+  stand.</p><section><h3>Modeling a Lemonade Stand as a Single-Product
+  Manufacturing Company</h3><p>A lemonade seller makes lemonade in pitchers
+  and sells it in paper cups at a stand in a street market. Each day consists
+  of the following process steps and phases:</p><ol>
+      <li>The day starts at 8 am with making planning decisions (demand
+      forecasting based on the weather forecast, production planning and sales
+      price planning) and ordering the input materials (lemons, sugar, etc.)
+      required for production and for refilling the inventory.</li>
+
+      <li>While the ordered ice cubes will be delivered within two hours, the
+      other items may be delivered later on that day or on the next day.</li>
+
+      <li>At 11 am, the planned quantity of lemonade is produced and the stand
+      is opened.</li>
+
+      <li>Then, customers arrive randomly and order a cup of lemonade. The
+      nicer the weather is, the more customers show up. As long as there is
+      still lemonade in stock, customer orders are served.</li>
+
+      <li>At the end of the day, the lemonade stand is closed and the
+      remaining lemonade and expired inventory items are dumped.</li>
+    </ol><p>This system narrative can be turned into a general simulation
+  model of single-product manufacturing companies with the following object
+  and event types. Object types: SingleProductCompany, InputItemType,
+  OutputItemType, ProductCategory, LemonadeMarket. Event types: StartOfDay,
+  Delivery, DailyProduction, DailyDemand, EndOfDay.</p><p>The OESjs model is
+  available as <a
+  href="https://sim4edu.com/oesjs/core1/lemonade-stand-2/">Lemonade-Stand-2</a>.</p></section><section><h3>Visualizing
+  the Operation of a Lemonade Stand</h3><p>OESjs allows adding a declarative
+  SVG/CSS-based visualization/animation to a given simulation model. The
+  essential principles of its approach are:</p><ol>
+      <li>The objects of the simulation model are visualized, or animated, by
+      defining <em><strong>object views</strong></em>, which consist of one or
+      more SVG elements with CSS styles, such that certain object properties
+      are mapped to SVG element attributes.</li>
+
+      <li>The events of the simulation model are visualized by defining
+      <em><strong>event views</strong></em>, which consist of keyframe-based
+      CSS animations.</li>
+    </ol><p>Since my graphics/design skills are quite limited, I've only be
+  able to define a pretty simple animation, as shown in the following figure
+  (recorded in the form of an animated GIF).</p><figure><img
+  alt="A visualization of the operation of a lemonade stand." height="392"
+  src="https://sim4edu.com/oesjs/core1/lemonade-stand-2/img/Animation.gif"
+  width="719" /></figure><p>As you may have recognized, the animation consists
+  of two fixed elements that don't change: the table of the lemonade stand and
+  its pitcher. Both are defined in the form of simple SVG elements:</p><pre>sim.config.ui.obs.fixedElements = {
+  "lemonadeStandTable": {
+    shapeName: "polygon",  // an SVG shape name
+    // defining fixed values for the attributes of an SVG shape
+    shapeAttributes: {points: "400,200 400,210 ... 180,210 180,200"},
+    // CSS style rules for the SVG element
+    style: "fill:brown; stroke-width:0"
+  },
+  "lemonadePitcher": {
+    shapeName: "polyline",
+    shapeAttributes: {points: "200,125 200,200 250,200 250,125"},
+    style: "fill:none; stroke:black; stroke-width:3"
+  }
+};</pre><p>In addition to these fixed elements, I have added a view of the
+  "lemonadeStand" object. This object view definition maps two properties to
+  SVG attributes: (1) the <em>stockQuantity</em> of the stand's
+  <em>productType</em> (the quantity of lemonade), and (2) the
+  <em>dailyProfit</em> of the stand. The view consists of 5 SVG elements: a
+  <em>rect</em> element and two text elements for mapping the
+  <em>productType.stockQuantity</em> property to the height of a yellow
+  rectangle representing the lemonade quantity and its textual display, and a
+  <em>rect</em> element and a text element for mapping the
+  <em>dailyProfit</em> property to the height of a rectangle filled with $
+  coins and its textual display.<br /></p><pre>sim.config.ui.obs.objectViews = {
+  "lemonadeStand": {  // a view for the object "lemonadeStand"
+    visualizationAttributes: ["productType.stockQuantity","dailyProfit"],
+    attributesViewItemsRecords: [
+      { attributes:["productType.stockQuantity"],
+        viewItems: [  // a list of view item definition records for the object/attribute
+          {shapeName: "rect",  // an SVG shape name
+            style: "fill:yellow; stroke-width:0",  // CSS style rules for the SVG element
+            // attribute-value slots of an SVG shape, using fixed values or expressions
+            shapeAttributes: {
+              // defining fixed values for the attributes of an SVG shape
+              x: 205, width: 40,
+              // using expressions for defining the values of shape attributes
+              y: stand =&gt; 195 - stand.productType.stockQuantity,
+              // the parameter "stand" represents a LemonadeStand object
+              height: stand =&gt; stand.productType.stockQuantity
+            }
+          },
+          {shapeName: "text",  // text elements are treated like shapes
+            style:"font-size:10px; text-anchor:middle",  // CSS text style rules
+            shapeAttributes: {
+              x: 225, y: 195,  // coordinates for positioning the text
+              textContent: stand =&gt; stand.productType.stockQuantity + " L"
+            }
+          },
+          {shapeName: "text",  // text elements are treated like shapes
+            style:"font-size:20px; text-anchor:middle",  // CSS text style rules
+            shapeAttributes: {
+              x: 50, y: 50,  // coordinates for positioning the text
+              textContent: () =&gt; sim.time ? "Day "+ Math.ceil( sim.time / 24) : ""
+            }
+          }
+        ]
+      },
+      { attributes:["dailyProfit"],
+        viewItems: [
+          {shapeName: "rect",
+            style:"stroke-width:0",
+            fillPatternImage:{id:"fp1", file:"Dollar-Coin.svg"},
+            shapeAttributes: { x: 300, width: 60,
+              y: stand =&gt;  195 - Math.floor( stand.dailyProfit / 2),
+              height: stand =&gt;  Math.floor( stand.dailyProfit / 2)
+            }
+          },
+          {shapeName: "text",
+            style:"font-size:10px; text-anchor:middle",  // CSS text style rules
+            shapeAttributes: {
+              x: 375, y: 195,
+              textContent: stand =&gt; stand.dailyProfit &gt; 0 ? "$"+ Math.floor( stand.dailyProfit) : ""
+            }
+          }
+        ]
+      }
+    ]
+  },</pre><p>In addition to the animation of the lemonade stand, there is also
+  an animation of the weather state (sunny, partly cloudy, etc.), which is a
+  property of the <em>LemonadeMarket</em> object, and animations of the
+  DailyDemand and EndOfDay events.</p><p>As you have noticed by looking at
+  this code, you can easily improve this animation simply by defining SVG
+  elements and their CSS styling in the case of object views, and
+  keyframe-based CSS animations in the case of event
+  views.<br /></p></section></body>
+</html>

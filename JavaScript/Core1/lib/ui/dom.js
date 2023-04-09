@@ -318,3 +318,74 @@ var dom = {
      return uiPanelEl;
    }
 };
+
+ /**
+  * Create a Modal Window/Panel
+  *
+  * @param {object} slots
+  * @return {object} uiPanelEl  element object
+  */
+ dom.createModal = function (slots) {
+   var modalEl = dom.createElement("div", {classValues:"modal"}),
+       overlayEl = dom.createElement("div", {id:"overlay"}),
+       el=null, h1El=null;
+   if (slots.id) modalEl.id = slots.id;
+   modalEl.classList.add("modal");
+   if (slots.classValues) modalEl.className += " "+ slots.classValues;
+   if (!slots.title) slots.title = "No Title?";
+   h1El = dom.createElement("h1", {content: "<span class='title'>"+ slots.title +"</span>"});
+   //  "</span><span class='closeButton'>&times;</span>"});
+   if (!slots.classValues.includes("action-required")) {
+     el = dom.createElement("span", {classValues:"closeButton", content:"&times;"});
+     el.addEventListener("click", function () {
+       overlayEl.style.display = "none";
+     });
+     h1El.appendChild( el);
+   }
+   modalEl.appendChild( h1El);
+   if (slots.fromElem) {
+     modalEl.appendChild( slots.fromElem);
+     slots.fromElem.classList.add("modal-body");
+   } else {
+     el = dom.createElement("div", {classValues:"modal-body"});
+     if (slots.textContent) el.textContent = slots.textContent;
+     modalEl.appendChild( el);
+   }
+   overlayEl.appendChild( modalEl);
+   document.body.appendChild( overlayEl);
+   return overlayEl;
+ };
+ /**
+  * Create a Draggable Modal Window/Panel
+  *
+  * @param {object} slots
+  * @return {object} uiPanelEl  element object
+  */
+ dom.createDraggableModal = function (slots) {
+   const overlayEl = dom.createModal( slots),
+         modalEl = overlayEl.querySelector(".modal");
+   // make the element draggable
+   modalEl.draggable = true;
+   if (!modalEl.id) modalEl.id = "dragMod";
+   modalEl.addEventListener("dragstart", dom.handleDragStart);
+   overlayEl.addEventListener("dragover", dom.handleDragOver);
+   overlayEl.addEventListener("drop", dom.handleDrop);
+   return overlayEl;
+ };
+ dom.handleDragStart = function (evt) {
+   evt.dataTransfer.dropEffect = 'move';
+   evt.dataTransfer.setData("text/plain", evt.target.id);
+ };
+ dom.handleDragOver = function (evt) {
+   // allow dropping by preventing the default behavior
+   evt.preventDefault();
+ };
+ dom.handleDrop = function (evt) {
+   const elId = evt.dataTransfer.getData("text/plain"),
+         el = document.getElementById( elId),
+         x = evt.clientX, y = evt.clientY;
+   evt.preventDefault();
+   el.style.position = "absolute";
+   el.style.left = x +"px";
+   el.style.top = y +"px";
+ };

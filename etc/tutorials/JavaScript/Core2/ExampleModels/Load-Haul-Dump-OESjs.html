@@ -132,10 +132,9 @@ GoToLoadingSite.<b>resourceRoles</b> = {
   OESjs, this rule is coded in the following way:</p><pre>class <b>Load</b> extends aCTIVITY {
   ...
   <b>onActivityEnd</b>() {
-    const followupEvents = [];
     // decrement nmrOfLoads counter
     sim.model.v.nmrOfLoads--;
-    return followupEvents;
+    return [];  // no follow-up events
   }
   ...
 }

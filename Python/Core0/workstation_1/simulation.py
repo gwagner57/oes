@@ -1,6 +1,6 @@
 import sys, os
 
-module_path = os.path.abspath('../OESpy-Core0/')
+module_path = os.path.abspath('../framework/')
 sys.path.insert(1, module_path)
 from simulator import Simulator, Model
 
