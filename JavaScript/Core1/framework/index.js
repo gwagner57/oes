@@ -262,6 +262,7 @@ function run() {
       oes.ui.createParVarExpResultsTableHead( sim.stat, exPostStatTableEl);
     }
   }
+  // create initialObjects with ID references
   for (const objTypeName of Object.keys( sim.Classes)) {
     const C = sim.Classes[objTypeName];
     if (!("instances" in C)) continue;  // skip abstract classes
@@ -272,7 +273,7 @@ function run() {
       for (const p of Object.keys( obj)) {
         const v = obj[p];
         // is v an instance of an object class?
-        if (typeof v === "object" && v.constructor.name in Object.keys( sim.Classes)) {
+        if (typeof v === "object" && v.constructor.name in sim.Classes) {
           obj[p] = v.id;  // assign ID reference
         }
       }

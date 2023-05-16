@@ -68,6 +68,42 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
       sim.model.p[parName] = expParSlots[parName];
     }
   }
+  function setupInitialStateDataStructures () {
+    // Add initial objects (possibly changed in UI)
+    for (const objTypeName of Object.keys( sim.scenario.initialObjects || {})) {
+      const C = sim.Classes[objTypeName];
+      const initialObjRecords = sim.scenario.initialObjects[objTypeName];
+      C.instances ??= Object.create(null);
+      for (const objId of Object.keys( initialObjRecords)) {
+        C.instances[objId] = new C( initialObjRecords[objId]);
+      }
+    }
+    // Set up initial state
+    if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
+    // create populations per class
+    for (const o of sim.objects.values()) {
+      const className = o.constructor.name;
+      if (className in sim.Classes) {
+        const C = sim.Classes[className];
+        // test if class has any reference property
+        if ("properties" in C) {
+          for (const propName of Object.keys(C.properties)) {
+            const propDecl = C.properties[propName];
+            if (propDecl.range in sim.Classes) {  // reference property
+              const idRef = o[propName];
+              if (!Number.isInteger( idRef)) {
+                console.error(`The ${propName} value of object ${o.id} is not an integer (but ${o[propName]})`)
+              } else {  // replace ID reference with object reference
+                o[propName] = sim.objects.get( idRef);
+              }
+            }
+          }
+        }
+        sim.Classes[className].instances ??= Object.create(null);
+        sim.Classes[className].instances[o.id] = o;
+      }
+    }
+  }
   // clear initial state data structures
   sim.objects.clear();
   sim.namedObjects.clear();
@@ -107,7 +143,7 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
       }
     }
   }
-  oes.setupInitialStateDataStructures();
+  setupInitialStateDataStructures();
   // schedule initial events if no initial event has been scheduled
   if (sim.FEL.isEmpty()) {
     for (const evtTypeName of sim.model.eventTypes) {
@@ -295,9 +331,9 @@ sim.runScenarioStep = function ( createLog) {
       // check if we need some delay, because of the stepDuration parameter
       const stepDelay = sim.stepDuration > stepTime ? sim.stepDuration - stepTime : 0;
       setTimeout( runScenarioStep, stepDelay);
-    } else {
+    } else {  // end simulation
       if (sim.model.computeFinalStatistics) sim.model.computeFinalStatistics();
-      // send statistics to main thread ate end of simulation
+      // send statistics to main thread at end of simulation
       self.postMessage({statistics: sim.stat, endSimTime: sim.time, loadEndTime: sim.loadEndTime});
     }
   }

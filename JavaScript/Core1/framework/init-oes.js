@@ -27,25 +27,3 @@ oes.defaults = {
   imgFolder: "img/"
 };
 
-oes.setupInitialStateDataStructures = function () {
-  // Add initial objects (possibly changed in UI)
-  for (const objTypeName of Object.keys( sim.scenario.initialObjects || {})) {
-    const C = sim.Classes[objTypeName];
-    const objRecords = sim.scenario.initialObjects[objTypeName];
-    C.instances ??= Object.create(null);
-    for (const objId of Object.keys( objRecords)) {
-      C.instances[objId] = new C( objRecords[objId]);
-    }
-  }
-  // Set up initial state
-  if (sim.scenario.setupInitialState) sim.scenario.setupInitialState();
-  // create populations per class
-  for (const o of sim.objects.values()) {
-    const className = o.constructor.name;
-    if (className in sim.Classes) {
-      sim.Classes[className].instances ??= Object.create(null);
-      sim.Classes[className].instances[o.id] = o;
-    }
-  }
-}
-

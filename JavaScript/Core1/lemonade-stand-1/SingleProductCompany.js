@@ -1,14 +1,7 @@
 class SingleProductCompany extends oBJECT {
   constructor({ id, name, productType, liquidity, fixedCostPerDay }) {
     super( id, name);
-    if (typeof productType === "object") this.productType = productType;
-    else if (typeof productType === "string") {
-      const o = sim.namedObjects.get(productType);
-      this.productType = o ? o : productType;
-    } else if (Number.isInteger( productType)) {
-      const o = sim.objects.get( productType);
-      this.productType = o ? o : productType;
-    }
+    this.productType = productType;
     this.liquidity = liquidity;
     this.fixedCostPerDay = fixedCostPerDay;  // Includes labor cost and facilities cost
     //*** history data ***
@@ -89,6 +82,9 @@ class SingleProductCompany extends oBJECT {
     // put production output to inventory
     prodType.stockQuantity = planProdQty * prodType.batchSize;
   }
+}
+SingleProductCompany.properties = {
+  "productType": {range:"OutputItemType", label:"Product type"}
 }
 SingleProductCompany.labels = {"className":"SPC", "liquidity":"liq"};
 SingleProductCompany.displayAttributes = ["id","name","liquidity","fixedCostPerDay"];

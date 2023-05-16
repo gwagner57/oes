@@ -24,7 +24,7 @@ sim.scenario.setupInitialStateForUi = function () {
     salesPrice: 1.5,  // e.g., USD
     batchSize: 3.5,  // in quantity units (1 pitcher = 3.5 liters)
     bomItems: {"Lemon": 3, "Water": 2.5, "IceCubes": 20, "Sugar": 0.3},
-    packItemsPerSupplyUnit: {"PaperCup": 1},
+    packagingItemsPerSupplyUnit: {"PaperCup": 1},
     stockQuantity: 0  // in quantity units
   });
   const ls = new SingleProductCompany({id:1, name: "LemonadeStand",
@@ -112,7 +112,7 @@ sim.scenario.setupInitialState = function () {
     salesPrice: 1.5,  // e.g., USD
     batchSize: 3.5,  // in quantity units (1 pitcher = 3.5 liters)
     bomItems: {"Lemon": 3, "Water": 2.5, "IceCubes": 20, "Sugar": 0.3},
-    packItemsPerSupplyUnit: {"PaperCup": 1},
+    packagingItemsPerSupplyUnit: {"PaperCup": 1},
     stockQuantity: 0  // in quantity units
   });
   const ls = new SingleProductCompany({id:1, name: "LemonadeStand",
