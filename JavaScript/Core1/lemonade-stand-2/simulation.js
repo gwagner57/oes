@@ -311,7 +311,7 @@ sim.scenario.userInteractions = {
       }
     },
     // a list of fields or field groups (sub-arrays) defining the ordering/grouping of UI fields
-    fieldOrder: ["dailyDemandHistory", "dailyRevenueHistory", "weatherStateHistory", "temperatureHistory",
+    fieldOrder: ["dailyDemandHistory", "weatherStateHistory", "temperatureHistory",
       ["forecastWeatherState", "forecastTemperature"], "planProdQty", "planSalesPrice"],
     waitForUserInput: true
   }

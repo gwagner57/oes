@@ -9,8 +9,12 @@ class EventList {
   constructor(a) {
     this.events = Array.isArray(a) ? a : [];
   }
-  add(e) {
-    this.events.push( e);
+  add( event) {
+    this.events.push( event);
+    this.events.sort( (e1, e2) => e1.occTime - e2.occTime);
+  }
+  addEvents( events) {
+    this.events.push( ...events);
     this.events.sort( (e1, e2) => e1.occTime - e2.occTime);
   }
   sort() {

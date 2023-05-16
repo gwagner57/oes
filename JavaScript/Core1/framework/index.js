@@ -312,10 +312,19 @@ function run() {
       }
     } else if (e.data.progressBarText) {
       dom.setProgressBarText( e.data.progressBarText);
-    } else if ("viewSlotsPerObject" in e.data || "eventsToAppear" in e.data) {
+    } else if ("eventsToAppear" in e.data || "viewSlotsPerObject" in e.data) {
       sim.time = e.data.time;
       if ("viewSlotsPerObject" in e.data) oes.ui.visualizeStep( e.data.viewSlotsPerObject);
       if ("eventsToAppear" in e.data) oes.ui.playEventAnimation( e.data.eventsToAppear);
+    } else if ("userInteractionEvent" in e.data) {
+      const uiViewModel = sim.scenario.userInteractions[e.data.userInteractionEventType];
+      for (const outFldName of Object.keys( uiViewModel.outputFields)) {
+        const fldEl = uiViewModel.dataBinding[outFldName],
+              val = uiViewModel.fieldValues[outFldName];
+        if (typeof val === "function") fldEl.value = val();
+        else fldEl.value = val || "";
+      }
+      uiViewModel.domElem.style.display = "block";
     } else {  // end of simulation/experiment
       if (document.getElementById("progress-container")) {
         document.getElementById("progress-container").remove();

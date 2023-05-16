@@ -600,36 +600,37 @@ oes.ui.playEventAnimation = function (eventsToAppear) {
  UIA input field values as parameters.
  */
 oes.ui.setupUserInteraction = function () {
-  sim.ui.userInteractions = sim.ui.userInteractions || {};
-  sim.currentEvents = {};  // map of current events by type
   for (const trigEvtTypeName of Object.keys( sim.scenario.userInteractions)) {
     const uiDefRec = sim.scenario.userInteractions[trigEvtTypeName],
-          viewModel = {...uiDefRec};  // needs to be completed
           title = uiDefRec.title;
-    //TODO: check if this reset can be dropped: uiDefRec.fieldValues = {};  // reset
-    for (const fld of Object.keys( viewModel.outputFields)) {
-      viewModel.outputFields[fld].inputOutputMode = "O";
+    // turn uiDefRec into a view model by adding several items
+    delete uiDefRec.title;  // is this needed?
+    uiDefRec.fieldValues = {};  // reset
+    for (const fld of Object.keys( uiDefRec.outputFields)) {
+      uiDefRec.outputFields[fld].inputOutputMode = "O";
     }
-    viewModel.fields = { ...viewModel.outputFields, ...viewModel.inputFields};
+    uiDefRec.fields = { ...uiDefRec.outputFields, ...uiDefRec.inputFields};
 
-    viewModel.userActions = {
+    uiDefRec.userActions = {
       "continue": function () {
         var inpFldValues={};  // initialize onEvent parameter record
-        for (const inpFldName of Object.keys( viewModel.inputFields)) {
+        for (const inpFldName of Object.keys( uiDefRec.inputFields)) {
           // extract input field values from the view's fieldValues map
-          inpFldValues[inpFldName] = viewModel.fieldValues[inpFldName];
+          inpFldValues[inpFldName] = uiDefRec.fieldValues[inpFldName];
         }
-        viewModel.domElem.style.display = "none";
-        const followupEvents = sim.currentEvents[trigEvtTypeName].onEvent( inpFldValues);
-        sim.runScenarioStep( followupEvents);  // restart simulator
+        uiDefRec.domElem.style.display = "none";
+        const followUpEvents = sim.currentUserInteractionEvent.onEvent( inpFldValues);
+        // schedule follow-up events
+        sim.FEL.addEvents( followUpEvents);
+        sim.runScenarioStep();  // restart simulator
       }
     };
-    viewModel.userActions["continue"].label = "Continue";
+    uiDefRec.userActions["continue"].label = "Continue";
 
-    const uiContainerEl = oBJECTvIEW.createUiFromViewModel( viewModel);  // create form element
+    const uiContainerEl = oBJECTvIEW.createUiFromViewModel( uiDefRec);  // create form element
     //uiContainerEl.querySelectorAll("input")[0].setAttribute("autofocus","true");
-    viewModel.domElem = dom.createDraggableModal({fromElem: uiContainerEl,
-      title:title, classValues:"action-required"});
-    viewModel.domElem.style.display = "none";
+    uiDefRec.domElem = dom.createDraggableModal({fromElem: uiContainerEl,
+                          title, classValues:"action-required"});
+    uiDefRec.domElem.style.display = "none";
   }
 };

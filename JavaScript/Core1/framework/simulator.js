@@ -121,49 +121,51 @@ sim.initializeScenarioRun = function ({seed, expParSlots}={}) {
   sim.stepDuration = sim.config.stepDuration || 0;
 };
 /*******************************************************
- Run a simulation scenario
+ Run a simulation scenario step
  ********************************************************/
-sim.runScenario = function (createLog) {
-  function sendLogMsg( currEvts) {
-    self.postMessage({ step: sim.step, time: sim.time,
-      // convert values() iterator to array and map its elements to strings
-      objectsStr: [...sim.objects.values()].map( el => el.toString()).join("|"),
-      currEvtsStr: currEvts.map( el => el.toString()).join("|"),
-      futEvtsStr: sim.FEL.toString()
-    });
-  }
-  function runScenarioStep() {
-    function advanceSimulationTime() {
-      const nextEvtTime = sim.FEL.getNextOccurrenceTime();  // 0 if there is no next event
-      // increment the step counter
-      sim.step += 1;
-      // advance simulation time
-      if (sim.timeIncrement) {  // fixed-increment time progression
-        // fixed-increment time progression simulations may also have events
-        if (nextEvtTime > sim.time && nextEvtTime < sim.time + sim.timeIncrement) {
-          sim.time = nextEvtTime;  // an event occurring before the next incremented time
-        } else {
-          sim.time += sim.timeIncrement;
-        }
-      } else if (nextEvtTime > 0) {  // next-event time progression
-        sim.time = nextEvtTime;
+sim.sendLogMsg = function (currEvts) {
+  self.postMessage({ step: sim.step, time: sim.time,
+    // convert values() iterator to array and map its elements to strings
+    objectsStr: [...sim.objects.values()].map( el => el.toString()).join("|"),
+    currEvtsStr: currEvts.map( el => el.toString()).join("|"),
+    futEvtsStr: sim.FEL.toString()
+  });
+}
+/*******************************************************
+ Run a simulation scenario step
+ ********************************************************/
+sim.runScenarioStep = function ( createLog) {
+  function advanceSimulationTime() {
+    const nextEvtTime = sim.FEL.getNextOccurrenceTime();  // 0 if there is no next event
+    // increment the step counter
+    sim.step += 1;
+    // advance simulation time
+    if (sim.timeIncrement) {  // fixed-increment time progression
+      // fixed-increment time progression simulations may also have events
+      if (nextEvtTime > sim.time && nextEvtTime < sim.time + sim.timeIncrement) {
+        sim.time = nextEvtTime;  // an event occurring before the next incremented time
+      } else {
+        sim.time += sim.timeIncrement;
       }
+    } else if (nextEvtTime > 0) {  // next-event time progression
+      sim.time = nextEvtTime;
     }
-    function sendVisualizationData( currentEvents) {
-      const eventAppearances = sim.config.ui.obs.eventAppearances,
-            objViewAttributes = sim.config.ui.obs.visualizationAttributes,
-            viewSlotsPerObject = {},
-            eventsToAppear = {};
-      // send object view data
-      for (const objViewId of Object.keys( objViewAttributes)) {
-        const visAttributes = objViewAttributes[objViewId],
-              obj = sim.namedObjects.get( objViewId),
-              objVisSlots = {};
-        if (obj) {  // a specific object to be visualized
-          for (const visAttr of visAttributes) {
-            const attrPathParts = visAttr.split("."),
-                  p1 = attrPathParts[0];
-            switch (attrPathParts.length) {
+  }
+  function sendVisualizationData( currentEvents) {
+    const eventAppearances = sim.config.ui.obs.eventAppearances,
+        objViewAttributes = sim.config.ui.obs.visualizationAttributes,
+        viewSlotsPerObject = {},
+        eventsToAppear = {};
+    // send object view data
+    for (const objViewId of Object.keys( objViewAttributes)) {
+      const visAttributes = objViewAttributes[objViewId],
+          obj = sim.namedObjects.get( objViewId),
+          objVisSlots = {};
+      if (obj) {  // a specific object to be visualized
+        for (const visAttr of visAttributes) {
+          const attrPathParts = visAttr.split("."),
+              p1 = attrPathParts[0];
+          switch (attrPathParts.length) {
             case 1:
               // create slot only if the value has changed
               if (obj[p1] !== obj[p1+"_pre"]) objVisSlots[p1] = obj[p1];
@@ -181,115 +183,138 @@ sim.runScenario = function (createLog) {
               if (obj[p1][p2][p3] !== obj[p1][p2][p3+"_pre"]) objVisSlots[visAttr] = obj[p1][p2][p3];
               obj[p1][p2][p3+"_pre"] = obj[p1][p2][p3];
               break;
-            }
-          }
-          if (Object.keys( objVisSlots).length > 0) viewSlotsPerObject[objViewId] = objVisSlots;
-        } else if (sim.model.objectTypes.includes( objViewId)) {
-          // an object view for all instances of an object type
-          for (const objIdStr of Object.keys( sim.Classes[objViewId].instances)) {
-            // ...
           }
         }
-      }
-      // send event appearance data
-      for (const e of currentEvents) {
-        const ET = e.constructor;
-        if (ET.name in eventAppearances) {
-          eventsToAppear[ET.name] = JSON.stringify(e);
-        }
-      }
-      if (Object.keys( viewSlotsPerObject).length > 0 && Object.keys( eventsToAppear).length > 0) {
-        self.postMessage({ step: sim.step, time: sim.time, viewSlotsPerObject, eventsToAppear});
-      } else if (Object.keys( viewSlotsPerObject).length > 0) {
-        self.postMessage({ step: sim.step, time: sim.time, viewSlotsPerObject});
-      } else if (Object.keys( eventsToAppear).length > 0) {
-        self.postMessage({ step: sim.step, time: sim.time, eventsToAppear});
-      }
-    }
-    const stepStartTime = (new Date()).getTime();
-    advanceSimulationTime();
-    // extract and process next events
-    const nextEvents = sim.FEL.removeNextEvents();
-    // sort simultaneous events according to priority order
-    if (nextEvents.length > 1) nextEvents.sort( eVENT.rank);
-    // process next (=current) events
-    for (const e of nextEvents) {
-      // process event by applying its event rule
-      const followUpEvents = e.onEvent();
-      // schedule follow-up events
-      for (const f of followUpEvents) {
-        sim.FEL.add( f);
-      }
-      const EventClass = e.constructor;
-      // test if e is an exogenous event
-      if (EventClass.recurrence || e.recurrence || EventClass.eventRate) {
-        // schedule next exogenous event
-        if ("createNextEvent" in e) {
-          const nextEvt = e.createNextEvent();
-          if (nextEvt) sim.FEL.add( nextEvt);
-        } else {
-          sim.schedule( new EventClass());
+        if (Object.keys( objVisSlots).length > 0) viewSlotsPerObject[objViewId] = objVisSlots;
+      } else if (sim.model.objectTypes.includes( objViewId)) {
+        // an object view for all instances of an object type
+        for (const objIdStr of Object.keys( sim.Classes[objViewId].instances)) {
+          // ...
         }
       }
     }
-    // check if any time series has to be stored/returned
-    if ("timeSeries" in sim.stat) {
-      /*
-      if (!statVar.timeSeriesScalingFactor) v = sim.stat[varName];
-      else v = sim.stat[varName] * statVar.timeSeriesScalingFactor;
-      */
-      for (const tmSerLbl of Object.keys( sim.stat.timeSeries)) {
-        const tmSerVarDef = sim.model.timeSeries[tmSerLbl];
-        let val=0;
-        // TODO: how to interpolate for implementing time series compression
-        if ("objectId" in tmSerVarDef) {
-          const obj = sim.objects.get( tmSerVarDef.objectId);
-          val = obj[tmSerVarDef.attribute];
-        } else if ("statisticsVariable" in tmSerVarDef) {
-          val = sim.stat[tmSerVarDef.statisticsVariable];
-        }
-        if (sim.timeIncrement) {  // fixed increment time progression
-          sim.stat.timeSeries[tmSerLbl].push( val);
-        } else {  // next-event time progression
-          sim.stat.timeSeries[tmSerLbl][0].push( sim.time);
-          sim.stat.timeSeries[tmSerLbl][1].push( val);
-        }
-        /*
-        if (oes.stat.timeSeriesCompressionSteps > 1
-            && sim.step % oes.stat.timeSeriesCompressionSteps === 0) {
-          oes.stat.compressTimeSeries( sim.stat.timeSeries[varName]);
-        }
-        */
+    // send event appearance data
+    for (const e of currentEvents) {
+      const ET = e.constructor;
+      if (ET.name in eventAppearances) {
+        eventsToAppear[ET.name] = JSON.stringify(e);
       }
     }
-    if (createLog) sendLogMsg( nextEvents);  // log current state
-    if (sim.visualize) sendVisualizationData( nextEvents);  // send visualization data
-    if (sim.stepDuration) {  // loop with "setTimeout"
-      if (sim.time < sim.scenario.durationInSimTime &&
-          sim.step < sim.scenario.durationInSimSteps &&
-          (sim.timeIncrement || !sim.FEL.isEmpty())) {  // end simulation if no more events
-        // compute the time that was needed for executing this step
-        const stepTime = (new Date()).getTime() - stepStartTime;
-        // check if we need some delay, because of the stepDuration parameter
-        const stepDelay = sim.stepDuration > stepTime ? sim.stepDuration - stepTime : 0;
-        setTimeout( runScenarioStep, stepDelay);
-      } else {
-        if (sim.model.computeFinalStatistics) sim.model.computeFinalStatistics();
-        // send statistics to main thread ate end of simulation
-        self.postMessage({statistics: sim.stat, endSimTime: sim.time, loadEndTime: sim.loadEndTime});
-      }
+    if (Object.keys( viewSlotsPerObject).length > 0 && Object.keys( eventsToAppear).length > 0) {
+      self.postMessage({ step: sim.step, time: sim.time, viewSlotsPerObject, eventsToAppear});
+    } else if (Object.keys( viewSlotsPerObject).length > 0) {
+      self.postMessage({ step: sim.step, time: sim.time, viewSlotsPerObject});
+    } else if (Object.keys( eventsToAppear).length > 0) {
+      self.postMessage({ step: sim.step, time: sim.time, eventsToAppear});
     }
   }
-
+  const stepStartTime = (new Date()).getTime(),
+        uia = sim.scenario.userInteractions;  // shortcut
+  advanceSimulationTime();
+  // extract and process next events
+  const nextEvents = sim.FEL.removeNextEvents();
+  // sort simultaneous events according to priority order
+  if (nextEvents.length > 1) nextEvents.sort( eVENT.rank);
+  // process next (=current) events
+  for (let i=0; i < nextEvents.length; i++) {
+    const e = nextEvents[i];
+    const EventClass = e.constructor,
+          eventTypeName = EventClass.name;
+    // check if a user interaction has been triggered
+    if (sim.config.userInteractive && uia && uia[eventTypeName]) {
+      // check also the triggering event condition, if defined
+      if (!uia[eventTypeName].trigEvtCondition || uia[eventTypeName].trigEvtCondition(e)) {
+        // make sure that the user interaction triggering event is last in nextEvents list
+        if (i === nextEvents.length - 1) {
+          self.postMessage({
+            userInteractionEvent: e,
+            userInteractionEventType: eventTypeName
+          });
+          return;  // interrupt simulator & transfer control to UI
+        } else {
+          // swap nextEvents elements
+          //util.swapArrayElements( nextEvents, i, nextEvents.length-1);
+          const j = nextEvents.length - 1;
+          [nextEvents[i], nextEvents[j]] = [nextEvents[j], nextEvents[i]];
+        }
+      }
+    }
+    // test if e is an exogenous event
+    if (EventClass.recurrence || e.recurrence || EventClass.eventRate) {
+      // schedule next exogenous event
+      if ("createNextEvent" in e) {
+        const nextEvt = e.createNextEvent();
+        if (nextEvt) sim.FEL.add( nextEvt);
+      } else {
+        sim.schedule( new EventClass());
+      }
+    }
+    // process event by applying its event rule
+    const followUpEvents = e.onEvent();
+    // schedule follow-up events
+    sim.FEL.addEvents( followUpEvents);
+  }
+  // check if any time series has to be stored/returned
+  if ("timeSeries" in sim.stat) {
+    /*
+    if (!statVar.timeSeriesScalingFactor) v = sim.stat[varName];
+    else v = sim.stat[varName] * statVar.timeSeriesScalingFactor;
+    */
+    for (const tmSerLbl of Object.keys( sim.stat.timeSeries)) {
+      const tmSerVarDef = sim.model.timeSeries[tmSerLbl];
+      let val=0;
+      // TODO: how to interpolate for implementing time series compression
+      if ("objectId" in tmSerVarDef) {
+        const obj = sim.objects.get( tmSerVarDef.objectId);
+        val = obj[tmSerVarDef.attribute];
+      } else if ("statisticsVariable" in tmSerVarDef) {
+        val = sim.stat[tmSerVarDef.statisticsVariable];
+      }
+      if (sim.timeIncrement) {  // fixed increment time progression
+        sim.stat.timeSeries[tmSerLbl].push( val);
+      } else {  // next-event time progression
+        sim.stat.timeSeries[tmSerLbl][0].push( sim.time);
+        sim.stat.timeSeries[tmSerLbl][1].push( val);
+      }
+      /*
+      if (oes.stat.timeSeriesCompressionSteps > 1
+          && sim.step % oes.stat.timeSeriesCompressionSteps === 0) {
+        oes.stat.compressTimeSeries( sim.stat.timeSeries[varName]);
+      }
+      */
+    }
+  }
+  if (createLog) sim.sendLogMsg( nextEvents);  // log current state
+  if (sim.visualize) sendVisualizationData( nextEvents);  // send visualization data
+  if (sim.stepDuration) {  // loop with "setTimeout"
+    if (sim.time < sim.scenario.durationInSimTime &&
+        sim.step < sim.scenario.durationInSimSteps &&
+        (sim.timeIncrement || !sim.FEL.isEmpty())) {  // end simulation if no more events
+      // compute the time that was needed for executing this step
+      const stepTime = (new Date()).getTime() - stepStartTime;
+      // check if we need some delay, because of the stepDuration parameter
+      const stepDelay = sim.stepDuration > stepTime ? sim.stepDuration - stepTime : 0;
+      setTimeout( runScenarioStep, stepDelay);
+    } else {
+      if (sim.model.computeFinalStatistics) sim.model.computeFinalStatistics();
+      // send statistics to main thread ate end of simulation
+      self.postMessage({statistics: sim.stat, endSimTime: sim.time, loadEndTime: sim.loadEndTime});
+    }
+  }
+}
+/*******************************************************
+ Run a simulation scenario
+ ********************************************************/
+sim.runScenario = function (createLog) {
   const scenStartTime = (new Date()).getTime();
-  if (createLog) sendLogMsg([]);  // log initial state
+  if (createLog) sim.sendLogMsg([]);  // log initial state
   if (sim.stepDuration) {  // slowing down the execution with "setTimeout"
-    runScenarioStep();  // asynchronous simulation Loop
+    sim.runScenarioStep( createLog);  // asynchronous simulation Loop
   } else {  // normal (synchronous) simulation Loop
     while (sim.time < sim.scenario.durationInSimTime &&
            sim.step < sim.scenario.durationInSimSteps &&
            (new Date()).getTime() - scenStartTime < sim.scenario.durationInCpuTime) {
-      runScenarioStep();
+      sim.runScenarioStep( createLog);
       // end simulation if no time increment and no more events
       if (!sim.timeIncrement && sim.FEL.isEmpty()) break;
     }
