@@ -3,11 +3,11 @@ import sys, os
 # Get the absolute path to the parent directory of the current file
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Get the path to the Core1/framework directory
-framework_dir = os.path.join(current_dir, '..', '..', 'Core1', 'framework')
+# Get the path to the Core0/lib directory
+oespy_dir = os.path.join(current_dir, '..', '..', 'Core1', 'framework')
 
 # Add the lib directory to sys.path
-sys.path.insert(0, framework_dir)
+sys.path.insert(0, oespy_dir)
 
 from simulator import Simulator, Model
 
@@ -16,36 +16,40 @@ sim = Simulator()
 #*******************************************************
 # Simulation Model                                     *
 # ******************************************************
-timeModel = "discrete"
-timeUnit = "days"
-objectTypes = ["SingleProductShop"]
-eventTypes = ["DailyDemand", "Delivery"]
+timeModel = "continuous"
+timeUnit = "min"
+objectTypes = ["ServiceDesk", "Customer"]
+eventTypes = ["CustomerArrival", "CustomerDeparture"]
 sim.model = Model( timeModel, timeUnit, objectTypes, eventTypes)
 #*******************************************************
 # Dynamic Imports                                      *
 # ******************************************************
-from Delivery import Delivery
-from DailyDemand import DailyDemand
-from SingleProductShop import SingleProductShop
+from ServiceDesk import ServiceDesk
+from CustomerArrival import CustomerArrival
 
 #*******************************************************
 # Simulation Scenario/Configuration Settings                         *
 #*******************************************************
 sim.scenario.durationInSimTime = 1000
+sim.scenario.idCounter = 11 # start value of auto IDs
+
 sim.config.createLog = True
 #*******************************************************
 # Initial State                                        *
 #*******************************************************
+
 def setupInitialState():
-    tvShop = SingleProductShop( sim, 1,"TV Shop", 80, 50, 100)
-    sim.FEL.add( DailyDemand( sim, 25, tvShop, occTime=1))
+    # sD = ServiceDesk(id=1, queueLength=0)
+    sD = ServiceDesk(sim,id=1, queueLength=0)
+    sim.FEL.add(  CustomerArrival(sim,occTime=1, serviceDesk=sD))
 #*******************************************************
 # Statistics Variables                                 *
 #*******************************************************
 def setupStatistics():
-    sim.stat = {"nmrOfStockOuts": 0, "lostSales": 0, "serviceLevel": 0.0}
+    sim.stat = {"arrivedCustomers": 0, "departedCustomers": 0, "cumulativeTimeInSystem": 0.0,"meanTimeInSystem":0.0,"maxQueueLength":0}
+    
 def computeFinalStatistics():
-    sim.stat['serviceLevel'] = (sim.time - sim.stat['nmrOfStockOuts']) / sim.time * 100
+    sim.stat["meanTimeInSystem"] = (sim.stat["cumulativeTimeInSystem"] /(sim.stat["departedCustomers"]))
 #************************************************************
 # Overwriting the (Abstract) Methods of Scenario and Model  *
 #************************************************************
@@ -56,3 +60,4 @@ sim.model.computeFinalStatistics = computeFinalStatistics
 # Running the Standalone Scenario                       *
 #********************************************************
 sim.runStandaloneScenario()
+

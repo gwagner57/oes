@@ -11,6 +11,9 @@ class eVENT:
         else: self.occTime = sim.time + sim.nextMomentDeltaT
         
     def toString(self): pass
+
+    def __str__(self):
+        return self.__class__.__name__ + " @ " + "{:.2f}".format(self.occTime)
         
 class oBJECT:
     def __init__(self, sim, id = None, name = None):
