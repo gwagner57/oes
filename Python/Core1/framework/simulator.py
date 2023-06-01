@@ -1,11 +1,27 @@
-import sys, os
+import sys
+import os
+
+
+# Get the absolute path to the parent directory of the current file
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Get the path to the Core0/lib directory
+lib_dir = os.path.join(current_dir, '..', '..', 'Core1', 'lib')
+
+# Add the lib directory to sys.path
+sys.path.insert(0, lib_dir)
+
+# Import EventList
+from EventList import EventList
+
+
+
+
 
 from oes_foundation import defaults
+
 from simulatorUI import logSimulationStep
 
-module_path = os.path.abspath('lib/')
-sys.path.insert(1, module_path)
-from EventList import EventList
 
 def has_method( o, name):
     return callable( getattr( o, name, None))
@@ -96,3 +112,8 @@ class Scenario:
 class Configuration:
     def __init__(self, createLog):
         self.createLog = createLog
+
+
+
+
+
