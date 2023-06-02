@@ -53,10 +53,10 @@ class Arrival( Event):
         ws = self.ws
         ws.inputBufferLength += 1
         if ws.status == "AVAILABLE":
-            followupEvents.append( ProcessingStart( self.occTime, ws) )
+            followupEvents.append( ProcessingStart( self.occTime, ws))
         return followupEvents
     def nextOccurrence( self):
-        delay = expovariate( lambd )
+        delay = expovariate( rate_nextOccurrence)
         return Arrival( self.occTime + delay, self.ws)
     
 class ProcessingStart( Event):
@@ -69,8 +69,8 @@ class ProcessingStart( Event):
         ws = self.ws
         ws.inputBufferLength -= 1
         ws.status= "BUSY"
-        delay = expovariate( mu )
-        followupEvents.append( ProcessingEnd( self.occTime + delay, ws) )
+        delay = expovariate( rate_serviceTime )
+        followupEvents.append( ProcessingEnd( self.occTime + delay, ws))
         return followupEvents
 
 class ProcessingEnd( Event):
@@ -92,8 +92,8 @@ class ProcessingEnd( Event):
 evList = EventList()
 simTime = 100000 # Total simulation time
 # assign model parameters
-lambda = 0.5
-mu = 0.6
+rate_nextOccurrence = 0.5
+rate_serviceTime = 0.6
 # set up the initial state
 ws = WorkStation("ws")
 evList.addEvent( Arrival( 0.0, ws))
