@@ -108,7 +108,7 @@ while (clock <= simTime):
     clock = ev.occTime
     #--- if the event is recurrent, schedule the next one -----
     if has_method( ev, "nextOccurrence"):
-        evList.addEvent( ev.nextOccurrence)	
+        evList.addEvent( ev.nextOccurrence())	
     followUpEvents = ev.onEvent()
     for ev in followUpEvents: evList.addEvent(ev)	
     #--- Collect statistics data -----
