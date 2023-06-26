@@ -6,7 +6,7 @@ defaults = {
 
 class eVENT:
     def __init__(self, sim, occTime = None, delay = None):
-        if occTime != None: self.occTime = occTime
+        if occTime != None: self.occTime = occTime + sim.time
         elif delay != None: self.occTime = sim.time + delay
         else: self.occTime = sim.time + sim.nextMomentDeltaT
         
