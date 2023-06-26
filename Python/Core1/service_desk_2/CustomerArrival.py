@@ -13,12 +13,6 @@ class CustomerArrival(eVENT):
         super().__init__( sim, occTime, delay)
         self.serviceDesk = serviceDesk
         self.customer = None;  # is assigned on occurrence
-        #print("this is first service desk variable"+str(self.serviceDesk))
-        #self.receiver = receiver
-
-#waitingCustomers = ServiceDesk.labels["queue"]
-
-
 
     def onEvent( self, sim):
         followupEvents = []
@@ -29,11 +23,10 @@ class CustomerArrival(eVENT):
         self.serviceDesk.waitingCustomers.append( self.customer)
 
         # update statistics
-        #print(sim.stat.arrivedCustomers)
         sim.stat["arrivedCustomers"]=sim.stat["arrivedCustomers"]+1
 
-        # if (len(self.serviceDesk.waitingCustomers) > sim.stat["maxQueueLength"]):
-        #     sim.stat["maxQueueLength"] = len(self.serviceDesk.waitingCustomers)
+        if (len(self.serviceDesk.waitingCustomers) > sim.stat["maxQueueLength"]):
+            sim.stat["maxQueueLength"] = len(self.serviceDesk.waitingCustomers)
         
         if (len(self.serviceDesk.waitingCustomers) >= 1) :
             followupEvents.append( CustomerDeparture.CustomerDeparture(sim,delay = ServiceDesk.serviceDuration(),serviceDesk= self.serviceDesk))
