@@ -12,9 +12,9 @@ def confint(data, samples = 10000, alpha = 0.95 ):
 	h = std_err * t.ppf( ( 1 + alpha ) / 2, n - 1 )
 
 	lowerBound = m - h
-	print ( lowerBound )
+	# print ( lowerBound )
 	upperBound = m + h
-	print ( upperBound )
+	# print ( upperBound )
 	return lowerBound, upperBound
 
 confint( ( 1, 2, 3, 5, 5 ) , 0.95 ) 
