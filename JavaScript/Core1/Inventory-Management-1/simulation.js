@@ -53,8 +53,8 @@ sim.model.computeFinalStatistics = function () {
 sim.experimentTypes[0] = {
   id: 0,
   title: `Simple experiment with 10 replications, each running for ${sim.scenario.durationInSimTime} ${sim.model.timeUnit}`,
-  nmrOfReplications: 50,
-  //seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012]
+  nmrOfReplications: 10,
+  seeds: [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012]
 };
 sim.experimentTypes[1] = {
   id: 1,
