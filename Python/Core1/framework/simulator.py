@@ -108,60 +108,27 @@ class Simulator:
 
 
     def calculateAverageStatistics(self, replicStat):
-        average_stat = {
-            "arrivedCustomers": round(np.mean(replicStat["arrivedCustomers"]), 2),
-            "departedCustomers": round(np.mean(replicStat["departedCustomers"]), 2),
-            "cumulativeTimeInSystem": round(np.mean(replicStat["cumulativeTimeInSystem"]), 2),
-            "meanTimeInSystem": round(np.mean(replicStat["meanTimeInSystem"]), 2),
-            "maxQueueLength": round(np.mean(replicStat["maxQueueLength"]), 2)
-        }
+        average_stat = {}
+        std_dev_stat = {}
+        min_stat = {}
+        max_stat = {}
+        ci_stat_lower = {}
+        ci_stat_upper = {}
 
-        std_dev_stat = {
-            "arrivedCustomers": round(np.std(replicStat["arrivedCustomers"]), 2),
-            "departedCustomers": round(np.std(replicStat["departedCustomers"]), 2),
-            "cumulativeTimeInSystem": round(np.std(replicStat["cumulativeTimeInSystem"]), 2),
-            "meanTimeInSystem": round(np.std(replicStat["meanTimeInSystem"]), 2),
-            "maxQueueLength": round(np.std(replicStat["maxQueueLength"]), 2)
-        }
-
-        min_stat = {
-            "arrivedCustomers": round(np.min(replicStat["arrivedCustomers"]), 2),
-            "departedCustomers": round(np.min(replicStat["departedCustomers"]), 2),
-            "cumulativeTimeInSystem": round(np.min(replicStat["cumulativeTimeInSystem"]), 2),
-            "meanTimeInSystem": round(np.min(replicStat["meanTimeInSystem"]), 2),
-            "maxQueueLength": round(np.min(replicStat["maxQueueLength"]), 2)
-        }
-
-        max_stat = {
-            "arrivedCustomers": round(np.max(replicStat["arrivedCustomers"]), 2),
-            "departedCustomers": round(np.max(replicStat["departedCustomers"]), 2),
-            "cumulativeTimeInSystem": round(np.max(replicStat["cumulativeTimeInSystem"]), 2),
-            "meanTimeInSystem": round(np.max(replicStat["meanTimeInSystem"]), 2),
-            "maxQueueLength": round(np.max(replicStat["maxQueueLength"]), 2)
-        }
-
-        # Calculate confidence interval for meanTimeInSystem
-        ci_stat_lower = {    
-            "arrivedCustomers": round(confint(replicStat["arrivedCustomers"])[0], 2),
-            "departedCustomers": round(confint(replicStat["departedCustomers"])[0], 2),
-            "cumulativeTimeInSystem": round(confint(replicStat["cumulativeTimeInSystem"])[0], 2),
-            "meanTimeInSystem": round(confint(replicStat["meanTimeInSystem"])[0], 2),
-            "maxQueueLength": round(confint(replicStat["maxQueueLength"])[0], 2)            
-        }
-
-        ci_stat_upper = {    
-            "arrivedCustomers": round(confint(replicStat["arrivedCustomers"])[1], 2),
-            "departedCustomers": round(confint(replicStat["departedCustomers"])[1], 2),
-            "cumulativeTimeInSystem": round(confint(replicStat["cumulativeTimeInSystem"])[1], 2),
-            "meanTimeInSystem": round(confint(replicStat["meanTimeInSystem"])[1], 2),
-            "maxQueueLength": round(confint(replicStat["maxQueueLength"])[1], 2)            
-        }
+        for varName, values in replicStat.items():
+            if varName != "nodes":
+                average_stat[varName] = round(np.mean(values), 2)
+                std_dev_stat[varName] = round(np.std(values), 2)
+                min_stat[varName] = round(np.min(values), 2)
+                max_stat[varName] = round(np.max(values), 2)
+                ci_stat_lower[varName] = round(confint(values)[0], 2)
+                ci_stat_upper[varName] = round(confint(values)[1], 2)
 
         print("\n-------------------- Average Statistics ------------------------")
         print("Average Stat:", average_stat)
         print("Standard Deviation Stat:", std_dev_stat)
         print("Minimum Stat:", min_stat)
-        print("Maximum stat:", max_stat)
+        print("Maximum Stat:", max_stat)
         print("CI lower:", ci_stat_lower)
         print("CI upper:", ci_stat_upper)
 

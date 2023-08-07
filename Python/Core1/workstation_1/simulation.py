@@ -41,4 +41,14 @@ sim.model.setupStatistics = setupStatistics
 #********************************************************
 # Running the Standalone Scenario                       *
 #********************************************************
-sim.runStandaloneScenario()
+# sim.runStandaloneScenario()
+experiment_type = {
+    "id": 0,
+    "title": f"Simple Experiment with 10 replications, each running for {sim.scenario.durationInSimTime} {sim.model.timeUnit}.",
+    "nmrOfReplications": 10,
+    "seeds": [123, 234, 345, 456, 567, 678, 789, 890, 901, 1012],
+    "storeExpResults": True 
+}
+
+sim.experiment_type = experiment_type  # Set the experiment_type attribute in the Simulator instance
+sim.runSimpleExperiment() 

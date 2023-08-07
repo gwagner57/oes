@@ -8,7 +8,8 @@ class eVENT:
     def __init__(self, sim, occTime = None, delay = None):
         if occTime != None: self.occTime = occTime + sim.time
         elif delay != None: self.occTime = sim.time + delay
-        else: self.occTime = sim.time + sim.nextMomentDeltaT
+        else: self.occTime = (sim.time if hasattr(sim, 'time') else 0) + (sim.nextMomentDeltaT if hasattr(sim, 'nextMomentDeltaT') and sim.nextMomentDeltaT is not None else defaults.get("nextMomentDeltaT", 0.01))
+
         
     def toString(self): pass
 
