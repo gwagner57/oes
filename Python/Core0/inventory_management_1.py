@@ -42,7 +42,7 @@ class EventList:
 # ----- Simulation model: object and event classes -----
 #------------------------------------------------------- 
     
-class SingleProductShop(Object):
+class SingleProductShop( Object):
     def __init__(self, name, quantityInStock, reorderLevel, targetInventory):
         super().__init__(name)
         self.quantityInStock = quantityInStock
@@ -76,7 +76,7 @@ class DailyDemand( Event):
     def nextOccurrence( self):
         delay = expovariate( rate_nextOccurrence)
         quantity = DailyDemand.quantity()
-        return DailyDemand(quantity, self.shop,self.occTime + delay)
+        return DailyDemand(quantity, self.shop, self.occTime + delay)
     
     @staticmethod
     def quantity(): return uniform(5, 30)

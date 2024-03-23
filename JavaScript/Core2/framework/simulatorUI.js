@@ -29,7 +29,7 @@ class oBJECT {
  UI for modifying model parameter values
  *******************************************************/
 oes.ui.createModelParameterPanel = function () {
-  const uiPanelEl = util.createExpandablePanel({id:"ModelParameterUI",
+  const uiPanelEl = dom.createExpandablePanel({id:"ModelParameterUI",
     heading: "Model Parameters", borderColor:"aqua",
     hint: "Modify model parameter values"
   });
@@ -39,7 +39,7 @@ oes.ui.createModelParameterPanel = function () {
  UI for defining the initial state objects
  *******************************************************/
 oes.ui.createInitialObjectsPanel = function () {
-  const uiPanelEl = util.createExpandablePanel({id:"InitialStateObjectsUI",
+  const uiPanelEl = dom.createExpandablePanel({id:"InitialStateObjectsUI",
     heading: "Initial Objects", borderColor:"aqua",
     hint: "Delete, create or edit the objects of the initial state"
   });

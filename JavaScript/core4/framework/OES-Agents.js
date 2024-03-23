@@ -79,8 +79,12 @@ class aGENT extends oBJECT {
     this.globalTimeEventBuffer.length = 0;  // delete buffer
   }
   // convenience method
+  perform( message, receiver) {
+    sim.schedule( new mESSAGEeVENT({ message, sender:this, receiver}));
+  }
+  // convenience method
   send( message, receiver) {
-    sim.schedule( new mESSAGEeVENT({message, sender:this, receiver}));
+    sim.schedule( new mESSAGEeVENT({ message, sender:this, receiver}));
   }
   // convenience method
   broadcast( message) {
@@ -153,8 +157,8 @@ class pERCEPTIONeVENT extends eVENT {
 pERCEPTIONeVENT.labels = {"percept":"perc"};
 
 /**
- * Action events are processed by the simulator by invoking the perceiver's
- * perceive method.
+ * Action events are processed by the simulator by invoking the performer's
+ * perform method.
  */
 class aCTION extends eVENT {
   constructor({occTime, delay, performer, action}) {
@@ -178,7 +182,7 @@ aCTION.labels = {"action":"act"};
  * action.
  */
 class rEINFORCEMENTlEARNINGaCTION extends aCTION {
-  constructor({occTime, delay, performer, success, othersToBeRewarded=[]}) {
+  constructor({ occTime, delay, performer, success, othersToBeRewarded=[]}) {
     super({occTime, delay, performer});
     this.success = success;  // Boolean
     this.othersToBeRewarded = othersToBeRewarded;
@@ -203,7 +207,7 @@ class rEINFORCEMENTlEARNINGaCTION extends aCTION {
  * receive method.
  */
 class mESSAGEeVENT extends eVENT {
-  constructor({occTime, delay, message, sender, receiver, receivers}) {
+  constructor({ occTime, delay, message, sender, receiver, receivers}) {
     super({occTime, delay});
     if (message) this.message = message;  // string or expression (JS object)
     // id or object reference
@@ -239,7 +243,7 @@ mESSAGEeVENT.labels = {"message":"msg"};
  * of all agents.
  */
 class tIMEeVENT extends eVENT {
-  constructor({occTime, delay, type}) {
+  constructor({ occTime, delay, type}) {
     super({occTime, delay});
     this.type = type;  // string
   }

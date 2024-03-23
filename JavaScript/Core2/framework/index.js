@@ -41,7 +41,7 @@ async function setupUI() {
     for (const scen of sim.scenarios) {
       optionTextItems.push( scen.title);
     }
-    util.fillSelectWithOptionsFromStringList( selScenEl, optionTextItems);
+    dom.fillSelectWithOptionsFromStringList( selScenEl, optionTextItems);
   }
   // fill run selection list
   optionTextItems = ["Standalone simulation"];
@@ -49,7 +49,7 @@ async function setupUI() {
     for (const expT of sim.experimentTypes) {
       optionTextItems.push( expT.title);
     }
-    util.fillSelectWithOptionsFromStringList( selExpEl, optionTextItems);
+    dom.fillSelectWithOptionsFromStringList( selExpEl, optionTextItems);
   }
   if (sim.config.ui.modelParameters && Object.keys( sim.model.p).length > 0 && upfrontUiEl) {  // create model parameter panel
     sim.scenario.parameters = {...sim.model.p};  // clone model parameters
@@ -67,7 +67,7 @@ async function setupUI() {
         OT.instances = {};
       }
       if ("setupInitialStateForUi" in sim.scenario) sim.scenario.setupInitialStateForUi();
-      renderInitialObjectsUI();
+      renderInitialObjectsTables();
     }
     catch( error) {
       console.log( error);
@@ -218,7 +218,7 @@ function run() {
   if (Array.isArray(sim.model.eventTypes)) nmrOfScriptFilesToLoad += sim.model.eventTypes.length;
   if (Array.isArray(sim.model.activityTypes)) nmrOfScriptFilesToLoad += sim.model.activityTypes.length;
   if (Array.isArray(sim.model.agentTypes)) nmrOfScriptFilesToLoad += sim.model.agentTypes.length;
-  document.body.appendChild( util.createProgressBarEl(
+  document.body.appendChild( dom.createProgressBarEl(
       `Loading ${nmrOfScriptFilesToLoad} script files ...`));
 
   data = {simToRun: choice,  // either standalone sim or experiment
