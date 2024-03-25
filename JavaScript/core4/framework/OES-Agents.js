@@ -34,19 +34,19 @@ class aGENT extends oBJECT {
           }
         } else if (typeof objects === "object") {
           this.objects = objects;
-        } else throw `Invalid objects argument provided for constructing aGENT: ${JSON.stringify(objects)}`;
+        } else throw Error(`Invalid objects argument provided for constructing aGENT: ${JSON.stringify(objects)}`);
       }
       // a map of references to the agents that the agent knows
       if (agents) {  // array or map
         if (Array.isArray( agents)) {
           this.agents = Object.create( null);
           for (const a of agents) {
-            if (!(a instanceof aGENT)) throw `Invalid agent ${JSON.stringify(a)} provided for constructing aGENT`;
+            if (!(a instanceof aGENT)) throw Error(`Invalid agent ${JSON.stringify(a)} provided for constructing aGENT`);
             this.agents[a.id] = a;
           }
         } else if (typeof agents === "object") {
           this.agents = agents;
-        } else throw `Invalid agents argument provided for constructing aGENT: ${JSON.stringify(agents)}`;
+        } else throw Error(`Invalid agents argument provided for constructing aGENT: ${JSON.stringify(agents)}`);
       }
     }
     if (sim.config.roundBasedAgentExecution) {
@@ -59,29 +59,30 @@ class aGENT extends oBJECT {
     sim.agents.set( this.id, this);
   }
   // abstract methods (to be implemented in subclasses)
-  onReceive( message, sender) {}
-  onPerceive( percept) {}
-  onTimeEvent( e) {}
+  onReceive( message, sender, roundBased) {}
+  onPerceive( perceptionEvent, roundBased) {}
+  onTimeEvent( globalTimeEvent, roundBased) {}
 
-  // execute agent for current simulation step
-  executeStep() {
-    for (const msgEvtRec of this.inMessageEventBuffer) {
-      this.onReceive( msgEvtRec.message, msgEvtRec.sender) ;
+  /** Execute agent for current simulation step (in round-based simulation mode)
+   *  agtEvents are either message or perception events
+   */
+  executeStep( agtEvents) {
+    const roundBased = true,
+          followUpEvents=[];
+    var resultingEvents=[];
+    for (const agtEvt of agtEvents) {
+      if (agtEvt instanceof pERCEPTIONeVENT) {
+        resultingEvents = this.onPerceive( agtEvt, roundBased);
+        followUpEvents.push(...resultingEvents);
+      } else if (agtEvt instanceof mESSAGEeVENT) {
+        resultingEvents = this.onReceive( agtEvt.message, agtEvt.sender, roundBased);
+        followUpEvents.push(...resultingEvents);
+      }
     }
-    this.inMessageEventBuffer.length = 0;  // delete buffer
-    for (const percept of this.perceptionBuffer) {
-      this.onPerceive( percept);
-    }
-    this.perceptionBuffer.length = 0;  // delete buffer
-    for (const tmEvt of this.globalTimeEventBuffer) {
-      this.onTimeEvent( tmEvt);
-    }
-    this.globalTimeEventBuffer.length = 0;  // delete buffer
+    sim.schedule( followUpEvents);
   }
   // convenience method
-  perform( message, receiver) {
-    sim.schedule( new mESSAGEeVENT({ message, sender:this, receiver}));
-  }
+  perform( actionEvt) { sim.schedule( actionEvt);}
   // convenience method
   send( message, receiver) {
     sim.schedule( new mESSAGEeVENT({ message, sender:this, receiver}));
@@ -143,34 +144,30 @@ class rEINFORCEMENTlEARNINGaGENT extends aGENT {
  * perceive method.
  */
 class pERCEPTIONeVENT extends eVENT {
-  constructor({occTime, delay, percept, perceiver}) {
+  constructor({occTime, delay, perceiver}) {
     super({occTime, delay});
-    if (percept) this.percept = percept;  // string or expression (JS object)
     // id or object reference
     this.perceiver = typeof perceiver === "object" ? perceiver : sim.objects.get( perceiver);
   }
+  // default event handler for interleaved simulation mode
   onEvent() {
-    this.perceiver.onPerceive( this.percept);
+    this.perceiver.onPerceive( this);
     return [];  // no follow-up events
   }
 }
 pERCEPTIONeVENT.labels = {"percept":"perc"};
 
 /**
- * Action events are processed by the simulator by invoking the performer's
- * perform method.
+ * Action events are processed by the simulator by invoking the onEvent method
+ * of the specific action event.
  */
 class aCTION extends eVENT {
-  constructor({occTime, delay, performer, action}) {
+  constructor({occTime, delay, performer}) {
     super({occTime, delay});
     // id or object reference
     this.performer = typeof performer === "object" ? performer : sim.objects.get( performer);
-    if (action) this.action = action;  // string or expression (JS object)
   }
-  onEvent() {
-    this.performer.perform( this.action);
-    return [];  // no follow-up events
-  }
+  onEvent() {}  // abstract method
 }
 aCTION.labels = {"action":"act"};
 
@@ -207,9 +204,8 @@ class rEINFORCEMENTlEARNINGaCTION extends aCTION {
  * receive method.
  */
 class mESSAGEeVENT extends eVENT {
-  constructor({ occTime, delay, message, sender, receiver, receivers}) {
+  constructor({ occTime, delay, sender, receiver, receivers, message}) {
     super({occTime, delay});
-    if (message) this.message = message;  // string or expression (JS object)
     // id or object reference
     this.sender = Number.isInteger( sender) || typeof sender === "string" ?
         sim.agents[sender] : sender;
@@ -221,8 +217,10 @@ class mESSAGEeVENT extends eVENT {
       for (const r of receivers) {
         this.receivers.push( Number.isInteger(r) || typeof r === "string" ? sim.agents[r] : r);
       }
-    } else throw `Cannot construct mESSAGEeVENT without receiver(s)`
+    } else throw Error(`Cannot construct mESSAGEeVENT ${this.toString()} without receiver(s)`);
+    this.message = message;
   }
+  // default event handler for interleaved simulation mode
   onEvent() {
     if (this.receiver) {
       this.receiver.onReceive( this.message, this.sender);
@@ -243,10 +241,10 @@ mESSAGEeVENT.labels = {"message":"msg"};
  * of all agents.
  */
 class tIMEeVENT extends eVENT {
-  constructor({ occTime, delay, type}) {
+  constructor({ occTime, delay}) {
     super({occTime, delay});
-    this.type = type;  // string
   }
+  // default event handler for interleaved simulation mode
   onEvent() {
     for (const agt of sim.agents.values()) {
       agt.onTimeEvent( this);

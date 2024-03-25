@@ -2,11 +2,12 @@ class EndCustomerDemand extends eVENT {
   constructor({occTime, delay}={}) {
     super({occTime, delay});
     this.retailer = sim.objects.get(1);
-    this.message = {type:"Order", quantity: EndCustomerDemand.quantity()};
   }
   onEvent() {
-    this.retailer.onReceive( this.message);
-    return [];  // no follow-up events
+    const followupEvents=[];
+    followupEvents.push( new mESSAGEeVENT({ receiver: this.retailer, sender:0, // dummy sender
+        message:{ type:"PurchaseOrder", quantity: EndCustomerDemand.quantity()}}));
+    return followupEvents;
   }
   static quantity() {
     return rand.uniformInt( 3, 7);

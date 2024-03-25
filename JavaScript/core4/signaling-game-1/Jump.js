@@ -11,7 +11,7 @@ class Jump extends rEINFORCEMENTlEARNINGaCTION {
     followupEvents.push(...super.onEvent());
     this.performer.position += this.jumpLength;
     sim.stat.nmrOfJumps++;
-    // skip the first 25 attempts
+    // skip the first 25 attempts for the statistics
     if (sim.stat.nmrOfJumps > 25) {
       if (this.success) sim.stat.jumpSuccessAfterFirst25Attempts++;
       else sim.stat.jumpFailureAfterFirst25Attempts++;

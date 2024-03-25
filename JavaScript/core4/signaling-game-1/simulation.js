@@ -6,7 +6,7 @@ sim.model.time = "discrete"; // implies using only discrete random variables
 
 sim.model.objectTypes = ["Barrier"];
 sim.model.agentTypes = ["Speaker", "Jumper"];
-sim.model.eventTypes = ["StartOver", "PerceiveBarrier", "SendJumpLengthSignal", "Jump"];
+sim.model.eventTypes = ["StartOver", "PerceiveBarrier", "Jump"];
 // a class for the (training-data-based) learning function
 sim.model.otherCodeFiles = ["LearningMatrix"];
 // the learning sensitivity coefficient for increasing/decreasing the learning matrix probabilities

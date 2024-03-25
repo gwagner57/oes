@@ -7,8 +7,7 @@ sim.model.timeUnit = "D"  // days
 
 sim.model.agentTypes = ["AbstractSupplyChainNode","BottomSupplyChainNode",
     "IntermediateSupplyChainNode","TopSupplyChainNode"];
-sim.model.eventTypes = ["EndOfWeek","EndCustomerDemand","PurchaseOrder",
-    "ShipItems","PerceiveInDelivery"];
+sim.model.eventTypes = ["EndOfWeek","EndCustomerDemand","ShipItems","PerceiveInDelivery"];
 
 // the costs for holding one unit in stock per week
 sim.model.p.holdingCostsPerUnitPerWeek = 0.5;  // in USD or EUR
@@ -18,7 +17,7 @@ sim.model.p.stockoutCostsPerUnit = 1;  // in USD or EUR
 sim.model.p.safetyStock = 2;
 
 // interleaved or round-based agent execution?
-sim.config.roundBasedAgentExecution = true;
+//sim.config.roundBasedAgentExecution = true;
 
 /*******************************************************
  Default Scenario

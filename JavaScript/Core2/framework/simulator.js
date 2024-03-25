@@ -293,12 +293,11 @@ sim.runScenario = function (createLog) {
       }
       /**** AN/PN extension END ****/
 
+      //TODO: connect to incremental time progression and pass message and perception events
       /**** ABS extension START ****/
       if (sim.config.roundBasedAgentExecution) {
         for (const agt of sim.agents.values()) {
-          agt.roundBasedExecution = false;
           agt.executeStep();
-          agt.roundBasedExecution = true;
         }
       }
       /**** ABS extension END ****/
