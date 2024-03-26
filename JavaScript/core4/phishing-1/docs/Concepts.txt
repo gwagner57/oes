@@ -1,0 +1,52 @@
+Phishing Model
+
+Basic Concepts
+
+Phisher ()
+
+Phishing Target
+
+1 Lure Message (emails, etc.)
+2 Hook Webpage
+3 Catch actions/activities by the Phisher
+
+Authenticity Cue (features a person uses to determine legitimacy, e.g., believable sender address)
+
+Influence Technique 
+ Examples:
+  Authority: Claims to come from an individual or institution that represents an authority figure.
+  Urgency: States that the receiver has a limited time to respond.
+  Reciprocity: Claims to provide some form of favour to the recipient.
+  Social proof: Suggests that other people have responded to the email.
+  Reward: Claims to provide the receiver with a potential reward if they respond.
+  Loss: Claims that the receiver will suffer some form of loss if they fail to respond.
+
+Phishing Susceptibility
+
+Open Issues
+- Distnguish between spear phishing and generic phishing?
+- Limit "phishing" to obtaining credentials (or other exploitable information)? Or also include getting the target to transfer money or download malicious software?
+
+
+Existing Theories/Models
+
+IPPM  Vishwanath, A., Herath, T., Chen, R., Wang, J., Rao, H.R., 2011. Why do people get
+phished? Testing individual differences in phishing vulnerability within an integrated,
+information processing model. Decis. Support Syst. 51, 576–586. https://
+doi.org/10.1016/j.dss.2011.03.002.
+
+ The IPPM suggests that the likelihood that an individual will respond
+ to a phishing email is influenced by the content of the email (such
+ as influence technique cues that it contains), the use and accuracy of
+ email signatures, and the sender address.
+ 
+SCAM  Vishwanath, A., Harrison, B., Ng, Y.J., 2016. Suspicion, cognition, and automaticity
+model of phishing susceptibility. Commun. Res. 1–21. https://doi.org/10.1177/
+0093650215627483. online pre-print.
+ 
+ The SCAM claims that the extent to which heuristic processing strategies are used when 
+ evaluating emails varies according to characteristics of the individual recipient. 
+ These differences primarily relate to individual beliefs regarding online risk, which 
+ encompasses the degree of experience, efficacy, and subject-specific knowledge that people have.
+
+

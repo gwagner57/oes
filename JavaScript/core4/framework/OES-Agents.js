@@ -10,43 +10,58 @@
  ******************************************************************************/
 /**
  * Agents are objects that are able to
- * - receive messages sent by other agents by reacting to in-message events
- * - perceive their environment (its objects and events) by reacting to perception events
- * - send messages to other agents by scheduling out-message events
+ * - receive messages sent by other agents, and react in response to them
+ * - perceive their environment via perception events, and react in response to them
+ * - send messages to other agents by scheduling message events
  * - perform actions by scheduling action events
  * An agent may have information about certain objects and agents.
+ * For perfect information agents, the "objects" and "agents" parameters are lists of
+ * object IDs that will be converted to maps.
+ * For non-perfect information agents, these parameters are lists of records with
+ * a "type" field and an "id" field the value of which corresponds to an existing
+ * object or agent (in sim.objects or sim.agents).
  */
 class aGENT extends oBJECT {
-  constructor({id, name, hasPerfectInformation=true, objects, agents}) {
+  constructor({id, name, hasPerfectInformation=true, objects=[], agents=[]}) {
     super( id, name);
     this.hasPerfectInformation = hasPerfectInformation;
-    if (this.hasPerfectInformation) {  // the agent knows all objects and agents
-      this.objects = sim.objects;
-      this.agents = sim.agents;
-    } else {  // incomplete and possibly incorrect information
-      // a map of references to the objects that the agent knows
-      if (objects) {  // array or map
-        if (Array.isArray( objects)) {
-          this.objects = Object.create( null);
-          for (const o of objects) {
-            if (!(o instanceof oBJECT)) throw `Invalid object ${JSON.stringify(o)} provided for constructing aGENT`;
-            this.objects[o.id] = o;
-          }
-        } else if (typeof objects === "object") {
-          this.objects = objects;
-        } else throw Error(`Invalid objects argument provided for constructing aGENT: ${JSON.stringify(objects)}`);
+    this.objects = Object.create(null);
+    if (this.hasPerfectInformation) {
+      for (const objId of objects) {
+        if (!sim.objects.has( objId)) {
+          throw Error(`Invalid object ID ${JSON.stringify(objId)} provided in constructor argument
+'objects' for constructing aGENT with ID ${id}`);
+        } else {
+          this.objects[objId] = sim.objects.get( objId);
+        }
       }
-      // a map of references to the agents that the agent knows
-      if (agents) {  // array or map
-        if (Array.isArray( agents)) {
-          this.agents = Object.create( null);
-          for (const a of agents) {
-            if (!(a instanceof aGENT)) throw Error(`Invalid agent ${JSON.stringify(a)} provided for constructing aGENT`);
-            this.agents[a.id] = a;
-          }
-        } else if (typeof agents === "object") {
-          this.agents = agents;
-        } else throw Error(`Invalid agents argument provided for constructing aGENT: ${JSON.stringify(agents)}`);
+      //TODO: check in a second pass if sim.agents.has( objId)
+      for (const objId of agents) {
+        if (!(Number.isInteger(objId) || typeof objId === "string")) {
+          throw Error(`Invalid object ID ${JSON.stringify(objId)} provided in constructor argument
+'agents' for constructing aGENT with ID ${id}`);
+        } else {
+          this.agents[objId] = sim.agents.get( objId);
+        }
+      }
+    } else {  // incomplete and possibly incorrect information
+      for (const objRec of objects) {
+        if (!(typeof objRec === "object" && "type" in objRec &&
+            "id" in objRec && sim.objects.has( objRec.id))) {
+          throw Error(`Invalid object record ${JSON.stringify(objRec)} provided in constructor argument
+'objects' for constructing aGENT with ID ${id}`);
+        } else {
+          this.objects[objRec.id] = objRec;
+        }
+      }
+      //TODO: check in a second pass if sim.agents.has( agtRec.id)
+      for (const agtRec of agents) {
+        if (!(typeof agtRec === "object" && "type" in agtRec && "id" in agtRec)) {
+          throw Error(`Invalid object record ${JSON.stringify(agtRec)} provided in constructor argument
+'agents' for constructing aGENT with ID ${id}`);
+        } else {
+          this.agents[agtRec.id] = agtRec;
+        }
       }
     }
     if (sim.config.roundBasedAgentExecution) {
@@ -69,16 +84,19 @@ class aGENT extends oBJECT {
   executeStep( agtEvents) {
     const roundBased = true,
           followUpEvents=[];
-    var resultingEvents=[];
+    var resultingStateChanges=[], resultingFutureEvents=[];
     for (const agtEvt of agtEvents) {
       if (agtEvt instanceof pERCEPTIONeVENT) {
-        resultingEvents = this.onPerceive( agtEvt, roundBased);
-        followUpEvents.push(...resultingEvents);
+        [resultingStateChanges, resultingFutureEvents] = this.onPerceive( agtEvt, roundBased);
+        //TODO: add resultingStateChanges to store
+        followUpEvents.push(...resultingFutureEvents);
       } else if (agtEvt instanceof mESSAGEeVENT) {
-        resultingEvents = this.onReceive( agtEvt.message, agtEvt.sender, roundBased);
-        followUpEvents.push(...resultingEvents);
+        [resultingStateChanges, resultingFutureEvents] = this.onReceive( agtEvt.message, agtEvt.sender, roundBased);
+        //TODO: add resultingStateChanges to store
+        followUpEvents.push(...resultingFutureEvents);
       }
     }
+    //TODO: return resultingStateChanges store and followUpEvents
     sim.schedule( followUpEvents);
   }
   // convenience method

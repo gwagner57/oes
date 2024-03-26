@@ -1,6 +1,6 @@
 /**
- * A bottom supply chain node orders and purchases from upstream nodes,
- * and maintains an inventory.
+ * A bottom supply chain node (such as a retailer) orders and purchases
+ * from its upstream node, and maintains an inventory.
  */
 class BottomSupplyChainNode extends AbstractSupplyChainNode {
   constructor({ id, name, stockQuantity, safetyStock, backorderQuantity, upStreamNode}) {

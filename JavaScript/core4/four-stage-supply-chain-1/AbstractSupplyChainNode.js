@@ -16,7 +16,7 @@ class AbstractSupplyChainNode extends aGENT {
     // the accumulated inventory costs of this node
     this.accumulatedInventoryCosts = 0;
   }
-  onReceive( message, roundBased) {
+  onReceive( message, sender, roundBased) {
     switch (message.type) {
     case "PurchaseOrder":
       // store order quantity for later processing
