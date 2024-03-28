@@ -7,8 +7,10 @@ sim.model.timeUnit = "min"  // minutes
 
 sim.model.objectTypes = ["Webpage"];
 sim.model.agentTypes = ["Phisher","PhishingTarget"];
-sim.model.eventTypes = ["StartOfWeek","GoToHookWebpage","LookAtHookWebpage",
-    "ProvideExploitableData","PerceiveExploitableData"];
+sim.model.eventTypes = ["StartOfDay","VisitHookPage","LookAtHookPage",
+    "ProvideExploitableData","PerceiveExploitableData","ExploitScammedData"];
+// the number of phishing targets
+sim.model.p.numberOfPhishingTargets = 10;
 
 // interleaved or round-based agent execution?
 //sim.config.roundBasedAgentExecution = true;
@@ -16,57 +18,29 @@ sim.model.eventTypes = ["StartOfWeek","GoToHookWebpage","LookAtHookWebpage",
 /*******************************************************
  Default Scenario
  ********************************************************/
-sim.scenario.durationInSimTime = 52 * 7 * 24 * 60;  // one year
+sim.scenario.durationInSimTime = 7 * 24 * 60;  // one week
 sim.scenario.description = "Default scenario";
 sim.scenario.setupInitialState = function(){
-  const retailer = new BottomSupplyChainNode({id: 1, name:"retailer",
-            stockQuantity: 8, safetyStock: 3}),
-        distributor = new IntermediateSupplyChainNode({id: 2, name:"distributor",
-            downStreamNode: retailer, stockQuantity: 8, safetyStock: 4}),
-        wholesaler = new IntermediateSupplyChainNode({id: 3, name:"wholesaler",
-            downStreamNode: distributor, stockQuantity: 8, safetyStock: 5}),
-        factory = new TopSupplyChainNode({id: 4, name:"factory",
-            downStreamNode: wholesaler});
-  retailer.upStreamNode = distributor;
-  distributor.upStreamNode = wholesaler;
-  wholesaler.upStreamNode = factory;
+  const targetStartId=1001, phishTargs=[];
+  for (let j=0; j < sim.model.p.numberOfPhishingTargets; j++) {
+    const i = targetStartId + j;
+    const susceptibility = rand.uniformInt(1,9) * 0.1;
+    phishTargs.push( new PhishingTarget({id: i, name:"phishTarg"+ (j+1), susceptibility}));
+  }
+  const phisher = new Phisher({id: 1, name:"phisher", phishingTargets: phishTargs});
   // Schedule initial events
-  sim.schedule( new EndCustomerDemand({occTime: 1}));
-  sim.schedule( new EndOfWeek({occTime: 5}));
+  sim.schedule( new StartOfDay({occTime: 1}));
 };
 
 /*******************************************************
  Define Output Statistics Variables
  ********************************************************/
 sim.model.setupStatistics = function () {};
+/*
 sim.model.timeSeries = {
   "retailer inventory": {objectId:1, attribute:"stockQuantity"},
   "distributor inventory": {objectId:2, attribute:"stockQuantity"},
   "wholesaler inventory": {objectId:3, attribute:"stockQuantity"},
 }
-
-sim.model.computeFinalStatistics = function () {
-  // create a table showing supply chain node characteristics
-  const tableDef = {name:"Supply chain nodes", objectTypeName:"NonTopSupplyChainNode",
-        attributes:["stockQuantity","backorderQuantity","accumulatedInventoryCosts"]};
-  const row0 = [];
-  sim.stat.table = {name: tableDef.name, rows:[]};
-  //const population = sim.Classes[tableDef.objectTypeName].instances;
-  for (const obj of sim.objects.values()) {
-    const row=[];
-    if (obj instanceof BottomSupplyChainNode || obj instanceof IntermediateSupplyChainNode) {
-      if (row0.length === 0) {  // create column headings
-        row0.push("");  // leftmost column
-        for (const attr of tableDef.attributes) {
-          row0.push( attr);
-        }
-        sim.stat.table.rows.push( row0);
-      }
-      row.push( obj.name);  // leftmost column
-      for (const attr of tableDef.attributes) {
-        row.push( obj[attr]);
-      }
-      sim.stat.table.rows.push( row);
-    }
-  }
-};
+*/
+sim.model.computeFinalStatistics = function () {};

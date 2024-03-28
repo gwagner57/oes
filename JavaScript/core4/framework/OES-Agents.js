@@ -73,7 +73,7 @@ class aGENT extends oBJECT {
     // add each new agent to the Map of simulation agents
     sim.agents.set( this.id, this);
   }
-  // abstract methods (to be implemented in subclasses)
+  // abstract methods (to be implemented in subclasses of aGENT)
   onReceive( message, sender, roundBased) {}
   onPerceive( perceptionEvent, roundBased) {}
   onTimeEvent( globalTimeEvent, roundBased) {}
@@ -103,7 +103,11 @@ class aGENT extends oBJECT {
   perform( actionEvt) { sim.schedule( actionEvt);}
   // convenience method
   send( message, receiver) {
-    sim.schedule( new mESSAGEeVENT({ message, sender:this, receiver}));
+    if (Array.isArray( receiver)) {  // multiple receivers
+      sim.schedule( new mESSAGEeVENT({ message, sender:this, receivers: receiver}));
+    } else {
+      sim.schedule( new mESSAGEeVENT({ message, sender:this, receiver}));
+    }
   }
   // convenience method
   broadcast( message) {
@@ -241,10 +245,11 @@ class mESSAGEeVENT extends eVENT {
   // default event handler for interleaved simulation mode
   onEvent() {
     if (this.receiver) {
+      if (typeof this.receiver.onReceive !== "function") console.log( JSON.stringify(this.receiver));
       this.receiver.onReceive( this.message, this.sender);
     } else if (Array.isArray( this.receivers)) {
       for (const r of this.receivers) {
-        this.r.onReceive( this.message, this.sender);
+        r.onReceive( this.message, this.sender);
       }
     } else {
       console.error(`Message event without receiver(s): ${this}`)
@@ -252,7 +257,7 @@ class mESSAGEeVENT extends eVENT {
     return [];  // no follow-up events
   }
 }
-mESSAGEeVENT.labels = {"message":"msg"};
+mESSAGEeVENT.labels = {className: "MsgEvt"};
 
 /**
  * Time events are processed by the simulator by invoking the onTimeEvent method

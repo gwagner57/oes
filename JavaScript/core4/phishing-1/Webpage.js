@@ -1,7 +1,8 @@
 class Webpage extends oBJECT {
-  constructor({ id, name, bodyText, phisher}) {
+  constructor({ id, name, body, phisher, impersonatedAgent}) {
     super( id, name);
-    this.bodyText = bodyText;
+    this.body = body;
     if (phisher) this.phisher = phisher;
+    if (impersonatedAgent) this.impersonatedAgent = impersonatedAgent;
   }
 }
