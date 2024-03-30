@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+ <meta charset="UTF-8"/>
+ <title>Phishing-1 Discrete Event Simulation Example</title>
+ <meta name="viewport" content="width=device-width, initial-scale = 1.0" />
+ <link href="https://sim4edu.com/oesjs/core4/phishing-1" rel="canonical" />
+ <meta name="description"
+       content="A baseline phishing model."/>
+ <link href="../css/index.css" rel="stylesheet" />
+ <script src="../lib/math.js"></script>
+ <script src="../lib/util.js"></script>
+ <script src="../lib/ui/dom.js"></script>
+ <script src="../lib/idb5.js"></script>
+ <script src="../framework/init-oes.js"></script>
+ <script src="../framework/simulatorUI.js"></script>
+ <script src="simulation.js"></script>
+</head>
+<body>
+<div><small>An <em><a href="https://gwagner57.github.io/oes/">Object Event Simulation (OES)</a></em> example model.
+ You can download and inspect its code from the <a href="https://github.com/gwagner57/oes/tree/master/JavaScript/core4/phishing-1">OES
+  GitHub repo</a>.</small></div>
+<h1>Phishing Baseline Model <a href="description.html">Read more...</a></h1>
+<p id="copyright">© 2024 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
+ Brandenburg University of Technology, Germany.</p>
+<div id="modelDescription">
+ <figure class="right" style="margin-top:-1em"><img alt="Process Design Model" src="img/CPM.svg" width="600" /></figure>
+ <p>A phisher sends lure messages to phishing targets. Depending on their susceptibility,
+  targets either trust or distrust the message. If they trust it, they visit the hook webpage
+ and if this page does not appear scammy to them, they provide the requested exploitable information.</p>
+</div>
+
+<h2 id="scenarioTitle">Default scenario</h2>
+<p id="scenarioDescription"></p>
+<form id="run">
+ <div><label>Select scenario: <select name="selScen" onchange="onChangeOfScenSelect()"></select></label></div>
+ <div><button onclick="run()" type="button">Run</button>
+  <select name="selExp" onchange="onChangeOfExpSelect()"></select></div>
+ <div><label>Simulation log <input name="log" type="checkbox" /></label></div>
+ <div style="display: none"><label>Store exper. results <input name="storeExpRes" type="checkbox" /></label>
+  <button onclick="exportExperResults()" type="button">Export exper. results</button>
+ </div>
+</form>
+<table style="display: none">
+ <caption>Simulation Log</caption>
+ <thead>
+ <tr>
+  <th>Step</th><th>Time</th><th>Current Events</th><th>System State</th><th>Future Events</th>
+ </tr>
+ </thead>
+ <tbody id="simLog"></tbody>
+</table>
+<p id="simInfo"></p>
+<table id="statisticsTbl">
+ <caption></caption>
+ <tbody></tbody>
+</table>
+<p id="execInfo"></p>
+<script src="../framework/index.js"></script>
+</body>
+</html>
