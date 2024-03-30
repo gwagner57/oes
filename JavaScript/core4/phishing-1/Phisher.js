@@ -18,7 +18,7 @@ class Phisher extends aGENT {
   onPerceive( perceptionEvt, roundBased) {
     switch (perceptionEvt.constructor.name) {
     case "PerceiveExploitableData":
-      this.perform( new ExploitScammedData({ scammedData: perceptionEvt.data,
+      this.perform( new ExploitScammedData({ performer: this, scammedData: perceptionEvt.data,
           victim: perceptionEvt.victim}));
       break;
     }

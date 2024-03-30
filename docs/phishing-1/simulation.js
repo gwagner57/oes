@@ -43,4 +43,27 @@ sim.model.timeSeries = {
   "wholesaler inventory": {objectId:3, attribute:"stockQuantity"},
 }
 */
-sim.model.computeFinalStatistics = function () {};
+sim.model.computeFinalStatistics = function () {
+  // create a table showing agent assets
+  const tableDef = {name:"Assets after phishing", attributes:["assetsTUSD"]};
+  const row0 = [];
+  sim.stat.table = {name: tableDef.name, rows:[]};
+  //const population = sim.Classes[tableDef.objectTypeName].instances;
+  for (const obj of sim.agents.values()) {
+    const row=[];
+    if (obj instanceof PhishingTarget || obj instanceof Phisher) {
+      if (row0.length === 0) {  // create column headings
+        row0.push("");  // leftmost column
+        for (const attr of tableDef.attributes) {
+          row0.push( attr);
+        }
+        sim.stat.table.rows.push( row0);
+      }
+      row.push( obj.name);  // leftmost column
+      for (const attr of tableDef.attributes) {
+        row.push( obj[attr]);
+      }
+      sim.stat.table.rows.push( row);
+    }
+  }
+};

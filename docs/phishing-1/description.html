@@ -2,24 +2,26 @@
 <html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="UTF-8" />
-    <title>Four-Stage-Supply-Chain-1 Simulation Model Description</title>
+    <title>Phishing-1 Simulation Model Description</title>
     <meta content="width=device-width, initial-scale = 1.0" name="viewport" />
     <meta content="en" http-equiv="Content-Language" />
-    <meta content="A simulation of a four stage supply chain consisting of a retailer, a wholesaler,
-      a distributor and a factory." name="description" />
+    <meta content="A phisher sends lure messages to phishing targets. Depending on their susceptibility,
+  targets either trust or distrust the message. If they trust it, they visit the hook webpage
+ and if this page does not appear scammy to them, they provide the requested exploitable information." name="description" />
     <link href="../css/description.css" rel="stylesheet" />
   </head>
   <body>
-  <div id="frontMatter"><h1><span>Four-Stage-Supply-Chain-1 Model Description</span> <a href="index.html">Back to simulation</a></h1>
+  <div id="frontMatter"><h1><span>Phishing-1 Model Description</span> <a href="index.html">Back to simulation</a></h1>
   
-  <p id="copyright">© 2022 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
+  <p id="copyright">© 2024 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>) Gerd Wagner,
   Brandenburg University of Technology, Germany.</p> 
   <!--<figure class="right"><img alt="" src="" width="400" /></figure>-->
 
-  <p>The four stage (single-product) supply chain of the classical "Beer Game" consists of
-      a retailer, a wholesaler, a distributor and a factory.</p>
+  <p>A phisher sends lure messages to phishing targets. Depending on their susceptibility,
+      targets either trust or distrust the message. If they trust it, they visit the hook webpage
+      and if this page does not appear scammy to them, they provide the requested exploitable information.</p>
   
-  <p>You can inspect the model's <a href="https://github.com/gwagner57/oes/tree/master/JavaScript/Core4/Four-Stage-Supply-Chain-1">OESjs
+  <p>You can inspect the model's <a href="https://github.com/gwagner57/oes/tree/master/JavaScript/core4/phishing-1">OESjs
       code</a> on the OES GitHub repo.</p>
   </div>
 
@@ -36,27 +38,24 @@
     <ul>
      <li><strong>types</strong>, corresponding to <em>classes</em> in OO modeling, or <em>unary predicates</em>
       in formal logic,</li>
-     <li><strong>properties</strong> corresponding to <em>binary predicates</em> in formal logic,</li>
+     <li><strong>attributes</strong> corresponding to <em>binary predicates</em> in formal logic,</li>
      <li><strong>associations</strong> corresponding to <em>n-ary predicates</em> (with <em>n</em> > 1) in formal logic.</li>
     </ul>
-    <p>The main categories of types are <em>object types</em> and <em>event types</em>. A simple form of conceptual
+    <p>The main categories of types are <em>object types</em>, <em>agent types</em> and <em>event types</em>. A simple form of conceptual
      information model is obtained by providing a list of each of them, while a more elaborated model, preferably
-     in the form of a UML class diagram, also defines properties and associations, including the <strong>participation</strong>
+     in the form of a UML class diagram, also defines attributes and associations, including the <strong>participation</strong>
      of objects (of certain types) in events (of certain types).</p>
    </div>
-  <p>The potentially relevant object types are:</p>
-  <ol>
-      <li>top supply chain nodes (like the factory)</li>
-      <li>intermediate supply chain nodes (like the wholesaler and distributor)</li>
-      <li>bottom supply chain nodes (like the retailer)</li>
-  </ol>
+  <p>The potentially relevant object types are: <b><i>webpages</i></b>, while the potentially relevant
+   agent types are: <b><i>phishers</i></b> and <b><i>phishing targets</i></b>.</p>
   <p>Potentially relevant types of events are:</p>
    <ol>
-    <li>receive order (from the downstream node or from end customer),</li>
-    <li>end of week,</li>
-    <li>send order (to the upstream node),</li>
-    <li>ship items (to the downstream node),</li>
-    <li>perceive reception of items (receive delivery).</li>
+    <li><b><i>start of day</i></b>: the start of a new business day for a phisher,</li>
+    <li><b><i>visit hook page</i></b>: a phishing target that trusts a lure message visits a hook webpage,</li>
+    <li><b><i>look at hook page</i></b>: a phishing target looks at a hook page,</li>
+    <li><b><i>provide exploitable data</i></b>: a phishing target trusts a hook page and provides the requested data,</li>
+    <li><b>perceive exploitable data<i></i></b>: a phisher notes that exploitable data has been provided by a target,</li>
+    <li><b>exploit scammed data<i></i></b>: a phisher exploits the data he has scammed from a target.</li>
    </ol>
   <p>Both object types and event types, together with their
   participation associations, can be visually described in a conceptual
@@ -69,7 +68,7 @@
   
   <details><summary>Conceptual Process Model</summary>
    <p></p>
-   <figure><img alt="A DPMN diagram showing a conceptual process model" src="img/CPM.svg" width="600" /></figure>
+   <figure><img alt="A BPMN diagram showing a conceptual process model" src="img/CPM.svg" width="600" /></figure>
   </details>
  </details>
 
@@ -96,120 +95,23 @@
 <!--
         <figure class="right"><img alt="???" src="img/Truck_IDM.svg" width="300" /></figure>
 -->
-        <p>The agent class <code>AbstractSupplyChainNode</code> can be coded with OESjs-Core4 in the following way:</p>
+        <p>The agent class <code>...</code> can be coded with OESjs-Core4 in the following way:</p>
 
-<pre>class <b>AbstractSupplyChainNode</b> extends aGENT {
-  constructor({ id, name, stockQuantity, safetyStock=3, backorderQuantity=0}) {
-    super({id, name});
-    if (stockQuantity !== undefined) this.stockQuantity = stockQuantity;
-    // extra inventory beyond the expected lead time demand
-    if (safetyStock !== undefined) this.safetyStock = safetyStock;
-    // orders of previous cycles that aren't fulfilled yet
-    if (backorderQuantity !== undefined) this.backorderQuantity = backorderQuantity;
-    // the quantity ordered last time by the downstream customer from this node
-    this.lastSalesOrderQuantity = 0;
-    // the accumulated inventory costs of this node
-    this.accumulatedInventoryCosts = 0;
-  }
-  <b>onReceiveOrder</b>( quantity) {
-    // store order quantity for later processing
-    this.lastSalesOrderQuantity = quantity;
-  }
-  // not used by TopSupplyChainNode
-  <b>onPerceive</b>( percept) {
-    switch (percept.type) {
-      case "InDelivery":
-        this.stockQuantity += percept.quantity;
-        break;
-    }
-  }
-  // overwritten by TopSupplyChainNode
-  <b>onTimeEvent</b>( e) {
-    switch (e.type) {
-    case "EndOfWeek":
-      ...
-    }
-  }
+<pre>class <b>...</b> extends aGENT {
 }</pre>
 
         <p>All agent classes inherit an <code>id</code> attribute and a <code>name</code> attribute from the
         pre-defined OES foundation class <code>aGENT</code>.</p>
-<p>The <code>onTimeEvent</code> method of the class <code>AbstractSupplyChainNode</code> contains most of the model logic:</p>
-
-<pre>  onTimeEvent( e) {
-    switch (e.type) {
-      case "EndOfWeek":
-        /********************************************************
-         *** ship items to downstream node or end customer ******
-         ********************************************************/
-        const stockQuantityAtStartOfWeek = this.stockQuantity;
-        let deliveryQuantity = 0, stockoutCosts = 0;
-        if (this.stockQuantity < this.lastSalesOrderQuantity + this.backorderQuantity) {
-          // not enough stock quantity for fulfilling the sum of order and backorder quantity
-          deliveryQuantity = this.stockQuantity;
-          if (this.lastSalesOrderQuantity > this.stockQuantity) {
-            const newBackorderQuantity = this.lastSalesOrderQuantity - this.stockQuantity;
-            stockoutCosts = newBackorderQuantity * sim.model.p.stockoutCostsPerUnit;
-            // increment backorder quantity
-            this.backorderQuantity += newBackorderQuantity;
-          } else if (this.stockQuantity > this.lastSalesOrderQuantity) {
-            // decrement backorder quantity
-            this.backorderQuantity -= this.stockQuantity - this.lastSalesOrderQuantity;
-          }
-          // stock quantity is reset to zero
-          this.stockQuantity = 0;
-        } else {  // enough stock quantity for fulfilling the sum of order and backorder quantity
-          deliveryQuantity = this.lastSalesOrderQuantity + this.backorderQuantity;
-          // decrement stock quantity
-          this.stockQuantity -= deliveryQuantity;
-          // backorder quantity is reset to zero
-          this.backorderQuantity = 0;
-        }
-        // only ship non-zero quantities
-        if (deliveryQuantity > 0) {
-          sim.schedule( new ShipItems({quantity: deliveryQuantity, performer: this}));
-        }
-        /***********************************************
-         *** Send purchase order to upstream node ******
-         ***********************************************/
-        let orderQuantity = 0;
-        // Try to keep the inventory as big as the latest order received by this node (plus a bit extra quantity)
-        if (this.stockQuantity > 0) {
-          orderQuantity = Math.max( this.lastSalesOrderQuantity -
-              this.stockQuantity + this.safetyStock, 0);
-        } else {
-          orderQuantity = this.lastSalesOrderQuantity + this.safetyStock;
-        }
-        //TODO: DELETE this.lastPuchaseOrderQuantity = orderQuantity;
-        // only place orders with values greater than zero
-        if (orderQuantity > 0) {
-          sim.schedule( new PurchaseOrder({ quantity: orderQuantity,
-            sender: this, receiver: this.upStreamNode}));
-        }
-        /***********************************************
-         *** Calculate inventory costs *****************
-         ***********************************************/
-            // the average inventory is the stock quantity at the beginning of the week plus the stock quantity
-            // at the end of the week divided by two
-        const averageStockQuantity = (stockQuantityAtStartOfWeek + this.stockQuantity) / 2,
-            totalHoldingCostsPerWeek = averageStockQuantity * sim.model.p.holdingCostsPerUnitPerWeek;
-        this.accumulatedInventoryCosts = totalHoldingCostsPerWeek + stockoutCosts;
-        break;
-    }
-  }
-</pre>
-
 
     </details>
    </details>
-
+<!--
    <section><h2>See also...</h2>
     <ul>
-     <li><a href="https://beergame.org/">beergame.org</a></li>
-     <li><a href="https://en.wikipedia.org/wiki/Beer_distribution_game">Wikipedia article</a></li>
+     <li></li>
     </ul>
    </section>
-
+-->
    <p><a href="index.html">Back to simulation</a></p>
 </body>
 </html>
