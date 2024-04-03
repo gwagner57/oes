@@ -36,13 +36,14 @@ sim.scenario.setupInitialState = function(){
  Define Output Statistics Variables
  ********************************************************/
 sim.model.setupStatistics = function () {};
-/*
 sim.model.timeSeries = {
-  "retailer inventory": {objectId:1, attribute:"stockQuantity"},
-  "distributor inventory": {objectId:2, attribute:"stockQuantity"},
-  "wholesaler inventory": {objectId:3, attribute:"stockQuantity"},
+  "phisher assets": {objectId:1, attribute:"assetsTUSD"},
+  "assets of target 1": {objectId:1001, attribute:"assetsTUSD"},
+  "assets of target 2": {objectId:1002, attribute:"assetsTUSD"},
+  "assets of target 3": {objectId:1003, attribute:"assetsTUSD"},
+  "assets of target 4": {objectId:1004, attribute:"assetsTUSD"},
+  "assets of target 5": {objectId:1005, attribute:"assetsTUSD"},
 }
-*/
 sim.model.computeFinalStatistics = function () {
   // create a table showing agent assets
   const tableDef = {name:"Assets after phishing", attributes:["assetsTUSD"]};

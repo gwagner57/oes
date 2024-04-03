@@ -11,9 +11,9 @@ class PhishingTarget extends aGENT {
     case "LureMessage":
       // (1) assess sender address and message subject
       const headerCredibility = this.getMessageHeaderCredibility( message);
-      if (headerCredibility*this.susceptibility > 0.5) {  // (2) read and assess message body
+      if (headerCredibility*this.susceptibility > 0.2) {  // (2) read and assess message body
         const bodyCredibility = this.getMessageBodyCredibility( message.body);
-        if (bodyCredibility*this.susceptibility > 0.5) {  // (3) go to hook webpage
+        if (bodyCredibility*this.susceptibility > 0.2) {  // (3) go to hook webpage
           this.perform( new VisitHookPage({ performer: this, hookPage: message.hookPage,
               impersonatedAgent: message.impersonatedAgent}));
         }
