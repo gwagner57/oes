@@ -10,5 +10,5 @@ class VisitHookPage extends aCTION {
     return followupEvents;
   }
 }
-VisitHookPage.labels = {"className":"Ship", "quantity":"qty","receiverId":"to"};
+VisitHookPage.labels = {"className":"VisitHookP"};
 
