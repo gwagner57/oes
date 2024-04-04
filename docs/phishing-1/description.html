@@ -51,6 +51,11 @@
   <p>Potentially relevant types of events are:</p>
    <ol>
     <li><b><i>start of day</i></b>: the start of a new business day for a phisher,</li>
+   <li><b><i>send lure message</i></b>: a phisher sends a lure message to many targets,</li>
+   <li><b><i>receive lure message</i></b>: a target receives a lure message from a phisher,</li>
+   <li><b><i>read lure message header</i></b>: a target reads the header data (sender and subject) of a lure message,</li>
+   <li><b><i>open lure message body</i></b>: a target opens a lure message for being able to read it,</li>
+   <li><b><i>read lure message body</i></b>: a target reads a lure message,</li>
     <li><b><i>visit hook page</i></b>: a phishing target that trusts a lure message visits a hook webpage,</li>
     <li><b><i>look at hook page</i></b>: a phishing target looks at a hook page,</li>
     <li><b><i>provide exploitable data</i></b>: a phishing target trusts a hook page and provides the requested data,</li>
@@ -62,8 +67,8 @@
   information model in the form of a UML class diagram, as shown
   below.</p>
   <figure><figcaption>A conceptual information model describing
-  object, event and activity types.</figcaption><img alt="???"
-  src="img/CIM.svg" width="700" /></figure>
+  various kinds of object and event types.</figcaption><img alt="???"
+  src="img/CIM.svg" width="800" /></figure>
   </details>
   
   <details><summary>Conceptual Process Model</summary>
@@ -72,20 +77,20 @@
   </details>
  </details>
 
-<!--
    <details><summary>Simulation Design</summary>
 
     <details><summary>Information Design Model</summary>
-     <figure><figcaption>An information design model defining object, event and activity types.</figcaption>
-         <img alt="???" src="img/IDM.svg" width="600" /></figure>
+     <figure><figcaption>An information design model defining various kinds of object and event types.</figcaption>
+         <img alt="Phishing Information Design Model" src="img/IDM.svg" width="800" /></figure>
     </details>
+       <!--
     <details><summary>Process Design Model</summary>
             <figure><figcaption>A computationally complete
           process design for the Load-Haul-Dump business process.</figcaption>
              <img alt="???" src="img/PDM.svg" width="700" /></figure>
          </details>
-        </details>
-  -->
+         -->
+ </details>
 
  <details><summary>Implementation with OESjs</summary>
   <details><summary>Implementing the Information Design Model</summary>
